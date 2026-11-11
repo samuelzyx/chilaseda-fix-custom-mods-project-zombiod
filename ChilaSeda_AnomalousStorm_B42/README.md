@@ -1,6 +1,15 @@
 Anomalous Storm - port local para Build 42
 
-Port de Anomalous Storm (Workshop 2779946812), cuyo concepto y codigo original son de Soul Filcher. Los archivos originales de Workshop permanecen intactos. Viewpoint True Weathers es opcional. El mismo rectangulo rojo fullscreen del mod original se dibuja en isometrica y Viewpoint; el mod deja intactos el shader y sus ajustes.
+<div align="center">
+
+[🏠 Repo](../README.md) · [🤝 Contribuir](../CONTRIBUTING.md) · [🚀 Releases](../docs/releases/README.md)
+
+</div>
+
+---
+
+
+Port de [Anomalous Storm en Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=2779946812), cuyo concepto y codigo original son de Soul Filcher. Los archivos originales de Workshop permanecen intactos. Viewpoint True Weathers es opcional. El mismo rectangulo rojo fullscreen del mod original se dibuja en isometrica y Viewpoint; el mod deja intactos el shader y sus ajustes.
 
 ## Ciclo de la emision
 

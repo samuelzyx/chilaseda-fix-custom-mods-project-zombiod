@@ -1,6 +1,6 @@
 # Check Around · reparación de listas de voces
 
-> Parche local para Check Around 1.4.0 en Project Zomboid B42.21.
+> Parche local para [Check Around 1.4.0](https://steamcommunity.com/sharedfiles/filedetails/?id=3300688173), hoy marcado como deprecated en Workshop, en Project Zomboid B42.21.
 
 ## Qué hace
 

@@ -1,5 +1,14 @@
 # ChilaSeda Fix · conocimiento de veneno (B42 vanilla) 0.2.0
 
+<div align="center">
+
+[🏠 Repo](../README.md) · [🤝 Contribuir](../CONTRIBUTING.md) · [🚀 Releases](../docs/releases/README.md)
+
+</div>
+
+---
+
+
 ## Problema
 
 Vanilla usa dos comprobaciones distintas para el veneno. El inventario cambia el nombre de una baya o hongo cuando el personaje conoce la receta `Herbalist` y el alimento tiene potencia de veneno positiva; en cambio, las calaveras del inventario y de los pines de rebusca solo consultan `player:isKnownPoison(item)`. Por eso Jill podía reconocer el ingrediente por Herbalist sin ver la misma señal en el tooltip o el pin.

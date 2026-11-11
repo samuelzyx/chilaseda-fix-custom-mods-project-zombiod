@@ -1,5 +1,14 @@
 # ChilaSeda Fix · colores de VisualSounds para Undead Wildlife (B42) 0.6.0
 
+<div align="center">
+
+[🏠 Repo](../README.md) · [🤝 Contribuir](../CONTRIBUTING.md) · [🚀 Releases](../docs/releases/README.md)
+
+</div>
+
+---
+
+
 ## Resumen
 
 Integra los 16 tipos de animales hostiles de Undead Wildlife con el indicador de dirección de sonido `SDI` de VisualSounds KA. El mod de Workshop no expone una tabla Lua `VisualSoundsKA`; el parche anterior apuntaba a esa API inexistente y registraba que se omitía.

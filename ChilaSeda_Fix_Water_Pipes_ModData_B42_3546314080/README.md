@@ -1,4 +1,13 @@
-﻿ChilaSeda WaterPipes ModData Recovery — Build 42
+ChilaSeda WaterPipes ModData Recovery — Build 42
+
+<div align="center">
+
+[🏠 Repo](../README.md) · [🤝 Contribuir](../CONTRIBUTING.md) · [🚀 Releases](../docs/releases/README.md)
+
+</div>
+
+---
+
 
 Parche local para Waterpipes (Workshop 3546314080). WPGMD.lua inicializa WPModData como una tabla vacía al cargar Lua y normalmente completa sus colecciones durante OnInitGlobalModData. Si se reinicia Lua sin volver a ejecutar ese evento, el cliente puede llamar WPSprinkler.Process con Sprinklers ausente; el pairs(...) de WaterPipes se repite en cada render.
 

@@ -624,8 +624,10 @@ local function addSearchTab(symbolsUI)
         UI_BORDER_SPACING + 1, view.width - UI_BORDER_SPACING * 2 - 2, buttonHeight)
     searchEntry:initialise()
     searchEntry.target = symbolsUI
-    searchEntry.onTextChangeFunction = function(target)
-        refreshSearchTab(target)
+    searchEntry.onTextChangeFunction = function()
+        -- ISTextEntryBox callback signatures vary across B42 UI paths. Bind the
+        -- symbols window that owns this field instead of trusting callback args.
+        refreshSearchTab(symbolsUI)
     end
     searchEntry.tooltip = getText("IGUI_ChilaSeda_SearchMapSymbolsHint")
     view:addChild(searchEntry)

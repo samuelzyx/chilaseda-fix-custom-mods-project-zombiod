@@ -1,4 +1,13 @@
-﻿# ChilaSeda — Álbum del Superviviente (Build 42)
+# ChilaSeda — Álbum del Superviviente (Build 42)
+
+<div align="center">
+
+[🏠 Repo](../README.md) · [🤝 Contribuir](../CONTRIBUTING.md) · [🚀 Releases](../docs/releases/README.md)
+
+</div>
+
+---
+
 
 Álbum personal para documentos y medios impresos de Project Zomboid.
 

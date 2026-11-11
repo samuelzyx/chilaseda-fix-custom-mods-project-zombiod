@@ -1,5 +1,12 @@
 # Weight Monitor · Audit Suite 2.1.2
 
+
+<div align="center">
+
+[<- Audit Suite](../../README.md) · [Error Logs](../ErrorSessionLogs/README.md) · [Memoria](../ModMemory/README.md) · [Rendimiento](../Performance/README.md) · [Pesos](../WeightMonitor/README.md)
+
+</div>
+
 ## Estado y metas
 
 Weight Monitor se trasladó a `ChilaSeda_AuditSuite_B42` junto con las demás herramientas de auditoría. Sus metas, etiquetas y formato de registro no cambiaron. Las correcciones de pesos siguen en `ChilaSeda_Fix_True_Weight_VanillaWeights_B42_3768669395`.

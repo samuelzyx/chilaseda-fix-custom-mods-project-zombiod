@@ -1,5 +1,14 @@
 # ChilaSeda - Abrir Survivor Journal (B42)
 
+<div align="center">
+
+[🏠 Repo](../README.md) · [🤝 Contribuir](../CONTRIBUTING.md) · [🚀 Releases](../docs/releases/README.md)
+
+</div>
+
+---
+
+
 La opción **Abrir diario** usa el icono de libro vanilla de B42 y queda detrás
 de equipar/recetas en vez de ocupar la primera posición del menú.
 

@@ -1,4 +1,13 @@
-﻿# ChilaSeda Recent Map Symbols · símbolos recientes del mapa (B42)
+# ChilaSeda Recent Map Symbols · símbolos recientes del mapa (B42)
+
+<div align="center">
+
+[🏠 Repo](../README.md) · [🤝 Contribuir](../CONTRIBUTING.md) · [🚀 Releases](../docs/releases/README.md)
+
+</div>
+
+---
+
 
 ## Funciones
 
@@ -12,7 +21,7 @@ La pestaña usa las definiciones y la acción de colocación vanilla. Funciona s
 
 ## Historial de cambios
 
-- **0.2.6:** actualiza los símbolos recientes después de crear el panel del mapa y mientras la pestaña está visible si los IDs o definiciones llegan tarde; no guarda lecturas vacías. La búsqueda acepta coincidencias exactas, prefijos y subcadenas dentro de tokens, así que `flech` y `flecha` encuentran `Flechas`.
+- **0.2.7:** actualiza los símbolos recientes después de crear el panel del mapa y mientras la pestaña está visible si los IDs o definiciones llegan tarde; no guarda lecturas vacías. La búsqueda acepta coincidencias exactas, prefijos y subcadenas dentro de tokens, así que `flech` y `flecha` encuentran `Flechas`.
 - **0.2.5:** corrige una palabra reservada de Lua en la tabla de palabras vacías, que impedía cargar todo el script de pestañas.
 - **0.2.4:** agrega archivos de idioma JSON B42 para español e inglés, nombres en español para símbolos comunes y búsquedas sin distinción de acentos, con alias de mochilas y orden por relevancia. Añade persistencia por jugador en ModData del mundo además del ModData del personaje y el archivo Lua.
 - **0.2.3:** guarda los IDs recientes en un archivo por jugador, conserva IDs de paquetes temporalmente ausentes y añade una pestaña de búsqueda con etiquetas localizadas.

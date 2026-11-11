@@ -8,6 +8,7 @@ local FLAG = "_ChilaSeda_ViewpointActionProgress"
 local sharedProgressBar = nil
 local currentProgressAction = nil
 local suppressedNativeAction = nil
+local trackedActions = setmetatable({}, { __mode = "k" })
 local customBarDrawLogged = false
 local customBarDrawnThisFrame = false
 local customBarDrawFailureLogged = false
@@ -257,16 +258,6 @@ local function localizedActionLabel(value)
     return label
 end
 
-local function isViewpointActive()
-    local viewpoint = Viewpoint
-    local loot = viewpoint and viewpoint.Loot
-    if loot and type(loot.viewOn) == "function" then
-        local ok, active = pcall(loot.viewOn)
-        if ok then return active == true end
-    end
-    return false
-end
-
 local function actionTypeName(action)
     if not action then return nil end
     local typeName = action.Type or action.type
@@ -316,7 +307,7 @@ local function actionLabel(action)
             :gsub("([a-z])([A-Z])", "%1 %2")
         if readable ~= "" then return readable end
     end
-    return "Realizando acción"
+    return "Realizando accion"
 end
 
 local function markAction(action)
@@ -324,15 +315,6 @@ local function markAction(action)
 
     local typeName = actionTypeName(action)
     local requiredCustomBar = typeName and REQUIRED_CUSTOM_BAR_ACTIONS[typeName] == true
-    local viewpointActive = isViewpointActive()
-    if not viewpointActive then
-        if requiredCustomBar and (requiredBarTraceCount[typeName] or 0) < 3 then
-            requiredBarTraceCount[typeName] = (requiredBarTraceCount[typeName] or 0) + 1
-            print("[ChilaSeda_ViewpointActionProgress] required action skipped; Viewpoint inactive: " .. typeName)
-        end
-        return
-    end
-
     local hasNativeBar = action.forceProgressBar == true or action.useProgressBar ~= false
         or requiredCustomBar
     if not hasNativeBar then return end
@@ -342,6 +324,7 @@ local function markAction(action)
         useProgressBar = action.useProgressBar,
         forceProgressBar = action.forceProgressBar,
     }
+    trackedActions[action] = true
     -- Keep the native bar until the custom renderer has actually drawn this
     -- action. If the overlay is not ready or fails, the action still has visible
     -- progress instead of running with no bar.
@@ -360,6 +343,7 @@ local function restoreAction(action)
         action.forceProgressBar = saved.forceProgressBar
     end
     action[FLAG] = nil
+    trackedActions[action] = nil
     if suppressedNativeAction == action then suppressedNativeAction = nil end
 end
 
@@ -410,17 +394,20 @@ local function actionProgress(action)
 end
 
 local function updateAndDrawProgress(player, allowDraw)
-    if not isViewpointActive() then
-        restoreSuppressedNativeAction()
-        if sharedProgressBar then sharedProgressBar:display(false) end
-        return
-    end
-
     local timedQueue = ISTimedActionQueue.queues and ISTimedActionQueue.queues[player]
     local actions = timedQueue and timedQueue.queue
+    local queuedActions = {}
     if actions then
-        for _, action in ipairs(actions) do markAction(action) end
+        for _, action in ipairs(actions) do
+            markAction(action)
+            if action[FLAG] then queuedActions[action] = true end
+        end
     end
+    local finishedActions = {}
+    for action in pairs(trackedActions) do
+        if not queuedActions[action] then finishedActions[#finishedActions + 1] = action end
+    end
+    for _, action in ipairs(finishedActions) do restoreAction(action) end
 
     local action = actions and actions[1]
     if suppressedNativeAction and suppressedNativeAction ~= action then
@@ -450,8 +437,8 @@ end
 
 do
     require "ISUI/ISUIElement"
-    local PureViewpointProgress = ISUIElement:derive("ChilaSedaPureViewpointProgress")
-    function PureViewpointProgress:new()
+    local LocalActionProgress = ISUIElement:derive("ChilaSedaLocalActionProgress")
+    function LocalActionProgress:new()
         local core = getCore()
         local width = core:getScreenWidth()
         local height = core:getScreenHeight()
@@ -462,18 +449,18 @@ do
         o:instantiate()
         return o
     end
-    function PureViewpointProgress:set(label, fraction)
+    function LocalActionProgress:set(label, fraction)
         self.label = label
         self.fraction = math.max(0, math.min(1, tonumber(fraction) or 0))
     end
-    function PureViewpointProgress:display(value)
+    function LocalActionProgress:display(value)
         -- Keep both visibility states in sync: UIManager checks the Java object,
         -- while this renderer checks the Lua field before drawing.
         local visible = value == true
         self.visible = visible
         self:setVisible(visible)
     end
-    function PureViewpointProgress:render()
+    function LocalActionProgress:render()
         if not self.visible or not self.label then return end
         local core = getCore()
         local width, height = core:getScreenWidth(), core:getScreenHeight()
@@ -491,7 +478,7 @@ do
             suppressNativeAfterCustomRender()
         end
     end
-    sharedProgressBar = PureViewpointProgress:new()
+    sharedProgressBar = LocalActionProgress:new()
     sharedProgressBar:addToUIManager()
     sharedProgressBar:setAlwaysOnTop(true)
     if Events and Events.OnTick then
@@ -521,19 +508,4 @@ do
     end
 end
 
-print("[ChilaSeda_ViewpointActionProgress] active: labeled orange overlay uses UIManager and post-UI fallback")
-
-local function restoreOutsideViewpoint()
-    if isViewpointActive() then return end
-    for _, timedQueue in pairs(ISTimedActionQueue.queues or {}) do
-        for _, action in ipairs(timedQueue.queue or {}) do
-            restoreAction(action)
-        end
-    end
-    if sharedProgressBar then
-        sharedProgressBar:set(nil, 0)
-        sharedProgressBar:display(false)
-    end
-end
-
-Events.OnTick.Add(restoreOutsideViewpoint)
+print("[ChilaSeda_ViewpointActionProgress] active: orange bars use local timed-action data; no Viewpoint state gate")

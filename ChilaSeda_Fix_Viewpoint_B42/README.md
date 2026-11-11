@@ -1,4 +1,13 @@
-# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.37
+# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.39
+
+<div align="center">
+
+[Repo](../README.md) | [Contribuir](../CONTRIBUTING.md) | [Releases](../docs/releases/README.md)
+
+</div>
+
+---
+
 
 > **Resumen:** paquete local de compatibilidad para Viewpoint y sus integraciones. Cada ajuste comprueba si existe la API correspondiente; las funciones que dependen de una API aún no publicada permanecen inactivas.
 
@@ -16,14 +25,19 @@
 
 - Mantiene las armas tomadas de cadáveres en el inventario principal durante la transferencia para que `ISEquipWeaponAction:isValid()` las encuentre antes de equiparlas; no las desvía a la mochila seleccionada.
 
+## Version 2.0.39
+
+- La barra naranja lee la cola temporizada vanilla de B42; no consulta el estado de Viewpoint ni depende de ViewpointUI. La barra vanilla se oculta solo despues de dibujar la barra personalizada con etiqueta.
+- El zoom de pin, circulo e icono se guarda como preferencia global en Zomboid/Lua, fuera de la carpeta del mundo. Persiste entre respaldos aunque cada copia tenga un nombre distinto y tambien funciona sin anclas. La altura sigue guardandose por ubicacion.
+
 ## Versión 2.0.36
 
 ## Barra de progreso 2.0.36
 
 - Elimina la dependencia de `Controller` y `Executor` de ViewpointUI para la barra de progreso.
-- Detecta si la vista de Viewpoint está activa mediante `Viewpoint.Loot.viewOn()`. La tabla global `ViewpointLoot` solo es un espacio de nombres, no una señal de actividad.
+- No consulta `Viewpoint.Loot.viewOn()` ni necesita que ViewpointUI este activo. Lee `ISTimedActionQueue` y dibuja el overlay local sin depender del estado de Workshop.
 - Sigue las acciones temporizadas mediante `ISTimedActionQueue`, toma la etiqueta de sus metadatos o tipo y usa `OnPostUIDraw` si UIManager omite el render de la barra naranja. Solo oculta la barra vanilla después de dibujar la personalizada. Incluye la rebúsqueda porque vanilla desactiva su barra para `ISForageAction`.
-- Conserva intactos los archivos de ViewpointUI en Workshop. Las demás compatibilidades opcionales del parche siguen disponibles cuando ese mod está activo.
+- La barra local no modifica archivos de Workshop. Las demas compatibilidades opcionales siguen disponibles cuando sus respectivos mods estan activos.
 
 ## Barra de progreso
 
@@ -277,9 +291,7 @@ Workshop files are unchanged. The unified local mod ID is
 - Keeps the broken-glass pickup filter available with Viewpoint core alone and
   promotes the native disassemble action for moveable objects without requiring
   ViewpointUI or Isometric No More.
-- Draws the labeled orange action bar through a standalone UI overlay when
-  ViewpointUI is absent. The native timed-action bar stays visible as a fallback
-  until the orange bar actually renders for that action; then it is suppressed.
+- Draws the labeled orange action bar for timed actions with native progress, without checking `Viewpoint.Loot.viewOn()` or depending on ViewpointUI. The vanilla bar is suppressed only after the local orange bar renders for that action.
 - Routes OSRS Experience Bar (`RUNE-EXP`) fractional XP drops through the fixed
   Halo notes overlay while leaving its own XP bar and drops intact.
 - Batch crafting, selected-container transfers, and butcher output routing

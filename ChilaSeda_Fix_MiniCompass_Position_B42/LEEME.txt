@@ -1,7 +1,0 @@
-# Mini Compass: restauración de posición (B42)
-
-Parche local 0.1.1 para **Mini Compass** (Workshop 3772670381). No modifica su copia de Workshop.
-
-El Workshop guarda las coordenadas al terminar de arrastrar y las lee desde `Zomboid/Lua`. La restauracion local se ejecutaba sin efecto: el parche buscaba un global `MiniCompass` que no existe. El original expone su API como `MC`; 0.1.1 usa ese global y vuelve a aplicar la preferencia guardada tras `OnCreatePlayer` y en el primer `OnTick` disponible, dejando trazas del resultado en `DebugLog`.
-
-Requiere y carga después de `MiniCompass`. La preferencia local vive en `Zomboid/Lua`; el parche conserva el archivo y el formato del Workshop.

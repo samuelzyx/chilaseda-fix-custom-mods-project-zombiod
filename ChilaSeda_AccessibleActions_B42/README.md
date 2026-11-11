@@ -1,5 +1,14 @@
 # ChilaSeda - Acciones Accesibles (Build 42) 1.0.20
 
+<div align="center">
+
+[🏠 Repo](../README.md) · [🤝 Contribuir](../CONTRIBUTING.md) · [🚀 Releases](../docs/releases/README.md)
+
+</div>
+
+---
+
+
 > **Resumen:** ajustes locales de inventario, recetas, transferencias, limpieza y desmantelado para Build 42. Las integraciones con otros mods son opcionales y solo se aplican cuando sus APIs están disponibles.
 
 ## 🧭 Contenido

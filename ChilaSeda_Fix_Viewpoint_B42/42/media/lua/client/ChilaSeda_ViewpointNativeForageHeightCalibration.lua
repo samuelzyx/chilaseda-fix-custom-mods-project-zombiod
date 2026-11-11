@@ -19,6 +19,7 @@ local headerIcon = nil
 local headerIconLoaded = false
 
 local anchors = {}
+local globalVisualZoom = { pin = 1, circle = 1, icon = 1 }
 local previewAnchor = nil
 local loaded = false
 local window = nil
@@ -73,6 +74,7 @@ local function loadConfig()
     end
 
     anchors = {}
+    globalVisualZoom = { pin = 1, circle = 1, icon = 1 }
     windowPosition = nil
     local ok, err = pcall(function()
         local reader = getFileReader(CONFIG_FILE, false)
@@ -85,6 +87,14 @@ local function loadConfig()
             local savedWindowY = windowYText and tonumber(windowYText) or nil
             if finite(savedWindowX) and finite(savedWindowY) then
                 windowPosition = { x = savedWindowX, y = savedWindowY }
+            end
+            local globalPinText, globalCircleText, globalIconText =
+                line:match("^global,([^,]+),([^,]+),([^,]+)$")
+            local globalPin = globalPinText and clampZoom(tonumber(globalPinText)) or nil
+            local globalCircle = globalCircleText and clampZoom(tonumber(globalCircleText)) or nil
+            local globalIcon = globalIconText and clampZoom(tonumber(globalIconText)) or nil
+            if globalPin and globalCircle and globalIcon then
+                globalVisualZoom = { pin = globalPin, circle = globalCircle, icon = globalIcon }
             end
             local xText, yText, offsetText, pinText, circleText, iconText =
                 line:match("^anchor,([^,]+),([^,]+),([^,]+),?([^,]*),?([^,]*),?([^,]*)$")
@@ -115,6 +125,8 @@ local function saveConfig()
         local writer = getFileWriter(CONFIG_FILE, true, false)
         if not writer then error("getFileWriter returned nil") end
         writer:write("# Viewpoint Foraging manual pin settings v2\n")
+        writer:write(string.format("global,%.3f,%.3f,%.3f\n",
+            globalVisualZoom.pin, globalVisualZoom.circle, globalVisualZoom.icon))
         if windowPosition and finite(windowPosition.x) and finite(windowPosition.y) then
             writer:write(string.format("window,%.0f,%.0f\n", windowPosition.x, windowPosition.y))
         end
@@ -207,7 +219,7 @@ function Calibration.getVisualAt(x, y)
     if info then
         return info.pinZoom or 1, info.circleZoom or 1, info.iconZoom or 1, info
     end
-    return 1, 1, 1, nil
+    return globalVisualZoom.pin, globalVisualZoom.circle, globalVisualZoom.icon, nil
 end
 
 function Calibration.getRecentAnchor(rank)
@@ -426,6 +438,11 @@ function Calibration.saveAt(x, y, offset, pinZoom, circleZoom, iconZoom)
         anchor.circleZoom = anchorValue.circleZoom
         anchor.iconZoom = anchorValue.iconZoom
     end
+    globalVisualZoom = {
+        pin = anchorValue.pinZoom,
+        circle = anchorValue.circleZoom,
+        icon = anchorValue.iconZoom,
+    }
     local nearest = nil
     local nearestDistanceSquared = REPLACE_RADIUS * REPLACE_RADIUS
     for _, anchor in ipairs(anchors) do

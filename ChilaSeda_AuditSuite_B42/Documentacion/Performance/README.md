@@ -1,4 +1,11 @@
-﻿ChilaSeda Audit Suite B42 - Performance Black Box component
+ChilaSeda Audit Suite B42 - Performance Black Box component
+
+
+<div align="center">
+
+[<- Audit Suite](../../README.md) · [Error Logs](../ErrorSessionLogs/README.md) · [Memoria](../ModMemory/README.md) · [Rendimiento](../Performance/README.md) · [Pesos](../WeightMonitor/README.md)
+
+</div>
 
 ESTADO HONESTO
 The Java capture pipeline and mocked Lua checks ran outside Project Zomboid.

@@ -1,0 +1,15 @@
+ArrowWest
+Deer
+AmmSSign_6
+AmmSSign_12
+AmmSSign_7
+ArrowSouthWest
+AmmSTool_1
+AmmSCar_8
+Fire
+ArrowEast
+Exclamation
+ArrowNorthWest
+Egg
+Fuel
+ArrowNorthEast

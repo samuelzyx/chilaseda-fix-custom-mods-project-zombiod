@@ -42,16 +42,15 @@ individual.
 
 ---
 
-## 🧾 Cómo llevamos el historial
+## Historial del proyecto
 
-`CHANGELOG.md` tiene dos apartados distintos:
+CHANGELOG.md registra solo cambios de mods que Chila confirmo dentro de Jill.
 
-- **Cambios incluidos en el repositorio:** trabajo disponible en `main`, aunque todavía no tenga
-  un ZIP de Release. Si una validación de Jill sigue pendiente, queda marcado como tal.
-- **GitHub Releases publicadas:** versiones ya validadas y publicadas, con enlace al paquete.
+- **Cambios confirmados por Chila:** resultado final que ya verifico en el juego.
+- **GitHub Releases publicadas:** versiones validadas con enlace al paquete individual.
 
-Así queda visible qué se trabajó y qué descarga individual está lista. No se inventan versiones
-anteriores ni se presenta una prueba pendiente como confirmada.
+El trabajo activo y lo que Chila aun no valida se siguen en TODO.md.
+Esos cambios no se presentan como finales en el changelog.
 
 ---
 
@@ -61,9 +60,9 @@ anteriores ni se presenta una prueba pendiente como confirmada.
    `MINOR` para funciones compatibles y `MAJOR` para cambios incompatibles. El tag de GitHub y
    el changelog son la fuente de esa versión; no agregues `version=` a `mod.info` sin que el mod
    lo necesite.
-2. En el cambio del mod, agrega o actualiza su entrada en [`CHANGELOG.md`](CHANGELOG.md): ID,
-   carpeta, versión, fecha de trabajo, compatibilidad y resumen para jugadores. Marca su estado
-   como **en el repositorio** o **Release publicada**.
+2. Despues de que Chila confirme el resultado dentro de Jill, agrega a CHANGELOG.md el ID, carpeta,
+   version, fecha de confirmacion, compatibilidad y resumen para jugadores. Mientras siga sin
+   confirmar, deja el trabajo en TODO.md.
 3. Cuando el cambio esté revisado y su validación requerida esté confirmada, crea una Release
    independiente titulada `Nombre del mod vX.Y.Z` y con tag `mod/<ID>/vX.Y.Z`.
 4. Resume el cambio, compatibilidad de Project Zomboid, requisitos e instrucciones de instalación.

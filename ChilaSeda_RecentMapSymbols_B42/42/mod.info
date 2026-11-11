@@ -4,4 +4,4 @@ authors=ChilaSeda
 description=Adds persistent recent symbols, Spanish searchable map-symbol tabs, and recenters the normal map view on the player.
 loadModAfter=MapSymbolSizeSlider,ExtraMapSymbols,ExtraMapSymbolsUI,ExtraSymbols
 versionMin=42.20
-modversion=0.2.6
+modversion=0.2.7

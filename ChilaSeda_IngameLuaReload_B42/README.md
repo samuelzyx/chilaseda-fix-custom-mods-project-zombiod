@@ -1,5 +1,14 @@
 ChilaSeda - Recargar Lua dentro de partida (B42)
 
+<div align="center">
+
+[🏠 Repo](../README.md) · [🤝 Contribuir](../CONTRIBUTING.md) · [🚀 Releases](../docs/releases/README.md)
+
+</div>
+
+---
+
+
 Uso:
   En una partida individual, pulsa Ctrl+Shift+F10 y confirma.
 

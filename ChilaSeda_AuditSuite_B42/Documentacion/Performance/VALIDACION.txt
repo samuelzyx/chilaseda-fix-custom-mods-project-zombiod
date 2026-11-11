@@ -48,7 +48,7 @@ sondeada, evento real simulado Prone -> Crawler, LoadChunk, ejecución del hook
 de render, límite de escaneo, error explícito y continuación, guard de recarga.
 No prueban la exposición real de todas las funciones en tu instalación.
 
-Para dar por terminado este diagnóstico faltan los pasos A–D de LEEME.txt en
+Para dar por terminado este diagnóstico faltan los pasos A–D de README.md en
 Project Zomboid. El PASS automático incluido permite comprobar captura y archivo
 sin esperar al bug ni editar código. Entrega como candidato de validación.
 

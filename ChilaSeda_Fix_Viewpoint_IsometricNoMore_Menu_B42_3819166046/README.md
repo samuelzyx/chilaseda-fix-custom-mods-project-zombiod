@@ -1,6 +1,15 @@
 ChilaSeda Fix - Viewpoint / Isometric No More Menu (B42) 1.0.2
 
-Corrige etiquetas de acciones del menú 3D de Viewpoint e Isometric No More.
+<div align="center">
+
+[🏠 Repo](../README.md) · [🤝 Contribuir](../CONTRIBUTING.md) · [🚀 Releases](../docs/releases/README.md)
+
+</div>
+
+---
+
+
+Corrige etiquetas de acciones del menú 3D de Viewpoint y [Project Viewpoint - Isometric No More](https://steamcommunity.com/sharedfiles/filedetails/?id=3819166046).
 
 Cristales rotos:
 - Reconoce también la etiqueta singular «vidrio roto».

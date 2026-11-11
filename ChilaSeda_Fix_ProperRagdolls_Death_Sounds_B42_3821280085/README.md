@@ -1,6 +1,15 @@
 # ChilaSeda Fix · sonidos de muerte de Proper Ragdolls (B42)
 
-> Parche local para Proper Ragdolls (Workshop 3821280085). Se carga después del mod original.
+<div align="center">
+
+[🏠 Repo](../README.md) · [🤝 Contribuir](../CONTRIBUTING.md) · [🚀 Releases](../docs/releases/README.md)
+
+</div>
+
+---
+
+
+> Parche local para [Proper Ragdolls](https://steamcommunity.com/sharedfiles/filedetails/?id=3821280085). Se carga después del mod original.
 
 ## Qué cambia
 

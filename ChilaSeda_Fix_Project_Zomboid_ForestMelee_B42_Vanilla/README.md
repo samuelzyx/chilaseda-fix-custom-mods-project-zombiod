@@ -1,4 +1,4 @@
-﻿# Forest Melee Through Vegetation · B42
+# Forest Melee Through Vegetation · B42
 
 ## Qué corrige
 

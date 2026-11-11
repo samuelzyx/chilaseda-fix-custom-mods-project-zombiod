@@ -1,5 +1,14 @@
 # ChilaSeda - Animal Balance and Handling (B42)
 
+<div align="center">
+
+[🏠 Repo](../README.md) · [🤝 Contribuir](../CONTRIBUTING.md) · [🚀 Releases](../docs/releases/README.md)
+
+</div>
+
+---
+
+
 Paquete local para rendimiento, productos y manipulacion de animales. ID:
 `ChilaSeda_AnimalBalance_B42`. Reune Animal Yield, Heavy Animal Pickup y las reparaciones
 locales de Undead Wildlife. Version 2.3.0. No modifica archivos de Workshop.
@@ -11,7 +20,7 @@ queda tras las opciones nativas de equipar/recetas.
 
 Todas las especies registradas activan `attackBack` para responder cuando reciben daño. Se conservan distancia y daño vanilla cuando existen; en las demás se asigna una represalia de alcance y daño bajos según el peso máximo de la especie. No se activa `attackIfStressed`, así que este ajuste no ordena a los animales iniciar ataques por estrés.
 
-Con Undead Wildlife, las especies hostiles registradas se agregan a `LivingToUndead` con su propio tipo. Esto permite que el sistema existente de predación zombi las considere objetivos y conserve su flujo de infección y reanimación. Los originales de Workshop permanecen intactos.
+Con [Undead Wildlife [B42 Stable]](https://steamcommunity.com/sharedfiles/filedetails/?id=3781571720), de N3WO, las especies hostiles registradas se agregan a `LivingToUndead` con su propio tipo. Esto permite que el sistema existente de predación zombi las considere objetivos y conserve su flujo de infección y reanimación. Los originales de Workshop permanecen intactos.
 
 ## Rendimientos y destino de productos
 

@@ -1,5 +1,14 @@
 ChilaSeda - Hunter Expansion Filth Fix y traducción ES (B42), versión 1.1.1
 
+<div align="center">
+
+[🏠 Repo](../README.md) · [🤝 Contribuir](../CONTRIBUTING.md) · [🚀 Releases](../docs/releases/README.md)
+
+</div>
+
+---
+
+
 CAMBIOS DE LA VERSIÓN 1.1.1
 Escapa el signo de porcentaje del consejo de cuidado animal como `%%` para que
 Java lo muestre como `%` sin intentar interpretar `p` como una conversión.

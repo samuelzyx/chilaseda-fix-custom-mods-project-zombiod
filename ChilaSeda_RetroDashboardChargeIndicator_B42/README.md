@@ -1,5 +1,14 @@
 ChilaSeda - Retro Dashboard Charge Indicator (B42)
 
+<div align="center">
+
+[🏠 Repo](../README.md) · [🤝 Contribuir](../CONTRIBUTING.md) · [🚀 Releases](../docs/releases/README.md)
+
+</div>
+
+---
+
+
 Muestra el porcentaje de carga actual centrado justo encima del icono original de
 batería de RetroDashboard. El aviso original del mod conserva su textura y su
 comportamiento; el porcentaje cambia de rojo (0–20%), a amarillo (21–50%) y

@@ -1,5 +1,14 @@
 ChilaSeda - Inventory Tetris Size Cap (B42) 1.3.0
 
+<div align="center">
+
+[🏠 Repo](../README.md) · [🤝 Contribuir](../CONTRIBUTING.md) · [🚀 Releases](../docs/releases/README.md)
+
+</div>
+
+---
+
+
 Limita los objetos que no son contenedores a estas cuadrículas: 1x1, 1x2 o 2x1.
 Las mochilas siguen excluidas de ese límite y nunca se reducen. Si la cuadrícula externa guardada o calculada de una mochila tiene menos celdas que su inventario interno en Inventory Tetris, se amplía solo lo necesario para que la validación TARDIS no la bloquee al moverla o colocarla.
 Todos los objetos que Inventory Tetris calcula o consulta, de cualquier módulo y categoría, reciben `maxStackSize=100`, incluidos objetos que antes eran únicos, contenedores, fluidos y objetos de mods. El límite se aplica a los datos existentes, calculados y modificados durante la partida. Los demás contenedores conservan su tamaño de rejilla; los objetos que no son contenedores conservan el límite de 1x1, 1x2 o 2x1.

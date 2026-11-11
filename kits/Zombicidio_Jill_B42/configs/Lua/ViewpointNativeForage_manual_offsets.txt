@@ -1,0 +1,2 @@
+# Viewpoint Foraging manual pin settings v2
+global,1.000,1.000,1.000

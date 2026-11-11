@@ -8,7 +8,7 @@ El hook de entrada de ZombieBuddy omite únicamente la inserción de baldosa inv
 
 ## Dependencias y orden
 
-Requiere el Workshop `ViewpointRoofs` y ZombieBuddy 2.3.4 o posterior. Este parche se carga después de ambos.
+Requiere [Viewpoint - Roofs (WIP)](https://steamcommunity.com/sharedfiles/filedetails/?id=3817294484) (`ViewpointRoofs`) y ZombieBuddy 2.3.4 o posterior. Este parche se carga después de ambos.
 
 ---
 

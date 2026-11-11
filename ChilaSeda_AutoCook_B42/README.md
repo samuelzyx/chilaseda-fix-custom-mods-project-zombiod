@@ -1,5 +1,14 @@
 # ChilaSeda AutoCook Fixes · B42 2.0.9
 
+<div align="center">
+
+[🏠 Repo](../README.md) · [🤝 Contribuir](../CONTRIBUTING.md) · [🚀 Releases](../docs/releases/README.md)
+
+</div>
+
+---
+
+
 > Paquete local con movilidad y reanudación de AutoCook, finalización segura de comidas y reparación de ingredientes envenenados. Cada función conserva su propio script Lua.
 
 ## Funciones
@@ -19,7 +28,7 @@ La opción de inventario **Reanudar AutoCook** usa el icono vanilla B42 de olla 
 
 AutoCook es opcional. Cada script lo carga con `pcall`, verifica las funciones que modifica y omite su integración con un mensaje breve si AutoCook falta o cambió su API. `loadModAfter=AutoCook` solo afecta el orden cuando está instalado.
 
-Los archivos de Workshop permanecen intactos. El ID local consolidado es `ChilaSeda_AutoCook_B42`. Las notas históricas de Safe Meal Completion están en `Documentacion/AutoCookSafeCompletion_1.1.0.md` y `LEEME.txt`.
+Los archivos de Workshop permanecen intactos. El ID local consolidado es `ChilaSeda_AutoCook_B42`. Las notas históricas de Safe Meal Completion están en `Documentacion/AutoCookSafeCompletion_1.1.0.md` y `README.md`.
 
 ---
 

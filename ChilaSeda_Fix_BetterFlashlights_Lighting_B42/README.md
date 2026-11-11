@@ -1,5 +1,14 @@
 # ChilaSeda Fix · Better Flashlights + Project Viewpoint (B42)
 
+<div align="center">
+
+[🏠 Repo](../README.md) · [🤝 Contribuir](../CONTRIBUTING.md) · [🚀 Releases](../docs/releases/README.md)
+
+</div>
+
+---
+
+
 > Parche local de iluminación para usar Better Flashlights con Project Viewpoint.
 > Conserva intactos los dos mods de Workshop.
 

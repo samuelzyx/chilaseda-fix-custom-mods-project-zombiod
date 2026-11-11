@@ -1,6 +1,6 @@
 # ChilaSeda Fix · extremidades del cadáver en Viewpoint Blood FX (B42)
 
-> Requiere el Workshop 3811472160 (`ViewpointBloodFX`), ZombieBuddy y Viewpoint. Se carga después de los tres.
+> Requiere [3d Blood VFX for Viewpoint](https://steamcommunity.com/sharedfiles/filedetails/?id=3811472160) (`ViewpointBloodFX`), ZombieBuddy y Viewpoint. Se carga después de los tres.
 
 ## Qué corrige
 

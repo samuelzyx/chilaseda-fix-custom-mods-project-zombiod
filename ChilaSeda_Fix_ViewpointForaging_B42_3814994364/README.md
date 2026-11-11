@@ -1,6 +1,15 @@
-﻿# Viewpoint Foraging Fixes
+# Viewpoint Foraging Fixes
 
-This local package groups fixes for the Workshop mod **Viewpoint Foraging**. Its folder and display name describe the full package; its internal mod ID is retained so the existing Jill profile continues to load it.
+<div align="center">
+
+[🏠 Repo](../README.md) · [🤝 Contribuir](../CONTRIBUTING.md) · [🚀 Releases](../docs/releases/README.md)
+
+</div>
+
+---
+
+
+This local package groups fixes for [Viewpoint Foraging on Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3814994364). Its folder and display name describe the full package; its internal mod ID is retained so the existing Jill profile continues to load it.
 
 - **Foraging markers:** read the terrain at both the pin and the player through Rolling Hills' public `getSelectedHeight(x, y)` API, apply their relative height difference, then project with Viewpoint Foraging's public `project(...)` API. No private `Camera3D` fields or `luajava.bindClass` reflection are used. Diagnostic samples record both heights and the applied delta in `Zomboid\ViewpointRebusquedaHills\<session>.log`.
 - **Optional per-area calibration:** press **Ctrl+Shift+Delete** to open a live adjustment panel. Height and one shared zoom value for the pin, target circle, and inner sprite preview live and persist with each area anchor. A single zoom field sets all three to the same 0.25–4.00x value; the paired buttons change it by 0.05x, like the height buttons. Existing anchors with separate legacy zoom values load into the shared field using their mean value. Nearby saved anchors blend by inverse-distance weighting, with exact anchor positions retaining their saved values. The right-side list opens any of the five most recently saved anchors; `Usar valores aqui` copies the selected values to the player's current location for a new anchor. `Guardar aqui` saves the values for the current area and `Borrar ancla` removes its closest anchor. Values are stored in `Zomboid\Lua\ViewpointRebusquedaHills_manual_offsets.txt`.

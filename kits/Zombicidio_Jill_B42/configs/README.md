@@ -42,6 +42,8 @@ La carpeta personal del juego es `%USERPROFILE%\Zomboid\` —por ejemplo,
 | `configs/Lua/keysB42.ini` | `%USERPROFILE%\Zomboid\Lua\keysB42.ini` | Teclas generales de Project Zomboid. |
 | `configs/Lua/MiniCompass_Position_user_JillValentine.txt` | `%USERPROFILE%\Zomboid\Lua\MiniCompass_Position_user_JillValentine.txt` | Posición del MiniCompass de Jill. |
 | `configs/Lua/ViewpointRebusquedaHills_manual_offsets.txt` | `%USERPROFILE%\Zomboid\Lua\ViewpointRebusquedaHills_manual_offsets.txt` | Ventana y posiciones manuales de pines de rebusca. |
+| `configs/Lua/ViewpointNativeForage_manual_offsets.txt` | `%USERPROFILE%\Zomboid\Lua\ViewpointNativeForage_manual_offsets.txt` | Zoom global de pines, circulos e iconos; queda fuera de las carpetas de partidas. |
+| `configs/Lua/ChilaSeda_RecentMapSymbols_0.txt` | `%USERPROFILE%\Zomboid\Lua\ChilaSeda_RecentMapSymbols_0.txt` | Simbolos recientes del jugador local (sufijo actual: `0`). |
 | `configs/viewpoint-live.properties` | `%USERPROFILE%\Zomboid\viewpoint-live.properties` | Cámara, controles, render y mundo de Viewpoint. |
 | `configs/grassiergrass.properties` | `%USERPROFILE%\Zomboid\grassiergrass.properties` | Preferencias de Grassier Grass. **No corrige el fallo que tuvo Jill.** |
 | `Sandbox Presets/Zombicidio.cfg` | `%USERPROFILE%\Zomboid\Sandbox Presets\Zombicidio.cfg` | Preset para crear el mundo. Está fuera de `configs/`. |
@@ -54,16 +56,26 @@ La carpeta personal del juego es `%USERPROFILE%\Zomboid\` —por ejemplo,
 
 ```text
 %USERPROFILE%\Zomboid\
-├── Lua\
-│   ├── ModOptions.ini
-│   ├── keysB42.ini
-│   ├── MiniCompass_Position_user_JillValentine.txt
-│   └── ViewpointRebusquedaHills_manual_offsets.txt
-├── Sandbox Presets\
-│   └── Zombicidio.cfg
-├── grassiergrass.properties
-└── viewpoint-live.properties
+|-- Lua\
+|   |-- ModOptions.ini
+|   |-- keysB42.ini
+|   |-- MiniCompass_Position_user_JillValentine.txt
+|   |-- ViewpointRebusquedaHills_manual_offsets.txt
+|   |-- ViewpointNativeForage_manual_offsets.txt
+|   `-- ChilaSeda_RecentMapSymbols_0.txt
+|-- Sandbox Presets\
+|   `-- Zombicidio.cfg
+|-- grassiergrass.properties
+`-- viewpoint-live.properties
 ```
+
+MiniCompass, Viewpoint Native Foraging y Recent Map Symbols guardan estas preferencias fuera de la carpeta del mundo.
+
+Al abrir respaldos con nombres distintos, los archivos de `Zomboid/Lua` siguen disponibles.
+Manten separados `ViewpointRebusquedaHills_manual_offsets.txt` (parche de Viewpoint Foraging)
+y `ViewpointNativeForage_manual_offsets.txt` (parche nativo de Viewpoint).
+El sufijo `0` de Recent Map Symbols es el archivo que genera esta partida local. Si Jill crea
+otro sufijo en tu instalacion, conserva el nombre generado por el juego.
 
 Los mods locales van en `%USERPROFILE%\Zomboid\mods\<carpeta_del_mod>\`, conservando cada
 carpeta completa y sus subcarpetas `42`. Las configuraciones de esta página **no van dentro de

@@ -221,6 +221,36 @@ local function createOverlay()
 	overlay:addToUIManager()
 	overlay:setCapture(false)
 	overlay.javaObject:setConsumeMouseEvents(false)
+
+	-- Insert the text overlay immediately below the top-level inventory pages.
+	-- AddToUIManager normally appends it above windows that are already open.
+	local ok, ui = pcall(function() return UIManager.getUI() end)
+	if ok and ui and type(getPlayerLoot) == "function" then
+		local firstInventoryIndex = nil
+		for playerNum = 0, 3 do
+			local gotLoot, playerLoot = pcall(getPlayerLoot, playerNum)
+			local page = gotLoot and playerLoot and playerLoot.inventoryPane
+				and playerLoot.inventoryPane.inventoryPage or nil
+			local inventoryUI = page and page.javaObject or nil
+			if inventoryUI then
+				local gotIndex, index = pcall(function() return ui:indexOf(inventoryUI) end)
+				if gotIndex and type(index) == "number" and index >= 0
+						and (firstInventoryIndex == nil or index < firstInventoryIndex) then
+					firstInventoryIndex = index
+				end
+			end
+		end
+		if firstInventoryIndex ~= nil then
+			local gotOverlayIndex, overlayIndex = pcall(function() return ui:indexOf(overlay.javaObject) end)
+			if gotOverlayIndex and type(overlayIndex) == "number" and overlayIndex >= 0
+					and overlayIndex > firstInventoryIndex then
+				pcall(function()
+					ui:remove(overlay.javaObject)
+					ui:add(firstInventoryIndex, overlay.javaObject)
+				end)
+			end
+		end
+	end
 end
 
 function ChilaSeda_ViewpointHaloNotifications.showFixed(text, color, icon)

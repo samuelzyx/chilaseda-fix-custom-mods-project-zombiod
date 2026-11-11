@@ -1,4 +1,13 @@
-﻿ChilaSeda_Translations_ES_B42 â€” Traducciones al espaÃ±ol para mods Build 42 1.0.8
+ChilaSeda_Translations_ES_B42 â€” Traducciones al espaÃ±ol para mods Build 42 1.0.8
+
+<div align="center">
+
+[🏠 Repo](../README.md) · [🤝 Contribuir](../CONTRIBUTING.md) · [🚀 Releases](../docs/releases/README.md)
+
+</div>
+
+---
+
 
 INSTALACION
 1. Cierra Project Zomboid.

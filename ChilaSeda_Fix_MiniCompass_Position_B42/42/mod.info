@@ -5,4 +5,4 @@ description=Restores the saved, draggable Mini Compass HUD position after each p
 require=MiniCompass
 loadModAfter=MiniCompass
 versionMin=42.19.0
-modversion=0.1.1
+modversion=0.1.2

@@ -1,4 +1,4 @@
-﻿# ChilaSeda Fix · formato de NeatUI Core
+# ChilaSeda Fix · formato de NeatUI Core
 
 ## Qué corrige
 
@@ -6,7 +6,7 @@ Evita el cierre del menú de opciones de NeatUI Core causado por los signos de p
 
 ## Dependencias y alcance
 
-Requiere NeatUI Core y se carga después de su página de opciones y de los hooks de opciones de Viewpoint. No modifica el mod de Workshop ni los datos del mundo.
+Requiere [NeatUI - Grid Inventory](https://steamcommunity.com/sharedfiles/filedetails/?id=3818729237) y se carga después de su página de opciones y de los hooks de opciones de Viewpoint. No modifica el mod de Workshop ni los datos del mundo.
 
 ---
 

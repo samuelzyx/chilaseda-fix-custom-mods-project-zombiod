@@ -1,5 +1,12 @@
 ChilaSeda Mod Memory Audit — Audit Suite 2.1.1
 
+
+<div align="center">
+
+[<- Audit Suite](../../README.md) · [Error Logs](../ErrorSessionLogs/README.md) · [Memoria](../ModMemory/README.md) · [Rendimiento](../Performance/README.md) · [Pesos](../WeightMonitor/README.md)
+
+</div>
+
 OBJETIVO
 Relacionar los cambios globales de memoria entre sesiones con el inventario de
 recursos por mod y los vehículos presentes en chunks cargados. No modifica
