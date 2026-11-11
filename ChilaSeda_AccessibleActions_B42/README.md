@@ -1,27 +1,38 @@
 # ChilaSeda - Acciones Accesibles (Build 42) 1.0.20
 
+> **Resumen:** ajustes locales de inventario, recetas, transferencias, limpieza y desmantelado para Build 42. Las integraciones con otros mods son opcionales y solo se aplican cuando sus APIs están disponibles.
+
+## 🧭 Contenido
+
+- [Cambios recientes](#cambios-de-1020)
+- [Funciones incluidas](#funciones-incluidas)
+- [Dependencias opcionales](#dependencias-opcionales)
+- [Validación pendiente](#validación-pendiente)
+- [Historial](#cambios-de-101)
+
+
 ## Cambios de 1.0.20
 
-- Incluye los contenedores de los objetos seleccionados al revisar recetas del men� contextual y al ejecutar Dismantle All at Once. Ahora puede desmantelar relojes desde un cad�ver sin moverlos primero a la mochila; los resultados vuelven al contenedor del objeto seleccionado.
+- Incluye los contenedores de los objetos seleccionados al revisar recetas del menú contextual y al ejecutar Dismantle All at Once. Ahora puede desmantelar relojes desde un cadáver sin moverlos primero a la mochila; los resultados vuelven al contenedor del objeto seleccionado.
 
-# ChilaSeda - Acciones Accesibles (Build 42) 1.0.19
+## Versión 1.0.19
 
-## Cambios de 1.0.19
+### Cambios de 1.0.19
 
 - Permite eliminar objetos y purgar comida seleccionada directamente desde el panel Suelo. La limpieza de piso incluye comida podrida, rancia y fresca; opera solo sobre los objetos seleccionados y los retira del mundo y de su contenedor.
-# ChilaSeda - Acciones Accesibles (Build 42) 1.0.17
+## Versión 1.0.17
 
-## Cambios de 1.0.17
+### Cambios de 1.0.17
 
 - Anade al menu del piso la eliminacion confirmada de objetos seleccionados y opciones para purgar comida podrida, rancia o fresca. Solo procesa los objetos seleccionados en el piso.
 
 
 ## Cambios de 1.0.16
 
-- Al terminar de consumir completamente comida en taz�n u olla, busca el recipiente vac�o creado por `ReplaceOnUse` y lo devuelve a la mochila donde estaba la comida. Si esa mochila ya no sigue dentro del inventario del personaje, el recipiente se queda en el inventario principal.
+- Al terminar de consumir completamente comida en tazón u olla, busca el recipiente vacío creado por `ReplaceOnUse` y lo devuelve a la mochila donde estaba la comida. Si esa mochila ya no sigue dentro del inventario del personaje, el recipiente se queda en el inventario principal.
 
 
-- «Cortar cabeza» y «Acoplar a cinturón» quedan inmediatamente después de las
+- Â«Cortar cabezaÂ» y Â«Acoplar a cinturónÂ» quedan inmediatamente después de las
   opciones para equipar en mano. Se reconocen sus etiquetas en español e inglés.
 
 ## Cambios de 1.0.14
@@ -41,9 +52,9 @@ puedan revisar y ajustar de forma independiente.
 
 - Reordena los menús de inventario en una secuencia funcional: equipar, armas,
   abrir/inspeccionar, consumir/usar, fabricar, procesar, transferir, dividir,
-  colocar, soltar/eliminar y opciones secundarias. «Más acciones» queda al final.
+  colocar, soltar/eliminar y opciones secundarias. Â«Más accionesÂ» queda al final.
 - Normaliza acentos al clasificar etiquetas y traduce el rótulo técnico de Xanny
-  como «Diagnósticos de armas».
+  como Â«Diagnósticos de armasÂ».
 
 ## Cambios de 1.0.11
 
@@ -121,7 +132,7 @@ son referencias de orden opcional, no requisitos.
 - Añade iconos de objetos vanilla B42 a las opciones propias de borrar objetos,
   combinar/reducir grasas, encolar recetas, consolidar drenables y llenar
   recipientes; lavado y purga conservan sus iconos vanilla.
-- Coloca «Eliminar objetos» después de equipar o recetas, con icono de bolsa de
+- Coloca Â«Eliminar objetosÂ» después de equipar o recetas, con icono de bolsa de
   basura vanilla.
 
 ## Cambios de 1.0.4
@@ -153,7 +164,7 @@ son referencias de orden opcional, no requisitos.
 - Permite que la devolucion de recipientes tambien procese alimentos que son
   `InventoryContainer` y los retorna a su bolsa de origen, incluso anidada.
 
-## Validacion pendiente
+## Validación pendiente
 
 Probar en Jill la consolidacion de baterias y encendedores azules desde mochila,
 las recetas desde mochila secundaria, los destinos cuando una mochila esta
@@ -170,13 +181,13 @@ este paquete aun no se considera validado dentro del juego.
 ## Cambios de 1.0.9
 
 - Agrupa las opciones propias relacionadas con comida inmediatamente después de
-  «Comer», antes de las opciones de equipar, conservando el orden de inserción.
-- Da a «Eliminar objetos» un icono directo de basura de la interfaz vanilla B42,
+  Â«ComerÂ», antes de las opciones de equipar, conservando el orden de inserción.
+- Da a Â«Eliminar objetosÂ» un icono directo de basura de la interfaz vanilla B42,
   con respaldo en la textura del objeto bolsa de basura.
 
 ## Cambios de 1.0.10
 
-- El submenú «Encolar fabricaciones posibles» ahora incluye únicamente recetas cuyo
+- El submenú Â«Encolar fabricaciones posiblesÂ» ahora incluye únicamente recetas cuyo
   resultado de hilo/cordel/cuerda se pudo resolver. Antes, cualquier receta compatible
   con el ingrediente podía crear un submenú padre y luego omitirse al construir sus filas,
   dejando la opción con flecha vacía.

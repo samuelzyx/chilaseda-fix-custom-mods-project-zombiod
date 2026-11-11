@@ -1,17 +1,14 @@
-# Error Magnifier Session Logs (Audit Suite)
+# Error Magnifier Session Logs · Audit Suite
 
-This component records Error Magnifier's parsed errors once per session. It
-requires no mod by declaration. If Error Magnifier is absent or its expected
-API cannot be loaded, the component prints one skip message and returns. If the
-ZombieBuddy Java bridge is unavailable, it does not write session files; the
-other audit components continue independently.
+## Qué registra
 
-Reports are written under `mods/ErrorLogs` in the active PZ cache directory.
-Existing reports are preserved. The exporter does not replace Error Magnifier
-or write to its `Errors.txt` file.
+Este componente guarda una vez por sesión los errores que Error Magnifier ya procesó. No declara una dependencia obligatoria. Si falta Error Magnifier o no puede cargar la API esperada, registra un único mensaje de omisión y termina. Si no está disponible el puente Java de ZombieBuddy, no escribe archivos de sesión; los demás componentes de Audit Suite siguen funcionando.
 
-Source and harness files are preserved under `source/errorlogs/` and
-`tests/errorlogs/`.
+## Archivos y alcance
+
+Los reportes se guardan bajo `mods/ErrorLogs` en la carpeta de caché activa de Project Zomboid. Conserva los reportes existentes: el exportador no reemplaza Error Magnifier ni escribe en `Errors.txt`.
+
+El código fuente y los archivos de prueba se conservan en `source/errorlogs/` y `tests/errorlogs/`.
 
 ---
 

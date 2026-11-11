@@ -1,58 +1,43 @@
-# ChilaSeda Fix - VisualSounds Undead Wildlife Colors (B42) 0.6.0
+# ChilaSeda Fix · colores de VisualSounds para Undead Wildlife (B42) 0.6.0
 
-Integrates the 16 hostile animal types from Undead Wildlife with VisualSounds KA's
-`SDI` sound-direction indicator. The Workshop mod does not expose a `VisualSoundsKA`
-Lua table; the older patch targeted that nonexistent API and logged that it skipped.
+## Resumen
 
-The patch promotes hostile animal sounds to the zombie cue channel, so they remain
-visible even when generic `LAMBDA` sounds are ignored. It samples nearby `IsoAnimal`
-objects every 250 ms within the Workshop detector's 15-tile range and refreshes
-existing cues before VisualSounds' one-second default lifetime expires. This avoids
-the Workshop's duplicate-source early return from letting proximity cues blink out.
-Normal animals retain the `LAMBDA` visibility/search filters and use a teal-to-amber
-distance palette. Undead Wildlife `infected*` and `undead*` types use local
-cyan-to-magenta textures; their cues are recognized by type prefix as well as the
-original infected herd list. The original Workshop files remain untouched.
+Integra los 16 tipos de animales hostiles de Undead Wildlife con el indicador de dirección de sonido `SDI` de VisualSounds KA. El mod de Workshop no expone una tabla Lua `VisualSoundsKA`; el parche anterior apuntaba a esa API inexistente y registraba que se omitía.
 
-## Dependencies and load order
+El parche pasa los sonidos de animales hostiles al canal de señales de zombis, para que sigan visibles aunque se ignoren sonidos genéricos `LAMBDA`. Muestrea objetos `IsoAnimal` cercanos cada 250 ms dentro del radio de 15 baldosas del detector de Workshop y actualiza las señales antes de que expire su duración predeterminada de un segundo. Así evita que el retorno temprano por fuente duplicada de Workshop haga parpadear los avisos de proximidad.
+
+Los animales normales conservan los filtros de visibilidad y búsqueda `LAMBDA` y usan una paleta de distancia turquesa a ámbar. Los tipos `infected*` y `undead*` de Undead Wildlife usan texturas cian a magenta. Los archivos originales de Workshop permanecen intactos.
+
+## Dependencias y carga
 
 - VisualSounds KA (`VisualSoundsKA`)
 - Visual Sounds KA Viewpoint (`VisualSoundsKAViewpoint`)
 - Undead Wildlife (`UndeadWildlife`)
 
-`mod.info` requires and loads after all three. The local ID is
-`ChilaSeda_Fix_VisualSounds_UndeadWildlife_Colors_B42`.
+`mod.info` requiere los tres y carga este parche después de ellos. El ID local es `ChilaSeda_Fix_VisualSounds_UndeadWildlife_Colors_B42`.
 
-## Supported animal types
+## Tipos de animales
 
-`infectedraccoon`, `infectedcockerel`, `infectedchicken`, `infectedturkey`,
-`infectedrabbit`, `infectedpiglet`, `infectedfarmpig`, `infecteddeerdoe`,
-`infecteddeerstag`, `infectedcow`, `infectedcowcalf`, `infectedbull`,
-`infectedewe`, `infectedram`, `infectedlamb`, and `infectedrat`, plus other Undead
-Wildlife types beginning with `infected` or `undead` (including skeletal variants).
+Reconoce estos tipos hostiles: `infectedraccoon`, `infectedcockerel`, `infectedchicken`, `infectedturkey`, `infectedrabbit`, `infectedpiglet`, `infectedfarmpig`, `infecteddeerdoe`, `infecteddeerstag`, `infectedcow`, `infectedcowcalf`, `infectedbull`, `infectedewe`, `infectedram`, `infectedlamb` e `infectedrat`. También reconoce otros tipos de Undead Wildlife que empiezan con `infected` o `undead`, incluidas variantes esqueléticas.
 
-## Changelog
+## Cambios
 
 ### 0.4.0
 
-- Replaced hooks for nonexistent `VisualSoundsKA` color methods with hooks on `SDI`.
-- Zombie-animal cues update with the live animal position and use cyan/magenta textures.
-- Fixed the load dependency to require VisualSounds KA itself.
+- Sustituye los hooks de métodos de color inexistentes en `VisualSoundsKA` por hooks sobre `SDI`.
+- Actualiza las señales de animales zombis con su posición en vivo y usa texturas cian/magenta.
+- Corrige la dependencia de carga para requerir VisualSounds KA.
 
 ### 0.5.0
 
-- Adds close-range detection for normal and zombified animals when they make no
-  world sound, following VisualSoundsKA's zombie range and distance sampling.
-- Updates live positions for both normal and hostile animal cues.
+- Detecta animales normales y zombificados cercanos aunque no produzcan sonido en el mundo, siguiendo el rango y el muestreo de distancia de los zombis en VisualSoundsKA.
+- Actualiza en vivo la posición de las señales de animales normales y hostiles.
 
 ### 0.6.0
 
-- Recognizes both `infected*` and `undead*` animal definitions as hostile cues.
-- Refreshes live animal cues while they remain nearby, overcoming VisualSounds'
-  duplicate-source early return and one-second default cue lifetime.
-- Gives normal wildlife a teal-to-amber distance palette, separate from the
-  cyan-to-magenta palette for hostile wildlife.
-
+- Reconoce definiciones `infected*` y `undead*` como señales hostiles.
+- Mantiene actualizadas las señales mientras los animales sigan cerca, evitando el retorno temprano por fuente duplicada y el vencimiento predeterminado de un segundo.
+- Asigna a la fauna normal una paleta turquesa a ámbar y reserva cian a magenta para la fauna hostil.
 
 ---
 

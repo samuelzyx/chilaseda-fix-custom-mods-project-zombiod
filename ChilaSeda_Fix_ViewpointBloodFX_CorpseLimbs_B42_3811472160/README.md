@@ -1,23 +1,16 @@
-# ChilaSeda Fix - Viewpoint Blood FX corpse limbs (B42)
+# ChilaSeda Fix · extremidades del cadáver en Viewpoint Blood FX (B42)
 
-Requires Workshop 3811472160 (`ViewpointBloodFX`), ZombieBuddy, and Viewpoint. Loads after all three.
+> Requiere el Workshop 3811472160 (`ViewpointBloodFX`), ZombieBuddy y Viewpoint. Se carga después de los tres.
 
-## Fix
+## Qué corrige
 
-Captures the dismemberment mask on `OnZombieDead`, matches the resulting `IsoDeadBody` by position
-and sex, and transfers the saved mask to Viewpoint's corpse pose before rendering. This keeps a
-head or limb removed during combat detached when the zombie becomes a loot corpse.
+Al recibir `OnZombieDead`, guarda la máscara de desmembramiento, identifica el `IsoDeadBody` resultante por posición y sexo, y pasa la máscara guardada a la pose del cadáver de Viewpoint antes de renderizarla. Así la cabeza o extremidad que se desprendió durante el combate permanece separada cuando el zombi se convierte en cadáver saqueable.
 
-The patch uses Blood FX's existing `cutByPlayer`, `bodyMask`, and `posesSeen` runtime state. It does
-not copy, replace, or edit the Workshop JAR and does not change hit, gore, or loot behavior.
+El parche usa el estado existente de Blood FX (`cutByPlayer`, `bodyMask` y `posesSeen`). No copia ni modifica el JAR de Workshop y no cambia los golpes, el gore ni el botín.
 
-## Validation
+## Validación pendiente
 
-In Jill, dismember one or more body parts during combat and kill the zombie. Confirm the corpse loot
-model keeps exactly the detached parts from the final combat moment. Repeat with a nearby second
-zombie to check that the saved mask is assigned to the correct corpse. Preserve `console.txt` if
-the patch logs a bridge or reflection error.
-
+En Jill, desprende una o más partes durante el combate y mata al zombi. Comprueba que el cadáver conserve exactamente las partes separadas en el último momento del combate. Repite con un segundo zombi cercano para revisar que cada máscara llegue al cadáver correcto. Conserva `console.txt` si el parche registra un error del puente o de reflexión.
 
 ---
 

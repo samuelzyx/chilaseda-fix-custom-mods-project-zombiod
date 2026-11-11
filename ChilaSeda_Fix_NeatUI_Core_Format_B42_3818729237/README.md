@@ -1,9 +1,12 @@
-﻿# ChilaSeda - NeatUI Core Format Fix
+﻿# ChilaSeda Fix · formato de NeatUI Core
 
-Fixes the NeatUI Core options-menu crash caused by raw percent signs in the `ICON_SCALE` and `OPACITY` slider labels. The patch escapes the percent signs immediately before Project Zomboid builds the mod-options panel; the displayed labels remain unchanged.
+## Qué corrige
 
-Requires NeatUI Core and loads after its options page and the Viewpoint options hooks. It does not edit the Workshop mod or touch world data.
+Evita el cierre del menú de opciones de NeatUI Core causado por los signos de porcentaje sin escapar en las etiquetas `ICON_SCALE` y `OPACITY`. El parche escapa esos signos justo antes de que Project Zomboid construya el panel; las etiquetas visibles no cambian.
 
+## Dependencias y alcance
+
+Requiere NeatUI Core y se carga después de su página de opciones y de los hooks de opciones de Viewpoint. No modifica el mod de Workshop ni los datos del mundo.
 
 ---
 

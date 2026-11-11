@@ -1,9 +1,12 @@
-﻿# Forest Melee Through Vegetation (B42)
+﻿# Forest Melee Through Vegetation · B42
 
-Standalone local vanilla combat fix; it does not patch or require Viewpoint. During a local player melee target check against a living zombie, a blocked line check is cleared only when forest vegetation is the blocker and the crossed attack path contains no hard blockers such as walls, fences, doors, windows, or solid objects. Uncertain cases retain the vanilla result.
+## Qué corrige
 
-Requires ZombieBuddy. Workshop originals remain unchanged. Runtime validation is pending.
+Parche local del combate vanilla, independiente de Viewpoint. Durante la comprobación de un ataque cuerpo a cuerpo del jugador contra un zombi vivo, solo elimina el bloqueo de la línea de ataque si el obstáculo es vegetación del bosque y la trayectoria no cruza una barrera sólida como una pared, reja, puerta, ventana u objeto sólido. Si el caso no es claro, conserva el resultado vanilla.
 
+## Dependencias y validación
+
+Requiere ZombieBuddy. No modifica los originales de Workshop. La validación dentro de Jill sigue pendiente.
 
 ---
 

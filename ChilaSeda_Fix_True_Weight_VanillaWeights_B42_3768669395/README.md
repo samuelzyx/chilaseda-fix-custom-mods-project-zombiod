@@ -1,24 +1,19 @@
-# ChilaSeda - Weight Fixes (B42) 2.1.1
+# ChilaSeda Fix · pesos vanilla y overrides (B42) 2.1.1
 
-This package contains VanillaWeightFix and the Any Wall Flags and Posters
-weight overrides. Weight Monitor now belongs to `ChilaSeda_AuditSuite_B42`.
+## Contenido del paquete
 
-VanillaWeightFix targets `Base.Magazine_Rich` (`“Alto Volador”`) at 0.10 kg.
-This is a reasoned estimate from comparable printed magazines; the matching
-Weight Monitor target and evidence are documented in `docs/Manual_Pesos_B42_y_Monitor.md`.
+Incluye VanillaWeightFix y los overrides de peso para Any Wall Flags y Posters. Weight Monitor ahora forma parte de `ChilaSeda_AuditSuite_B42`.
 
-Machete targets now cover `Base.Machete` and `Base.Machete_Crude` at 0.71 kg,
-and the unfinished `Base.MacheteBlade_NoTang` at 0.48 kg. These estimates use
-the UNIDO fabrication reference for a 0.71 kg complete machete and 0.48 kg
-machete body. They are mirrored in Weight Monitor 1.9.8 and documented in
-`docs/Manual_Pesos_B42_y_Monitor.md`.
+## Metas de peso documentadas
 
-`TrueWeight`, `ThisIsYourLife`, `ExtendedVanillaWeapons`,
-`AnimalRemasterApproved`, `DGVFlags`, and `DGVPosters` are optional. The fixes
-scan loaded item definitions, so missing target mods are ignored. No hard
-requirements are declared. See `docs/Manual_Pesos_B42_y_Monitor.md` for targets and
-evidence.
+- `Base.Magazine_Rich` (`Alto Volador`): 0.10 kg. Es una estimación razonada a partir de revistas impresas comparables. La meta equivalente y su evidencia están en `docs/Manual_Pesos_B42_y_Monitor.md`.
+- `Base.Machete` y `Base.Machete_Crude`: 0.71 kg; `Base.MacheteBlade_NoTang`, sin terminar: 0.48 kg. Las estimaciones usan la referencia de fabricación de UNIDO para un machete completo de 0.71 kg y un cuerpo de 0.48 kg. Weight Monitor 1.9.8 usa las mismas metas.
 
+## Dependencias opcionales
+
+`TrueWeight`, `ThisIsYourLife`, `ExtendedVanillaWeapons`, `AnimalRemasterApproved`, `DGVFlags` y `DGVPosters` son opcionales. Las correcciones recorren las definiciones de objetos cargadas e ignoran los objetivos de mods ausentes; no hay requisitos estrictos.
+
+Consulta `docs/Manual_Pesos_B42_y_Monitor.md` para ver las metas y su evidencia.
 
 ---
 

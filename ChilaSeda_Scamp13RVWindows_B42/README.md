@@ -1,20 +1,18 @@
-# Scamp 13 RV Interior Windows - prototype
+# Scamp 13 · ventanas interiores del RV (prototipo)
 
-Local single-player addon for KI5 `Base.Trailer87Scamp13`. It uses the `RVHooks` API from
-PROJECT RV Interior and does not replace Workshop files or map binaries.
+> Addon local para un jugador para `Base.Trailer87Scamp13` de KI5. Usa la API `RVHooks` de PROJECT RV Interior y no reemplaza archivos de Workshop ni binarios del mapa.
 
-On entry, it replaces four outer wall segments with fixed chrome-framed glass: three side windows
-and one rear window. Exterior `IsoZombie` objects are removed from the reserved 60-tile room slot
-on entry and every 30 game ticks. Zombies and animals within the assigned room are left alone.
+## Cambios en el vehículo
 
-The addon restores the replaced wall objects on normal RV exit. Tile-object changes now require a
-loaded square chunk; cleanup skips squares that have already started unloading, avoiding
-`AddTileObject`/pathfinding calls against stale squares. Do not smash or climb through the test
-windows; exit through the RV context option.
+Al entrar, reemplaza cuatro segmentos exteriores de pared por ventanas fijas con marco cromado: tres laterales y una trasera. Retira los `IsoZombie` exteriores del espacio reservado de 60 baldosas al entrar y cada 30 ticks de juego; deja intactos los zombis y animales dentro de la habitación asignada.
 
-The first visual pass still needs in-game review for wall selection, model layout, daylight, and
-window orientation.
+Al salir del RV normalmente, restaura los objetos de pared reemplazados. Los cambios de objetos requieren que el chunk del cuadrado esté cargado; la limpieza omite cuadrados que ya comenzaron a descargarse, evitando llamadas `AddTileObject` y de pathfinding sobre datos obsoletos.
 
+No rompas las ventanas de prueba ni intentes trepar por ellas; sal mediante la opción contextual del RV.
+
+## Revisión visual pendiente
+
+La primera revisión dentro del juego aún debe confirmar la selección de paredes, la disposición de los modelos, la luz diurna y la orientación de las ventanas.
 
 ---
 

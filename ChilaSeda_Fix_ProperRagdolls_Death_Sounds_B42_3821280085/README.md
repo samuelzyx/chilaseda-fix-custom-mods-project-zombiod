@@ -1,36 +1,26 @@
-# ChilaSeda Fix - Proper Ragdolls Death Sounds (B42)
+# ChilaSeda Fix · sonidos de muerte de Proper Ragdolls (B42)
 
-Requires Proper Ragdolls (Workshop 3821280085) and loads after it.
+> Parche local para Proper Ragdolls (Workshop 3821280085). Se carga después del mod original.
 
-The early-loot option uses a vanilla B42 hiking-bag icon and follows the first
-native loot action in its context menu.
+## Qué cambia
 
-## Changes
+- Conserva intactos los XML de animación de muerte y los eventos `PlayDeathSound` de Proper Ragdolls.
+- Detiene los alias de voz `MaleZombieDeath` y `FemaleZombieDeath` cuando empieza la animación de muerte personalizada.
+- Conserva el impacto `BodyHitGround`, además de la velocidad y duración originales de la animación.
+- Cuando termina la voz, permite hacer clic derecho en el zombi que aún cae y elegir **Loot dead zombie / Saquear zombi muerto**. El panel vanilla abre el inventario del zombi y la opción permanece disponible durante toda la animación.
+- Cuando aparece el cadáver, cambia el panel abierto a su contenedor si el juego creó uno separado; espera a que el contenedor esté disponible para hacer el traspaso.
 
-- Keeps all Proper Ragdolls death animation XML and `PlayDeathSound` events intact.
-- Stops the `MaleZombieDeath` and `FemaleZombieDeath` voice aliases as soon as Proper Ragdolls starts its custom death clip.
-- Preserves the `BodyHitGround` impact event and the original animation speed and duration.
-- As soon as the voice stops, right-click the still-falling dead zombie and choose **Loot dead zombie** / **Saquear zombi muerto**. The vanilla loot pane opens on the zombie inventory and the option stays available for the entire animation.
-- When the corpse spawns, the open pane switches to its corpse container if the game created a separate one; the handoff waits for that container to become available.
+El icono de la opción de botín temprano usa la mochila vanilla B42 y queda después de la primera opción nativa de botín.
 
-## Pending behavior
+## Comportamiento que conserva
 
-Proper Ragdolls sets `prdDone=true` at 90% of its custom death clips and then enables `ragdollFall`. This addon does not change the clip or corpse conversion timing.
+Proper Ragdolls activa `prdDone=true` al 90 % de sus clips de muerte personalizados y después habilita `ragdollFall`. Este addon no cambia el clip ni el momento en que el cuerpo se convierte en cadáver.
 
-## Version 1.3.0
+## Versión 1.3.0
 
-Version 1.3.0 removes the fixed two-second timer. The patch clears a stale
-`prdDeath` marker on `OnZombieDead` and watches for Proper Ragdolls' XML
-`SetVariable prdDeath=PRDeath_*` event, which runs at the start of its custom
-death clips. It cuts the voice and enables early loot on that marker without
-changing the clip, impact sound, or corpse-conversion timing.
+Elimina el temporizador fijo de dos segundos. Limpia un marcador `prdDeath` obsoleto en `OnZombieDead` y observa el evento XML `SetVariable prdDeath=PRDeath_*`, que ocurre al inicio del clip personalizado. El parche corta la voz y habilita el botín temprano al detectar ese marcador, sin alterar el clip, el sonido de impacto ni el momento de conversión del cadáver.
 
-## Origin
-
-https://steamcommunity.com/sharedfiles/filedetails/?id=3821280085
-
-The Workshop source remains unmodified.
-
+Los archivos de Workshop permanecen intactos.
 
 ---
 

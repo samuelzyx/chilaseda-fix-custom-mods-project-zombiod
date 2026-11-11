@@ -1,16 +1,14 @@
-# ChilaSeda Fix - Viewpoint Roofs Chunk Unload
+# ChilaSeda Fix · descarga de chunks en Viewpoint Roofs
 
-Guards `IsoGridSquare.AddTileObject` when the square no longer belongs to a loaded chunk.
-Viewpoint Roofs 0.9.2 can call this method from `ViewpointRoofs_Backs.lua:add` while its
-`LoadChunk` callback runs during `IsoChunk.removeFromWorld`. The game then passes a square
-with `chunk == null` into native pathfinding and throws from `SquareUpdateTask.init`.
+## Causa y protección
 
-The ZombieBuddy entry hook skips only the invalid tile insertion. Calls on loaded squares
-continue unchanged. The Workshop original is untouched. The one-time log message identifies
-when the guard skips an insertion.
+Viewpoint Roofs 0.9.2 puede llamar `IsoGridSquare.AddTileObject` desde `ViewpointRoofs_Backs.lua:add` mientras `LoadChunk` corre dentro de `IsoChunk.removeFromWorld`. Si el chunk ya se descargó, el juego recibe un cuadrado con `chunk == null` y falla al entrar al pathfinding nativo en `SquareUpdateTask.init`.
 
-Requires Workshop `ViewpointRoofs` and ZombieBuddy 2.3.4 or newer. It loads after both.
+El hook de entrada de ZombieBuddy omite únicamente la inserción de baldosa inválida. Las llamadas de cuadrados cargados siguen igual; el original de Workshop no se modifica. Un mensaje de log único indica cuándo se omitió una inserción.
 
+## Dependencias y orden
+
+Requiere el Workshop `ViewpointRoofs` y ZombieBuddy 2.3.4 o posterior. Este parche se carga después de ambos.
 
 ---
 

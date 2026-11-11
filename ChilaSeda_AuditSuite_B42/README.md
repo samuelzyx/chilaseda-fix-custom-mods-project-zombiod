@@ -1,21 +1,14 @@
-# ChilaSeda Audit Suite (B42) 2.1.3
+# ChilaSeda Audit Suite · B42 2.1.3
 
-One local ID bundles four independent tools: Error Magnifier session logs,
-Mod Memory Audit, Performance Black Box, and Weight Monitor 1.9.8. Their Lua files
-and feature documentation remain separate. The Java bridges are packaged into
-one `ChilaSedaAuditSuite.jar`. Each exposed bridge class is in the exact
-`chilaseda` package required by ZombieBuddy; helper classes remain grouped by
-function.
+## Herramientas incluidas
 
-All integrations are optional. Error Session Logs skips if Error Magnifier is
-missing or its expected API is unavailable. Java-backed logging, performance
-capture, and weight monitoring require ZombieBuddy's exposed bridge classes.
-Mod Memory Audit continues writing its Lua session data and marks Java heap
-windows unavailable when the bridge is absent. None of these tools changes
-gameplay or item weights.
+Un único ID local reúne cuatro herramientas independientes: registros de sesión de Error Magnifier, Mod Memory Audit, Performance Black Box y Weight Monitor 1.9.8. Sus archivos Lua y documentación se mantienen separados. Los puentes Java se empaquetan en `ChilaSedaAuditSuite.jar`; cada clase pública usa el paquete `chilaseda` que requiere ZombieBuddy y las clases auxiliares siguen agrupadas por función.
 
-See `LEEME.txt` for installation and `Documentacion/` for each tool's details.
+## Integraciones y dependencias
 
+Todas las integraciones son opcionales. Los registros de Error Magnifier se omiten si falta el mod o su API esperada. El registro Java, la captura de rendimiento y el monitoreo de pesos requieren los puentes expuestos por ZombieBuddy. Mod Memory Audit continúa guardando sus datos de sesión Lua y marca como no disponibles las lecturas de heap Java si falta ese puente.
+
+Audit Suite no cambia la jugabilidad ni los pesos de objetos. La instalación está en `LEEME.txt`; los detalles de cada herramienta, en `Documentacion/`.
 
 ---
 

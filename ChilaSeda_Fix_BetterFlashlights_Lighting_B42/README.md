@@ -1,29 +1,34 @@
-# ChilaSeda Fix - Better Flashlights for Project Viewpoint (B42)
+# ChilaSeda Fix · Better Flashlights + Project Viewpoint (B42)
 
-Custom flashlight actions reuse vanilla B42 hand-torch and battery icons; floor
-light toggles follow the native take/pick-up entries.
+> Parche local de iluminación para usar Better Flashlights con Project Viewpoint.
+> Conserva intactos los dos mods de Workshop.
 
-Local lighting compatibility patch for Better Flashlights 2.4.16 (`BetterFlashlightsFixed`,
-Workshop 3420478458) when used with Project Viewpoint (`ProjectViewpointQOLLegacy0.1.6`). It
-overrides only the two matching Lua paths in Better Flashlights; both Workshop folders remain
-untouched. `mod.info` loads this patch after both mods.
+## Qué corrige
 
-## Changes
+## Cambios
 
-- Keep held flashlight light sources while the player stays on the same tile and faces the same
-  direction, instead of removing and recreating them every three ticks.
-- Use the character's forward vector without inversion, matching Better Flashlights' own projection;
-  the reversed vector points behind Jill. The 2026-11-06 screenshots show Jill facing W 270° while
-  the projected beam drifts upward. The carrier halo and beam radii stay compact.
-- Prevent the repeated light-source recreation from appearing as a strobe in Project Viewpoint's
-  asynchronous lighting renderer.
-- Reduce the fixed radius of a dropped Better Flashlights weapon torch from 6 to 3 tiles.
+- Mantiene la luz de la linterna equipada mientras el personaje sigue en la misma baldosa y mira
+  en la misma dirección; evita recrearla cada tres ticks.
+- Usa el vector frontal del personaje sin invertirlo, como hace la proyección de Better Flashlights.
+  Invertirlo dirige el haz detrás de Jill. En las capturas del 6 de noviembre, Jill miraba al oeste
+  (270°), pero el haz se desplazaba hacia arriba; el halo y el radio del haz se mantienen compactos.
+- Evita el parpadeo que causaba la recreación repetida de fuentes de luz en el render asíncrono de
+  Project Viewpoint.
+- Reduce de 6 a 3 baldosas el radio fijo de la antorcha de Better Flashlights cuando cae al suelo.
 
-Load this patch after `BetterFlashlightsFixed`. If the Workshop mod changes either overridden Lua
-file, compare the new version against this patch before updating it.
+Las acciones de linterna conservan los iconos vanilla B42 de antorcha y batería. Los interruptores
+de luces en el piso siguen las opciones nativas de recoger y tomar.
 
-Runtime confirmation in Jill is still required for the beam direction, strobe, and dropped-light
-radius.
+## Dependencias y carga
+
+Requiere Better Flashlights 2.4.16 (`BetterFlashlightsFixed`, Workshop 3420478458) y Project
+Viewpoint (`ProjectViewpointQOLLegacy0.1.6`). `mod.info` carga este parche después de ambos y solo
+sobrescribe las dos rutas Lua correspondientes. Si Workshop modifica esos archivos, compara la nueva
+versión con el parche antes de actualizarlo.
+
+## Estado de validación
+
+Falta confirmar en Jill la dirección del haz, el parpadeo y el radio de la linterna caída.
 
 
 ---

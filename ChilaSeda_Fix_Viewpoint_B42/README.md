@@ -1,17 +1,29 @@
 # ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.37
 
-## Equipar desde cad�ver
+> **Resumen:** paquete local de compatibilidad para Viewpoint y sus integraciones. Cada ajuste comprueba si existe la API correspondiente; las funciones que dependen de una API aún no publicada permanecen inactivas.
 
-- Keeps corpse weapons in the character's root inventory during the equip transfer. This satisfies `ISEquipWeaponAction:isValid()` instead of redirecting the weapon into the selected bag before the equip action checks it.
+## 🧭 En esta página
 
-# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.36
+- [Cambios recientes](#equipar-desde-cadáver)
+- [Barra de progreso](#barra-de-progreso-2036)
+- [Rebúsqueda, pines y neblina](#neblina-del-radio-de-rebúsqueda-integrada)
+- [Protección del menú del mundo](#objetos-sin-nombre-de-sprite-en-el-menú-del-mundo)
+- [Funciones del paquete](#halo-de-subida-de-habilidad-y-colores-de-rasgos)
+- [Historial de versiones](#cambios-de-202025)
+
+
+## Equipar desde cadáver
+
+- Mantiene las armas tomadas de cadáveres en el inventario principal durante la transferencia para que `ISEquipWeaponAction:isValid()` las encuentre antes de equiparlas; no las desvía a la mochila seleccionada.
+
+## Versión 2.0.36
 
 ## Barra de progreso 2.0.36
 
-- Removes the ViewpointUI `Controller` and `Executor` dependency from the progress feature.
-- Uses Viewpoint's own `Viewpoint.Loot.viewOn()` API to detect when its view is active; the global `ViewpointLoot` table is only a namespace and is not an active-state signal.
-- Tracks timed actions directly through `ISTimedActionQueue`, labels them from action metadata/type, and uses `OnPostUIDraw` if UIManager skips the orange overlay's render callback. It suppresses the vanilla bar only after drawing the custom one. Foraging is explicitly included because vanilla disables its own bar for `ISForageAction`.
-- Keeps ViewpointUI Workshop files untouched; other optional ViewpointUI compatibility features in this combined patch remain available when that mod is active.
+- Elimina la dependencia de `Controller` y `Executor` de ViewpointUI para la barra de progreso.
+- Detecta si la vista de Viewpoint está activa mediante `Viewpoint.Loot.viewOn()`. La tabla global `ViewpointLoot` solo es un espacio de nombres, no una señal de actividad.
+- Sigue las acciones temporizadas mediante `ISTimedActionQueue`, toma la etiqueta de sus metadatos o tipo y usa `OnPostUIDraw` si UIManager omite el render de la barra naranja. Solo oculta la barra vanilla después de dibujar la personalizada. Incluye la rebúsqueda porque vanilla desactiva su barra para `ISForageAction`.
+- Conserva intactos los archivos de ViewpointUI en Workshop. Las demás compatibilidades opcionales del parche siguen disponibles cuando ese mod está activo.
 
 ## Barra de progreso
 
@@ -79,19 +91,19 @@
 - Objects with a valid sprite continue through the original menu code. The guard logs only the first
   skipped object in a session.
 
-## Changes in 2.0.20
+## Cambios de 2.0.20
 
 - Prevents a null sprite name on one world object from breaking Viewpoint's world interaction menu.
 
-## Changes in 2.0.32
+## Cambios de 2.0.32
 
 - Persists the selected pin, circle, and icon zoom across all saved anchors while keeping height corrections location-specific.
 
-## Changes in 2.0.33
+## Cambios de 2.0.33
 
 - Toggles the standalone orange progress overlay with `ISUIElement:setVisible`, updating the Java UI object that UIManager renders.
 
-## Changes in 2.0.36
+## Cambios de 2.0.36
 
 - Adds an `OnPostUIDraw` fallback for the labeled orange overlay. Some B42/Viewpoint
   UI stacks showed the native progress bar while the registered overlay's `render`
@@ -99,18 +111,18 @@
   only after that draw. Marks foraging as a required custom-bar action because
   vanilla disables its own bar for `ISForageAction`.
 
-## Changes in 2.0.31
+## Cambios de 2.0.31
 
 - Draws a dedicated orange progress overlay regardless of ViewpointUI HUD registration; the vanilla bar is suppressed only after the orange bar actually renders.
 
-## Changes in 2.0.28
+## Cambios de 2.0.28
 
 - Replaces Viewpoint timed actions' native green progress bar with the labeled orange bar and
   restores each action's original progress-bar flags when Viewpoint is inactive.
 - Makes the Java search-fog renderer bridge public so ZombieBuddy's `IsoCell.render` advice can
   call it without `IllegalAccessError`.
 
-## Changes in 2.0.19
+## Cambios de 2.0.19
 
 - Ports the projected-direction correction to Viewpoint 0.1.7's native 3D foraging renderer.
 
@@ -124,7 +136,7 @@
 - Accessible Actions calls to `HaloTextHelper` use the same fixed notice overlay; its food-purge
   notices use the direct `showFixed` route to preserve each removed item's icon.
 
-## Transfer progress bars
+## Barras de progreso de transferencia
 
 - Shows the labeled orange Viewpoint action bar in place of the native green timed-action
   bar. The original `useProgressBar` and `forceProgressBar` values are saved and restored
@@ -132,23 +144,23 @@
 - Labels Accessible Actions' timed washing and fat-combining jobs as `Lavando vendaje` and
   `Combinando grasas`; these labels are added only when those queued actions run.
 
-## ASCII-safe display corrections
+## Correcciones de caracteres compatibles con Jill
 
 - Selected-container notices use "esta" without an accent, and trait-change
   notices use `+` and `-` instead of Unicode arrows because Jill displayed those
   characters as `?`.
 
-## Changes in 2.0.16
+## Cambios de 2.0.16
 
-- Translates the explicit `Remove Broken Glass` progress label used by the
-  Viewpoint UI menu, in addition to the vanilla action class name.
+- Traduce la etiqueta explícita de progreso `Remove Broken Glass` que usa el
+  menú de Viewpoint UI, además del nombre de la acción vanilla.
 
-## Changes in 2.0.15
+## Cambios de 2.0.15
 
-- Translates the Viewpoint progress label for putting out a campfire as
-  “Apagando fogata,” whether the label comes from the action type or its text.
+- Traduce la etiqueta de progreso de Viewpoint para apagar una fogata como
+  "Apagando fogata,â€" whether the label comes from the action type or its text.
 
-## Changes in 2.0.14
+## Cambios de 2.0.14
 
 - When the selected bag cannot accept all requested loot, stops routing overflow
   into other worn bags and opens a menu of destinations that can accept the
@@ -157,7 +169,7 @@
 - Keeps partial take-all batches within the selected bag and leaves items that
   do not fit in their source container.
 
-## Changes in 2.0.13
+## Cambios de 2.0.13
 
 - Resolves transfer destination container names from their owning item and
   localized item key before falling back to an internal type ID.
@@ -196,7 +208,7 @@ API skips only its related fix.
 - **Food purge notices:** accepts a vanilla inventory texture as an inline icon
   so Accessible Actions can show each deleted food type in its Halo notice.
 
-## Changes in 2.0.1
+## Cambios de 2.0.1
 
 - Explicitly loads after the local Accessible Actions package so its action and
   transfer hooks compose in the profile's intended order.
@@ -205,50 +217,50 @@ API skips only its related fix.
   separate Foraging calibration window and passive halo overlay; no proven
   Viewpoint exception was available to justify a speculative behavioral change.
 
-## Changes in 2.0.2
+## Cambios de 2.0.2
 
 - Draws the action bar with a saturated orange fill at a real minimum thickness
   of 10 pixels. The prior code raised the widget height but ViewpointUI's own
   renderer still drew a 3-pixel fill.
 
-## Changes in 2.0.3
+## Cambios de 2.0.3
 
 - Preserves the `QuickLoot.tick` argument order while checking for corpse loot
   content changes. The prior wrapper passed the timestamp as the entries table,
   causing `ipairs` to fail and Viewpoint UI to stop after five ticks.
 
-## Changes in 2.0.4
+## Cambios de 2.0.4
 
 - Forces the orange labeled bar for dismantling, drinking, and animal butchering
   actions even if a mod disables the vanilla progress flag. Adds a Spanish label
   for dismantling and caps per-action diagnostics at three lines per action type.
 
-## Changes in 2.0.5
+## Cambios de 2.0.5
 
 - Keeps Viewpoint UI's controller running if the QuickLoot hook receives malformed
   entries. It retries the supported `QuickLoot.wants` lookup, resets only the loot
   panel when the list is still invalid, and logs the condition once until recovery.
 
-## Changes in 2.0.6
+## Cambios de 2.0.6
 
 - Styles Dynamic Traits arrow notices as framed cards and adds a reused vanilla
   moodle icon; thirst and sleep labels use their matching B42 icons.
 
-## Changes in 2.0.7
+## Cambios de 2.0.7
 
 - Reduces the custom orange progress fill from 10 to 5 pixels so it remains
   legible without looking heavy, matching Chila's preferred screenshot reference.
 
-## Changes in 2.0.8
+## Cambios de 2.0.8
 
 - Routes vanilla `ISPickupBrokenGlass` results after `ISMoveableSpriteProps` adds
   them directly to the main inventory, using the selected container when
   possible and showing a notice when it is full or the transfer cannot start.
 
-## Changes in 2.0.9
+## Cambios de 2.0.9
 
 - Translates the vanilla `ISRemoveBrokenGlass` progress label and recipe labels
-  for `MakeSalad` / `MakeFruitSalad`; composite “complete recipe” labels resolve
+  for `MakeSalad` / `MakeFruitSalad`; composite "complete recipeâ€" labels resolve
   their recipe name too.
 
 `Viewpoint`, `ViewpointForaging`, `ViewpointUI`, and NeatUI integrations are
@@ -260,7 +272,7 @@ restored after the wrapped transfer returns.
 Workshop files are unchanged. The unified local mod ID is
 `ChilaSeda_Fix_Viewpoint_B42`.
 
-## Changes in 2.0.25
+## Cambios de 2.0.25
 
 - Keeps the broken-glass pickup filter available with Viewpoint core alone and
   promotes the native disassemble action for moveable objects without requiring
@@ -273,7 +285,7 @@ Workshop files are unchanged. The unified local mod ID is
 - Batch crafting, selected-container transfers, and butcher output routing
   already come from active local patches and do not depend on ViewpointUI.
 
-## Changes in 2.0.26
+## Cambios de 2.0.26
 
 - Registers the standalone pure-Viewpoint progress overlay with
   `ISUIElement:addToUIManager()` so the UI manager receives its native element
@@ -283,12 +295,12 @@ Workshop files are unchanged. The unified local mod ID is
   on `OnTick`; if the custom widget is absent or fails to draw, the native
   progress bar remains available.
 
-## Changes in 2.0.27
+## Cambios de 2.0.27
 
 - Makes the search-fog bridge entry point public so ZombieBuddy's inlined
   `IsoCell.render` advice can call it without `IllegalAccessError` every frame.
 
-## Changes in 2.0.30
+## Cambios de 2.0.30
 
 - Does not disable an action's native progress until the orange labeled renderer
   has actually drawn that action. This keeps a visible fallback if the custom UI
