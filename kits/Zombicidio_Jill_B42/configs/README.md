@@ -38,7 +38,7 @@ La carpeta personal del juego es `%USERPROFILE%\Zomboid\` —por ejemplo,
 
 | Archivo incluido en el kit | Debe quedar en | Para qué sirve |
 |---|---|---|
-| `configs/Lua/ModOptions.ini` | `%USERPROFILE%\Zomboid\Lua\ModOptions.ini` | Opciones y teclas guardadas por los mods. |
+| `configs/Lua/ModOptions.ini` | `%USERPROFILE%\Zomboid\Lua\ModOptions.ini` | Opciones y teclas de mods; Isometric No More queda en E confirmar, R rotar y Escape cancelar. |
 | Ajustes de Isometric No More (en el juego) | Opciones > Mods > Isometric No More | Activa acciones y colocacion 3D; asigna teclas para confirmar y cancelar. No se copia como archivo separado. |
 | `configs/Lua/keysB42.ini` | `%USERPROFILE%\Zomboid\Lua\keysB42.ini` | Teclas generales de Project Zomboid. |
 | `configs/Lua/MiniCompass_Position_user_JillValentine.txt` | `%USERPROFILE%\Zomboid\Lua\MiniCompass_Position_user_JillValentine.txt` | Posición del MiniCompass de Jill. |
@@ -99,7 +99,7 @@ carpeta completa y sus subcarpetas `42`. Las configuraciones de esta página **n
 4. Copia `Sandbox Presets/Zombicidio.cfg` a `%USERPROFILE%\Zomboid\Sandbox Presets\`.
 5. Inicia el juego y revisa los controles y ajustes antes de cargar una partida.
 
-En Opciones > Mods > Isometric No More, comprueba que Acciones y Colocacion esten activas. Asigna confirmar y cancelar (por ejemplo, E y Escape); no hay otro archivo de configuracion que copiar.
+ModOptions.ini ya activa Acciones y Colocacion y asigna E para confirmar, R para rotar y Escape para cancelar. Puedes reasignarlas en Opciones > Mods > Isometric No More; no hay otro archivo de configuracion que copiar.
 
 > 💡 No copies la carpeta `configs` como una carpeta adicional. Por ejemplo,
 > `configs/Lua/keysB42.ini` va en `Zomboid/Lua/keysB42.ini`, no en `Zomboid/configs/Lua/`.
