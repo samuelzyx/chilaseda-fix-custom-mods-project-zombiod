@@ -12,3 +12,7 @@ Para cambios en mods, mantén intactas las copias de mods originales e implement
 No agregues partidas guardadas, registros de usuario, backups, credenciales, cachés, datos personales ni compilados temporales. Conserva únicamente los binarios que formen parte de la distribución del mod (por ejemplo, JARs incluidos por un parche).
 
 Las skills y hooks compartidos de Codex viven en `.agents/` y `.codex/`. Ajusta cualquier integración de usuario para que use rutas relativas del repositorio.
+
+## Enviar una nota de incidente
+
+Puedes documentar un error o mejora en `docs/incidentes/` con nombre `YYYY-MM-DD_NN_titulo-corto.md` y usar `docs/incidentes/PLANTILLA_NOTA.md`. Añade capturas al Pull Request o a `docs/incidentes/evidencias/`; describe la versión del juego y los mods, pasos para reproducir, y resultados esperado y observado. Oculta datos personales innecesarios. La nota también debe llegar en una rama propia y Pull Request; Chila revisa y autoriza antes de integrarla.

@@ -40,8 +40,6 @@
 /ChilaSedaViewpointHalo.jar
 
 # Private reference documents kept locally
-/docs/errores/
-/docs/bitacoras/
 /docs/coleccion/
 /docs/PesoCatalogo_Jill_Auditoria.csv
 /docs/_vp-instructions.tmp.webp
@@ -52,3 +50,24 @@
 /.codemie/cache/
 
 
+
+# Local Jill diagnostics and profile-specific comparison; contributors submit new notes via PR
+/docs/incidentes/2026-10-30_01_notas-de-errores.md
+/docs/incidentes/2026-10-31_01_notas-de-errores.md
+/docs/incidentes/2026-11-01_01_notas-de-errores.md
+/docs/incidentes/2026-11-03_01_bitacora-de-incidentes.md
+/docs/incidentes/2026-11-04_01_notas-de-errores.md
+/docs/incidentes/2026-11-06_01_notas-de-errores.md
+/docs/incidentes/2026-11-06_02_bitacora-de-incidentes.md
+/docs/incidentes/SIN-FECHA_01_consolidado-de-34-notas.md
+/kits/Zombicidio_Jill_B42/Comparacion_Coleccion_Zombicidio_Jill_2026-11-11.md
+/PZVoxelStudioViewpoint/
+/RE3_Jill/
+/Viewpoint/
+/Viewpoint-nightly-0.1.7-rc4/
+/examplemod/
+/default.txt
+/mod.info
+/reset-mods-42_00.txt
+/generate_content_examples.py
+/generate_textures.py

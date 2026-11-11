@@ -1,0 +1,49 @@
+﻿COLECCIÓN ZOMBICIDIO — JILL VALENTINE
+Project Zomboid Build 42
+
+Esta colección reúne los mods usados en la partida de Jill Valentine. Incluye Project
+Viewpoint, mods de supervivencia y vehículos, además de un paquete aparte con 38 mods
+locales de ChilaSeda y el preset de sandbox Zombicidio.
+
+INSTALACIÓN
+
+1. Suscríbete a los mods de la colección en Steam Workshop y espera a que Steam termine
+   de descargarlos. Actívalos en el menú Mods del juego.
+
+2. ZombieBuddy es requisito de Project Viewpoint. Suscríbete aquí, espera la descarga y
+   actívalo junto con Viewpoint:
+   https://steamcommunity.com/sharedfiles/filedetails/?id=3619862853
+
+3. Descarga la versión nueva de Project Viewpoint desde el enlace de Discord que se
+   añadirá aquí: [ENLACE DE DISCORD DE VIEWPOINT — AÑADIR]. Extrae el mod; la carpeta
+   `Viewpoint` debe quedar directamente dentro de `%USERPROFILE%\Zomboid\mods\`, con
+   `42\mod.info` dentro. No dejes el ZIP/RAR sin extraer ni anides otra carpeta
+   `Viewpoint` por accidente.
+
+4. Descarga `Kit_Zombicidio_Jill_B42.rar` y extráelo. Copia la carpeta `mods` del kit
+   dentro de `%USERPROFILE%\Zomboid\` para que las carpetas ChilaSeda queden en
+   `%USERPROFILE%\Zomboid\mods\<nombre_del_mod>\`. Copia `Sandbox Presets\Zombicidio.cfg`
+   a `%USERPROFILE%\Zomboid\Sandbox Presets\`. Conserva el nombre y la estructura de
+   cada carpeta; no pongas el RAR dentro de `mods`.
+
+CREAR LA PARTIDA
+
+5. En el juego elige Nueva partida > Sandbox y carga el preset `Zombicidio`. Activa los
+   mods de la colección y los mods locales del kit. Para jugar con el aspecto de Jill,
+   instala `[COS] RE:3 Remake Jill` y usa el conjunto `RE3_Jill`.
+
+6. Para recrear a Jill, elige la ocupación Pescador y estos rasgos, comprobados en el
+   guardado actual: Insensible, Manitas, Poca sed, Insomne (necesita dormir menos),
+   Propenso a enfermar, Sanador lento, Robusto, Bajo peso y Metabolismo lento. El conjunto
+   `RE3_Jill` es ropa/apariencia; no configura por sí mismo la ocupación ni los rasgos.
+
+7. Crea y guarda el mundo. Sal por completo del juego. Haz una copia de los archivos que
+   generó ese mundo y reemplaza `mods.txt` y `map_ver.bin` con los archivos compartidos
+   aquí: `mods.txt` y `map_ver.bin` de esta carpeta. Van juntos en
+   `%USERPROFILE%\Zomboid\Saves\Sandbox\<nombre_de_tu_partida>\`, no dentro de `mods`.
+   Vuelve a iniciar el juego para cargar la configuración compartida.
+
+Los parches de ChilaSeda son locales y se distribuyen en el kit; la colección de Steam no
+los instala automáticamente. Los mods de terceros pertenecen a sus respectivos autores.
+
+
