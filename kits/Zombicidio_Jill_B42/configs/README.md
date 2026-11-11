@@ -112,3 +112,14 @@ instalados en cada equipo.
 
 Vuelve al [README del kit Zombicidio Jill](../README.md) para instalar mods, crear el mundo y
 colocar `mods.txt` y `map_ver.bin` en el guardado.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [⬅️ Inicio del kit Jill](../README.md)
+- [⏸️ Mods en pausa](../mods_en_pausa.md)
+- [🏠 Inicio del repositorio](../../../README.md)
+- [🤝 Cómo contribuir](../../../CONTRIBUTING.md)
+- [🚀 Releases de mods](../../../docs/releases/README.md)

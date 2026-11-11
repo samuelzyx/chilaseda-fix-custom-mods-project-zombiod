@@ -14,3 +14,12 @@ windows; exit through the RV context option.
 
 The first visual pass still needs in-game review for wall selection, model layout, daylight, and
 window orientation.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [🏠 Inicio del repositorio](../README.md)
+- [🤝 Cómo contribuir](../CONTRIBUTING.md)
+- [🚀 Releases de mods](../docs/releases/README.md)

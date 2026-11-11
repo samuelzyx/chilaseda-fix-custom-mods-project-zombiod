@@ -296,3 +296,13 @@ Workshop files are unchanged. The unified local mod ID is
 - Drives the pure-Viewpoint overlay from `OnTick` before UI rendering and logs
   the first successful custom draw so the next Jill session can verify which
   renderer is active.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [Viewpoint UI Workshop Fixes](Documentacion/ViewpointUI_0.5.0_README.md)
+- [🏠 Inicio del repositorio](../README.md)
+- [🤝 Cómo contribuir](../CONTRIBUTING.md)
+- [🚀 Releases de mods](../docs/releases/README.md)

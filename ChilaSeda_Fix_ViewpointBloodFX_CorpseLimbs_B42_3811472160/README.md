@@ -17,3 +17,12 @@ In Jill, dismember one or more body parts during combat and kill the zombie. Con
 model keeps exactly the detached parts from the final combat moment. Repeat with a nearby second
 zombie to check that the saved mask is assigned to the correct corpse. Preserve `console.txt` if
 the patch logs a bridge or reflection error.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [🏠 Inicio del repositorio](../README.md)
+- [🤝 Cómo contribuir](../CONTRIBUTING.md)
+- [🚀 Releases de mods](../docs/releases/README.md)

@@ -50,3 +50,13 @@ API has changed. `loadModAfter=AutoCook` only affects order when it is present.
 Workshop files are unchanged. The unified local mod ID is
 `ChilaSeda_AutoCook_B42`. Historical component notes are in
 `Documentacion/AutoCookSafeCompletion_1.1.0.md` and `LEEME.txt`.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [ChilaSeda - AutoCook Safe Meal Completion (B42)](Documentacion/AutoCookSafeCompletion_1.1.0.md)
+- [🏠 Inicio del repositorio](../README.md)
+- [🤝 Cómo contribuir](../CONTRIBUTING.md)
+- [🚀 Releases de mods](../docs/releases/README.md)

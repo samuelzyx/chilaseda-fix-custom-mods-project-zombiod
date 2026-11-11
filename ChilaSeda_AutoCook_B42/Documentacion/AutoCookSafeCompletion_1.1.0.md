@@ -9,3 +9,13 @@ available. New meal preparation follows AutoCook's original filtering.
 
 This local patch requires AutoCook and loads after `ChilaSeda_AutoCookMobility_B42`. It does not
 modify Workshop files. Static source review only; in-game validation is still required.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [⬅️ Inicio del mod](../README.md)
+- [🏠 Inicio del repositorio](../../README.md)
+- [🤝 Cómo contribuir](../../CONTRIBUTING.md)
+- [🚀 Releases de mods](../../docs/releases/README.md)

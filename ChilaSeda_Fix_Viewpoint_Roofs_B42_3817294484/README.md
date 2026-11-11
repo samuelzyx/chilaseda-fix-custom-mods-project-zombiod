@@ -10,3 +10,12 @@ continue unchanged. The Workshop original is untouched. The one-time log message
 when the guard skips an insertion.
 
 Requires Workshop `ViewpointRoofs` and ZombieBuddy 2.3.4 or newer. It loads after both.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [🏠 Inicio del repositorio](../README.md)
+- [🤝 Cómo contribuir](../CONTRIBUTING.md)
+- [🚀 Releases de mods](../docs/releases/README.md)

@@ -19,3 +19,15 @@ El monitor solo inicia sesión, panel y escaneos si está disponible el puente
 Java de ZombieBuddy. Sin ese puente, no abre un panel vacío ni comienza un
 escaneo. Conserva las mismas metas documentadas en
 `docs/Manual_Pesos_B42_y_Monitor.md`.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [⬅️ Inicio del mod](../../README.md)
+- [Error Magnifier Session Logs (Audit Suite)](../ErrorSessionLogs/README.md)
+- [Wilderness QoL dentro de Traducciones ES](../WildernessQoL/README.md)
+- [🏠 Inicio del repositorio](../../../README.md)
+- [🤝 Cómo contribuir](../../../CONTRIBUTING.md)
+- [🚀 Releases de mods](../../../docs/releases/README.md)

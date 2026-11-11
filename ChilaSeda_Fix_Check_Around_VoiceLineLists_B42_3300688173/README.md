@@ -9,3 +9,11 @@ it skips only that voice line so the timed action can finish.
 
 This targets the observed `ApplyVoiceline` failure at `CheckAround.lua:86`. Check Around and Doggy's
 Library Workshop files remain untouched. The diagnostics remain available to identify the runtime cause.
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [🏠 Inicio del repositorio](../README.md)
+- [🤝 Cómo contribuir](../CONTRIBUTING.md)
+- [🚀 Releases de mods](../docs/releases/README.md)

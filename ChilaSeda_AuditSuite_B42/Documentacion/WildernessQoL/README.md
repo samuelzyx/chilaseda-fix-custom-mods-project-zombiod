@@ -12,3 +12,15 @@ existe. El catálogo de traducciones funciona aunque el mod original falte.
 
 Los archivos del paquete separado y el parche anterior se conservaron como
 referencia en esta carpeta; sus IDs ya no se activan por separado.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [⬅️ Inicio del mod](../../README.md)
+- [Error Magnifier Session Logs (Audit Suite)](../ErrorSessionLogs/README.md)
+- [⚖️ Weight Monitor](../WeightMonitor/README.md)
+- [🏠 Inicio del repositorio](../../../README.md)
+- [🤝 Cómo contribuir](../../../CONTRIBUTING.md)
+- [🚀 Releases de mods](../../../docs/releases/README.md)

@@ -180,3 +180,13 @@ este paquete aun no se considera validado dentro del juego.
   resultado de hilo/cordel/cuerda se pudo resolver. Antes, cualquier receta compatible
   con el ingrediente podía crear un submenú padre y luego omitirse al construir sus filas,
   dejando la opción con flecha vacía.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [Acciones Accesibles 1.0.18](Cambios_1.0.18.md)
+- [🏠 Inicio del repositorio](../README.md)
+- [🤝 Cómo contribuir](../CONTRIBUTING.md)
+- [🚀 Releases de mods](../docs/releases/README.md)

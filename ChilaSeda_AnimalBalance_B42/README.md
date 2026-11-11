@@ -61,3 +61,12 @@ Requiere `AnimalRemasterApproved`, `ChilaSeda_Fix_True_Weight_VanillaWeights_B42
 La revision estatica enlaza las rutas vanilla de carniceria de suelo, extraccion de huesos,
 despiece en gancho y recogida pesada. Falta validar en Jill el tope acumulado, destino, avisos Halo,
 bloqueo sobre 50 kg, acceso a cuerpos desde contenedores y proteccion/avisos de Undead Wildlife.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [🏠 Inicio del repositorio](../README.md)
+- [🤝 Cómo contribuir](../CONTRIBUTING.md)
+- [🚀 Releases de mods](../docs/releases/README.md)

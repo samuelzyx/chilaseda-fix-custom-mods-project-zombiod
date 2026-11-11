@@ -80,3 +80,12 @@ está en [`.github/release_template.md`](../../.github/release_template.md).
 ## 📣 Canales de ChilaSeda
 
 Los directos y redes están reunidos en [atom.bio/chilaseda](https://www.atom.bio/chilaseda).
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [🧾 Changelog](CHANGELOG.md)
+- [🏠 Inicio del repositorio](../../README.md)
+- [🤝 Cómo contribuir](../../CONTRIBUTING.md)

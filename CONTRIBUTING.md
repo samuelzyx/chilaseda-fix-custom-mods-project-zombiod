@@ -77,3 +77,11 @@ en las integraciones compartidas y deja fuera configuraciones locales o datos de
 - [ ] Incluí evidencia o expliqué qué validación falta.
 - [ ] Si actualicé una versión, agregué su entrada al changelog.
 - [ ] Revisé que el PR no incluya saves, logs privados, backups ni credenciales.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [🏠 Inicio del repositorio](README.md)
+- [🚀 Releases de mods](docs/releases/README.md)

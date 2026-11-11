@@ -99,3 +99,14 @@ Conservamos esos IDs para revisar si alguno puede recuperarse más adelante.
 **Verificado el 11 de noviembre de 2026 · ChilaSeda**
 
 </div>
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [⬅️ Inicio del kit Jill](README.md)
+- [⚙️ Configuraciones del kit](configs/README.md)
+- [🏠 Inicio del repositorio](../../README.md)
+- [🤝 Cómo contribuir](../../CONTRIBUTING.md)
+- [🚀 Releases de mods](../../docs/releases/README.md)

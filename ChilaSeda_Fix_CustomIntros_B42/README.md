@@ -15,3 +15,12 @@ Requires `PZCustomIntros` and `ZombieBuddy`. The Workshop files remain unchanged
 - Routes the inlined ZombieBuddy advice through a public bridge entry point. This
   prevents `IllegalAccessError` when the advice executes inside `Boot` and reaches
   helpers in the local addon.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [🏠 Inicio del repositorio](../README.md)
+- [🤝 Cómo contribuir](../CONTRIBUTING.md)
+- [🚀 Releases de mods](../docs/releases/README.md)

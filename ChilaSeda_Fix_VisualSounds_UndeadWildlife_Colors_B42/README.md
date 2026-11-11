@@ -52,3 +52,12 @@ Wildlife types beginning with `infected` or `undead` (including skeletal variant
   duplicate-source early return and one-second default cue lifetime.
 - Gives normal wildlife a teal-to-amber distance palette, separate from the
   cyan-to-magenta palette for hostile wildlife.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [🏠 Inicio del repositorio](../README.md)
+- [🤝 Cómo contribuir](../CONTRIBUTING.md)
+- [🚀 Releases de mods](../docs/releases/README.md)

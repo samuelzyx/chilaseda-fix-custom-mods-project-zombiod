@@ -18,3 +18,12 @@ machete body. They are mirrored in Weight Monitor 1.9.8 and documented in
 scan loaded item definitions, so missing target mods are ignored. No hard
 requirements are declared. See `docs/Manual_Pesos_B42_y_Monitor.md` for targets and
 evidence.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [🏠 Inicio del repositorio](../README.md)
+- [🤝 Cómo contribuir](../CONTRIBUTING.md)
+- [🚀 Releases de mods](../docs/releases/README.md)

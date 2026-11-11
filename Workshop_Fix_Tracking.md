@@ -110,3 +110,12 @@ conserva en `Workshop_Fix_Checker.log` y en los cambios agregados arriba. Antes/
 cuando se investigue un crash, comparar tambiÃ©n las horas registradas en esos archivos. Si no se
 puede consultar Steam o el contenido instalado, se conserva el Ãºltimo dato vÃ¡lido y se registra el
 fallo; no se marca una versiÃ³n como actual sin evidencia.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [🏠 Inicio del repositorio](README.md)
+- [🤝 Cómo contribuir](CONTRIBUTING.md)
+- [🚀 Releases de mods](docs/releases/README.md)

@@ -24,3 +24,12 @@ file, compare the new version against this patch before updating it.
 
 Runtime confirmation in Jill is still required for the beam direction, strobe, and dropped-light
 radius.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [🏠 Inicio del repositorio](../README.md)
+- [🤝 Cómo contribuir](../CONTRIBUTING.md)
+- [🚀 Releases de mods](../docs/releases/README.md)

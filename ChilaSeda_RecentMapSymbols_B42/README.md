@@ -17,3 +17,12 @@ When the normal player-map shortcut opens the map, the view recenters on the cur
 - 0.2.4: Adds B42 JSON locale files for Spanish and English tab labels, Spanish names for common symbols, tokenized accent-insensitive search with backpack aliases and relevance ranking, and world ModData persistence per player alongside character ModData and the Lua file.
 - 0.2.3: Mirrors recent symbol IDs to a per-player file, preserves IDs whose symbol packs are temporarily unavailable, and adds a searchable symbol tab with localized labels.
 - 0.2.2: Recent-symbol icons now inherit the currently selected symbol color when the tab is built or refreshed. Vanilla color changes continue to update them through the shared button list.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [🏠 Inicio del repositorio](../README.md)
+- [🤝 Cómo contribuir](../CONTRIBUTING.md)
+- [🚀 Releases de mods](../docs/releases/README.md)

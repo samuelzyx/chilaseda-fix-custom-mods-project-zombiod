@@ -37,3 +37,14 @@ No se modifican portada/contraportada ni icono. Los medios nuevos aparecen cuand
 ## Revisión runtime
 
 Con el mod activo, abre el álbum y sigue `Documentacion/P-002.5_Report.md`. Comprueba layout, idioma, zoom, arrastre, scroll, acción de mapa y errores Lua. La prueba de Jill queda pendiente.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [P-002.5A — Inventario preliminar vanilla de medios impresos y coleccionables](Documentacion/P-002.5A_InventoryReport.md)
+- [Informe P-002.5 — Segunda apertura vanilla](Documentacion/P-002.5_Report.md)
+- [🏠 Inicio del repositorio](../README.md)
+- [🤝 Cómo contribuir](../CONTRIBUTING.md)
+- [🚀 Releases de mods](../docs/releases/README.md)

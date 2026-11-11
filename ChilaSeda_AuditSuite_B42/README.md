@@ -15,3 +15,15 @@ windows unavailable when the bridge is absent. None of these tools changes
 gameplay or item weights.
 
 See `LEEME.txt` for installation and `Documentacion/` for each tool's details.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [Error Magnifier Session Logs (Audit Suite)](Documentacion/ErrorSessionLogs/README.md)
+- [⚖️ Weight Monitor](Documentacion/WeightMonitor/README.md)
+- [Wilderness QoL dentro de Traducciones ES](Documentacion/WildernessQoL/README.md)
+- [🏠 Inicio del repositorio](../README.md)
+- [🤝 Cómo contribuir](../CONTRIBUTING.md)
+- [🚀 Releases de mods](../docs/releases/README.md)

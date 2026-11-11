@@ -146,3 +146,14 @@ El [changelog](../../docs/releases/CHANGELOG.md) resume las versiones y cambios 
 ZIP individuales aparecerán en [GitHub Releases](https://github.com/samuelzyx/chilaseda-fix-custom-mods-project-zombiod/releases)
 cuando cada versión esté validada y publicada. También puedes seguir los directos y redes en
 [atom.bio/chilaseda](https://www.atom.bio/chilaseda).
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [⚙️ Configuraciones del kit](configs/README.md)
+- [⏸️ Mods en pausa](mods_en_pausa.md)
+- [🏠 Inicio del repositorio](../../README.md)
+- [🤝 Cómo contribuir](../../CONTRIBUTING.md)
+- [🚀 Releases de mods](../../docs/releases/README.md)

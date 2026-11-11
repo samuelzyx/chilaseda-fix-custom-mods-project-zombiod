@@ -59,3 +59,12 @@ agregaremos aquí su fecha de publicación y enlace de descarga. La lista públi
   ChilaSeda.
 - Se mejoraron las guías del kit Jill y de contribución; se documentaron el changelog por mod,
   los paquetes individuales y las opciones para seguir Releases con Watch o Atom/XML.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [📦 Guía de releases](README.md)
+- [🏠 Inicio del repositorio](../../README.md)
+- [🤝 Cómo contribuir](../../CONTRIBUTING.md)

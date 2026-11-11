@@ -12,3 +12,14 @@ or write to its `Errors.txt` file.
 
 Source and harness files are preserved under `source/errorlogs/` and
 `tests/errorlogs/`.
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [⬅️ Inicio del mod](../../README.md)
+- [⚖️ Weight Monitor](../WeightMonitor/README.md)
+- [Wilderness QoL dentro de Traducciones ES](../WildernessQoL/README.md)
+- [🏠 Inicio del repositorio](../../../README.md)
+- [🤝 Cómo contribuir](../../../CONTRIBUTING.md)
+- [🚀 Releases de mods](../../../docs/releases/README.md)

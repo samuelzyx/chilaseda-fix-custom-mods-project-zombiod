@@ -29,3 +29,14 @@
 ## Alcance de la revisión
 
 <!-- ¿Se reproduce siempre? ¿Hubo cambios recientes? ¿Qué se comprobó? -->
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [📓 Índice de incidentes](README.md)
+- [📷 Evidencias](evidencias/README.md)
+- [🏠 Inicio del repositorio](../../README.md)
+- [🤝 Cómo contribuir](../../CONTRIBUTING.md)
+- [🚀 Releases de mods](../releases/README.md)

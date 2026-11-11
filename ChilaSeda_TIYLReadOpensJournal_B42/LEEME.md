@@ -12,3 +12,12 @@ El parche reconoce la libreta propia aunque el evento de inventario entregue var
 El mod requiere `ThisIsYourLife` y debe cargarse después de él. La partida de Jill lo lleva al final de `mods.txt`.
 
 La versión 0.3.0 quedó confirmada en partida por Chila. La versión 0.4.0 solo cambia la posición de **Abrir diario** en el menú; queda pendiente confirmar que aparezca entre las primeras opciones durante la siguiente sesión.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [🏠 Inicio del repositorio](../README.md)
+- [🤝 Cómo contribuir](../CONTRIBUTING.md)
+- [🚀 Releases de mods](../docs/releases/README.md)

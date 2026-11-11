@@ -30,3 +30,12 @@ changing the clip, impact sound, or corpse-conversion timing.
 https://steamcommunity.com/sharedfiles/filedetails/?id=3821280085
 
 The Workshop source remains unmodified.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [🏠 Inicio del repositorio](../README.md)
+- [🤝 Cómo contribuir](../CONTRIBUTING.md)
+- [🚀 Releases de mods](../docs/releases/README.md)

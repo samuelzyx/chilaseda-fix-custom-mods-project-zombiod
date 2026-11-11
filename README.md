@@ -116,3 +116,12 @@ El **Álbum del Superviviente** es una creación de ChilaSeda, desarrollada a pa
     <td align="center"><strong>📘 Contraportada</strong></td>
   </tr>
 </table>
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [🧟 Kit Zombicidio Jill](kits/Zombicidio_Jill_B42/README.md)
+- [🤝 Cómo contribuir](CONTRIBUTING.md)
+- [🚀 Releases de mods](docs/releases/README.md)

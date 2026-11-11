@@ -11,3 +11,13 @@ This single local package groups fixes targeting the Workshop mod **Viewpoint UI
 - **Action progress:** draws a labeled orange progress bar with a thin, visible 3 px minimum fill.
 
 Requires Viewpoint and Viewpoint UI. It loads after NeatUI ProgressBar so the custom progress integration can wrap it. Workshop originals are unchanged. Local package 2.0.16 includes Halo presentation, inline vanilla texture support, multiline action rows, localized destination names, an alternate loot destination picker that does not spill into other worn bags, the Spanish «Apagando fogata» progress label, and the explicit «Remove Broken Glass» progress label translation; confirm them in Jill.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [⬅️ Inicio del mod](../README.md)
+- [🏠 Inicio del repositorio](../../README.md)
+- [🤝 Cómo contribuir](../../CONTRIBUTING.md)
+- [🚀 Releases de mods](../../docs/releases/README.md)

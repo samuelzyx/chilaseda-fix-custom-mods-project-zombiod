@@ -1220,7 +1220,7 @@ El peso cero es correcto para estas entradas porque son overlays invisibles o ad
 
 Se asignan metas a 60 pieles de cerdito, 15 variantes por cuatro estados: `Full`/`Fur` verdes 3.75 kg, `Fur_Tan_Wet` 3.60 kg y `Fur_Tan` secas 1.50 kg. B42 define `piglet` entre 15 y 110 kg; se usa el punto medio (62.5 kg) y el rendimiento de piel porcina aproximado de 6% del peso vivo de University of Maine Cooperative Extension: 3.75 kg. La etapa húmeda conserva 96% (pérdida del 4%, dentro del rango porcino publicado de 2–4%); el cuero seco usa 40% del verde, coherente con las pérdidas de curtido documentadas para otras pieles. Es una extrapolación a etapa animal, no pesaje individual. Los cortes `Small` de cerdito quedan pendientes por falta de área/tamaño definido. VanillaWeightFix 1.4.19 y Weight Monitor 1.9.3 sincronizan las 60 metas.
 
-Referencias: [B42 `PigDefinitions.lua`](J:/SteamLibrary/steamapps/common/ProjectZomboid/media/lua/shared/Definitions/animal/PigDefinitions.lua) (15–110 kg para piglet); [University of Maine Cooperative Extension, Understanding Pork Yields](https://extension.umaine.edu/publications/1073e/) (la piel es aproximadamente 6% del peso vivo); [Weight and area of leather](https://eopcw.com/find/downloadFiles/159) (55–65% de pérdida al secar). Pendiente lectura runtime posterior a estas versiones.
+Referencias: `B42: media/lua/shared/Definitions/animal/PigDefinitions.lua` (15–110 kg para piglet); [University of Maine Cooperative Extension, Understanding Pork Yields](https://extension.umaine.edu/publications/1073e/) (la piel es aproximadamente 6% del peso vivo); [Weight and area of leather](https://eopcw.com/find/downloadFiles/159) (55–65% de pérdida al secar). Pendiente lectura runtime posterior a estas versiones.
 ### Ajuste de pieles húmedas adultas de conejo
 
 VanillaWeightFix 1.4.20 y Weight Monitor 1.9.4 añaden meta de 0.384 kg a 48 pieles adultas `Fur_Tan_Wet`. El cálculo usa como base el peso seco de 0.225 kg, con 31.76% de humedad en cuero semiterminado de conejo (World Rabbit Science 2016); la materia seca estimada es 0.1535 kg. Para wet-blue uso 60% de humedad, dentro del rango técnico 40–60% que publica UNIDO: 0.1535 / 0.40 = 0.384 kg. El mismo estudio reporta 64.36% de humedad en piel natural, consistente con 0.43 kg verdes y aproximadamente 0.153 kg de materia seca. Son mediciones de grupos distintos y el cálculo supone materia seca constante; sirve como meta realista aproximada. Las 24 pieles húmedas juveniles siguen sin meta por falta de una masa de pelt por edad.
@@ -1231,3 +1231,12 @@ Referencias: [Souza et al., Compositional analysis and physicochemical and mecha
 Se asignan metas a 96 IDs juveniles: 0.30 kg verde (`Full`/`Fur`), 0.27 kg wet-tanned y 0.16 kg seco curtido; 24 IDs por etapa. Una revisión de datos de faena resume 299 g de pelt a ocho semanas y 383 g a doce semanas (Ockerman, 1967). Se usa el valor de ocho semanas como el mejor análogo publicado para “Juvenile”; FAO indica que el manto infantil madura alrededor de nueve semanas. Como masa verde adulta se usa 0.43 kg, el húmedo y el seco escalan por los cocientes adultos 0.384/0.43 y 0.225/0.43: 0.299×0.893=0.267 kg y 0.299×0.523=0.156 kg, redondeados a 0.27 y 0.16. Se sustituye la meta previa de 0.10 kg para 24 `Full`, que no estaba respaldada. La edad concreta de cada objeto juvenil del mod no se indica; por tanto, estas metas son estimaciones por análogo de ocho semanas, no pesajes por raza o individuo. VanillaWeightFix 1.4.21 y Weight Monitor 1.9.5 sincronizan las 96 etapas.
 
 Referencias: [revisión de pesos de pelt por edad, Ockerman 1967](https://krishikosh.egranth.ac.in/server/api/core/bitstreams/7009c658-278b-4f8e-aaaf-8cd7148f7906/content) (299 g a 8 semanas; 383 g a 12); [FAO, producción de piel de conejo](https://www.fao.org/4/x5082e/X5082E0h.htm) (manto infantil maduro alrededor de 9 semanas; tamaño del pelt depende de superficie corporal). Pendiente lectura runtime posterior.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [🏠 Inicio del repositorio](../README.md)
+- [🤝 Cómo contribuir](../CONTRIBUTING.md)
+- [🚀 Releases de mods](releases/README.md)

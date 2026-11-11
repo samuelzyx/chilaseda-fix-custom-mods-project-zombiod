@@ -15,3 +15,12 @@ Version 0.2.0 applies the same Herbalist and poison-power rule to:
 This patch does not reveal poison to a player who has not learned Herbalist and does not add
 item-ID exceptions. It leaves vanilla files unchanged. It loads after AutoCook so the poison-name
 tooltip wrapper composes with AutoCook's nutrition tooltip.
+
+
+---
+
+### 🔗 Otros enlaces de interés
+
+- [🏠 Inicio del repositorio](../README.md)
+- [🤝 Cómo contribuir](../CONTRIBUTING.md)
+- [🚀 Releases de mods](../docs/releases/README.md)
