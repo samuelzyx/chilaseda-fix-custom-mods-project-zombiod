@@ -6,23 +6,43 @@ No incluyen archivos de guardado, registros ni opciones gráficas generales del 
 
 ## Archivos
 
-| Archivo del kit | Destino dentro de `%USERPROFILE%\Zomboid\` | Contenido |
+Las rutas de destino son bajo `%USERPROFILE%\Zomboid\` (en Windows suele ser
+`C:\Users\<tu_usuario>\Zomboid\`). Por ejemplo, el archivo del kit
+`configs/Lua/keysB42.ini` debe terminar en `C:\Users\<tu_usuario>\Zomboid\Lua\keysB42.ini`.
+
+| Archivo dentro del kit | Ruta de destino completa | Contenido |
 |---|---|---|
-| `Lua/ModOptions.ini` | `Lua/ModOptions.ini` | Opciones y teclas de mods guardadas por Mod Options. |
-| `Lua/keysB42.ini` | `Lua/keysB42.ini` | Asignaciones de teclas de Project Zomboid. |
-| `Lua/MiniCompass_Position_user_JillValentine.txt` | `Lua/MiniCompass_Position_user_JillValentine.txt` | Posición del MiniCompass para Jill. |
-| `Lua/ViewpointRebusquedaHills_manual_offsets.txt` | `Lua/ViewpointRebusquedaHills_manual_offsets.txt` | Posición de la ventana y ajustes manuales de pines de rebusca. |
-| `viewpoint-live.properties` | `viewpoint-live.properties` | Ajustes vivos de cámara, controles, render y mundo de Viewpoint. |
-| `grassiergrass.properties` | `grassiergrass.properties` | Preferencias guardadas de Grassier Grass; incluirlas no corrige el fallo de carga/render que tuvo Jill. |
-| `../Sandbox Presets/Zombicidio.cfg` | `Sandbox Presets/Zombicidio.cfg` | Preset Sandbox, ya incluido fuera de esta carpeta. |
+| `configs/Lua/ModOptions.ini` | `%USERPROFILE%\Zomboid\Lua\ModOptions.ini` | Opciones y teclas de mods guardadas por Mod Options. |
+| `configs/Lua/keysB42.ini` | `%USERPROFILE%\Zomboid\Lua\keysB42.ini` | Asignaciones de teclas de Project Zomboid. |
+| `configs/Lua/MiniCompass_Position_user_JillValentine.txt` | `%USERPROFILE%\Zomboid\Lua\MiniCompass_Position_user_JillValentine.txt` | Posición del MiniCompass para Jill. |
+| `configs/Lua/ViewpointRebusquedaHills_manual_offsets.txt` | `%USERPROFILE%\Zomboid\Lua\ViewpointRebusquedaHills_manual_offsets.txt` | Posición de la ventana y ajustes manuales de pines de rebusca. |
+| `configs/viewpoint-live.properties` | `%USERPROFILE%\Zomboid\viewpoint-live.properties` | Ajustes vivos de cámara, controles, render y mundo de Viewpoint. |
+| `configs/grassiergrass.properties` | `%USERPROFILE%\Zomboid\grassiergrass.properties` | Preferencias guardadas de Grassier Grass; incluirlas no corrige el fallo de carga/render que tuvo Jill. |
+| `Sandbox Presets/Zombicidio.cfg` | `%USERPROFILE%\Zomboid\Sandbox Presets\Zombicidio.cfg` | Preset Sandbox, ya incluido fuera de `configs/`. |
+
+La estructura final en la computadora queda así:
+
+```text
+%USERPROFILE%\Zomboid\
+├── Lua\
+│   ├── ModOptions.ini
+│   ├── keysB42.ini
+│   ├── MiniCompass_Position_user_JillValentine.txt
+│   └── ViewpointRebusquedaHills_manual_offsets.txt
+├── Sandbox Presets\
+│   └── Zombicidio.cfg
+├── grassiergrass.properties
+└── viewpoint-live.properties
+```
 
 ## Instalar la configuración
 
 1. Cierra Project Zomboid.
 2. Haz una copia de los archivos existentes en los destinos de la tabla, porque al reemplazarlos
    también cambiarán tus preferencias y teclas personales.
-3. Copia el contenido de `configs/` a `%USERPROFILE%\Zomboid\`, conservando las carpetas y
-   permitiendo reemplazar los archivos indicados.
+3. Abre `configs/` del kit. Copia **su contenido** directamente a `%USERPROFILE%\Zomboid\`;
+   combina la carpeta `Lua` con la que ya existe y conserva las rutas de la tabla. No copies la
+   carpeta `configs` como subcarpeta, y no pongas estos archivos en `Zomboid\mods` ni en Workshop.
 4. Copia `Sandbox Presets/Zombicidio.cfg` a `%USERPROFILE%\Zomboid\Sandbox Presets\` al crear
    el mundo.
 5. Inicia el juego y comprueba la configuración antes de entrar a la partida.

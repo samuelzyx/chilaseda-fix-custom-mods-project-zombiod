@@ -36,7 +36,9 @@ resume estos pasos para compartirlos en Steam.
 1. Suscríbete a los mods de terceros de la [colección Zombicidio](https://steamcommunity.com/sharedfiles/filedetails/?id=3812814868) y espera a que Workshop termine de descargarlos.
 2. Instala [ZombieBuddy](https://steamcommunity.com/sharedfiles/filedetails/?id=3619862853), requisito de Project Viewpoint.
 3. Descarga **Project Viewpoint 0.1.7** desde el [canal de descargas del autor en Discord](https://discord.com/channels/1553114135833616435/1566624749755564042). Extrae el archivo y revisa que quede `Zomboid/mods/Viewpoint/42/mod.info`.
-4. Copia las **38 carpetas locales ChilaSeda** de este repositorio a `%USERPROFILE%\Zomboid\mods\`. Conserva la estructura de carpetas.
+4. Copia las **38 carpetas locales ChilaSeda** de este repositorio como carpetas hijas de
+   `%USERPROFILE%\Zomboid\mods\`. Conserva cada carpeta completa y sus subcarpetas `42`; no las
+   copies a la carpeta de Workshop.
 
 <details>
 <summary>📂 Ver las 38 carpetas locales del perfil</summary>
@@ -120,12 +122,12 @@ Workshop pueden cambiar; comprueba sus notas en Steam y revisa el registro de
 
 ## ⚙️ Carga las configuraciones de Jill
 
-La carpeta [`configs/`](configs/README.md) incluye las teclas del juego, opciones y teclas de
-mods, ajustes vivos de Viewpoint, posición de MiniCompass y pines manuales de rebusca. Con el juego
-cerrado, respalda tus archivos actuales y copia el contenido de `configs/` a `%USERPROFILE%\Zomboid\`,
-conservando la estructura. Esto reemplaza preferencias y teclas locales. El preset Sandbox está en
-[`Sandbox Presets/Zombicidio.cfg`](Sandbox%20Presets/Zombicidio.cfg); cópialo a
-`%USERPROFILE%\Zomboid\Sandbox Presets\` antes de crear el mundo.
+La [guía de destinos de configuración](configs/README.md) muestra la ruta de cada archivo. En
+resumen: el contenido de `configs/Lua/` va dentro de `%USERPROFILE%\Zomboid\Lua\`; los archivos
+`.properties` van directamente en `%USERPROFILE%\Zomboid\`. No pongas la carpeta `configs` ni estos
+archivos dentro de `Zomboid\mods` o Workshop. Respalda primero los archivos que ya tengas, porque
+las teclas y opciones se reemplazarán. Copia [`Sandbox Presets/Zombicidio.cfg`](Sandbox%20Presets/Zombicidio.cfg)
+a `%USERPROFILE%\Zomboid\Sandbox Presets\` antes de crear el mundo.
 
 ## 📋 Coloca `mods.txt` y `map_ver.bin`
 
