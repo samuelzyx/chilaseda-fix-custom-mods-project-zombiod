@@ -17,6 +17,7 @@ Adjunta capturas al Pull Request o añádelas a `docs/incidentes/evidencias/` y 
 - [ ] Trabajé en una rama distinta de `main`.
 - [ ] No modifiqué copias originales de mods de Workshop.
 - [ ] Revisé el cambio con la versión de Project Zomboid indicada arriba.
+- [ ] Si cambia la versión distribuible de un mod, agregué su entrada a `docs/releases/CHANGELOG.md`.
 - [ ] No incluí saves, logs personales, backups, credenciales ni cachés.
 
 ## Autorización

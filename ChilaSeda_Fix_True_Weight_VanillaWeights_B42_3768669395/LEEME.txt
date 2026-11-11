@@ -7,8 +7,8 @@ weight overrides. Weight Monitor is now in ChilaSeda_AuditSuite_B42.
 
 VanillaWeightFix assigns an estimated 0.10 kg target to `Base.Magazine_Rich`
 (`“Alto Volador”`). Weight Monitor uses the same target; the printed-magazine
-analogues are documented in Manual_Pesos_B42_y_Monitor.md.
+analogues are documented in docs/Manual_Pesos_B42_y_Monitor.md.
 
 Target mods remain optional. The fixes scan loaded item definitions and ignore
-types whose source mod is absent. See Manual_Pesos_B42_y_Monitor.md for targets
+types whose source mod is absent. See docs/Manual_Pesos_B42_y_Monitor.md for targets
 and evidence.

@@ -69,7 +69,7 @@ const additionalContext = fs.existsSync(todoPath)
       "to-do list.txt is Chila's quick-view copy: do not read it, treat it as task input, or synchronize it. Do not recreate it if missing.",
       "Do not create work backups unless Chila explicitly asks; do not automatically remove backups that already exist.",
       ...(includeDailyWeightReview ? [
-        "Daily weight review: consult Manual_Pesos_B42_y_Monitor.md and the latest monitor log. After each Jill session, inspect new entries in mods/PesosLogs/*.txt once the requested writer is implemented; until then use Zomboid/Lua/ChilaSeda_WeightMonitor.log. Update the manual and TODO.md only when evidence changes; investigate REVISAR or unexpected values, mark unseen current-session items Sin registro, preserve Markdown tables and technical IDs, and never invent observations. Do not ask Chila to collect items or operate the monitor panel. If UI access is unavailable, report that blocker.",
+        "Daily weight review: consult docs/Manual_Pesos_B42_y_Monitor.md and the latest monitor log. After each Jill session, inspect new entries in mods/PesosLogs/*.txt once the requested writer is implemented; until then use Zomboid/Lua/ChilaSeda_WeightMonitor.log. Update the manual and TODO.md only when evidence changes; investigate REVISAR or unexpected values, mark unseen current-session items Sin registro, preserve Markdown tables and technical IDs, and never invent observations. Do not ask Chila to collect items or operate the monitor panel. If UI access is unavailable, report that blocker.",
       ] : []),
     ].join(" ")
   : "TODO.md is missing from this workspace. Do not recreate it unless Chila explicitly asks; report the missing task list.";

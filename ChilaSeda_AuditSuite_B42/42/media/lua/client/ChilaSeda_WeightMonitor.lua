@@ -253,7 +253,7 @@ local fullTypeTargets = {
 }
 
 -- Variable food/carcass weights are checked as ranges instead of one exact
--- mass. Bounds are documented in Manual_Pesos_B42_y_Monitor.md.
+-- mass. Bounds are documented in docs/Manual_Pesos_B42_y_Monitor.md.
 local variableWeightTargets = {
     ["Base.DeadRatSkinned"] = { min = 0.05, max = 0.15 },
     ["Base.Salad"] = { min = 0.15, max = 1.10 },

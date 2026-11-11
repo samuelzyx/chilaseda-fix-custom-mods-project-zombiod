@@ -1,57 +1,34 @@
-﻿# Local data and generated files
+﻿# Local game and diagnostic data
 /backups/
 /ErrorLogs/
 /PesosLogs/
 /graphify-out/
 /.tmp/
 /.ai-memory/
-# Private Codemie analytics; never publish these files
-/docs/codemie/
-/.codex/.graphify-runtime/
-/.codex/hooks/*last-date.txt
-/.codex/hooks/*.lock
+/local-only/
+/AGENTS.md
+/TODO.md
+/Errors.txt
 /Workshop_Fix_Checker.log
 /Workshop_Fix_Tracking_State.json
-/Errors.txt
-/to-do list.txt
-/to-do list.archived-*.txt
+/.today-screenshots-contact.png
+/default.txt
+/reset-mods-42_00.txt
+/mod.info
+/ChilaSedaViewpointHalo.jar
+
+# Personal or temporary packages
 /*.rar
 /*.zip
 /*.jar
 /*.tmp.*
 /*.png
-!/docs/coleccion/*.png
-
-# Build outputs and local editor/session data
-*.class
-/tests/session_*/
-/**/evidence/perf/*.log
-/**/.vscode/
-
-
-# Personal workspace and root-level game data
-/AGENTS.md
-/TODO.md
-/.today-screenshots-contact.png
-/Errors.txt
-/default.txt
-/reset-mods-42_00.txt
-/Workshop_Fix_Tracking_State.json
-/ChilaSedaViewpointHalo.jar
-
-# Private reference documents kept locally
+/docs/codemie/
 /docs/coleccion/
 /docs/PesoCatalogo_Jill_Auditoria.csv
 /docs/_vp-instructions.tmp.webp
 
-
-/.claude/settings.local.json
-/.codemie/local/
-/.codemie/cache/
-
-
-
-# Local Jill diagnostics and profile-specific comparison; contributors submit new notes via PR
+# Jill historical diagnostics stay local; new community notes can be submitted by PR
 /docs/incidentes/2026-10-30_01_notas-de-errores.md
 /docs/incidentes/2026-10-31_01_notas-de-errores.md
 /docs/incidentes/2026-11-01_01_notas-de-errores.md
@@ -61,13 +38,24 @@
 /docs/incidentes/2026-11-06_02_bitacora-de-incidentes.md
 /docs/incidentes/SIN-FECHA_01_consolidado-de-34-notas.md
 /kits/Zombicidio_Jill_B42/Comparacion_Coleccion_Zombicidio_Jill_2026-11-11.md
+
+# Local Workshop/reference copies are not redistributed
 /PZVoxelStudioViewpoint/
 /RE3_Jill/
 /Viewpoint/
 /Viewpoint-nightly-0.1.7-rc4/
 /examplemod/
-/default.txt
-/mod.info
-/reset-mods-42_00.txt
-/generate_content_examples.py
-/generate_textures.py
+
+# Build outputs and editor state
+*.class
+/tests/session_*/
+/**/evidence/perf/*.log
+/**/.vscode/
+/.codex/.graphify-runtime/
+/.codex/hooks/*last-date.txt
+/.codex/hooks/*.lock
+/.claude/settings.local.json
+/.codemie/local/
+/.codemie/cache/
+/to-do list.txt
+/to-do list.archived-*.txt

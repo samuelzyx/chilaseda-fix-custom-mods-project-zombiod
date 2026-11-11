@@ -28,7 +28,7 @@ HomemadeThings.HomemadeHacksaw 0.75; HomemadeNeedle 0.05; HomemadeWoodenMallet 0
 
 Existing item instances are updated periodically while they are in the player's inventory, nested bags, or containers currently open in the inventory UI (including vehicle trunks and furniture). No item transfer is required. Closed containers are not scanned until opened.
 
-Expanded in 1.2.0: related pillow, knife, hammer, utensil, textile, packed sleeping bag, fruit, berry, wild herb, pepper/salt, bottle, rag, and HomemadeThings variants are also included. Targets are shared with the Weight Monitor now included in this package. Loose-food and dry-herb targets are separate; wet dishcloth and beer bottle keep their full-state targets. LTP boxed shaker packs remain 4 kg. Review Manual_Pesos_B42_y_Monitor.md for the item groups and in-game validation notes.
+Expanded in 1.2.0: related pillow, knife, hammer, utensil, textile, packed sleeping bag, fruit, berry, wild herb, pepper/salt, bottle, rag, and HomemadeThings variants are also included. Targets are shared with the Weight Monitor now included in this package. Loose-food and dry-herb targets are separate; wet dishcloth and beer bottle keep their full-state targets. LTP boxed shaker packs remain 4 kg. Review docs/Manual_Pesos_B42_y_Monitor.md for the item groups and in-game validation notes.
 
 In 1.2.3, accessible skeleton instances of `Base.CorpseAnimal` use a target equal
 to 16% of their species midpoint live weight. For a white-tailed doe (110-200 kg
@@ -48,7 +48,7 @@ In 1.4.0, Base.AlcoholWipes targets 0.01 kg tare plus 0.05 kg multiplied by getU
 
 In 1.2.8, Base.BlackSage targets 0.05 kg for note 13. The identification of the note's 'wild magic sage' with vanilla Black Sage is an inference from the local item catalog; only the fresh Base.BlackSage item is changed, not BlackSageDried.
 
-In 1.4.0, Base.LargeAnimalBone targets 0.70 kg, a rounded estimate based on retail beef femur pieces averaging about 0.68 kg; this stays inside note 13 range of 0.6-0.8 kg. Base.SmallAnimalBone targets 0.10 kg as an inferred bundle/portion of small-bone pieces, not an individual bone. Base.SharpBoneFragment targets 0.01 kg as a small fragment estimate. Base.Bowl (0.50 kg), Base.FishingRod (1.00 kg), and Base.RubberHose (0.30 kg) retain explicit targets. Base.PetrolCan is 1.60 kg empty plus 0.75 kg per liter of gasoline, capped at its 10 L capacity (9.10 kg full). Weight Monitor shares these targets. The physical analogs and references are documented in Manual_Pesos_B42_y_Monitor.md.
+In 1.4.0, Base.LargeAnimalBone targets 0.70 kg, a rounded estimate based on retail beef femur pieces averaging about 0.68 kg; this stays inside note 13 range of 0.6-0.8 kg. Base.SmallAnimalBone targets 0.10 kg as an inferred bundle/portion of small-bone pieces, not an individual bone. Base.SharpBoneFragment targets 0.01 kg as a small fragment estimate. Base.Bowl (0.50 kg), Base.FishingRod (1.00 kg), and Base.RubberHose (0.30 kg) retain explicit targets. Base.PetrolCan is 1.60 kg empty plus 0.75 kg per liter of gasoline, capped at its 10 L capacity (9.10 kg full). Weight Monitor shares these targets. The physical analogs and references are documented in docs/Manual_Pesos_B42_y_Monitor.md.
 
 The 1.4.1 change for `ThisIsYourLife.PreservedJournal` corrects from 0 kg to 0.25 kg. Jill's Weight Monitor log 1.6.1 showed one copy in a waist bag at actual=0; the target approximates a small bound journal between manufacturer weights of 0.15 kg (A6) and 0.42 kg (A5). The local override is ordered after `ThisIsYourLife` when that mod is active.
 
@@ -68,7 +68,7 @@ In 1.4.9, Base.HandTorch targets 0.20 kg. An Energizer 2-in-1 handheld flashligh
 
 In 1.4.10, Base.WristWatch_Left_DigitalDress targets 0.021 kg, using the manufacturer-listed 21 g Casio F-91W as an analog for a lightweight digital wristwatch.
 
-In 1.4.11, adult Animal Remaster cow and bull hide targets follow processing stage: full/fur green hides 20 kg, wet-tanned hides 16 kg, and dried tanned hides 8 kg. Medium/small cut hides remain unaudited until cut area or mass is defined. References and limits are documented in Manual_Pesos_B42_y_Monitor.md.
+In 1.4.11, adult Animal Remaster cow and bull hide targets follow processing stage: full/fur green hides 20 kg, wet-tanned hides 16 kg, and dried tanned hides 8 kg. Medium/small cut hides remain unaudited until cut area or mass is defined. References and limits are documented in docs/Manual_Pesos_B42_y_Monitor.md.
 
 
 In 1.4.12, non-sheared adult Jacob, Dorper, Icelandic, and Shetland hides receive breed-class and tanning-stage targets. Sheared hides, lamb hides, and small cuts remain unaudited pending stage-specific physical mass data.
