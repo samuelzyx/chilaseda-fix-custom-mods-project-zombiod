@@ -1,4 +1,4 @@
-# ChilaSeda - Acciones Accesibles (Build 42) 1.0.20
+# ChilaSeda - Acciones Accesibles (Build 42) 1.0.21
 
 <div align="center">
 
@@ -13,12 +13,16 @@
 
 ## 🧭 Contenido
 
-- [Cambios recientes](#cambios-de-1020)
+- [Cambios recientes](#cambios-de-1021)
 - [Funciones incluidas](#funciones-incluidas)
 - [Dependencias opcionales](#dependencias-opcionales)
 - [Validación pendiente](#validación-pendiente)
 - [Historial](#cambios-de-101)
 
+
+## Cambios de 1.0.21
+
+- Asigna el icono vanilla de Salud a la opcion contextual **Secarse** cuando no trae uno, sin cambiar la accion ni su posicion en el menu.
 
 ## Cambios de 1.0.20
 

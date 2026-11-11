@@ -6,6 +6,7 @@ local iconPaths = {
 	drop = "media/ui/MP/mp_ui_droplist.png",
 	split = "media/ui/Icon_RecipeGroup_Partial_48x48.png",
 	inventory = "media/ui/Sidebar/48/Inventory_On_48.png",
+	health = "media/ui/Sidebar/48/Health_On_48.png",
 }
 
 local iconCache = {}
@@ -64,6 +65,8 @@ local function assignContextIcon(option, name)
 		key = "split"
 	elseif name == "tetris" or name:find("tetris", 1, true) then
 		key = "inventory"
+	elseif name == "secarse" or name == "dry off" or name == "dry yourself" then
+		key = "health"
 	end
 	if key then option.iconTexture = iconFor(key) end
 end
