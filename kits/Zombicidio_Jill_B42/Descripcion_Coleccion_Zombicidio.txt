@@ -7,8 +7,8 @@ para Project Zomboid. Esta colección acompaña una partida inspirada en Jill.
 📦 En el kit encuentras mods locales, configs y teclas, preset Sandbox y una guía rápida para
 armar el entorno y colocar los archivos de la partida.
 
-👉 El kit y las instrucciones, por acá 😉
-https://github.com/samuelzyx/chilaseda-fix-custom-mods-project-zombiod/tree/main/kits/Zombicidio_Jill_B42
+🔧 Si quieres ver nuestros arreglos, búscanos en GitHub como
+chilaseda-fix-custom-mods-project-zombiod 😉
 
 📺 Streams y redes:
 https://www.atom.bio/chilaseda
