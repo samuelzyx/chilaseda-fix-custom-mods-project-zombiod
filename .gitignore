@@ -5,6 +5,7 @@
 /graphify-out/
 /.tmp/
 /.ai-memory/
+# Private Codemie analytics; never publish these files
 /docs/codemie/
 /.codex/.graphify-runtime/
 /.codex/hooks/*last-date.txt
