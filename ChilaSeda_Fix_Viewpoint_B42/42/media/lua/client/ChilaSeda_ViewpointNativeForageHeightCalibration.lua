@@ -76,6 +76,7 @@ local function loadConfig()
     anchors = {}
     globalVisualZoom = { pin = 1, circle = 1, icon = 1 }
     windowPosition = nil
+    local foundGlobalZoom = false
     local ok, err = pcall(function()
         local reader = getFileReader(CONFIG_FILE, false)
         if not reader then return end
@@ -95,6 +96,7 @@ local function loadConfig()
             local globalIcon = globalIconText and clampZoom(tonumber(globalIconText)) or nil
             if globalPin and globalCircle and globalIcon then
                 globalVisualZoom = { pin = globalPin, circle = globalCircle, icon = globalIcon }
+                foundGlobalZoom = true
             end
             local xText, yText, offsetText, pinText, circleText, iconText =
                 line:match("^anchor,([^,]+),([^,]+),([^,]+),?([^,]*),?([^,]*),?([^,]*)$")
@@ -112,6 +114,16 @@ local function loadConfig()
     if not ok then
         print(TAG .. "could not load saved offsets: " .. safeText(err))
         anchors = {}
+    end
+    -- Older config files may only contain per-anchor zoom. Migrate the most
+    -- recently saved values once, then use the global line for every pin.
+    if not foundGlobalZoom and #anchors > 0 then
+        local latest = anchors[#anchors]
+        globalVisualZoom = {
+            pin = latest.pinZoom or 1,
+            circle = latest.circleZoom or 1,
+            icon = latest.iconZoom or 1,
+        }
     end
     loaded = true
     print(TAG .. "loaded " .. tostring(#anchors) .. " saved area offset(s)")
@@ -216,10 +228,9 @@ end
 
 function Calibration.getVisualAt(x, y)
     local _, info = Calibration.getOffsetAt(x, y)
-    if info then
-        return info.pinZoom or 1, info.circleZoom or 1, info.iconZoom or 1, info
-    end
-    return globalVisualZoom.pin, globalVisualZoom.circle, globalVisualZoom.icon, nil
+    -- Anchors control height only. A zoom edit must affect every pin, including
+    -- pins near older anchors and pins with no anchor at all.
+    return globalVisualZoom.pin, globalVisualZoom.circle, globalVisualZoom.icon, info
 end
 
 function Calibration.getRecentAnchor(rank)
@@ -229,9 +240,9 @@ function Calibration.getRecentAnchor(rank)
 	if not anchor then return nil end
 	return {
 		x = anchor.x, y = anchor.y, offset = anchor.offset,
-		pinZoom = anchor.pinZoom or 1,
-		circleZoom = anchor.circleZoom or 1,
-		iconZoom = anchor.iconZoom or 1,
+        pinZoom = globalVisualZoom.pin,
+        circleZoom = globalVisualZoom.circle,
+        iconZoom = globalVisualZoom.icon,
 	}
 end
 
@@ -682,9 +693,10 @@ function CalibrationWindow:onRecentAnchorSelected(rank)
 	self.selectedRecentAnchor = anchor
 	if self.useRecentAnchorButton then self.useRecentAnchorButton.enable = true end
 	self.currentOffset = anchor.offset
-	self.currentPinZoom, self.currentCircleZoom, self.currentIconZoom =
-		anchor.pinZoom, anchor.circleZoom, anchor.iconZoom
-	self.currentVisualZoom = commonZoom(anchor.pinZoom, anchor.circleZoom, anchor.iconZoom)
+    self.currentPinZoom, self.currentCircleZoom, self.currentIconZoom =
+        Calibration.getVisualAt(anchor.x, anchor.y)
+    self.currentVisualZoom = commonZoom(self.currentPinZoom, self.currentCircleZoom,
+        self.currentIconZoom)
 	self:setEntryValue(anchor.offset)
 	self:setVisualEntryValue(self.currentVisualZoom)
 	Calibration.setPreview(self.originX, self.originY, anchor.offset,
@@ -712,9 +724,10 @@ function CalibrationWindow:onUseRecentAnchorHere()
 	end
 	self.originX, self.originY = x, y
 	self.currentOffset = anchor.offset
-	self.currentPinZoom, self.currentCircleZoom, self.currentIconZoom =
-		anchor.pinZoom, anchor.circleZoom, anchor.iconZoom
-	self.currentVisualZoom = commonZoom(anchor.pinZoom, anchor.circleZoom, anchor.iconZoom)
+    self.currentPinZoom, self.currentCircleZoom, self.currentIconZoom =
+        Calibration.getVisualAt(x, y)
+    self.currentVisualZoom = commonZoom(self.currentPinZoom, self.currentCircleZoom,
+        self.currentIconZoom)
 	self:setEntryValue(anchor.offset)
 	self:setVisualEntryValue(self.currentVisualZoom)
 	Calibration.setPreview(x, y, anchor.offset,
@@ -756,6 +769,12 @@ function CalibrationWindow:applySettings()
     self.currentCircleZoom = settings.circleZoom
     self.currentIconZoom = settings.iconZoom
     self.currentVisualZoom = settings.visualZoom
+    -- Apply updates the runtime-wide scale immediately; Save persists it to Lua.
+    globalVisualZoom = {
+        pin = settings.pinZoom,
+        circle = settings.circleZoom,
+        icon = settings.iconZoom,
+    }
     Calibration.setPreview(self.originX, self.originY, settings.offset,
         settings.pinZoom, settings.circleZoom, settings.iconZoom)
     return true, settings

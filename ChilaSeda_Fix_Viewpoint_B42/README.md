@@ -1,4 +1,4 @@
-# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.41
+# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.42
 
 <div align="center">
 
@@ -25,11 +25,14 @@
 
 - Mantiene las armas tomadas de cadáveres en el inventario principal durante la transferencia para que `ISEquipWeaponAction:isValid()` las encuentre antes de equiparlas; no las desvía a la mochila seleccionada.
 
+## Version 2.0.42
+
+- El zoom conjunto de pin, circulo e icono es global en toda la rebusqueda, haya anclas guardadas o no. Aplicar un cambio actualiza todas las zonas en la sesion; Guardar aqui lo conserva en `Zomboid/Lua`. Las anclas solo determinan la altura por ubicacion. Los archivos antiguos sin una linea global migran el ultimo zoom guardado.
+
 ## Version 2.0.41
 
 - La barra naranja lee la cola temporizada vanilla de B42, se coloca al 57% de la altura de pantalla y no consulta el estado de Viewpoint ni depende de ViewpointUI. Chila confirmo que queda alineada con la barra vanilla y que esta ultima se oculta.
 - Cada tipo de accion visto en la cola deja una linea `[ACTIVATION]` en `DebugLog.txt`, una sola vez por sesion. La linea incluye clase, modo, si quedo cubierta por la barra custom, etiqueta usada, si la etiqueta es especifica y los flags vanilla originales; sirve para encontrar clases nuevas y completar sus textos.
-- El zoom de pin, circulo e icono se guarda como preferencia global en Zomboid/Lua, fuera de la carpeta del mundo. Persiste entre respaldos aunque cada copia tenga un nombre distinto y tambien funciona sin anclas. La altura sigue guardandose por ubicacion.
 
 ## Versión 2.0.36
 

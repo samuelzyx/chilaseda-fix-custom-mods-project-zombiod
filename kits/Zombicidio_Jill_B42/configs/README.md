@@ -74,6 +74,9 @@ MiniCompass, Viewpoint Native Foraging y Recent Map Symbols guardan estas prefer
 Al abrir respaldos con nombres distintos, los archivos de `Zomboid/Lua` siguen disponibles.
 Manten separados `ViewpointRebusquedaHills_manual_offsets.txt` (parche de Viewpoint Foraging)
 y `ViewpointNativeForage_manual_offsets.txt` (parche nativo de Viewpoint).
+En el panel nativo de pines, **Aplicar** cambia el zoom de pin, circulo e icono para toda la
+rebusqueda, con o sin anclas; **Guardar aqui** conserva ese zoom global. Solo la altura se calibra
+por ubicacion.
 El sufijo `0` de Recent Map Symbols es el archivo que genera esta partida local. Si Jill crea
 otro sufijo en tu instalacion, conserva el nombre generado por el juego.
 
