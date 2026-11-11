@@ -23,8 +23,9 @@ INSTALACIÓN DE LA COLECCIÓN
 2. ZombieBuddy es requisito de Project Viewpoint. Instálalo desde Steam Workshop:
 https://steamcommunity.com/sharedfiles/filedetails/?id=3619862853
 
-3. Descarga Project Viewpoint desde el enlace de Discord compartido por la comunidad. Extrae el
-   archivo y revisa que quede `Zomboid/mods/Viewpoint/42/mod.info`; no dejes el ZIP/RAR sin
+3. Descarga **Project Viewpoint 0.1.7** desde el canal de descargas del autor en Discord:
+   https://discord.com/channels/1553114135833616435/1566624749755564042
+   Extrae el archivo y revisa que quede `Zomboid/mods/Viewpoint/42/mod.info`; no dejes el ZIP/RAR sin
    extraer ni anides una segunda carpeta `Viewpoint`.
 
 4. Sigue el README del kit para copiar solo las carpetas locales ChilaSeda necesarias a

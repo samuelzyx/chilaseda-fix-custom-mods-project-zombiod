@@ -4,7 +4,7 @@
 
 # 🧟 ChilaSeda · Mods para Project Zomboid
 
-**Mods propios, parches locales y guías para Build 42**
+**Mods propios, parches locales y guías · Base: Project Zomboid Vanilla B42.22.2**
 
 <a href="#kit-zombicidio-jill"><img alt="Project Zomboid · Build 42" src="https://img.shields.io/badge/PROJECT_ZOMBOID-Build_42-52796F?style=for-the-badge"></a>
 <a href="#redes-y-streaming"><img alt="ChilaSeda · Canales" src="https://img.shields.io/badge/CHILASEDA-STREAMS_Y_REDES-E76F51?style=for-the-badge"></a>
@@ -26,7 +26,7 @@ Este repositorio reúne mods y parches locales de ChilaSeda, junto con herramien
 | 🗂️ Ruta | ✨ Qué encontrarás |
 | --- | --- |
 | `ChilaSeda_*` | Mods propios y parches locales para Build 42. |
-| `kits/Zombicidio_Jill_B42/` | Guía, `mods.txt`, `map_ver.bin` y preset para montar una partida parecida a Jill. |
+| `kits/Zombicidio_Jill_B42/` | Guía, lista de suscripciones en pausa, `mods.txt`, `map_ver.bin` y preset de Jill. |
 | `docs/incidentes/` | Guía y plantilla para proponer notas comunitarias con evidencia. |
 | `docs/releases/` | Historial de versiones de mods y guía para descargar actualizaciones. |
 | `docs/Manual_Pesos_B42_y_Monitor.md` | Manual de objetivos de peso y del monitor. |
@@ -40,7 +40,10 @@ Este repositorio reúne mods y parches locales de ChilaSeda, junto con herramien
 
 La guía [`kits/Zombicidio_Jill_B42/README.md`](kits/Zombicidio_Jill_B42/README.md) incluye las instrucciones para clonar o descargar el repo como ZIP y enumera las **38 carpetas locales ChilaSeda** activas en el perfil Jill.
 
+- 🎮 Partida de referencia: **Project Zomboid Vanilla B42.22.2**.
+- 🧺 [Colección ChilaSeda en Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3812814868).
 - 📋 [`mods.txt`](kits/Zombicidio_Jill_B42/mods.txt) y 🗺️ [`map_ver.bin`](kits/Zombicidio_Jill_B42/map_ver.bin), para colocar en el guardado después de crear el mundo y cerrar el juego.
+- ⏸️ [`mods_en_pausa.md`](kits/Zombicidio_Jill_B42/mods_en_pausa.md) registra elementos de Workshop que no están activos en la lista de Jill y candidatos para desuscripción temporal.
 - ⚙️ [Preset de Sandbox](kits/Zombicidio_Jill_B42/Sandbox%20Presets/Zombicidio.cfg) y 📖 [descripción de la colección e instalación](kits/Zombicidio_Jill_B42/Descripcion_Coleccion_Zombicidio.txt).
 - 🧟 Los mods de terceros se descargan desde Workshop; el repo no redistribuye sus archivos.
 

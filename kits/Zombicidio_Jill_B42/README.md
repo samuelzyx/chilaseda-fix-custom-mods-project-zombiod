@@ -4,7 +4,7 @@
 
 # 🧟 Kit Zombicidio Jill
 
-**Una guía para montar una partida parecida en Project Zomboid · Build 42**
+**Una guía para montar una partida parecida · Project Zomboid Vanilla B42.22.2**
 
 <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3812814868">🧰 Colección de Steam</a> ·
 <a href="https://github.com/samuelzyx/chilaseda-fix-custom-mods-project-zombiod/releases">🚀 Releases</a> ·
@@ -35,7 +35,7 @@ resume estos pasos para compartirlos en Steam.
 
 1. Suscríbete a los mods de terceros de la [colección Zombicidio](https://steamcommunity.com/sharedfiles/filedetails/?id=3812814868) y espera a que Workshop termine de descargarlos.
 2. Instala [ZombieBuddy](https://steamcommunity.com/sharedfiles/filedetails/?id=3619862853), requisito de Project Viewpoint.
-3. Descarga Project Viewpoint desde el enlace de Discord compartido con la colección. Extrae el archivo y revisa que quede `Zomboid/mods/Viewpoint/42/mod.info`.
+3. Descarga **Project Viewpoint 0.1.7** desde el [canal de descargas del autor en Discord](https://discord.com/channels/1553114135833616435/1566624749755564042). Extrae el archivo y revisa que quede `Zomboid/mods/Viewpoint/42/mod.info`.
 4. Copia las **38 carpetas locales ChilaSeda** de este repositorio a `%USERPROFILE%\Zomboid\mods\`. Conserva la estructura de carpetas.
 
 <details>
@@ -91,6 +91,10 @@ ChilaSeda_Translations_ES_B42
 | [`mods.txt`](mods.txt) | Orden de carga de referencia para Jill. |
 | [`map_ver.bin`](map_ver.bin) | Acompaña a `mods.txt` en el guardado. |
 | [`Sandbox Presets/Zombicidio.cfg`](Sandbox%20Presets/Zombicidio.cfg) | Preset para crear el mundo Sandbox. |
+
+La referencia usa **Project Zomboid Vanilla B42.22.2**. Las versiones instaladas de los mods de
+Workshop pueden cambiar; comprueba sus notas en Steam y revisa el registro de
+[`mods_en_pausa.md`](mods_en_pausa.md) antes de limpiar suscripciones.
 
 ---
 
