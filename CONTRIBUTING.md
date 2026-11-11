@@ -1,20 +1,79 @@
-﻿# Contribuir
+# 🤝 Contribuye al taller de mods
 
-Las contribuciones se revisan mediante Pull Requests. No está autorizado trabajar directamente en `main` ni subir commits a esa rama.
+¡Gracias por ayudar a mejorar estos mods y sus guías! Para que cada cambio se pueda revisar,
+probar y atribuir correctamente, sigue este flujo.
 
-1. Crea una rama para tu cambio, por ejemplo `fix/nombre-del-arreglo`, `feature/nombre` o `docs/tema`.
-2. Haz commits en esa rama y súbela a GitHub.
-3. Abre un Pull Request dirigido a `main` y describe el problema, los cambios, dependencias y cómo los revisaste.
-4. Espera la revisión y autorización de Chila antes de integrar el cambio.
+> 🚦 **Las contribuciones de la comunidad se envían en una rama propia y mediante un Pull
+> Request a `main`.** No hagas push directo a `main`; Chila revisa y autoriza cada PR antes de
+> integrarlo.
 
-Para cambios en mods, mantén intactas las copias de mods originales e implementa los arreglos dentro del mod local correspondiente. Documenta el arreglo, dependencias y orden de carga en el README o LEEME del mod. Indica la versión de Project Zomboid y los mods relacionados que usaste para revisar el cambio.
+---
 
-Si el cambio actualiza la versión de un mod, incluye en el PR una entrada para `docs/releases/CHANGELOG.md` con el ID del mod, nueva versión, fecha y resumen para jugadores. Después de integrar el cambio, la persona mantenedora publica una GitHub Release por mod y adjunta un ZIP instalable solo de esa carpeta. Consulta [`docs/releases/README.md`](docs/releases/README.md).
+## 🧭 Flujo rápido
 
-No agregues partidas guardadas, registros de usuario, backups, credenciales, cachés, datos personales ni compilados temporales. Conserva únicamente los binarios que formen parte de la distribución del mod (por ejemplo, JARs incluidos por un parche).
+1. **Prepara tu rama** desde `main`. Usa un nombre claro, por ejemplo `fix/acciones-accesibles`,
+   `feature/opcion-nueva` o `docs/instalacion`.
+2. **Haz un cambio enfocado.** Conserva intactos los mods originales de Workshop. Los fixes de
+   este proyecto van dentro de la carpeta local `ChilaSeda_*` correspondiente.
+3. **Revisa y documenta.** Indica qué cambió y qué comprobaste; no declares como probado algo que
+   no ejecutaste en el juego.
+4. **Abre el Pull Request** hacia `main`. Describe el problema, solución, dependencias y
+   evidencia. Espera la revisión y autorización de Chila antes de integrar.
 
-Las skills y hooks compartidos de Codex viven en `.agents/` y `.codex/`. Ajusta cualquier integración de usuario para que use rutas relativas del repositorio.
+---
 
-## Enviar una nota de incidente
+## 🧩 Si cambias un mod
 
-Puedes documentar un error o mejora en `docs/incidentes/` con nombre `YYYY-MM-DD_NN_titulo-corto.md` y usar `docs/incidentes/PLANTILLA_NOTA.md`. Añade capturas al Pull Request o a `docs/incidentes/evidencias/`; describe la versión del juego y los mods, pasos para reproducir, y resultados esperado y observado. Oculta datos personales innecesarios. La nota también debe llegar en una rama propia y Pull Request; Chila revisa y autoriza antes de integrarla.
+Incluye en el PR:
+
+- 🏷️ Nombre y `id` del mod afectado.
+- 🛠️ Resumen del arreglo o función y cualquier dependencia.
+- 📚 Orden de carga requerido; documenta `loadModAfter` cuando aplique.
+- 🎮 Versión o Build de Project Zomboid y versiones de los mods relacionados.
+- 🔍 Cómo revisaste el cambio: pasos, resultado observado y evidencia disponible.
+
+Agrupa en una carpeta los fixes dirigidos al mismo mod de Workshop. Si un arreglo cruza varios
+mods, explica cuál tiene el defecto principal y declara el resto como dependencia.
+
+### 🚀 Cuando cambia la versión distribuible
+
+Si el PR actualiza la versión de un mod, agrega una entrada al inicio de
+[`docs/releases/CHANGELOG.md`](docs/releases/CHANGELOG.md) con su ID/carpeta, versión, fecha,
+compatibilidad y resumen para jugadores. Chila publica después una Release individual con sus
+notas y el ZIP instalable de ese mod. Sigue el formato de
+[`docs/releases/README.md`](docs/releases/README.md); no publiques tags o releases por tu cuenta.
+
+---
+
+## 📝 Reporta un incidente
+
+Para proponer una nota o mejora, usa
+[`docs/incidentes/PLANTILLA_NOTA.md`](docs/incidentes/PLANTILLA_NOTA.md) y envíala en tu rama
+mediante un PR. Incluye pasos para reproducir, resultado esperado y observado, Build del juego,
+mods y versiones involucradas. Adjunta capturas al PR o en
+[`docs/incidentes/evidencias/`](docs/incidentes/evidencias/).
+
+Antes de compartir evidencia, oculta nombres de usuario, rutas personales, identificadores y
+datos del guardado que no sean necesarios para entender el problema.
+
+---
+
+## 🔒 Cuida el repositorio
+
+No subas partidas guardadas, logs personales, backups, credenciales, cachés, datos privados ni
+compilados temporales. Conserva únicamente los binarios necesarios para distribuir el mod, como
+un JAR incluido por un parche.
+
+Las skills y hooks portables viven en `.agents/` y `.codex/`. Usa rutas relativas al repositorio
+en las integraciones compartidas y deja fuera configuraciones locales o datos de cuenta.
+
+---
+
+## 📬 Antes de solicitar revisión
+
+- [ ] Mi rama parte de `main` y el PR apunta a `main`.
+- [ ] El cambio respeta los originales de Workshop.
+- [ ] Documenté versiones, dependencias y orden de carga.
+- [ ] Incluí evidencia o expliqué qué validación falta.
+- [ ] Si actualicé una versión, agregué su entrada al changelog.
+- [ ] Revisé que el PR no incluya saves, logs privados, backups ni credenciales.
