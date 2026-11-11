@@ -29,22 +29,10 @@
 
 ## 🧭 Índice
 
-- [✅ Elemento recuperado](#elemento-recuperado)
 - [🖼️ Candidatos para quitar de la colección](#candidatos-para-quitar-de-la-coleccion)
 - [ℹ️ Cómo leer esta lista](#como-leer-esta-lista)
 
 ---
-
-## ✅ Elemento recuperado
-
-<a id="elemento-recuperado"></a>
-
-**Stab Bunker** ya volvió a la colección. Jill tiene activo su módulo `idStabBunker`, y Steam ahora
-muestra el Workshop `3662265843` dentro de la colección. La colección vuelve a cubrir todos los
-IDs activos de Workshop detectados en el `mods.txt`.
-
-El complemento **Stab Bunker - Project Viewpoint Compatibility** (`3814451969`) es otro elemento;
-su ID no está activo en Jill.
 
 ## 🖼️ Candidatos para quitar de la colección
 
