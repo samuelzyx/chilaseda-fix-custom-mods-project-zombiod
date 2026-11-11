@@ -78,14 +78,15 @@ local function appendNutrition(tooltip, item, startY)
     layout:setMinValueWidth(80)
 
     local header = layout:addItem()
-    header:setLabel(getText("Tooltip_food_Nutrition") .. ":", 1, 1, 0.8, 1)
+    -- Use solid white for the custom rows so they stay crisp over the translucent tooltip.
+    header:setLabel(getText("Tooltip_food_Nutrition") .. ":", 1, 1, 1, 1)
     for _, row in ipairs(nutritionRows) do
         local getter = item[row[2]]
         if type(getter) == "function" then
             local ok, value = pcall(getter, item)
             if ok and type(value) == "number" then
                 local line = layout:addItem()
-                line:setLabel(getText(row[1]) .. ":", 1, 1, 0.8, 1)
+                line:setLabel(getText(row[1]) .. ":", 1, 1, 1, 1)
                 line:setValueRightNoPlus(value)
             end
         end

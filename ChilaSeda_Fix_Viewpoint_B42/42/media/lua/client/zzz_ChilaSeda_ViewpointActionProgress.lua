@@ -9,6 +9,7 @@ local sharedProgressBar = nil
 local currentProgressAction = nil
 local suppressedNativeAction = nil
 local trackedActions = setmetatable({}, { __mode = "k" })
+local activationLogged = {}
 local customBarDrawLogged = false
 local customBarDrawnThisFrame = false
 local customBarDrawFailureLogged = false
@@ -310,24 +311,70 @@ local function actionLabel(action)
     return "Realizando accion"
 end
 
+local function hasSpecificActionLabel(action, typeName)
+    local explicit = action and (action.label or action.jobType or action.name)
+    if explicit ~= nil then
+        local label = tostring(explicit)
+        local mapped = ACTION_LABELS[label] or ACTION_LABELS[string.lower(label)]
+        if mapped then return true end
+        local localized = localizedActionLabel(label)
+        if localized ~= label then return true end
+    end
+    if typeName == "ISLightActions" then
+        return LIGHT_ACTION_LABELS[action.mode] ~= nil
+    end
+    if typeName == "ISMoveablesAction" then
+        return MOVEABLE_ACTION_LABELS[action.mode] ~= nil
+    end
+    return (typeName and ACTION_LABELS[typeName] ~= nil)
+        or (action and action.ChilaSedaAutoCookJob == true)
+end
+
+local function logActionActivation(action, typeName, covered, label)
+    local actionName = typeName or "unknown"
+    if activationLogged[actionName] then return end
+    activationLogged[actionName] = true
+    local mode = action and action.mode
+    print("[ChilaSeda_ViewpointActionProgress][ACTIVATION] action=" .. actionName
+        .. " mode=" .. tostring(mode or "-")
+        .. " covered=" .. (covered and "yes" or "no")
+        .. " label=" .. tostring(label or "-")
+        .. " specificLabel=" .. (hasSpecificActionLabel(action, typeName) and "yes" or "no")
+        .. " vanillaUseProgressBar=" .. tostring(action and action.useProgressBar)
+        .. " vanillaForceProgressBar=" .. tostring(action and action.forceProgressBar))
+end
+
 local function markAction(action)
-    if not action or action[FLAG] then return end
+    if not action then return end
+    if action[FLAG] then
+        -- Keep the engine bar off while the local renderer owns the action.
+        if sharedProgressBar then
+            action.useProgressBar = false
+            action.forceProgressBar = false
+        end
+        return
+    end
 
     local typeName = actionTypeName(action)
     local requiredCustomBar = typeName and REQUIRED_CUSTOM_BAR_ACTIONS[typeName] == true
     local hasNativeBar = action.forceProgressBar == true or action.useProgressBar ~= false
         or requiredCustomBar
+    local label = actionLabel(action)
+    logActionActivation(action, typeName, hasNativeBar, label)
     if not hasNativeBar then return end
 
     action[FLAG] = {
-        label = actionLabel(action),
+        label = label,
         useProgressBar = action.useProgressBar,
         forceProgressBar = action.forceProgressBar,
     }
     trackedActions[action] = true
-    -- Keep the native bar until the custom renderer has actually drawn this
-    -- action. If the overlay is not ready or fails, the action still has visible
-    -- progress instead of running with no bar.
+    -- Jill's screenshot confirms that the local renderer draws correctly.
+    -- Disable the engine flags before the action starts to avoid two bars.
+    if sharedProgressBar then
+        action.useProgressBar = false
+        action.forceProgressBar = false
+    end
     if requiredCustomBar and (requiredBarTraceCount[typeName] or 0) < 3 then
         requiredBarTraceCount[typeName] = (requiredBarTraceCount[typeName] or 0) + 1
         print("[ChilaSeda_ViewpointActionProgress] required action marked: " .. typeName
@@ -465,7 +512,7 @@ do
         local core = getCore()
         local width, height = core:getScreenWidth(), core:getScreenHeight()
         local barWidth = math.min(360, width - 40)
-        local x, y = math.floor((width - barWidth) / 2), height - 112
+        local x, y = math.floor((width - barWidth) / 2), math.floor(height * 0.57)
         local font = UIFont.Small
         local textWidth = getTextManager():MeasureStringX(font, self.label)
         self:drawText(self.label, math.floor((width - textWidth) / 2), y - 19,

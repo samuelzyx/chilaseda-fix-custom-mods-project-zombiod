@@ -13,6 +13,10 @@ validación en Jill solo se considera confirmada cuando se comprueba dentro del 
 ### Viewpoint Foraging
 
 - **0.3.0 + parche local 1.3.15 (2026-11-11)** - Chila confirmo que la rebusqueda funciona y que el panel de calibracion carga y funciona.
+
+### ChilaSeda Fix - Viewpoint Workshop Fixes
+
+- **2.0.40 (2026-11-11)** - Chila confirmo que la barra naranja queda alineada con la barra vanilla y que la barra vanilla se oculta durante la accion.
 ## 📦 GitHub Releases publicadas
 
 **Todavía no hay Releases individuales publicadas.** Al completar y validar una versión,
