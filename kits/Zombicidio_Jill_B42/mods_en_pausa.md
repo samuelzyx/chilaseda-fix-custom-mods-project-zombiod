@@ -15,8 +15,8 @@
 ---
 
 > 🔎 Esta revisión compara la colección pública con los IDs activos en el `mods.txt` de Jill.
-> Que un mod no aparezca activo no significa que sea incompatible ni que debas quitarlo de otras
-> partidas.
+> Los elementos sin coincidencia activa se marcan como candidatos para quitar de la colección
+> de esta partida, incluidos los que tienen un parche local pero no se usan en Jill.
 
 <table>
 <tr>
@@ -31,7 +31,6 @@
 
 - [✅ Elemento recuperado](#elemento-recuperado)
 - [🖼️ Candidatos para quitar de la colección](#candidatos-para-quitar-de-la-coleccion)
-- [🔎 Revisar antes de decidir](#revisar-antes-de-decidir)
 - [ℹ️ Cómo leer esta lista](#como-leer-esta-lista)
 
 ---
@@ -51,9 +50,9 @@ su ID no está activo en Jill.
 
 <a id="candidatos-para-quitar-de-la-coleccion"></a>
 
-Estos tres mods no tienen un ID activo en Jill. Si quieres que la colección represente solo esta
-partida, puedes quitarlos de la **colección pública**. Revisa primero si los conservas para otros
-mundos.
+Estos ocho mods no tienen un ID activo en Jill. Se recomiendan quitar de la **colección pública de
+esta partida**. La presencia de un parche local no cambia la recomendación si el mod no se carga en
+Jill.
 
 <table>
 <tr>
@@ -63,26 +62,22 @@ mundos.
 </tr>
 </table>
 
-## 🔎 Revisar antes de decidir
-
-<a id="revisar-antes-de-decidir"></a>
-
-Estos cinco elementos siguen en la colección, pero requieren una revisión adicional:
+Los otros cinco candidatos:
 
 | Elemento de Workshop | ID interno | Motivo |
 |---|---|---|
-| [3d Blood VFX for Viewpoint (experimental)](https://steamcommunity.com/sharedfiles/filedetails/?id=3811472160) · `3811472160` | `ViewpointBloodFX` | Hay un parche local asociado. |
-| [Viewpoint - Roofs (WIP)](https://steamcommunity.com/sharedfiles/filedetails/?id=3817294484) · `3817294484` | `ViewpointRoofs` | Hay un parche local asociado. |
-| [Project Viewpoint - Isometric No More](https://steamcommunity.com/sharedfiles/filedetails/?id=3819166046) · `3819166046` | `isometricnomore` | Hay un parche local; el título dice que no se necesita con Viewpoint 0.1.7+. |
-| [Wring Out Clothing](https://steamcommunity.com/sharedfiles/filedetails/?id=2696083206) · `2696083206` | `wringclothes` | Confirma si lo usas en otros perfiles y revisa el parche local. |
-| [Elemento sin título público](https://steamcommunity.com/sharedfiles/filedetails/?id=3032253803) · `3032253803` | `PZRPs11Zombies` | Steam no entrega título ni portada. Identifícalo antes de quitarlo. |
+| [3d Blood VFX for Viewpoint (experimental)](https://steamcommunity.com/sharedfiles/filedetails/?id=3811472160) · `3811472160` | `ViewpointBloodFX` | Tiene parche local, pero no está activo en Jill. |
+| [Viewpoint - Roofs (WIP)](https://steamcommunity.com/sharedfiles/filedetails/?id=3817294484) · `3817294484` | `ViewpointRoofs` | Tiene parche local, pero no está activo en Jill. |
+| [Project Viewpoint - Isometric No More](https://steamcommunity.com/sharedfiles/filedetails/?id=3819166046) · `3819166046` | `isometricnomore` | No está activo en Jill; el título indica que no se necesita con Viewpoint 0.1.7+. |
+| [Wring Out Clothing](https://steamcommunity.com/sharedfiles/filedetails/?id=2696083206) · `2696083206` | `wringclothes` | No está activo en Jill. |
+| [Elemento sin título público](https://steamcommunity.com/sharedfiles/filedetails/?id=3032253803) · `3032253803` | `PZRPs11Zombies` | No está activo en Jill; Steam no entrega título ni portada. |
 
 ## ℹ️ Cómo leer esta lista
 
 <a id="como-leer-esta-lista"></a>
 
 - **Quitar de la colección** elimina el elemento de la lista pública, pero no cancela por sí solo tu
-  suscripción personal de Workshop.
+  suscripción personal de Workshop. La lista recomienda quitar los ocho de la colección de Jill.
 - **Desuscribirte** cambia tu cuenta; no elimina el mod de la colección pública.
 - **CVI** (`3749026793`) sí tiene un ID activo en Jill, por eso no aparece entre los candidatos.
 - Codex no ha cambiado la colección ni las suscripciones de tu cuenta.
