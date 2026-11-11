@@ -26,8 +26,6 @@
 /tests/session_*/
 /**/evidence/perf/*.log
 /**/.vscode/
-/.claude/
-/.codemie/
 
 
 # Personal workspace and root-level game data
@@ -46,4 +44,10 @@
 /docs/coleccion/
 /docs/PesoCatalogo_Jill_Auditoria.csv
 /docs/_vp-instructions.tmp.webp
+
+
+/.claude/settings.local.json
+/.codemie/local/
+/.codemie/cache/
+
 

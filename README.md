@@ -10,7 +10,7 @@ Las contribuciones requieren una rama propia y un Pull Request hacia `main`. No 
 2. No incluyas saves, logs de usuario, backups, credenciales, cachés ni archivos temporales.
 3. Antes de proponer un cambio, indica el mod y la versión de Project Zomboid con la que lo revisaste.
 
-Las skills e hooks compartibles de Codex están en `.agents/` y `.codex/`. Los datos locales y entornos generados se excluyen del repositorio.
+Las skills e hooks compartibles están en `.agents/` y `.codex/`. `.claude/` y `.codemie/` conservan espacios de configuración portables; los ajustes locales y entornos generados se excluyen del repositorio.
 
 ## Contenido
 
@@ -18,3 +18,4 @@ Las skills e hooks compartibles de Codex están en `.agents/` y `.codex/`. Los d
 - `docs/`: manuales, bitácoras, notas técnicas y material de referencia.
 - `tools/`: utilidades de mantenimiento.
 - `tests/`: pruebas automatizadas existentes de los mods.
+
