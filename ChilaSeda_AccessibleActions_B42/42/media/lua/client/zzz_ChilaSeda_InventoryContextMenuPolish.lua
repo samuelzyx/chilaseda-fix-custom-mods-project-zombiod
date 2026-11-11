@@ -77,6 +77,7 @@ local function optionOrder(option)
 	if name:find("mas acciones", 1, true) or name == "mas" or name == "more" then return 100 end
 	if name:find("equipar", 1, true) or name:find("equip", 1, true)
 		or name:find("vestir", 1, true) or name:find("wear", 1, true) then return 10 end
+	if name:find('cataplasma', 1, true) or name:find('poultice', 1, true) then return 12 end
 	-- Keep the two reported action labels immediately after the hand-equip block.
 	if name:find("cortar cabeza", 1, true) or name:find("quitar cabeza", 1, true)
 		or name:find("decap", 1, true) or name:find("cut head", 1, true)

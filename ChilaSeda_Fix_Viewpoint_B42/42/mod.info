@@ -1,12 +1,12 @@
 name=ChilaSeda Fix - Viewpoint Workshop Fixes (B42)
 id=ChilaSeda_Fix_Viewpoint_B42
 authors=ChilaSeda
-description=Local fixes for Viewpoint search fog and pins, labeled orange action progress, corpse weapon equip, Accessible Actions and Rune Exp Halo notices, null-sprite menus, selected loot destinations, glass pickup, and trait colors.
+description=Local fixes for Viewpoint search pins and progress, corpse actions, selected loot destinations, and Halo notices drawn behind windows and tooltips.
 require=ZombieBuddy
 loadModAfter=Viewpoint,ViewpointUI,NeatUI_ProgressBar,INVENTORY_TETRIS,ChilaSeda_AccessibleActions_B42,ZombieBuddy
 versionMin=42.21
 versionMax=42.22.2
-modversion=2.0.42
+modversion=2.0.43
 ZBVersionMin=2.3.4
 javaJarFile=media/java/client/ChilaSedaViewpointHalo.jar
 javaPkgName=chilaseda.viewpointhalo

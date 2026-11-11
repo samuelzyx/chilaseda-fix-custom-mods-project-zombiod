@@ -213,46 +213,38 @@ function ChilaSeda_ViewpointHaloNotifications:render()
 	end
 end
 
+local function keepOverlayBehindUI()
+	if not overlay or #notifications == 0 or not overlay.javaObject then return end
+	local ok, ui = pcall(function() return UIManager.getUI() end)
+	if not ok or not ui then return end
+	local gotIndex, index = pcall(function() return ui:indexOf(overlay.javaObject) end)
+	if not gotIndex or type(index) ~= "number" then return end
+	if index > 0 then
+		pcall(function()
+			ui:remove(overlay.javaObject)
+			ui:add(0, overlay.javaObject)
+		end)
+	elseif index < 0 then
+		pcall(function() ui:add(0, overlay.javaObject) end)
+	end
+end
+
 local function createOverlay()
-	if overlay then return end
+	if overlay then
+		keepOverlayBehindUI()
+		return
+	end
 	overlay = ChilaSeda_ViewpointHaloNotifications:new(0, 0, 1, 1)
 	overlay.wantMouseEvents = false
 	overlay:initialise()
 	overlay:addToUIManager()
 	overlay:setCapture(false)
 	overlay.javaObject:setConsumeMouseEvents(false)
-
-	-- Insert the text overlay immediately below the top-level inventory pages.
-	-- AddToUIManager normally appends it above windows that are already open.
-	local ok, ui = pcall(function() return UIManager.getUI() end)
-	if ok and ui and type(getPlayerLoot) == "function" then
-		local firstInventoryIndex = nil
-		for playerNum = 0, 3 do
-			local gotLoot, playerLoot = pcall(getPlayerLoot, playerNum)
-			local page = gotLoot and playerLoot and playerLoot.inventoryPane
-				and playerLoot.inventoryPane.inventoryPage or nil
-			local inventoryUI = page and page.javaObject or nil
-			if inventoryUI then
-				local gotIndex, index = pcall(function() return ui:indexOf(inventoryUI) end)
-				if gotIndex and type(index) == "number" and index >= 0
-						and (firstInventoryIndex == nil or index < firstInventoryIndex) then
-					firstInventoryIndex = index
-				end
-			end
-		end
-		if firstInventoryIndex ~= nil then
-			local gotOverlayIndex, overlayIndex = pcall(function() return ui:indexOf(overlay.javaObject) end)
-			if gotOverlayIndex and type(overlayIndex) == "number" and overlayIndex >= 0
-					and overlayIndex > firstInventoryIndex then
-				pcall(function()
-					ui:remove(overlay.javaObject)
-					ui:add(firstInventoryIndex, overlay.javaObject)
-				end)
-			end
-		end
-	end
+	keepOverlayBehindUI()
 end
 
+if Events and Events.OnTick then Events.OnTick.Add(keepOverlayBehindUI) end
+if Events and Events.OnTickEvenPaused then Events.OnTickEvenPaused.Add(keepOverlayBehindUI) end
 function ChilaSeda_ViewpointHaloNotifications.showFixed(text, color, icon)
 	if not addNotification(text, color, nil, nil, icon) then return false end
 	createOverlay()

@@ -8,6 +8,7 @@ mods
     mod = UndeadWildlife,
     mod = ZombieBuddy,
     mod = Viewpoint,
+    mod = isometricnomore,
     mod = ViewpointForaging,
     mod = GrassierGrassViewpoint,
     mod = PZVoxelStudioViewpoint,

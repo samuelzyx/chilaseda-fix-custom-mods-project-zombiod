@@ -1,4 +1,4 @@
-# ChilaSeda - Acciones Accesibles (Build 42) 1.0.21
+# ChilaSeda - Acciones Accesibles (Build 42) 1.0.22
 
 <div align="center">
 
@@ -13,12 +13,16 @@
 
 ## 🧭 Contenido
 
-- [Cambios recientes](#cambios-de-1021)
+- [Cambios recientes](#cambios-de-1022)
 - [Funciones incluidas](#funciones-incluidas)
 - [Dependencias opcionales](#dependencias-opcionales)
 - [Validación pendiente](#validación-pendiente)
 - [Historial](#cambios-de-101)
 
+
+## Cambios de 1.0.22
+
+- Coloca las opciones Hacer cataplasma de consuelda justo despues de Equipar para que queden visibles en el menu contextual.
 
 ## Cambios de 1.0.21
 

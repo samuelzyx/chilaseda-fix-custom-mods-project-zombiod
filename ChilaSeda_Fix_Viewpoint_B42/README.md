@@ -1,4 +1,4 @@
-# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.42
+# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.43
 
 <div align="center">
 
@@ -11,9 +11,13 @@
 
 > **Resumen:** paquete local de compatibilidad para Viewpoint y sus integraciones. Cada ajuste comprueba si existe la API correspondiente; las funciones que dependen de una API aún no publicada permanecen inactivas.
 
+## Version 2.0.43
+
+- Dibuja Halo Notes detras de todas las ventanas, inventarios y tooltips y mantiene ese orden mientras el aviso esta visible.
+
 ## 🧭 En esta página
 
-- [Cambios recientes](#equipar-desde-cadáver)
+- [Cambios recientes](#version-2043)
 - [Barra de progreso](#barra-de-progreso-2036)
 - [Rebúsqueda, pines y neblina](#neblina-del-radio-de-rebúsqueda-integrada)
 - [Protección del menú del mundo](#objetos-sin-nombre-de-sprite-en-el-menú-del-mundo)
