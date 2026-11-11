@@ -1,27 +1,45 @@
-# Kit Zombicidio Jill · Project Zomboid B42
+<div align="center">
 
-Guía para montar una partida parecida a la referencia de Jill. El kit comparte listas y ajustes,
-no copias de mods de Workshop.
+<img src="../../docs/branding/chilaseda-atom-bio-header.jpg" width="108" alt="Avatar de ChilaSeda">
 
-## Descarga del repositorio
+# 🧟 Kit Zombicidio Jill
 
-Puedes clonar el repo con Git:
+**Una guía para montar una partida parecida en Project Zomboid · Build 42**
+
+<a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3812814868">🧰 Colección de Steam</a> ·
+<a href="https://github.com/samuelzyx/chilaseda-fix-custom-mods-project-zombiod/releases">🚀 Releases</a> ·
+<a href="https://www.atom.bio/chilaseda">📺 Canales de ChilaSeda</a>
+
+</div>
+
+---
+
+> ⚠️ El kit comparte listas y ajustes; no redistribuye los mods de terceros. Haz una copia del
+> guardado antes de reemplazar archivos.
+
+## ⬇️ Descarga el kit
+
+Clona el repositorio con Git:
 
 ```powershell
 git clone https://github.com/samuelzyx/chilaseda-fix-custom-mods-project-zombiod.git
 ```
 
-O abre el repo en GitHub, pulsa **Code → Download ZIP** y extrae el archivo. Lee también
-[`Descripcion_Coleccion_Zombicidio.txt`](Descripcion_Coleccion_Zombicidio.txt).
+O abre el repo en GitHub, pulsa **Code → Download ZIP** y extrae el archivo. Continúa en
+`kits/Zombicidio_Jill_B42/`. La [descripción de la colección](Descripcion_Coleccion_Zombicidio.txt)
+resume estos pasos para compartirlos en Steam.
 
-## Mods que necesitas
+---
+
+## 🧩 Prepara los mods
 
 1. Suscríbete a los mods de terceros de la [colección Zombicidio](https://steamcommunity.com/sharedfiles/filedetails/?id=3812814868) y espera a que Workshop termine de descargarlos.
-2. Instala **ZombieBuddy** desde [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3619862853); es requisito de Project Viewpoint.
-3. Instala la versión de **Project Viewpoint** compartida en el enlace de Discord que acompaña la colección. Extrae el contenido y confirma que quede `Zomboid/mods/Viewpoint/42/mod.info`.
-4. Copia las 38 carpetas locales ChilaSeda que aparecen abajo desde este repositorio a `%USERPROFILE%\Zomboid\mods\`. Mantén cada carpeta con su nombre y estructura.
+2. Instala [ZombieBuddy](https://steamcommunity.com/sharedfiles/filedetails/?id=3619862853), requisito de Project Viewpoint.
+3. Descarga Project Viewpoint desde el enlace de Discord compartido con la colección. Extrae el archivo y revisa que quede `Zomboid/mods/Viewpoint/42/mod.info`.
+4. Copia las **38 carpetas locales ChilaSeda** de este repositorio a `%USERPROFILE%\Zomboid\mods\`. Conserva la estructura de carpetas.
 
-### Carpetas locales ChilaSeda
+<details>
+<summary>📂 Ver las 38 carpetas locales del perfil</summary>
 
 ```text
 ChilaSeda_AccessibleActions_B42
@@ -64,15 +82,39 @@ ChilaSeda_TIYLReadOpensJournal_B42
 ChilaSeda_Translations_ES_B42
 ```
 
-## Crear la partida y aplicar los archivos
+</details>
 
-1. Copia `Sandbox Presets/Zombicidio.cfg` a `%USERPROFILE%\Zomboid\Sandbox Presets\`.
-2. Crea un mundo nuevo en Sandbox y selecciona el preset `Zombicidio`. Activa los mods de la colección y los mods locales. Para la apariencia, instala `[COS] RE:3 Remake Jill` desde Workshop y selecciona `RE3_Jill`.
-3. Para recrear a Jill, elige la ocupación Pescador y los rasgos Insensible, Manitas, Poca sed, Insomne, Propenso a enfermar, Sanador lento, Robusto, Bajo peso y Metabolismo lento.
-4. Guarda la partida y cierra el juego. Haz una copia de seguridad de los archivos del mundo.
-5. Reemplaza `mods.txt` y `map_ver.bin` en `%USERPROFILE%\Zomboid\Saves\Sandbox\<nombre_de_tu_partida>\` con los archivos de esta carpeta. No los pongas dentro de `mods`.
-6. Abre el juego y carga el mundo. Comprueba compatibilidad después de cada actualización de Project Zomboid o de un mod.
+### 🗂️ Archivos de partida incluidos
 
-El perfil de Jill es una referencia, no una partida completa. Las releases individuales de mods
-ChilaSeda están en la [página Releases](https://github.com/samuelzyx/chilaseda-fix-custom-mods-project-zombiod/releases).
-Sigue los directos y redes en [atom.bio/chilaseda](https://www.atom.bio/chilaseda).
+| Archivo | Dónde se usa |
+| --- | --- |
+| [`mods.txt`](mods.txt) | Orden de carga de referencia para Jill. |
+| [`map_ver.bin`](map_ver.bin) | Acompaña a `mods.txt` en el guardado. |
+| [`Sandbox Presets/Zombicidio.cfg`](Sandbox%20Presets/Zombicidio.cfg) | Preset para crear el mundo Sandbox. |
+
+---
+
+## 🎮 Crea una partida parecida a Jill
+
+1. Copia `Sandbox Presets/Zombicidio.cfg` en `%USERPROFILE%\Zomboid\Sandbox Presets\`.
+2. Crea un mundo nuevo en Sandbox, selecciona el preset `Zombicidio` y activa los mods de la colección y las carpetas locales.
+3. Para la apariencia de Jill, instala `[COS] RE:3 Remake Jill` desde Workshop y selecciona `RE3_Jill`.
+4. Para recrear su personaje, elige la ocupación **Pescador** y los rasgos **Insensible, Manitas, Poca sed, Insomne, Propenso a enfermar, Sanador lento, Robusto, Bajo peso** y **Metabolismo lento**.
+
+## 📋 Coloca `mods.txt` y `map_ver.bin`
+
+Después de crear y guardar el mundo:
+
+1. Cierra el juego y haz una copia de los archivos generados.
+2. Reemplaza `mods.txt` y `map_ver.bin` dentro de `%USERPROFILE%\Zomboid\Saves\Sandbox\<nombre_de_tu_partida>\` con los archivos de este kit.
+3. Déjalos juntos en la carpeta del guardado; **no** los pongas dentro de `mods`.
+4. Inicia de nuevo y comprueba que el mundo cargue.
+
+---
+
+## 🔄 Cambios y comunidad
+
+El [changelog](../../docs/releases/CHANGELOG.md) resume las versiones y cambios recientes. Los
+ZIP individuales aparecerán en [GitHub Releases](https://github.com/samuelzyx/chilaseda-fix-custom-mods-project-zombiod/releases)
+cuando cada versión esté validada y publicada. También puedes seguir los directos y redes en
+[atom.bio/chilaseda](https://www.atom.bio/chilaseda).

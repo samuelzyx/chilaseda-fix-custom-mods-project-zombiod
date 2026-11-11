@@ -1,47 +1,82 @@
-# Releases de mods ChilaSeda
+<div align="center">
 
-Este registro permite que quien descarga el proyecto sin clonar Git también encuentre las
-actualizaciones de cada mod. Cada publicación corresponde a **un mod** y tiene su propio tag,
-notas y ZIP instalable.
+# 🚀 Releases de mods ChilaSeda
 
-Las versiones de publicación usan `MAJOR.MINOR.PATCH` y viven en el tag de GitHub; ese tag y
-`CHANGELOG.md` son la fuente de verdad. No supongas que `mod.info` lleva un campo de versión ni
-agregues uno sin necesidad del mod.
+**Actualizaciones individuales para Project Zomboid · Build 42**
 
-## Para jugadores
+Consulta el [historial del proyecto](CHANGELOG.md) · Descarga en
+[GitHub Releases](https://github.com/samuelzyx/chilaseda-fix-custom-mods-project-zombiod/releases)
 
-- Revisa la página de [Releases](https://github.com/samuelzyx/chilaseda-fix-custom-mods-project-zombiod/releases).
-- Abre la versión del mod que necesitas y descarga el archivo ZIP adjunto con su nombre y versión.
-- Extrae la carpeta del mod en `Zomboid/mods/`, reemplazando la versión anterior con el juego cerrado.
-- También puedes suscribirte al [RSS de Releases](https://github.com/samuelzyx/chilaseda-fix-custom-mods-project-zombiod/releases.atom).
-- En GitHub, elige **Watch → Custom → Releases** para recibir avisos de nuevas versiones.
+</div>
 
-El ZIP de una Release contiene solo la carpeta instalable de ese mod. El ZIP automático del
-código fuente de GitHub contiene el repositorio completo y no es el paquete recomendado para
-instalar una actualización individual.
+---
 
-## Flujo de publicación
+## 📡 ¿Cómo me entero de una actualización?
 
-1. Al cambiar un mod, incrementa su versión de publicación (`PATCH` para correcciones,
-   `MINOR` para funciones compatibles y `MAJOR` para cambios incompatibles), conserva su
-   `mod.info` y actualiza su documentación habitual.
-2. En el mismo PR, agrega al inicio de [`CHANGELOG.md`](CHANGELOG.md) una entrada con fecha,
-   ID/carpeta, versión nueva, compatibilidad y cambios visibles para jugadores.
-3. Tras la revisión e integración del PR, crea una Release independiente con el título
-   `Nombre del mod vX.Y.Z` y el tag `mod/<ID>/vX.Y.Z`.
-4. Escribe notas breves: qué cambió, compatibilidad de Project Zomboid, requisitos y cómo
-   instalar/actualizar.
-5. Adjunta un ZIP llamado `<ID>-vX.Y.Z.zip`. Debe tener la carpeta del mod en su raíz y no
-   incluir logs, backups, saves ni otros mods.
-6. Publica la Release y verifica que el enlace y el ZIP aparezcan en la página pública.
-   Solo entonces la versión se considera publicada.
+| Opción | Para qué sirve |
+| --- | --- |
+| **GitHub Releases** | Ver las notas y descargar el ZIP de un mod específico. |
+| **Watch → Custom → Releases** | Recibir notificaciones de GitHub sobre nuevas Releases. |
+| **Feed Atom/XML** | Suscribirte desde un lector de feeds, sin clonar el repo. |
 
-Si un cambio del repo actualiza varios mods, publica una Release por cada mod y enumera los
-IDs afectados en el PR. No cambies la versión de un mod por ediciones que no alteran su
-contenido distribuible.
+🔔 [Abrir la página de Releases](https://github.com/samuelzyx/chilaseda-fix-custom-mods-project-zombiod/releases) ·
+📰 [Suscribirse al feed Atom](https://github.com/samuelzyx/chilaseda-fix-custom-mods-project-zombiod/releases.atom)
 
-## Cómo leer el historial
+> El feed `releases.atom` es un documento XML generado por GitHub. Solo anuncia Releases
+> publicadas; el historial de `CHANGELOG.md` no se replica allí automáticamente. Por eso el feed
+> puede estar vacío hasta que publiquemos la primera versión.
 
-`CHANGELOG.md` es el índice humano de los cambios por mod. La Release de GitHub es el anuncio
-público y contiene la descarga individual. Mantén ambos registros alineados: misma versión,
-fecha, resumen y enlace a la Release.
+---
+
+## 🎮 Descargar e instalar
+
+1. Abre una Release y localiza el ZIP que tenga el ID y la versión del mod, por ejemplo
+   `<ID>-vX.Y.Z.zip`.
+2. Cierra Project Zomboid y reemplaza la carpeta del mod anterior en
+   `%USERPROFILE%\Zomboid\mods\` por la del ZIP.
+3. Inicia el juego y comprueba la compatibilidad indicada en las notas de esa Release.
+
+Cada ZIP adjunto contiene **un solo mod**, con su carpeta en la raíz del archivo. El ZIP
+automático que ofrece GitHub contiene el repositorio entero; no lo uses para instalar una versión
+individual.
+
+---
+
+## 🧾 Cómo llevamos el historial
+
+`CHANGELOG.md` tiene dos apartados distintos:
+
+- **Cambios incluidos en el repositorio:** trabajo disponible en `main`, aunque todavía no tenga
+  un ZIP de Release. Si una validación de Jill sigue pendiente, queda marcado como tal.
+- **GitHub Releases publicadas:** versiones ya validadas y publicadas, con enlace al paquete.
+
+Así queda visible qué se trabajó y qué descarga individual está lista. No se inventan versiones
+anteriores ni se presenta una prueba pendiente como confirmada.
+
+---
+
+## 🛠️ Flujo para preparar una versión
+
+1. Incrementa el número de publicación `MAJOR.MINOR.PATCH`: `PATCH` para correcciones,
+   `MINOR` para funciones compatibles y `MAJOR` para cambios incompatibles. El tag de GitHub y
+   el changelog son la fuente de esa versión; no agregues `version=` a `mod.info` sin que el mod
+   lo necesite.
+2. En el cambio del mod, agrega o actualiza su entrada en [`CHANGELOG.md`](CHANGELOG.md): ID,
+   carpeta, versión, fecha de trabajo, compatibilidad y resumen para jugadores. Marca su estado
+   como **en el repositorio** o **Release publicada**.
+3. Cuando el cambio esté revisado y su validación requerida esté confirmada, crea una Release
+   independiente titulada `Nombre del mod vX.Y.Z` y con tag `mod/<ID>/vX.Y.Z`.
+4. Resume el cambio, compatibilidad de Project Zomboid, requisitos e instrucciones de instalación.
+5. Adjunta `<ID>-vX.Y.Z.zip` con solo la carpeta instalable de ese mod. Excluye logs, backups,
+   partidas guardadas y otros mods.
+6. Publica y revisa que la página, las notas y el ZIP sean visibles. Añade el enlace y la fecha
+   a la sección de Releases publicadas de `CHANGELOG.md`.
+
+Si una actualización afecta varios mods, publica una Release por cada uno. La plantilla de notas
+está en [`.github/release_template.md`](../../.github/release_template.md).
+
+---
+
+## 📣 Canales de ChilaSeda
+
+Los directos y redes están reunidos en [atom.bio/chilaseda](https://www.atom.bio/chilaseda).

@@ -85,7 +85,7 @@ Oculta nombres de usuario, rutas personales y datos del guardado que no sean nec
 <a id="releases"></a>
 ## 🚀 Actualizaciones y descargas
 
-Consulta las [releases de GitHub](https://github.com/samuelzyx/chilaseda-fix-custom-mods-project-zombiod/releases) para ver los cambios por mod y descargar el paquete de la versión que te interese. También puedes suscribirte al [RSS de releases](https://github.com/samuelzyx/chilaseda-fix-custom-mods-project-zombiod/releases.atom) o, en GitHub, elegir **Watch → Custom → Releases** para recibir avisos.
+El [changelog](docs/releases/CHANGELOG.md) ya muestra los cambios recientes del repositorio. Cuando publiquemos paquetes individuales, estarán en [GitHub Releases](https://github.com/samuelzyx/chilaseda-fix-custom-mods-project-zombiod/releases). También puedes suscribirte al [feed Atom/XML](https://github.com/samuelzyx/chilaseda-fix-custom-mods-project-zombiod/releases.atom) o, en GitHub, elegir **Watch → Custom → Releases** para recibir avisos de Releases publicadas.
 
 El historial y el procedimiento para publicar versiones están en [`docs/releases/`](docs/releases/README.md).
 
