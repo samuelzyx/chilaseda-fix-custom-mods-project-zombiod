@@ -5,4 +5,4 @@ description=Mobility, auto-resume, exhausted-ingredient cleanup, safe meal compl
 loadModAfter=AutoCook
 versionMin=42.20
 versionMax=42.22.2
-modversion=2.0.10
+modversion=2.0.11

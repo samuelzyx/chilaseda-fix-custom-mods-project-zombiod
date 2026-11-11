@@ -88,6 +88,9 @@ local function appendNutrition(tooltip, item, startY)
                 local line = layout:addItem()
                 line:setLabel(getText(row[1]) .. ":", 1, 1, 1, 1)
                 line:setValueRightNoPlus(value)
+                -- setValueRightNoPlus chooses its own dim value color; override
+                -- the public LayoutItem color fields to match the bright labels.
+                line.r1, line.g1, line.b1, line.a1 = 1, 1, 1, 1
             end
         end
     end
@@ -120,11 +123,8 @@ local function renderFoodTooltip(self)
     self.tooltip:setMeasureOnly(true)
     self.item:DoTooltip(self.tooltip)
     local nativeTooltipHeight = numericValue(self.tooltip:getHeight())
-    self.tooltip:setMeasureOnly(false)
-
-    -- Rebuild the visible native tooltip, then append our rows once. The
-    -- measurement pass above must not add persistent layout rows.
-    self.item:DoTooltip(self.tooltip)
+    -- Measure the custom rows too, but do not draw them yet. ISToolTipInv's
+    -- background must render before ObjectTooltip text or it tints every row.
     appendNutrition(self.tooltip, self.item, nativeTooltipHeight + 3)
 
     local core = getCore()
@@ -132,6 +132,7 @@ local function renderFoodTooltip(self)
     local maxY = core:getScreenHeight()
     local tooltipWidth = numericValue(self.tooltip:getWidth())
     local tooltipHeight = numericValue(self.tooltip:getHeight())
+    self.tooltip:setMeasureOnly(false)
     self.tooltip:setX(math.max(0, math.min(mx, maxX - tooltipWidth - 1)))
     if not self.followMouse and self.anchorBottomLeft then
         self.tooltip:setY(math.max(0, math.min(my - tooltipHeight, maxY - tooltipHeight - 1)))
@@ -169,6 +170,11 @@ local function renderFoodTooltip(self)
     self:drawRectBorder(0, 0, self.width, self.height,
         self.borderColor.a, self.borderColor.r,
         self.borderColor.g, self.borderColor.b)
+
+    -- Vanilla ISToolTipInv draws its background before DoTooltip. Match that
+    -- order, then append the custom rows in the same final text pass.
+    self.item:DoTooltip(self.tooltip)
+    appendNutrition(self.tooltip, self.item, nativeTooltipHeight + 3)
 end
 
 ISToolTipInv.render = function(self)
