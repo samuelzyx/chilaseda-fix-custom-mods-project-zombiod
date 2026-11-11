@@ -1,8 +1,12 @@
 🧟 Zombicidio · partida inspirada en Jill Valentine
 Project Zomboid Vanilla B42.22.2
 
-¿Recién llegas? Somos ChilaSeda: hacemos streams y compartimos mods, parches y configuraciones
-para Project Zomboid. Esta colección acompaña una partida inspirada en Jill.
+¿Nuevo por aquí? Somos ChilaSeda. En YouTube tenemos la serie **Zombicidio**, una partida de
+supervivencia en Project Zomboid donde jugamos como Jill Valentine.
+
+Elegimos estos mods para acercarnos al estilo de Jill: Viewpoint aporta la cámara en primera y
+tercera persona; otros suman ambiente y mejoras prácticas, y nuestros parches afinan detalles y
+corrigen errores para B42.22.2.
 
 📦 En el kit encuentras mods locales, configs y teclas, preset Sandbox y una guía rápida para
 armar el entorno y colocar los archivos de la partida.
