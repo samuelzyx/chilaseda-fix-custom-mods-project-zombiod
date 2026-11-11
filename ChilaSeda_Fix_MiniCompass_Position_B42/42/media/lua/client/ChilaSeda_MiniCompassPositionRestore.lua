@@ -106,17 +106,22 @@ local function onCreatePlayer(playerIndex, player)
     restoredPlayer = nil
 end
 
-local function onTick()
+local function onTick(source)
     local player = localPlayer()
     if not player or player == restoredPlayer then return end
-    restoreSavedPosition(player, "OnTick")
+    restoreSavedPosition(player, source or "OnTick")
 end
 
 if Events and Events.OnCreatePlayer and type(Events.OnCreatePlayer.Add) == "function" then
     Events.OnCreatePlayer.Add(onCreatePlayer)
 end
 if Events and Events.OnTick and type(Events.OnTick.Add) == "function" then
-    Events.OnTick.Add(onTick)
+    Events.OnTick.Add(function() onTick("OnTick") end)
+end
+-- OnTick may stop while the game is paused. The HUD can be created after
+-- OnCreatePlayer, so retry on this paused-safe event until its panel is ready.
+if Events and Events.OnTickEvenPaused and type(Events.OnTickEvenPaused.Add) == "function" then
+    Events.OnTickEvenPaused.Add(function() onTick("OnTickEvenPaused") end)
 end
 
 print("[ChilaSeda_MiniCompassPositionRestore] ready")
