@@ -1,11 +1,13 @@
 🧟 Zombicidio · partida inspirada en Jill Valentine
 Project Zomboid Vanilla B42.22.2
 
-Mods de Workshop para montar una partida al estilo Jill. Los mods de terceros siguen siendo de sus autores.
+¿Recién llegas? Somos ChilaSeda: hacemos streams y compartimos mods, parches y configuraciones
+para Project Zomboid. Esta colección acompaña una partida inspirada en Jill.
 
-📦 El kit incluye mods locales ChilaSeda, configuraciones y teclas, preset Sandbox, guía de instalación y archivos para la partida.
+📦 En el kit encuentras mods locales, configs y teclas, preset Sandbox y una guía rápida para
+armar el entorno y colocar los archivos de la partida.
 
-👉 El kit completo, acá 😉
+👉 El kit y las instrucciones, por acá 😉
 https://github.com/samuelzyx/chilaseda-fix-custom-mods-project-zombiod/tree/main/kits/Zombicidio_Jill_B42
 
 📺 Streams y redes:
