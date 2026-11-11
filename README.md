@@ -4,10 +4,11 @@ Workspace de mods locales para Build 42: parches propios, herramientas de apoyo 
 
 ## Contribuir
 
-1. Clona el repositorio y lee `CONTRIBUTING.md` para conocer el flujo de colaboración.
-2. Trabaja dentro del mod local relacionado y documenta cada cambio en su `README.md` o `LEEME.txt`.
-3. No incluyas saves, logs de usuario, backups, credenciales, cachés ni archivos temporales.
-4. Antes de proponer un cambio, indica el mod y la versión de Project Zomboid con la que lo revisaste.
+Las contribuciones requieren una rama propia y un Pull Request hacia `main`. No se aceptan cambios directos en `main`; Chila revisa y autoriza antes de integrar. Consulta `CONTRIBUTING.md`.
+
+1. Trabaja dentro del mod local relacionado y documenta cada cambio en su `README.md` o `LEEME.txt`.
+2. No incluyas saves, logs de usuario, backups, credenciales, cachés ni archivos temporales.
+3. Antes de proponer un cambio, indica el mod y la versión de Project Zomboid con la que lo revisaste.
 
 Las skills e hooks compartibles de Codex están en `.agents/` y `.codex/`. Los datos locales y entornos generados se excluyen del repositorio.
 
@@ -17,4 +18,3 @@ Las skills e hooks compartibles de Codex están en `.agents/` y `.codex/`. Los d
 - `docs/`: manuales, bitácoras, notas técnicas y material de referencia.
 - `tools/`: utilidades de mantenimiento.
 - `tests/`: pruebas automatizadas existentes de los mods.
-
