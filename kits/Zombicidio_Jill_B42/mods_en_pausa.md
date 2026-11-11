@@ -1,10 +1,10 @@
-﻿<div align="center">
+<div align="center">
 
 <img src="../../docs/branding/chilaseda-atom-bio-header.jpg" width="100" alt="Avatar de ChilaSeda">
 
-# ⏸️ Mods candidatos a pausa
+# ⏸️ Revisión de la colección Zombicidio
 
-**Colección Zombicidio · Jill · Project Zomboid Vanilla B42.22.2**
+**Jill · Project Zomboid Vanilla B42.22.2**
 
 <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3812814868">🧰 Abrir colección</a> ·
 <a href="README.md">🧟 Volver al kit</a> ·
@@ -14,86 +14,78 @@
 
 ---
 
-> ⚠️ **Candidatos para revisar; no son incompatibilidades confirmadas.** La lista compara la
-> colección con los IDs activos en el `mods.txt` del kit. Antes de desuscribirte, confirma que no
-> uses cada mod en otras partidas.
+> 🔎 Esta revisión compara la colección pública con los IDs activos en el `mods.txt` de Jill.
+> Que un mod no aparezca activo no significa que sea incompatible ni que debas quitarlo de otras
+> partidas.
 
 <table>
 <tr>
-<td align="center"><strong>📦 215</strong><br>elementos en la colección</td>
+<td align="center"><strong>📦 179</strong><br>mods en la colección</td>
 <td align="center"><strong>✅ 171</strong><br>con algún ID activo en Jill</td>
-<td align="center"><strong>⏸️ 44</strong><br>sin coincidencia activa</td>
+<td align="center"><strong>🔎 8</strong><br>sin coincidencia activa</td>
+<td align="center"><strong>🧩 0</strong><br>mods activos faltantes</td>
 </tr>
 </table>
 
 ## 🧭 Índice
 
-- [🔎 Revisar primero](#revisar-primero)
-- [🖼️ Candidatos a pausa](#candidatos-a-pausa)
-- [🧰 Cómo actualizar tu suscripción](#como-actualizar-tu-suscripcion)
-- [📚 Referencias](#referencias)
+- [✅ Elemento recuperado](#elemento-recuperado)
+- [🖼️ Candidatos para quitar de la colección](#candidatos-para-quitar-de-la-coleccion)
+- [🔎 Revisar antes de decidir](#revisar-antes-de-decidir)
+- [ℹ️ Cómo leer esta lista](#como-leer-esta-lista)
 
 ---
 
-## 🔎 Revisar primero
+## ✅ Elemento recuperado
 
-<a id="revisar-primero"></a>
+<a id="elemento-recuperado"></a>
 
-Estos cinco elementos necesitan comprobación adicional antes de decidir:
+**Stab Bunker** ya volvió a la colección. Jill tiene activo su módulo `idStabBunker`, y Steam ahora
+muestra el Workshop `3662265843` dentro de la colección. La colección vuelve a cubrir todos los
+IDs activos de Workshop detectados en el `mods.txt`.
 
-| Estado | Elemento de Workshop | ID(s) de mod detectado(s) | Qué revisar |
-|---|---|---|---|
-| 🔎 Revisar | [Wring Out Clothing](https://steamcommunity.com/sharedfiles/filedetails/?id=2696083206) · `2696083206` | `wringclothes` | Confirma si lo usas en otros perfiles y revisa el parche local antes de pausar. |
-| 🔎 Revisar | [Elemento sin título público](https://steamcommunity.com/sharedfiles/filedetails/?id=3032253803) · `3032253803` | `PZRPs11Zombies` | Steam no devuelve título ni portada; el `mod.info` local sugiere ese ID. Identifícalo manualmente. |
-| 🔎 Revisar | [3d Blood VFX for Viewpoint (experimental)](https://steamcommunity.com/sharedfiles/filedetails/?id=3811472160) · `3811472160` | `ViewpointBloodFX` | Hay un parche local asociado. |
-| 🔎 Revisar | [Viewpoint - Roofs (WIP)](https://steamcommunity.com/sharedfiles/filedetails/?id=3817294484) · `3817294484` | `ViewpointRoofs` | Hay un parche local asociado. |
-| 🔎 Revisar | [Project Viewpoint - Isometric No More](https://steamcommunity.com/sharedfiles/filedetails/?id=3819166046) · `3819166046` | `isometricnomore` | Hay un parche local asociado; el título dice que no hace falta en Viewpoint 0.1.7+. |
----
+El complemento **Stab Bunker - Project Viewpoint Compatibility** (`3814451969`) es otro elemento;
+su ID no está activo en Jill.
 
-## 🖼️ Candidatos a pausa
+## 🖼️ Candidatos para quitar de la colección
 
-<a id="candidatos-a-pausa"></a>
+<a id="candidatos-para-quitar-de-la-coleccion"></a>
 
-**39 elementos** no coinciden con IDs activos de Jill. Cada portada abre la ficha del mod en
-Workshop. Usa esta sección como referencia visual; desuscribirte de Steam no lo quita de la colección
-pública.
-
-El elemento **Carry Visible Items In Hands** (`3749026793`) sí coincide con `CVI` activo en Jill, por eso no aparece como candidato.
+Estos tres mods no tienen un ID activo en Jill. Si quieres que la colección represente solo esta
+partida, puedes quitarlos de la **colección pública**. Revisa primero si los conservas para otros
+mundos.
 
 <table>
-<tr><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3390655115"><img src="https://images.steamusercontent.com/ugc/43444870503826683/5C5631BEF1C900396C3F8A5F76993B7734A842DF/" width="150" alt="Portada: [COS] LALA"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3390655115"><strong>[COS] LALA</strong></a><br><small>Workshop 3390655115</small><br><small><code>[COS]LALA</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3810724915"><img src="https://images.steamusercontent.com/ugc/16202951933682265774/AA8ED22531067C05A8C27A16980CCF9C279EF02C/" width="150" alt="Portada: [OBSOLETE] Car Fix - Project Viewpoint"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3810724915"><strong>[OBSOLETE] Car Fix - Project Viewpoint</strong></a><br><small>Workshop 3810724915</small><br><small><code>ViewpointCar</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3811495292"><img src="https://images.steamusercontent.com/ugc/15485548485289124634/59CD261FF7BEA1B19B2B11DD672802CAE5964622/" width="150" alt="Portada: [OBSOLETE] Fire Fix - Project Viewpoint"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3811495292"><strong>[OBSOLETE] Fire Fix - Project Viewpoint</strong></a><br><small>Workshop 3811495292</small><br><small><code>ViewpointFire</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3813815383"><img src="https://images.steamusercontent.com/ugc/10083999921040496151/48A2B7DCFADCDB6380A09717DC650421285A67C9/" width="150" alt="Portada: [OBSOLETE] Menu Fix - Project Viewpoint"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3813815383"><strong>[OBSOLETE] Menu Fix - Project Viewpoint</strong></a><br><small>Workshop 3813815383</small><br><small><code>ViewpointMenu</code></small></td></tr>
-<tr><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2779946812"><img src="https://images.steamusercontent.com/ugc/1816645737957464127/DE467F0C023A0193579F1DC0FD75A4BB64937602/" width="150" alt="Portada: Anomalous Storm"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2779946812"><strong>Anomalous Storm</strong></a><br><small>Workshop 2779946812</small><br><small><code>Anomalous Storm</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3815033191"><img src="https://images.steamusercontent.com/ugc/12816700681798391772/AA013C9D3CD6F85FA00030EF66831480A5E53216/" width="150" alt="Portada: Barricade Fix - Project Viewpoint"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3815033191"><strong>Barricade Fix - Project Viewpoint</strong></a><br><small>Workshop 3815033191</small><br><small><code>ViewpointBarricade</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2868734860"><img src="https://images.steamusercontent.com/ugc/1825670692716038823/DC469F53B3FD0396640C9801B338067F7810B226/" width="150" alt="Portada: Better Sorting - Le Gourmet Revolution Patch (Deprecated)"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2868734860"><strong>Better Sorting - Le Gourmet Revolution Patch (Deprecated)</strong></a><br><small>Workshop 2868734860</small><br><small><code>BSLGR</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3813801053"><img src="https://images.steamusercontent.com/ugc/13676186050843382361/050A3C79846035E01119AE56A6B5D002E12B2EE7/" width="150" alt="Portada: Blood FX for Viewpoint - Fixes"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3813801053"><strong>Blood FX for Viewpoint - Fixes</strong></a><br><small>Workshop 3813801053</small><br><small><code>ViewpointBloodFXAddon</code></small></td></tr>
-<tr><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3812151347"><img src="https://images.steamusercontent.com/ugc/9900120249953720634/59881F0D3B1207CDFD965ADC4565B54DE91C05CD/" width="150" alt="Portada: Door Fix - Project Viewpoint"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3812151347"><strong>Door Fix - Project Viewpoint</strong></a><br><small>Workshop 3812151347</small><br><small><code>ViewpointDoor</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2701170568"><img src="https://images.steamusercontent.com/ugc/1853793284186445306/68B4ECBD134CF75BC105B53689E3C01451745507/" width="150" alt="Portada: Extra Map Symbols"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2701170568"><strong>Extra Map Symbols</strong></a><br><small>Workshop 2701170568</small><br><small><code>ExtraMapSymbols, ExtraMapSymbolsUI</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3811344119"><img src="https://images.steamusercontent.com/ugc/17761879297563457144/226E9FA9A06057093B504304426CD32243EC852D/" width="150" alt="Portada: Light Fix - Project Viewpoint"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3811344119"><strong>Light Fix - Project Viewpoint</strong></a><br><small>Workshop 3811344119</small><br><small><code>ViewpointLight</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2508327382"><img src="https://images.steamusercontent.com/ugc/1745688374813034898/98BCFCADCA98D28482E891AF37218D2A241B13A1/" width="150" alt="Portada: No Hat Drop"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2508327382"><strong>No Hat Drop</strong></a><br><small>Workshop 2508327382</small><br><small><code>NHD</code></small></td></tr>
-<tr><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3815999052"><img src="https://images.steamusercontent.com/ugc/18306122769429683284/62C923DF030A0A8F7A55A3406BDA312294ED8089/" width="150" alt="Portada: OldPoint - Rotating Overhead Camera [B42 / Viewpoint]"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3815999052"><strong>OldPoint - Rotating Overhead Camera [B42 / Viewpoint]</strong></a><br><small>Workshop 3815999052</small><br><small><code>OldPoint</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3811256204"><img src="https://images.steamusercontent.com/ugc/13403808106329373874/50A7C06E246BFB4938CA26E6B7CEC0B260C8DA47/" width="150" alt="Portada: Project Viewpoint QOL"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3811256204"><strong>Project Viewpoint QOL</strong></a><br><small>Workshop 3811256204</small><br><small><code>ProjectViewpointQOL, ProjectViewpointQOLControllerSupport</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3813172420"><img src="https://images.steamusercontent.com/ugc/14562839728505173280/D60256B00381574E578FDD22439755F1BF051052/" width="150" alt="Portada: Project Viewpoint: KK&#39;s TREE in 3D （Animated &amp; Seasonal）"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3813172420"><strong>Project Viewpoint: KK&#39;s TREE in 3D （Animated &amp; Seasonal）</strong></a><br><small>Workshop 3813172420</small><br><small><code>ProjectViewpointNearVegetation</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3812612054"><img src="https://images.steamusercontent.com/ugc/11455362144364358968/8DECAEC60BE58D1E9EC5C8798DCBDE14810E9ED8/" width="150" alt="Portada: Project Viewpoint: Recoil &amp; ADS"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3812612054"><strong>Project Viewpoint: Recoil &amp; ADS</strong></a><br><small>Workshop 3812612054</small><br><small><code>ProjectViewpointADS</code></small></td></tr>
-<tr><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3813908957"><img src="https://images.steamusercontent.com/ugc/10807209661108739356/717B48883AA5E0783710C76AE4D4497D012702BF/" width="150" alt="Portada: Project Viewpoint: True Weathers &amp; Lighting"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3813908957"><strong>Project Viewpoint: True Weathers &amp; Lighting</strong></a><br><small>Workshop 3813908957</small><br><small><code>ViewpointTrueWeathers, ViewpointTrueWeathersGameplay</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3818718796"><img src="https://images.steamusercontent.com/ugc/17758338216522150741/06B1F6F7F2C4AE4E0E0CC674CD6DD00185B46C32/" width="150" alt="Portada: PVZ- Plants vs Zomboid 2.2 Prerelease | 3D Viewpoint (by Mr.DOCS)"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3818718796"><strong>PVZ- Plants vs Zomboid 2.2 Prerelease | 3D Viewpoint (by Mr.DOCS)</strong></a><br><small>Workshop 3818718796</small><br><small><code>PvZGarden</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3817555882"><img src="https://images.steamusercontent.com/ugc/11034301464883962807/E0BF05D784FA14247CA00366857A069086194E91/" width="150" alt="Portada: Rolling Hills Physics Addon (Project Viewpoint)"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3817555882"><strong>Rolling Hills Physics Addon (Project Viewpoint)</strong></a><br><small>Workshop 3817555882</small><br><small><code>RollingHillsPhysics</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2760035814"><img src="https://images.steamusercontent.com/ugc/1854924430375051429/EA0096C8A556FD2C704C0406FA88ACD163495D42/" width="150" alt="Portada: Simple UI library"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2760035814"><strong>Simple UI library</strong></a><br><small>Workshop 2760035814</small><br><small><code>UIAPI</code></small></td></tr>
-<tr><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2719327441"><img src="https://images.steamusercontent.com/ugc/1850417028306054951/E13006A3AD23A4A0DA5E6C4CAB789F277FD2090E/" width="150" alt="Portada: Snake&#39;s Mod Pack"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2719327441"><strong>Snake&#39;s Mod Pack</strong></a><br><small>Workshop 2719327441</small><br><small><code>AliceSPack, AmmoMaker, Barco Abandonado, BatesMetalicosRevived, BeerCapsRewardMachine, CustomMapBridge, Factory, FuelTanksMod, LeGourmetRevolution, LootZetaEnhancedEdition, MilitaryComplex, NumarkComplex, RPropaneTank, Riverside Gunstore, SkillsMag, SnakeUtilsPack, SnakeClothingMod, SnakeMansion, TableSaw, TallerMecanico, WPA, ZombiesAtWorkEvo41</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3814451969"><img src="https://images.steamusercontent.com/ugc/16459728929457900489/650DBA62379B1D1606E8106E9E6BDD9AF9103B27/" width="150" alt="Portada: Stab Bunker - Project Viewpoint Compatibility"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3814451969"><strong>Stab Bunker - Project Viewpoint Compatibility</strong></a><br><small>Workshop 3814451969</small><br><small><code>StabBunker-ViewpointCompatibility</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3814398576"><img src="https://images.steamusercontent.com/ugc/10728194719241521630/56B62569D4280ED056D17A431EE202446DCE0D34/" width="150" alt="Portada: Surface Fix - Project Viewpoint"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3814398576"><strong>Surface Fix - Project Viewpoint</strong></a><br><small>Workshop 3814398576</small><br><small><code>ViewpointSurface</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3814486926"><img src="https://images.steamusercontent.com/ugc/9880001480743807243/376C22E1887167E0CCF4579FC6D3F6591B4489CE/" width="150" alt="Portada: Viewpoint - 3D Fences"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3814486926"><strong>Viewpoint - 3D Fences</strong></a><br><small>Workshop 3814486926</small><br><small><code>ViewpointFences3D</code></small></td></tr>
-<tr><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3820158673"><img src="https://images.steamusercontent.com/ugc/16715228244783182748/0A5795A782D1FEAB679F8AE73CB9CD942BA24EAD/" width="150" alt="Portada: Viewpoint - 3D RVs [B42.21] [WIP]"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3820158673"><strong>Viewpoint - 3D RVs [B42.21] [WIP]</strong></a><br><small>Workshop 3820158673</small><br><small><code>DaleChieftainRV, DeadWorksDaleRV, DeadWorksNomadRV, GridRV, GridRVHost</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3813194971"><img src="https://images.steamusercontent.com/ugc/15504587383070240779/986A581E4E6F399A3F8A2EBD790C145FB1D520DE/" width="150" alt="Portada: Viewpoint - Advanced Throwables"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3813194971"><strong>Viewpoint - Advanced Throwables</strong></a><br><small>Workshop 3813194971</small><br><small><code>ViewpointAdvancedThrowables</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3812659173"><img src="https://images.steamusercontent.com/ugc/15091095666310955127/4ABC6F5C66B73BC300C42A9A01C81F575FACFC69/" width="150" alt="Portada: Viewpoint - Crop Visibility Fix [B42.22]"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3812659173"><strong>Viewpoint - Crop Visibility Fix [B42.22]</strong></a><br><small>Workshop 3812659173</small><br><small><code>ViewpointCropVisibility</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3812984535"><img src="https://images.steamusercontent.com/ugc/13886809763722336510/752ED08768EE779EB823023629521C8C715FAD17/" width="150" alt="Portada: Viewpoint - Immersive Effects"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3812984535"><strong>Viewpoint - Immersive Effects</strong></a><br><small>Workshop 3812984535</small><br><small><code>ViewpointImmersiveEffects</code></small></td></tr>
-<tr><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3812616893"><img src="https://images.steamusercontent.com/ugc/9290983805375505445/39270AD9D4D968B5601F247495846A502CFF45BE/" width="150" alt="Portada: Viewpoint - Interface"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3812616893"><strong>Viewpoint - Interface</strong></a><br><small>Workshop 3812616893</small><br><small><code>ViewpointUI</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3815223174"><img src="https://images.steamusercontent.com/ugc/11948627692374523846/60EF1BE57B5AE674C6B19CBBF2347D565A63F010/" width="150" alt="Portada: Viewpoint Better Terrain"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3815223174"><strong>Viewpoint Better Terrain</strong></a><br><small>Workshop 3815223174</small><br><small><code>ViewpointBetterTerrain</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3818585720"><img src="https://images.steamusercontent.com/ugc/17317490806339512560/919537F0800FCD7BF6390C13E60FB783C8CE6E09/" width="150" alt="Portada: Viewpoint Binoculars"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3818585720"><strong>Viewpoint Binoculars</strong></a><br><small>Workshop 3818585720</small><br><small><code>ViewpointBinoculars</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3814560827"><img src="https://images.steamusercontent.com/ugc/15249431297992562002/E180A74291E7A2A55DC660C4D5812C68677A6DB0/" width="150" alt="Portada: Viewpoint Fishing"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3814560827"><strong>Viewpoint Fishing</strong></a><br><small>Workshop 3814560827</small><br><small><code>FishingView</code></small></td></tr>
-<tr><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3815630947"><img src="https://images.steamusercontent.com/ugc/16500491795426754601/5A6DFA5BB7875CA195DFF69E3E1A81F475B68F6C/" width="150" alt="Portada: Viewpoint Rolling Hills"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3815630947"><strong>Viewpoint Rolling Hills</strong></a><br><small>Workshop 3815630947</small><br><small><code>ViewpointRollingHills</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3819385365"><img src="https://images.steamusercontent.com/ugc/10174568856697529357/07D9ACA9EAD3B3F32BA892E9344B39A31FFA119C/" width="150" alt="Portada: Viewpoint Tactical - 3D GUNS, ANIMATIONS &amp; BULLET HOLES [ALPHA]"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3819385365"><strong>Viewpoint Tactical - 3D GUNS, ANIMATIONS &amp; BULLET HOLES [ALPHA]</strong></a><br><small>Workshop 3819385365</small><br><small><code>ViewpointTactical</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3812864848"><img src="https://images.steamusercontent.com/ugc/17020841956446019373/D961EB7D2B541D2EED9480DBC8FB02E7C440D6A4/" width="150" alt="Portada: Viewpoint True Ballistics"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3812864848"><strong>Viewpoint True Ballistics</strong></a><br><small>Workshop 3812864848</small><br><small><code>ViewpointTrueBallistics</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3821308495"><img src="https://images.steamusercontent.com/ugc/15663826876799602356/2B1E74CE34CABDB8B237572EAA7D45C742E336AB/" width="150" alt="Portada: Viewpoint Visual Fixes"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3821308495"><strong>Viewpoint Visual Fixes</strong></a><br><small>Workshop 3821308495</small><br><small><code>ViewpointVisualFixes</code></small></td></tr>
-<tr><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3816442251"><img src="https://images.steamusercontent.com/ugc/11824557953794138009/8A25C537A6D0B5C4766CB8E793BD86378BAD3E5C/" width="150" alt="Portada: Viewpoint: Living Props"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3816442251"><strong>Viewpoint: Living Props</strong></a><br><small>Workshop 3816442251</small><br><small><code>ViewpointLivingProps</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3820609079"><img src="https://images.steamusercontent.com/ugc/10354781048999241225/2F829A6738FB9BFEE79C7B471755518C86509D76/" width="150" alt="Portada: Wall Texture Fix for Viewpoint"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3820609079"><strong>Wall Texture Fix for Viewpoint</strong></a><br><small>Workshop 3820609079</small><br><small><code>WallTextureFixForViewpoint</code></small></td><td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3779759338"><img src="https://images.steamusercontent.com/ugc/16114517483461674941/5540FAC0DA5815A7905EFD107098DCB2A02794F8/" width="150" alt="Portada: Wilderness QoL [B42.21]"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3779759338"><strong>Wilderness QoL [B42.21]</strong></a><br><small>Workshop 3779759338</small><br><small><code>Wilderness QoL</code></small></td><td></td></tr>
+<tr>
+<td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3815223174"><img src="https://images.steamusercontent.com/ugc/11948627692374523846/60EF1BE57B5AE674C6B19CBBF2347D565A63F010/" width="180" alt="Portada de Viewpoint Better Terrain"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3815223174"><strong>Viewpoint Better Terrain</strong></a><br><small>Workshop `3815223174` · <code>ViewpointBetterTerrain</code></small></td>
+<td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3818585720"><img src="https://images.steamusercontent.com/ugc/17317490806339512560/919537F0800FCD7BF6390C13E60FB783C8CE6E09/" width="180" alt="Portada de Viewpoint Binoculars"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3818585720"><strong>Viewpoint Binoculars</strong></a><br><small>Workshop `3818585720` · <code>ViewpointBinoculars</code></small></td>
+<td align="center" valign="top"><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3815630947"><img src="https://images.steamusercontent.com/ugc/16500491795426754601/5A6DFA5BB7875CA195DFF69E3E1A81F475B68F6C/" width="180" alt="Portada de Viewpoint Rolling Hills"></a><br><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3815630947"><strong>Viewpoint Rolling Hills</strong></a><br><small>Workshop `3815630947` · <code>ViewpointRollingHills</code></small></td>
+</tr>
 </table>
 
----
+## 🔎 Revisar antes de decidir
 
-## 🧰 Cómo actualizar tu suscripción
+<a id="revisar-antes-de-decidir"></a>
 
-1. Abre la ficha de un candidato y revisa si lo necesitas en otra partida.
-2. Si ya no lo usas, pulsa **Cancelar suscripción** en Workshop.
-3. Anota aquí cuáles pausaste y la fecha; no marques como desuscrito algo que siga activo.
+Estos cinco elementos siguen en la colección, pero requieren una revisión adicional:
 
-Este documento no cambia la colección pública ni las suscripciones de tu cuenta. Para reinstalar un
-mod pausado, vuelve a suscribirte a su ficha de Workshop.
+| Elemento de Workshop | ID interno | Motivo |
+|---|---|---|
+| [3d Blood VFX for Viewpoint (experimental)](https://steamcommunity.com/sharedfiles/filedetails/?id=3811472160) · `3811472160` | `ViewpointBloodFX` | Hay un parche local asociado. |
+| [Viewpoint - Roofs (WIP)](https://steamcommunity.com/sharedfiles/filedetails/?id=3817294484) · `3817294484` | `ViewpointRoofs` | Hay un parche local asociado. |
+| [Project Viewpoint - Isometric No More](https://steamcommunity.com/sharedfiles/filedetails/?id=3819166046) · `3819166046` | `isometricnomore` | Hay un parche local; el título dice que no se necesita con Viewpoint 0.1.7+. |
+| [Wring Out Clothing](https://steamcommunity.com/sharedfiles/filedetails/?id=2696083206) · `2696083206` | `wringclothes` | Confirma si lo usas en otros perfiles y revisa el parche local. |
+| [Elemento sin título público](https://steamcommunity.com/sharedfiles/filedetails/?id=3032253803) · `3032253803` | `PZRPs11Zombies` | Steam no entrega título ni portada. Identifícalo antes de quitarlo. |
 
-## 📚 Referencias
+## ℹ️ Cómo leer esta lista
 
-- La comparación está hecha contra `kits/Zombicidio_Jill_B42/mods.txt`.
-- La guía para preparar la partida y usar el kit está en `README.md`.
-- Los mods de terceros se mantienen en Workshop; este repositorio no redistribuye sus archivos.
+<a id="como-leer-esta-lista"></a>
 
----
+- **Quitar de la colección** elimina el elemento de la lista pública, pero no cancela por sí solo tu
+  suscripción personal de Workshop.
+- **Desuscribirte** cambia tu cuenta; no elimina el mod de la colección pública.
+- **CVI** (`3749026793`) sí tiene un ID activo en Jill, por eso no aparece entre los candidatos.
+- Codex no ha cambiado la colección ni las suscripciones de tu cuenta.
 
-<div align="center">
-
-**Actualizado el 11 de noviembre de 2026 · ChilaSeda**
-
-</div>
+La comparación se hizo el **11 de noviembre de 2026** contra `kits/Zombicidio_Jill_B42/mods.txt`.
+Las miniaturas enlazan a las fichas de Workshop.

@@ -8,11 +8,12 @@ Elegimos estos mods para acercarnos al estilo de Jill: Viewpoint aporta la cáma
 tercera persona; otros suman ambiente y mejoras prácticas, y nuestros parches afinan detalles y
 corrigen errores para B42.22.2.
 
-📦 En el kit encuentras mods locales, configs y teclas, preset Sandbox y una guía rápida para
-armar el entorno y colocar los archivos de la partida.
-
 🔧 Si quieres ver nuestros arreglos, búscanos en GitHub como
 chilaseda-fix-custom-mods-project-zombiod 😉
+
+📦 Dentro de ese repositorio, en `kits/Zombicidio_Jill_B42/`, está el kit de la partida de Jill:
+mods locales, configuraciones y teclas, preset Sandbox y una guía rápida para montar el entorno
+y colocar los archivos de la partida.
 
 📺 Streams y redes:
 https://www.atom.bio/chilaseda
