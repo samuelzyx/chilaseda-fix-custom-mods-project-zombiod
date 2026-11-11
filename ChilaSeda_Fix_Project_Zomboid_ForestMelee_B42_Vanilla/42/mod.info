@@ -1,0 +1,12 @@
+name=ChilaSeda Fix - Project Zomboid Forest Melee (B42, Vanilla)
+id=ChilaSeda_Fix_Project_Zomboid_ForestMelee_B42_Vanilla
+authors=ChilaSeda
+description=Allows local melee attacks against zombies through forest trees and foliage only when vegetation blocks line of sight and no hard obstacle occupies the attack path.
+require=ZombieBuddy
+loadModAfter=ZombieBuddy
+versionMin=42.20.2
+versionMax=42.22
+modversion=1.0.0
+javaJarFile=media/java/client/ChilaSedaForestMeleeFix.jar
+javaPkgName=chilaseda.viewpointfixes
+ZBVersionMin=2.3.2

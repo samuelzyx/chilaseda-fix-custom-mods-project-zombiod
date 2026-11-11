@@ -1,0 +1,3 @@
+[ChilaPerf] JAVA_EXECUTING log=/workspace/scratch/b02971936a3e/perf_build/threshold_runtime/ChilaPerformance.log tick-gap observer; frame/render timings UNAVAILABLE
+[ChilaPerf][SPIKE-0001] SAVED synthetic=false peak_callback_gap_ms=291.306732 samples=727 log=/workspace/scratch/b02971936a3e/perf_build/threshold_runtime/ChilaPerformance.log
+samples=850 buffered=479 writer_queue=0 dropped=0 previous_java_ns=14492 worst_java_ns=4778945 log=/workspace/scratch/b02971936a3e/perf_build/threshold_runtime/ChilaPerformance.log selftest=NOT_RUN

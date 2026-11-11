@@ -1,0 +1,50 @@
+﻿{
+    "hooks":  {
+                  "UserPromptSubmit":  [
+                                           {
+                                               "hooks":  [
+                                                             {
+                                                                 "type":  "command",
+                                                                 "command":  "node .codex/hooks/todo-iteration.mjs",
+                                                                 "commandWindows":  "cmd /c node \".codex\\hooks\\todo-iteration.mjs\"",
+                                                                 "timeout":  5,
+                                                                 "statusMessage":  "Revisando TODO y recordatorio diario de pesos"
+                                                             },
+                                                             {
+                                                                 "type":  "command",
+                                                                 "command":  "node tools/workshop-fix-prompt-hook.mjs --client codex",
+                                                                 "commandWindows":  "cmd /c node \"tools\\workshop-fix-prompt-hook.mjs\" --client codex",
+                                                                 "timeout":  5,
+                                                                 "statusMessage":  "Comprobando actualizaciones antes de revisar errores"
+                                                             }
+                                                         ]
+                                           }
+                                       ],
+                  "SessionStart":  [
+                                       {
+                                           "hooks":  [
+                                                         {
+                                                             "type":  "command",
+                                                             "command":  "node .codex/hooks/graphify-stop.mjs",
+                                                             "commandWindows":  "cmd /c node \".codex\\hooks\\graphify-stop.mjs\"",
+                                                             "timeout":  10,
+                                                             "statusMessage":  "Comprobando actualizaciÃ³n diaria de Graphify"
+                                                         }
+                                                     ]
+                                       }
+                                   ],
+                  "Stop":  [
+                               {
+                                   "hooks":  [
+                                                 {
+                                                     "type":  "command",
+                                                     "command":  "node .codex/hooks/memory-stop.mjs",
+                                                     "commandWindows":  "cmd /c node \".codex\\hooks\\memory-stop.mjs\"",
+                                                     "timeout":  5,
+                                                     "statusMessage":  "Actualizando memoria de Zomboid"
+                                                 }
+                                             ]
+                               }
+                           ]
+              }
+}

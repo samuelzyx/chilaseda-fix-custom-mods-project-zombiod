@@ -1,0 +1,8 @@
+﻿name=ChilaSeda Fix - Water Pipes - Mod Data (B42)
+id=ChilaSeda_Fix_Water_Pipes_ModData_B42_3546314080
+authors=ChilaSeda
+description=Restores WaterPipes global mod data tables when they are unavailable or incomplete, preventing repeated sprinkler rendering errors.
+require=Waterpipes
+loadModAfter=Waterpipes
+versionMin=42.20
+modversion=1.0.0

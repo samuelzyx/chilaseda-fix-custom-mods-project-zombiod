@@ -1,0 +1,8 @@
+Tooltip_ES = {
+    Tooltip_CantCheckThroughWindow_tooFar = "No puedes mirar a traves de la ventana porque esta demasiado lejos.",
+    Tooltip_CantCheckThroughWindow_curtain = "Las cortinas impiden mirar a traves de la ventana.",
+    Tooltip_CantCheckThroughWindow_notOpen = "No puedes mirar a traves de la ventana porque esta cerrada.",
+    Tooltip_CantCheckThroughDoor_barricaded = "No puedes revisar detras de la puerta porque tiene una barricada.",
+    Tooltip_CantCheckThroughWindow_barricaded = "No puedes revisar detras de la ventana porque tiene una barricada.",
+    Tooltip_PeekBehindDoor = "Asomarte por la puerta puede hacer ruido segun tu habilidad de sigilo y los indicadores de estado de tu personaje. Agacharte puede ayudar a reducirlo.",
+}

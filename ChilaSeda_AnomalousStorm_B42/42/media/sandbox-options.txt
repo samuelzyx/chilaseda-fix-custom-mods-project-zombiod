@@ -1,0 +1,102 @@
+VERSION = 1,
+
+option AnomalousStormDaysMin
+{
+	type = integer,
+	min = 1,
+	max = 90,
+	default = 3,
+	page = NatureOptions,
+	translation = AnomalousStormDaysMin,
+}
+
+option AnomalousStormDaysMax
+{
+	type = integer,
+	min = 1,
+	max = 90,
+	default = 6,
+	page = NatureOptions,
+	translation = AnomalousStormDaysMax,
+}
+
+option AnomalousStormLength
+{
+	type = integer,
+	min = 1,
+	max = 5,
+	default = 1,
+	page = NatureOptions,
+	translation = AnomalousStormLength,
+}
+
+option AnomalousStormWarningMinutes
+{
+	type = integer,
+	min = 0,
+	max = 180,
+	default = 0,
+	page = NatureOptions,
+	translation = AnomalousStormWarningMinutes,
+}
+
+option AnomalousStormThunderDelayMinutes
+{
+	type = integer,
+	min = 0,
+	max = 180,
+	default = 60,
+	page = NatureOptions,
+	translation = AnomalousStormThunderDelayMinutes,
+}
+
+option AnomalousStormCalmRainMinutes
+{
+	type = integer,
+	min = 0,
+	max = 180,
+	default = 60,
+	page = NatureOptions,
+	translation = AnomalousStormCalmRainMinutes,
+}
+
+option AnomalousStormRedFadeMinutes
+{
+	type = integer,
+	min = 0,
+	max = 180,
+	default = 60,
+	page = NatureOptions,
+	translation = AnomalousStormRedFadeMinutes,
+}
+
+option AnomalousStormZombieDamagePerTenMinutes
+{
+	type = integer,
+	min = 0,
+	max = 10,
+	default = 10,
+	page = NatureOptions,
+	translation = AnomalousStormZombieDamagePerTenMinutes,
+}
+
+option AnomalousStormZombieSlowPercent
+{
+	type = integer,
+	min = 10,
+	max = 100,
+	default = 10,
+	page = NatureOptions,
+	translation = AnomalousStormZombieSlowPercent,
+}
+
+option AnomalousStormLethalExposurePercent
+{
+	type = integer,
+	min = 50,
+	max = 95,
+	default = 75,
+	page = NatureOptions,
+	translation = AnomalousStormLethalExposurePercent,
+}
+

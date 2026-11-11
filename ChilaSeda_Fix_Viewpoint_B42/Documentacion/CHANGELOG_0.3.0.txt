@@ -1,0 +1,54 @@
+ChilaSeda Fix - Viewpoint Interface - Action Progress (B42)
+Version 0.3.0 - 2026-11-01
+
+EXPANSION MASIVA: Todas las acciones IS* vanilla traducidas al español
+
+Se agregaron 80+ traducciones nuevas organizadas por categoria:
+
+ANIMALES Y NATURALEZA:
+- ISBuryCorpse, ISChopTreeAction, ISFishingAction, ISGrabCorpseAction
+- ISRemoveBush, ISSeedFlowerAction, ISShovelGround, ISWaterPlantAction
+
+CRAFTING Y CONSTRUCCION:
+- ISBBQInsertFuelAction, ISBBQRemovePropaneTankAction, ISBuildAction
+- ISCookAction, ISFireplaceAction, ISPlaceCampfireAction, ISPlaceItemAction
+- ISStartFireAction
+
+INVENTARIO Y TRANSFERENCIA:
+- ISConsolidateDrainable, ISDumpWaterAction, ISGrabItemAction
+- ISOpenContainerAction, ISPourInAction, ISPourOutAction, ISRemoveItemAction
+- ISStoreItemAction, ISThrowAction, ISTransferWaterAction
+
+ROPA Y SALUD:
+- ISApplyBandage, ISDrinkFluidAction, ISEquipWeaponAction
+- ISInsertClothingPadAction, ISRemoveClothingPadAction, ISSutureAction
+- ISTakePillAction, ISWashClothing, ISWashYourself
+
+ESTRUCTURAS E INTERACCION:
+- ISAddSheetAction, ISBarricadeAction, ISClimbOverFence, ISClimbOverWall
+- ISClimbSheetRope, ISClimbThroughWindow, ISCloseCurtainAction
+- ISDefeatCrawlingZombieAction, ISDestroyStuffAction, ISDigGravesAction
+- ISEmptyGraves, ISFillGrave, ISOpenDoor, ISPaintAction, ISPlumbItem
+- ISRemoveInsulationAction, ISRemoveSheetAction, ISSawAction, ISSmashWindow
+- ISToggleLightAction, ISToggleStoveAction, ISToggleWashingMachine
+- ISToggleWindowLock, ISUpRopeAction, ISWaterWindowAction
+
+ARMAS Y COMBATE:
+- ISExerciseAction, ISFireExtinguisherAction, ISInsertMagazine
+- ISPourWaterOnSmokeAction, ISReloadWeaponAction
+- ISUnloadBulletsFromMagazine, ISUnloadMagazine
+
+VEHICULOS:
+- ISAttachCarBatteryChargerAction, ISPlaceCarBatteryChargerAction
+- ISRainCollectorAction, ISTrapControlAction, ISVehicleActions
+
+LECTURA Y ESCRITURA:
+- ISReadMagazine, ISWriteOnPaper
+
+NOTAS:
+- Todas las traducciones respetan la restriccion Project Sonar (CERO tildes/acentos)
+- Organizacion por categorias para facilitar mantenimiento futuro
+- Total: 95+ acciones IS* cubiertas
+
+Origen: Solicitud usuario 2026-11-01 22:20:00 -06:00
+Responsable: Codex

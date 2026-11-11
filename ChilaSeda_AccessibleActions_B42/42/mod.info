@@ -1,0 +1,7 @@
+name=ChilaSeda - Acciones Accesibles (B42)
+id=ChilaSeda_AccessibleActions_B42
+authors=ChilaSeda
+description=Reune fabricacion accesible, llaves a llaveros, consolidacion, lavado y destinos; corrige menu del piso y recetas desde contenedores de cadaveres para B42.
+versionMin=42.20
+modversion=1.0.20
+loadModAfter=ConsolidatedAllFixB42,ChilaSeda_Fix_Water_Pipes_ModData_B42_3546314080,LongTermPreservationExtended,DismantleAllAtOnce,Viewpoint,ProjectViewpointQOL,ViewpointUI,INVENTORY_TETRIS

@@ -1,0 +1,6 @@
+﻿name=ChilaSeda Fix - NeatUI Core - Format (B42)
+id=ChilaSeda_Fix_NeatUI_Core_Format_B42_3818729237
+require=NeatUI_Core
+versionMin=42.21.0
+modversion=0.1.0
+loadModAfter=NeatUI_Core,Viewpoint,ViewpointImmersiveEffects,ViewpointTactical

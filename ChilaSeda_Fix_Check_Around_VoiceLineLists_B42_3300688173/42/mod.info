@@ -1,0 +1,9 @@
+﻿name=ChilaSeda Fix - Check Around - Voice Line Lists (B42)
+id=ChilaSeda_Fix_Check_Around_VoiceLineLists_B42_3300688173
+authors=ChilaSeda
+description=Repara listas de frases de voz ausentes o inválidas al revisar puertas o ventanas; omite solo la frase si no hay una lista válida para evitar que falle la acción.
+require=DoggyLibrary,CheckAround
+loadModAfter=DoggyLibrary,CheckAround
+versionMin=42.21
+versionMax=42.22
+modversion=0.1.1

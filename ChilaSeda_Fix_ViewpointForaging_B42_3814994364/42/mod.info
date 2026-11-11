@@ -1,0 +1,10 @@
+name=ChilaSeda Fix - Viewpoint Foraging Fixes (B42)
+id=ChilaSeda_Fix_Viewpoint_Foraging_PinHeight_B42_3814994364
+authors=ChilaSeda
+description=Viewpoint Foraging fixes for B42.22.2: align and restore visible 3D pins; calibrate terrain and shared pin/circle/icon zoom; localize options. Rolling Hills and Advanced Throwables are optional.
+require=ZombieBuddy,ViewpointForaging
+loadModAfter=ZombieBuddy,Viewpoint,ViewpointForaging,ViewpointRollingHills,ViewpointAdvancedThrowables
+versionMin=42.21
+versionMax=42.22.2
+modversion=1.3.15
+ZBVersionMin=2.3.0

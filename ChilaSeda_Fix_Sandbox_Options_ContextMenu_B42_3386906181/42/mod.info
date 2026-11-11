@@ -1,0 +1,8 @@
+﻿name=ChilaSeda Fix - Sandbox Options - Context Menu (B42)
+id=ChilaSeda_Fix_Sandbox_Options_ContextMenu_B42_3386906181
+authors=ChilaSeda
+description=Hides the Sandbox Options context-menu entry on all world objects. The hotkey remains available.
+require=SandboxSettings
+loadModAfter=SandboxSettings
+versionMin=42.20.0
+modversion=1.0.0

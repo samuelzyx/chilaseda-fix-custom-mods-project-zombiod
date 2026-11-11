@@ -1,0 +1,12 @@
+UI_ES = {
+    -- ChilaSeda Personal Reading Archive - Collector's Album
+    UI_ReadingArchive_MainIndex = "Indice Principal",
+    UI_ReadingArchive_Magazines = "Revistas",
+    UI_ReadingArchive_Newspapers = "Periodicos",
+    UI_ReadingArchive_AnnotatedMaps = "Mapas Anotados",
+    UI_ReadingArchive_Identifications = "Identificaciones",
+    UI_ReadingArchive_Empty = "No hay elementos en esta categoria.",
+    UI_ReadingArchive_Open = "Abrir",
+    UI_ReadingArchive_Close = "Cerrar",
+    ContextMenu_ReadingArchive_Open = "Leer álbum coleccionable",
+}

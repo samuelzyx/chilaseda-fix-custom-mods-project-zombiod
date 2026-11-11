@@ -1,0 +1,41 @@
+﻿# Local data and generated files
+/backups/
+/ErrorLogs/
+/PesosLogs/
+/graphify-out/
+/.tmp/
+/.ai-memory/
+/docs/codemie/
+/.codex/.graphify-runtime/
+/.codex/hooks/*last-date.txt
+/.codex/hooks/*.lock
+/Workshop_Fix_Checker.log
+/Workshop_Fix_Tracking_State.json
+/Errors.txt
+/to-do list.txt
+/to-do list.archived-*.txt
+/*.rar
+/*.zip
+/*.jar
+/*.tmp.*
+/*.png
+!/docs/coleccion/*.png
+
+# Build outputs and local editor/session data
+*.class
+/tests/session_*/
+/**/evidence/perf/*.log
+/**/.vscode/
+/.claude/
+/.codemie/
+
+
+# Personal workspace and root-level game data
+/AGENTS.md
+/TODO.md
+/.today-screenshots-contact.png
+/Errors.txt
+/default.txt
+/reset-mods-42_00.txt
+/Workshop_Fix_Tracking_State.json
+/ChilaSedaViewpointHalo.jar

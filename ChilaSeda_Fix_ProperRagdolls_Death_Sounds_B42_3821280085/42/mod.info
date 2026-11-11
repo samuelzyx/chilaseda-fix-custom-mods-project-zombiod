@@ -1,0 +1,9 @@
+name=ChilaSeda Fix - Proper Ragdolls Death Sounds (B42)
+id=ChilaSeda_Fix_ProperRagdolls_Death_Sounds_B42_3821280085
+authors=ChilaSeda
+description=Stops the death voice and enables early looting as soon as a Proper Ragdolls death animation starts; the loot option uses a vanilla B42 bag icon.
+require=ProperRagdolls
+loadModAfter=ProperRagdolls
+versionMin=42.21.0
+versionMax=42.22
+modversion=1.3.1

@@ -1,0 +1,6 @@
+ContextMenu_EN.txt: 3 claves; sintaxis, tokens ordenados, string.format y paridad JSON/TXT OK
+IG_UI_EN.txt: 137 claves; sintaxis, tokens ordenados, string.format y paridad JSON/TXT OK
+Sandbox_EN.txt: 9 claves; sintaxis, tokens ordenados, string.format y paridad JSON/TXT OK
+Tooltip_EN.txt: 6 claves; sintaxis, tokens ordenados, string.format y paridad JSON/TXT OK
+UI_EN.txt: 1 claves; sintaxis, tokens ordenados, string.format y paridad JSON/TXT OK
+TOTAL: 156 claves; 0 faltantes; 0 adicionales; 0 cambios de logica.

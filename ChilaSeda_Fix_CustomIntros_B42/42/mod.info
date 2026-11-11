@@ -1,0 +1,12 @@
+name=ChilaSeda Fix - PZ Custom Intros (B42)
+id=ChilaSeda_Fix_CustomIntros_B42
+authors=ChilaSeda
+description=Compatibility bridge for PZ Custom Intros on B42.22.2: replaces its incompatible Core.gameMode String descriptor with the current GameMode API while preserving the original loading intro flow.
+require=ZombieBuddy,PZCustomIntros
+loadModAfter=ZombieBuddy,PZCustomIntros
+versionMin=42.21
+versionMax=42.22.2
+modversion=1.0.1
+ZBVersionMin=2.3.4
+javaJarFile=media/java/client/ChilaSedaCustomIntrosFix.jar
+javaPkgName=chilaseda.customintros

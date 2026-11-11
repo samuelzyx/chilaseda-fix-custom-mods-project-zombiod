@@ -1,0 +1,19 @@
+[ChilaUWButchering] v0.1 loaded: vanilla ground classification; 16 infected types.
+infectedcockerel -> cockerel: before=equal, patched=equal
+infectedlamb -> lamb: before=equal, patched=equal
+infectedturkey -> turkeyhen: before=equal, patched=equal
+infecteddeerstag -> buck: before=DIFFERENT, patched=equal
+infectedrabbit -> rabdoe: before=equal, patched=equal
+infectedram -> ram: before=DIFFERENT, patched=equal
+infectedewe -> ewe: before=DIFFERENT, patched=equal
+infecteddeerdoe -> doe: before=DIFFERENT, patched=equal
+infectedchicken -> hen: before=equal, patched=equal
+infectedbull -> bull: before=DIFFERENT, patched=equal
+infectedraccoon -> raccoonboar: before=equal, patched=equal
+infectedpiglet -> piglet: before=equal, patched=equal
+infectedcow -> cow: before=DIFFERENT, patched=equal
+infectedcowcalf -> cowcalf: before=DIFFERENT, patched=equal
+infectedrat -> rat: before=equal, patched=equal
+infectedfarmpig -> sow: before=DIFFERENT, patched=equal
+PASS: new corpse metadata parity for all 16 variants.
+PASS: 16 species; 2520 full ground-butchering comparisons (mocked PZ engine, real supplied vanilla Lua); exclusion and exception cleanup.

@@ -1,0 +1,71 @@
+VALIDACIÓN DE v0.1 — NO CERTIFICADO EN JUEGO
+
+Compilador: Eclipse ECJ 3.38.0, target Java 17; anotación de ZombieBuddy como
+stub solo para compilar. El stub NO se incluye en ChilaPerformance.jar.
+El JAR de la suite expone chilaseda.PerformanceMain en la raíz exacta
+chilaseda requerida por ZombieBuddy.
+
+1. Ejecución real de Java: PASS, dos procesos JVM independientes.
+2. Buffer: PASS, 738 muestras por evento, 1476 persistidas entre las dos sesiones.
+3. SELFTEST dispara y escribe: PASS en ambas sesiones, con lectura byte a byte.
+4. Valores: PASS en reloj monotónico, heap, CPU/GC disponibles de la JVM. Los
+   datos del personaje NO son reales en estas pruebas: UNAVAILABLE, no inventados.
+5. Ruta efectiva documentada e impresa: PASS en harness. Resolución PZ getCacheDir
+   comprobada en el JAR local, pendiente ejecutar mediante ZombieBuddy.
+6. Reinicio: PASS para cierre y nueva JVM con append y UUID distinto. PENDIENTE
+   reinicio de Project Zomboid; NO se equiparan ambas pruebas.
+7. Throttling: implementado 15s de cooldown, máximo 4 tareas pendientes, eventos
+   de hasta 8192 muestras, marcas limitadas a 64 entre ticks, rotación de log.
+   Pruebas Lua comprueban límite de 128 zombis por sondeo y llamadas observadas.
+8. Overhead: MEDIDO SOLO en JVM local, excluye Lua, puente ZombieBuddy, driver,
+   GPU y carga del juego. No permite garantizar ausencia de stutters en juego.
+
+Medidas del recorder Java (dos ejecuciones, 929 llamadas cada una):
+             P50           P99          máximo
+Proceso 1    0.018097 ms   0.123141 ms   5.523142 ms
+Proceso 2    0.019939 ms   0.176941 ms   4.234913 ms
+Son costes de Main.tick(), incluyendo la primera llamada. La inicialización estática de la clase,
+previa a Main.tick(), tampoco está incluida. A 60 ticks/s,
+la mediana equivale aproximadamente a 1.1–1.2 ms de CPU por segundo; esto NO
+incluye el trabajo asíncrono de serializar/escribir ni el sondeo Lua y eventos.
+No es una promesa de coste dentro de PZ ni una medida de FPS del juego.
+
+Evidencia de SELFTEST (copias exactas en tests y evidence):
+[ChilaPerf][SELFTEST] PASS session=c2cd4bfe-de33-4840-995b-eb10c5aa66b3 event=SPIKE-0001 verified_bytes=316480 samples=738 capture=buffered_runtime_samples trigger=artificial persistence=readback_equal
+[ChilaPerf][SELFTEST] PASS session=66e23f48-e4e6-4444-87cb-afcd5ddc65be event=SPIKE-0001 verified_bytes=316528 samples=738 capture=buffered_runtime_samples trigger=artificial persistence=readback_equal
+
+Revisión de API contra upload/projectzomboid.jar (hash en evidence/SHA256.txt):
+- LuaEventManager registra OnTick, OnRenderTick, OnAIStateChange y LoadChunk.
+- StateMachine.changeState emite OnAIStateChange(owner,current,previous).
+- IsoGameCharacter.getCurrentStateName e IsoZombie.isProne/isCrawling existen.
+- IsoZombie.toString incluye StateFlags y cambia con el estado: NO se utiliza
+  como identificador del zombi. Se usa getID, referido por el propio motor.
+- ZomboidFileSystem.instance es público; getCacheDir() retorna la ruta.
+- getCacheDir NO se asumió como función global Lua: la consulta se hace en Java.
+
+Pruebas Lua con mocks: activación Java tardía, captura del jugador, transición
+sondeada, evento real simulado Prone -> Crawler, LoadChunk, ejecución del hook
+de render, límite de escaneo, error explícito y continuación, guard de recarga.
+No prueban la exposición real de todas las funciones en tu instalación.
+
+Para dar por terminado este diagnóstico faltan los pasos A–D de LEEME.txt en
+Project Zomboid. El PASS automático incluido permite comprobar captura y archivo
+sin esperar al bug ni editar código. Entrega como candidato de validación.
+
+Prueba adicional real de umbral (harness independiente, NO juego): se bloqueó
+el hilo de prueba 270ms después de 8.5s de muestreo. El recorder detectó el gap
+sin usar selftest(), guardó synthetic=false severity=CRITICAL_250, conservó la
+marca HARNESS_CONTROLLED_STALL y el contador de LoadChunk simulado=1.
+Archivo completo incluido en evidence/ChilaPerformance_CONTROLLED_STALL.log.
+
+2026-10-27 - Correccion Lua v0.1.1:
+- La consola real mostro 59 excepciones de getName en objetos Java de estados.
+  OnAIStateChange ahora obtiene las etiquetas mediante tostring y elimina el
+  sufijo @hexadecimal, sin indexar los estados ni consultar getName.
+- tests/test_lua.py resuelve el archivo Lua desde su propia ubicacion. PASS
+  con Lupa 2.8: los cuatro estados de la consola se simulan con objetos que
+  fallan si se intenta consultar un campo. Cero consultas; etiquetas correctas;
+  estados nil conservan UNAVAILABLE. Pasaron tambien las comprobaciones previas.
+- Es una prueba con mocks, no una ejecucion dentro de PZ. Falta reiniciar el
+  juego y comprobar LUA_LOADED v0.1.1 y ausencia de nuevos errores getName
+  durante cambios de estado de zombies cercanos.

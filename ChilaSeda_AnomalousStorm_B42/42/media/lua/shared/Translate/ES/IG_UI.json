@@ -1,0 +1,8 @@
+{
+    "IGUI_AnomalousStormOptions":  "Tormenta anomala",
+    "IGUI_AnomalousStormZombieSlow":  "Velocidad de zombis expuestos (%)",
+    "IGUI_AnomalousStormZombieSlowTooltip":  "Porcentaje de velocidad normal desde que inicia la tormenta electrica hasta que termina la lluvia. 10 por defecto.",
+    "IGUI_AnomalousStormZombieDamage":  "Dano por exposicion cada 10 minutos",
+    "IGUI_AnomalousStormZombieDamageTooltip":  "Puntos de salud en centesimas para zombis y animales expuestos. 10 equivale a 0.10 cada 10 minutos; 0 desactiva el dano gradual. El punto de exposicion letal sigue activo.",
+    "IGUI_AnomalousStormMassDeath":  "La lluvia ha matado a todos los zombis y animales expuestos en la zona."
+}

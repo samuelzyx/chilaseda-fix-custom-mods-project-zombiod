@@ -1,0 +1,7 @@
+﻿name=Logros recientes de Lugli
+id=ChilaSeda_LugliAchievements_Recent_B42
+author=ChilaSeda
+description=Muestra los seis logros desbloqueados más recientemente junto a la ventana F7 de Lugli Achievements.
+loadModAfter=Lugli_Achievements
+versionMin=42.20
+modversion=1.0.1

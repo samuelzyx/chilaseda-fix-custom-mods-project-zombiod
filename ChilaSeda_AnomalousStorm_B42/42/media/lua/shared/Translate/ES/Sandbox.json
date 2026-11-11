@@ -1,0 +1,22 @@
+{
+    "Sandbox_AnomalousStormDaysMin":  "Tormenta anomala: frecuencia minima",
+    "Sandbox_AnomalousStormDaysMin_tooltip":  "Dias minimos entre emisiones, incluido el limite. El minimo original es 3 dias.",
+    "Sandbox_AnomalousStormDaysMax":  "Tormenta anomala: frecuencia maxima",
+    "Sandbox_AnomalousStormDaysMax_tooltip":  "Dias maximos entre emisiones, incluido el limite. El codigo original produce de 3 a 6 dias por defecto.",
+    "Sandbox_AnomalousStormLength":  "Tormenta anomala: duracion",
+    "Sandbox_AnomalousStormLength_tooltip":  "Duracion de la fase fuerte en horas. 1 hora por defecto, igual que en el mod original.",
+    "Sandbox_AnomalousStormWarningMinutes":  "Tormenta anomala: aviso rojo opcional (minutos)",
+    "Sandbox_AnomalousStormWarningMinutes_tooltip":  "Fase roja sin lluvia antes de la tormenta. 0 minutos por defecto, como en el original; un valor mayor agrega una prealerta personalizada.",
+    "Sandbox_AnomalousStormThunderDelayMinutes":  "Tormenta anomala: demora de los truenos (minutos)",
+    "Sandbox_AnomalousStormThunderDelayMinutes_tooltip":  "Tiempo desde el inicio de STAGE_STORM hasta que comienzan los truenos y el dano por exposicion. 60 por defecto, igual que el mod original.",
+    "Sandbox_AnomalousStormCalmRainMinutes":  "Tormenta anomala: lluvia tranquila tras los truenos (minutos)",
+    "Sandbox_AnomalousStormCalmRainMinutes_tooltip":  "Tiempo que los zombis expuestos siguen ralentizados al terminar la fase peligrosa. 60 por defecto, para conservar el tiempo total original.",
+    "Sandbox_AnomalousStormRedFadeMinutes":  "Tormenta anomala: desvanecimiento del cielo rojo (minutos)",
+    "Sandbox_AnomalousStormRedFadeMinutes_tooltip":  "Tiempo que la mascara roja fullscreen permanece despues de la lluvia tranquila. 60 minutos por defecto; el efecto sigue hasta terminar el ciclo.",
+    "Sandbox_AnomalousStormZombieDamagePerTenMinutes":  "Tormenta anomala: dano por exposicion cada 10 minutos",
+    "Sandbox_AnomalousStormZombieDamagePerTenMinutes_tooltip":  "Puntos de salud en centesimas cada 10 minutos para zombis y animales expuestos. 10 equivale a 0.10 de salud; 0 desactiva el dano gradual. El punto de exposicion letal sigue activo.",
+    "Sandbox_AnomalousStormZombieSlowPercent":  "Tormenta anomala: velocidad de zombis expuestos (%)",
+    "Sandbox_AnomalousStormZombieSlowPercent_tooltip":  "Porcentaje de velocidad normal tras comenzar la tormenta electrica; la ralentizacion dura hasta que termina la lluvia. 10 % por defecto, muy lentos pero aun se mueven.",
+    "Sandbox_AnomalousStormLethalExposurePercent":  "Tormenta anomala: punto de exposicion letal (%)",
+    "Sandbox_AnomalousStormLethalExposurePercent_tooltip":  "Los zombis, animales y animales zombis expuestos mueren al llegar a este porcentaje de la fase de lluvia electrica. 75 % por defecto."
+}

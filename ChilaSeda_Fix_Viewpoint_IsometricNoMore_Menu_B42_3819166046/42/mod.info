@@ -1,0 +1,8 @@
+name=ChilaSeda Fix - Viewpoint and Isometric No More Menu Spanish (B42)
+id=ChilaSeda_Fix_Viewpoint_IsometricNoMore_Menu_B42_3819166046
+authors=ChilaSeda
+description=Traduce acciones 3D y prioriza «Juntar cristales rotos» sobre opciones duplicadas de recoger.
+require=Viewpoint,ViewpointUI,isometricnomore
+loadModAfter=Viewpoint,ViewpointUI,isometricnomore,NeatUI_ContextMenus,ChilaSeda_Fix_Viewpoint_BrokenGlassContainer_B42
+versionMin=42.20
+modversion=1.0.2

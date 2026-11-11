@@ -1,0 +1,13 @@
+ChilaSeda - Retro Dashboard Charge Indicator (B42)
+
+Muestra el porcentaje de carga actual centrado justo encima del icono original de
+batería de RetroDashboard. El aviso original del mod conserva su textura y su
+comportamiento; el porcentaje cambia de rojo (0–20%), a amarillo (21–50%) y
+verde (51–100%). La carga se lee del acumulador, con getBatteryCharge() como
+respaldo. No sustituye ni colorea el icono original.
+
+El mod original de Workshop no se modifica. El parche carga después de
+RetroDashboard.
+
+Activación preparada al final del mods.txt de la partida Sandbox actual de Jill.
+Requiere reiniciar el juego.

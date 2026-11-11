@@ -1,0 +1,29 @@
+VALIDACION DEL PAQUETE SEPARADO, CONSERVADA COMO ANTECEDENTE. No representa validación de la integración actual.
+
+2026-10-27 - Traducción para Wilderness QoL 0.8.11
+
+Fuente instalada: Workshop 3779759338, mods/ForageIdentification/42.20/.
+El mod original tiene id=Wilderness QoL y carece de traducción ES instalada.
+
+Comparación de los cinco JSON ingleses con los cinco JSON del parche:
+ContextMenu.json: PASS, 10/10 claves.
+IG_UI.json: PASS, 32/32 claves.
+Sandbox.json: PASS, 45/45 claves.
+Tooltip.json: PASS, 5/5 claves.
+UI.json: PASS, 33/33 claves.
+TOTAL: 125/125 claves, sin faltantes, adicionales, repetidas ni vacías.
+
+Los JSON se analizaron correctamente. Se compararon por cada clave el orden y
+la cantidad de los argumentos %1, %2 y %3, los porcentajes %% y las etiquetas
+<LINE>. Coinciden con el original.
+Revisión terminológica contra el español del juego base: Rebuscar, Investigar
+zona, Tablón con muescas y Ramitas. Wilderness se traduce como Supervivencia
+silvestre; Wilderness QoL y Auto Foraging se conservan como nombres de mods.
+
+La dependencia es Wilderness QoL. El orden declarado carga el parche después
+del original y de los proveedores de traducciones conocidos en este workspace.
+No incluye scripts Lua ejecutables, JAR ni reglas de jugabilidad.
+
+PENDIENTE EN JUEGO: activar ChilaSeda_WildernessQoL_ES_B42, reiniciar PZ con idioma
+Español y revisar avisos, identificación, Investigar zona y opciones del mod.
+Los perfiles y las listas de mods de las partidas no se modificaron.

@@ -1,0 +1,5 @@
+[ChilaPerf] JAVA_EXECUTING log=/workspace/scratch/b02971936a3e/perf_build/validated_runtime/ChilaPerformance.log tick-gap observer; frame/render timings UNAVAILABLE
+[ChilaPerf][SELFTEST] PASS session=c2cd4bfe-de33-4840-995b-eb10c5aa66b3 event=SPIKE-0001 verified_bytes=316480 samples=738 capture=buffered_runtime_samples trigger=artificial persistence=readback_equal
+[ChilaPerf][SPIKE-0001] SAVED synthetic=true peak_callback_gap_ms=16.244217 samples=738 log=/workspace/scratch/b02971936a3e/perf_build/validated_runtime/ChilaPerformance.log
+MEASURED standalone_JVM tick_calls=929 p50_us=18.097 p99_us=123.141 max_us=5523.142
+samples=929 buffered=495 writer_queue=0 dropped=0 previous_java_ns=16153 worst_java_ns=5522050 log=/workspace/scratch/b02971936a3e/perf_build/validated_runtime/ChilaPerformance.log selftest=[ChilaPerf][SELFTEST] PASS session=c2cd4bfe-de33-4840-995b-eb10c5aa66b3 event=SPIKE-0001 verified_bytes=316480 samples=738 capture=buffered_runtime_samples trigger=artificial persistence=readback_equal

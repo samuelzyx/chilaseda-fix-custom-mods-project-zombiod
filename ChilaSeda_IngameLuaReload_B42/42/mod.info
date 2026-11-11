@@ -1,0 +1,7 @@
+name=ChilaSeda - Recargar Lua dentro de partida (B42)
+id=ChilaSeda_IngameLuaReload_B42
+authors=ChilaSeda
+description=Abre una confirmacion dentro de una partida individual y reinicia Lua para volver a cargar el guardado actual. Ctrl+Shift+F10.
+versionMin=42.21
+versionMax=42.22
+modversion=0.1.0

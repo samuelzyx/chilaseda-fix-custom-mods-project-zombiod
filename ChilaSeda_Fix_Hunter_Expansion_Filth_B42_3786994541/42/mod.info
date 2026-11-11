@@ -1,0 +1,8 @@
+﻿name=ChilaSeda Fix - Hunter Expansion - Filth (B42)
+id=ChilaSeda_Fix_Hunter_Expansion_Filth_B42_3786994541
+authors=ChilaSeda
+description=Corrige la lectura de suciedad y sangre de Hunter Expansion, traduce la interfaz y escapa el porcentaje del consejo de habilidad para evitar errores de formato. Conserva la lógica original de juego.
+require=HunterExpansion
+loadModAfter=HunterExpansion
+versionMin=42.20
+modversion=1.1.1

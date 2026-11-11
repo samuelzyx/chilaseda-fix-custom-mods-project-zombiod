@@ -1,0 +1,9 @@
+ChilaSeda - Any Wall Posters 3D Weight Fix (B42) 1.1.0
+
+Any Wall Posters 3D (DGVPosters) defines 99 posters at 0.2 kg as Furniture.
+This component sets loaded poster definitions and existing accessible items
+to 0.05 kg.
+
+It is included in ChilaSeda's Weight Fixes package.
+DGVPosters and True Weight are optional; absent poster definitions and items
+are skipped. Workshop files are unchanged.

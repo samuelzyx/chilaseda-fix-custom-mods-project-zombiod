@@ -1,0 +1,9 @@
+name=ChilaSeda Fix - VisualSounds Undead Wildlife Colors (B42)
+id=ChilaSeda_Fix_VisualSounds_UndeadWildlife_Colors_B42
+authors=ChilaSeda
+description=Adds close-range animal cues; normal wildlife uses teal/amber distance colors and infected/undead wildlife uses cyan/magenta.
+require=VisualSoundsKA,VisualSoundsKAViewpoint,UndeadWildlife
+loadModAfter=VisualSoundsKA,VisualSoundsKAViewpoint,UndeadWildlife
+versionMin=42.21
+versionMax=42.22
+modversion=0.6.0

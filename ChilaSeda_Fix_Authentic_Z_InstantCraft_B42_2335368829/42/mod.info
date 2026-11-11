@@ -1,0 +1,8 @@
+name=ChilaSeda - Fix Authentic Z InstantCraft (B42)
+id=ChilaSeda_Fix_Authentic_Z_InstantCraft_B42_2335368829
+authors=ChilaSeda
+description=Uses the Build 42 timed-action queue API in Authentic Z's InstantCraft callback.
+require=Authentic Z - Current,Lugli_Achievements
+loadModAfter=Authentic Z - Current,Lugli_Achievements
+versionMin=42.21
+modversion=0.1.0

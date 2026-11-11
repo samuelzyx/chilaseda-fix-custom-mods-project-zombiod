@@ -1,0 +1,15 @@
+Audit Suite Java bridge packaging
+
+ZombieBuddy 2.x exposes @LuaClass only when the annotated class is in the exact
+package named by javaPkgName. The suite declares javaPkgName=chilaseda, so the
+annotated classes must be chilaseda.ErrorLogsMain, chilaseda.PerformanceMain,
+and chilaseda.WeightLogMain. Putting them in chilaseda.errorlogs, chilaseda.perf,
+or chilaseda.weightmonitor silently hides all three Lua APIs.
+
+The Java sources under this directory compile to the exact root package. Build
+them against the installed ZombieBuddy API with Java 17, then merge the six
+generated class files into 42/media/java/client/ChilaSedaAuditSuite.jar. Keep
+the single manifest and do not bundle ZombieBuddy, Project Zomboid classes, or
+signatures from component JARs. RepackageAuditSuiteJava.ps1 is the migration
+tool for the already compiled pre-2.1.1 artifact; it relocates its six class
+files without recompilation and verifies that the expected count was present.

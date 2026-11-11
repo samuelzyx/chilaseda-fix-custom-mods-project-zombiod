@@ -1,0 +1,6 @@
+name=ChilaSeda Fix - Better Flashlights for Project Viewpoint (B42)
+id=ChilaSeda_Fix_BetterFlashlights_Lighting_B42
+loadModAfter=BetterFlashlightsFixed,ProjectViewpointQOLLegacy0.1.6
+modversion=1.0.2
+versionMin=42.20
+description=Fixes Better Flashlights lighting with Project Viewpoint and reuses vanilla B42 hand-torch and battery icons for its contextual actions.

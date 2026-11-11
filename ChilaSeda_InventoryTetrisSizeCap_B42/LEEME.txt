@@ -1,0 +1,29 @@
+ChilaSeda - Inventory Tetris Size Cap (B42) 1.3.0
+
+Limita los objetos que no son contenedores a estas cuadrículas: 1x1, 1x2 o 2x1.
+Las mochilas siguen excluidas de ese límite y nunca se reducen. Si la cuadrícula externa guardada o calculada de una mochila tiene menos celdas que su inventario interno en Inventory Tetris, se amplía solo lo necesario para que la validación TARDIS no la bloquee al moverla o colocarla.
+Todos los objetos que Inventory Tetris calcula o consulta, de cualquier módulo y categoría, reciben `maxStackSize=100`, incluidos objetos que antes eran únicos, contenedores, fluidos y objetos de mods. El límite se aplica a los datos existentes, calculados y modificados durante la partida. Los demás contenedores conservan su tamaño de rejilla; los objetos que no son contenedores conservan el límite de 1x1, 1x2 o 2x1.
+
+Se integra después de Inventory Tetris y aplica el límite a datos calculados,
+paquetes de datos y ajustes editados durante el juego. La corrección de mochilas se
+aplica al consultar sus datos efectivos y no cambia el archivo global
+InventoryTetris_ItemData.txt ni los originales de Workshop.
+
+Activación preparada para la partida Sandbox actual de Jill Valentine.
+Requiere reiniciar el juego para que se cargue. Para partidas futuras, activa este mod en el gestor de mods antes de crear el mundo.
+
+Version 1.2.4: conserva las rejillas ampliadas de mochilas y, durante las validaciones de insercion, transferencia y arrastre, evita que Inventory Tetris omita el limite de peso de cualquier mochila.
+
+Version 1.2.5: protege con pcall la consulta de `getDropContainer` durante el arrastre. Si un override de otro mod falla, Size Cap omite el chequeo propio de capacidad para ese frame y deja que continúe la actualización original del arrastre.
+
+Version 1.2.6: inicializa `playerNum` desde `inventoryPane.player` antes de consultar `getDropContainer`. Vanilla hace esta asignacion al inicio de `update`; el sondeo anticipado de Size Cap ocurria antes y Nomad Grid RV llamaba `getSpecificPlayer(nil)`, registrando `__add not defined for operands in getPlayerData`.
+
+Version 1.2.7: cuando una transferencia hacia una mochila se rechaza porque el peso excederia su capacidad efectiva, muestra un aviso Halo una vez cada dos segundos por objeto y destino. No anuncia rechazo por otras causas ni altera la validacion.
+
+Version 1.2.9: la comparacion del Workshop mostro que los limites de peso de la cuadricula solo se validan en `ItemContainerGrid:validateCapacityRestrictions`, mientras el menu de arrastre tiene una rama propia cuando `EnforceCarryWeight` esta desactivado. Se agrego una comprobacion final en `ISInventoryTransferAction.isValid` para rechazar cualquier objeto que haga exceder la capacidad efectiva de una mochila, aunque la accion de arrastre no haya marcado `enforceTetrisRules`. Se mantiene el aviso Halo por exceso de peso.
+
+Version 1.3.0: la revision de Workshop y el codigo vanilla confirman que `ISInventoryTransferAction:perform()` vuelve a llamar `isValid` por cada objeto en cola. Se agrego un control final en `ISInventoryTransferAction.transferItem`, justo antes del movimiento, para volver a calcular el peso efectivo de la mochila y omitir cualquier objeto que lo exceda; se conserva el aviso Halo. La causa de que la validacion previa no detuviera el caso reportado aun requiere confirmacion en Jill con esta version.
+
+Version 1.3.1: agrega el ultimo control de capacidad en ISTransferAction.transferItem, antes de retirar el objeto del contenedor de origen. Cubre arrastres entre ventanas de Inventory Tetris que alcancen la mutacion vanilla aunque se omitan las validaciones de cuadricula o de la accion; revisa el peso despues de cada objeto anterior de la cola y muestra el aviso Halo.
+
+El aviso de mochila llena usa "esta" sin tilde porque Jill mostraba la vocal acentuada como "?".

@@ -1,0 +1,14 @@
+ChilaSeda - Weight Monitor (B42) 1.9.8
+
+Adds audited targets for Base.Machete (0.71 kg),
+Base.Machete_Crude (0.71 kg), and Base.MacheteBlade_NoTang (0.48 kg).
+These estimates use the UNIDO machete fabrication reference and are
+synchronized with ChilaSeda Weight Fixes 2.1.1.
+
+The Weight Fixes patch now refreshes both player inventory pages before
+enumerating nearby containers, matching the monitor's scan path. This lets the
+weight patch reach nearby containers that the monitor reports as `cercano[n]`.
+
+The 2026-11-08 session still recorded Base.Acorn at 0.069 kg against a dynamic
+0.0057 kg target. The source trace identified the missing page refresh; runtime
+confirmation is still pending.

@@ -1,0 +1,8 @@
+name=ChilaSeda - Retro Dashboard Charge Indicator (B42)
+id=ChilaSeda_RetroDashboardChargeIndicator_B42
+authors=ChilaSeda
+description=Muestra el porcentaje de carga sobre el icono original de batería de RetroDashboard, con color según el nivel.
+require=RetroDashboard
+loadModAfter=RetroDashboard
+versionMin=42.0
+modversion=1.0.0

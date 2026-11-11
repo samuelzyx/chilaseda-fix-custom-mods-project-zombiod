@@ -1,0 +1,15 @@
+{
+    "UI_ChilaSeda_DeleteItem_OptionOne":  "Delete item permanently...",
+    "UI_ChilaSeda_DeleteItem_OptionMany":  "Delete selected items permanently (%1)...",
+    "UI_ChilaSeda_DeleteItem_ConfirmOne":  "Permanently delete %1? This cannot be undone.",
+    "UI_ChilaSeda_DeleteItem_ConfirmMany":  "Permanently delete %1 selected items? This cannot be undone.",
+    "UI_ChilaSeda_DeleteFood_OptionRotten":  "Delete rotten food (%1)",
+    "UI_ChilaSeda_DeleteFood_OptionStale":  "Delete stale food (%1)",
+    "UI_ChilaSeda_DeleteFood_OptionFresh":  "Delete fresh food (%1)",
+    "UI_ChilaSeda_DeleteFood_StateRotten":  "rotten",
+    "UI_ChilaSeda_DeleteFood_StateStale":  "stale",
+    "UI_ChilaSeda_DeleteFood_StateFresh":  "fresh",
+    "UI_ChilaSeda_DeleteFood_ConfirmOne":  "Permanently delete %1 from the %2 group? This cannot be undone.",
+    "UI_ChilaSeda_DeleteFood_ConfirmMany":  "Permanently delete %1 food items from the %2 group in this container? This cannot be undone.",
+    "UI_ChilaSeda_DeleteFood_Notification": "Removed %1 x %2"
+}

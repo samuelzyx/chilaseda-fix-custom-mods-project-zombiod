@@ -1,0 +1,7 @@
+name=ChilaSeda Fix - Project Zomboid Timed Action Speed (B42, Vanilla)
+id=ChilaSeda_Fix_Project_Zomboid_TimedActionSpeed_B42_Vanilla
+authors=ChilaSeda
+description=Restores normal speed after timed actions and clears the optional Project Viewpoint QOL speed keeper.
+loadModAfter=ProjectViewpointQOL,ViewpointUI,Viewpoint
+versionMin=42.21
+modversion=1.0.1

@@ -1,0 +1,1 @@
+PASS Lua late Java activation; player values; sampled zombie transition; four non-indexable Java state fixtures and nil states with zero method lookups; render callback execution; scan cap 128; errors remain explicit; tick continues; reload guard. Mock PZ API, not an in-game test.

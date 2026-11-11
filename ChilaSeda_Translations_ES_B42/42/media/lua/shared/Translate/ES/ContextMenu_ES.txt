@@ -1,0 +1,5 @@
+ContextMenu_ES = {
+    ContextMenu_CheckThroughWindow = "Mirar a traves de la ventana",
+    ContextMenu_PeekDoor = "Asomarse por la puerta",
+    ContextMenu_CheckBehindDoor = "Revisar detras de la puerta",
+}

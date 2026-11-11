@@ -1,0 +1,8 @@
+name=ChilaSeda - Inventory Tetris Size Cap (B42)
+id=ChilaSeda_InventoryTetrisSizeCap_B42
+authors=ChilaSeda
+description=Normaliza stacks, limita rejillas y valida el peso de mochilas en la cuadrícula y las acciones de traslado. Avisa al rechazar por peso, prepara playerNum y usa texto ASCII en el Halo de mochila llena.
+require=INVENTORY_TETRIS
+loadModAfter=INVENTORY_TETRIS
+versionMin=42.20
+modversion=1.3.1

@@ -1,0 +1,13 @@
+module ChilaSeda_PersonalReadingArchive
+{
+    item PersonalReadingArchive
+    {
+        DisplayCategory = Literature,
+        ItemType = base:literature,
+        Weight = 0.1,
+        Icon = ChilaSeda_Album_InventoryIcon,
+        StaticModel = Magazine,
+        WorldStaticModel = MagazineGround,
+        Tags = base:magazine,
+    }
+}

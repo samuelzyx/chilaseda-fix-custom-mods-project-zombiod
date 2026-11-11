@@ -1,0 +1,26 @@
+﻿2026-10-27 - Hunter Expansion Filth Fix 1.0.0
+
+Referencia real: Hunter Expansion 0.6.3, Workshop 3786994541.
+HE_Detect.lua SHA256:
+acedb4ab696b5c1ab559b9dc2cbf56751f9c9a49e925e7b72e4f965dc83e56ee
+
+Prueba ejecutada: tests/verify.py, Python 3.14 y Lupa 2.8.
+Carga el HE_Detect.lua original y simula las API de jugador/equipo del juego.
+
+PASS: el original genera 3 errores al consultar métodos inexistentes en una
+      mezcla de prendas, una bolsa sin lector de suciedad y un objeto genérico.
+PASS: la misma mezcla produce 0 errores con el parche y conserva el resultado.
+PASS: objetos sin lectores, valores no numéricos y campos no invocables.
+PASS: jugador nulo, inventario vacío y lista de equipo no disponible.
+PASS: máximo por prenda, límite de 100 y BLOOD_WEIGHT configurable.
+PASS: distancias originales de 14 de pie, 9.45 agachado con Sneaking 5 y 19
+      con suciedad >=50, conservando distanceFor, apply y SPECIES originales.
+PASS: 1000 comprobaciones repetidas sin llamadas fallidas.
+PASS: protección de carga repetida; no duplica funciones ni eventos del original.
+PASS: Lua UTF-8 sin BOM y hash del archivo de Workshop intacto tras la prueba.
+
+Alcance: prueba con objetos simulados y el código original instalado.
+No se ha ejecutado el parche dentro de Project Zomboid.
+Pendiente: activar ChilaSeda_Fix_Hunter_Expansion_Filth_B42_3786994541 después de HunterExpansion,
+reiniciar el juego, comprobar Loaded v1.0.0 y ausencia de nuevas excepciones
+HE_Detect.lua:105 con el equipo que disparaba el fallo.

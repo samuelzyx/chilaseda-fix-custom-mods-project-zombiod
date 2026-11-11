@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animNode>
+	<m_Name>prd_ctx_RunBehind_slow3</m_Name>
+	<m_ConditionPriority>6</m_ConditionPriority>
+	<m_AnimName>PRDeath_RunBehind_5</m_AnimName>
+	<m_AlternateAnims>PRDeath_RunBehind_6</m_AlternateAnims>
+	<m_SpeedScale>1.00</m_SpeedScale>
+	<m_SpeedScaleRandomMultiplierMin>0.94</m_SpeedScaleRandomMultiplierMin>
+	<m_SpeedScaleRandomMultiplierMax>1.06</m_SpeedScaleRandomMultiplierMax>
+	<m_DeferredBoneName>Bip01</m_DeferredBoneName>
+	<m_deferredBoneAxis>Z</m_deferredBoneAxis>
+	<m_Looped>false</m_Looped>
+	<m_BlendTime>0.20</m_BlendTime>
+	<m_SyncTrackingEnabled>false</m_SyncTrackingEnabled>
+	<m_Events x_name="b6fb67c5-d4bf-4a83-91af-7492890c13f8">
+		<m_EventName>FallOnFront</m_EventName>
+		<m_Time>Start</m_Time>
+		<m_ParameterValue>false</m_ParameterValue>
+	</m_Events>
+	<m_Events x_name="bbadae09-b5f0-40b9-ae96-35624d3f9a4b">
+		<m_EventName>PlayDeathSound</m_EventName>
+		<m_Time>Start</m_Time>
+		<m_ParameterValue></m_ParameterValue>
+	</m_Events>
+	<m_Events x_name="6b3f2e1a-0d4c-4e57-9a51-7c0a3f1d2e0c">
+		<m_EventName>PlaySound</m_EventName>
+		<m_TimePc>0.185</m_TimePc>
+		<m_ParameterValue>BodyHitGround</m_ParameterValue>
+	</m_Events>
+	<m_Conditions x_name="6b3f2e1a-0d4c-4e57-9a51-7c0a3f1d2e03">
+		<m_Name>zombieWalkType</m_Name>
+		<m_Type>STRING</m_Type>
+		<m_Value>slow3</m_Value>
+	</m_Conditions>
+	<m_Events x_name="6b3f2e1a-0d4c-4e57-9a51-7c0a3f1d2e01">
+		<m_EventName>FallOnFront</m_EventName>
+		<m_TimePc>0.12</m_TimePc>
+		<m_ParameterValue>true</m_ParameterValue>
+	</m_Events>
+	<m_Events x_name="6b3f2e1a-0d4c-4e57-9a51-7c0a3f1d2e02">
+		<m_EventName>SetVariable</m_EventName>
+		<m_Time>Start</m_Time>
+		<m_ParameterValue>prdDeath=PRDeath_RunBehind_5</m_ParameterValue>
+	</m_Events>
+	<m_Events x_name="6b3f2e1a-0d4c-4e57-9a51-7c0a3f1d2e08">
+		<m_EventName>SetVariable</m_EventName>
+		<m_TimePc>0.90</m_TimePc>
+		<m_ParameterValue>prdDone=true</m_ParameterValue>
+	</m_Events>
+	<m_Conditions x_name="6b3f2e1a-0d4c-4e57-9a51-7c0a3f1d2e0d">
+		<m_Name>prdRun</m_Name>
+		<m_Type>STRING</m_Type>
+		<m_Value>true</m_Value>
+	</m_Conditions>
+	<m_Conditions x_name="6b3f2e1a-0d4c-4e57-9a51-7c0a3f1d2e05">
+		<m_Name>FromBehind</m_Name>
+		<m_Type>BOOL</m_Type>
+		<m_Value>true</m_Value>
+	</m_Conditions>
+	<m_Conditions x_name="6b3f2e1a-0d4c-4e57-9a51-7c0a3f1d2e0b">
+		<m_Name>bDead</m_Name>
+		<m_Type>BOOL</m_Type>
+		<m_Value>true</m_Value>
+	</m_Conditions>
+</animNode>

@@ -1,0 +1,55 @@
+ChilaSeda - Hunter Expansion Filth Fix y traducción ES (B42), versión 1.1.1
+
+CAMBIOS DE LA VERSIÓN 1.1.1
+Escapa el signo de porcentaje del consejo de cuidado animal como `%%` para que
+Java lo muestre como `%` sin intentar interpretar `p` como una conversión.
+Esto elimina la excepción de formato asociada a IGUI_HE_ES_AdviceSkill.
+
+CAMBIOS DE LA VERSIÓN 1.1.0
+Traduce al español las opciones, avisos y textos del comedero, además de las
+páginas de clima, fauna y mapa del diario. Hunter Expansion contiene estas
+cadenas como texto literal en inglés y no incluye traducción ES. La capa cliente
+local adapta únicamente los textos visibles; no cambia cálculos, acciones,
+lecturas, probabilidades ni estado del comedero.
+
+La interfaz del diario se traduce al dibujarse. Las etiquetas del comedero se
+adaptan en el menú contextual y en su ventana. La capa depende del original,
+que ya se carga antes según mod.info.
+
+ID: ChilaSeda_Fix_Hunter_Expansion_Filth_B42_3786994541
+Original requerido: HunterExpansion 0.6.3, Workshop 3786994541.
+
+INSTALACIÓN
+La carpeta ya está preparada en los mods locales.
+Activa este complemento junto con Hunter Expansion en la lista de mods de la
+partida y cárgalo después del original. mod.info declara dependencia y orden.
+Reinicia Project Zomboid por completo para cargar la corrección.
+
+CORRECCIÓN
+Errors.txt registra Tried to call nil en HE_Detect.lua:105 al leer suciedad de
+un objeto equipado que no expone getDirtiness. El pcall original devuelve 0,
+pero Kahlua registra igualmente la excepción. El objeto concreto no se puede
+identificar a partir de ese reporte.
+
+El complemento carga HE_Detect y sustituye únicamente HEDetect.filthOf.
+Comprueba que cada método sea una función antes de invocarlo. Si no existe o
+no devuelve un número, aporta cero para esa lectura, como el original.
+Conserva la suma suciedad + sangre * HEDetect.BLOOD_WEIGHT, toma el máximo de
+las prendas y lo limita a 100. Las distancias y demás ajustes siguen en manos
+de Hunter Expansion. Se ejecuta como Lua compartido.
+
+COMPROBACIÓN EN JUEGO
+Busca [ChilaSeda Hunter Filth Fix] Loaded v1.0.0 y [ChilaSeda Hunter Spanish UI]
+Loaded v1.1.0 en console.txt al cargar.
+Conserva el equipo con el que aparecían los errores y acércate a animales.
+Comprueba que no aumenten las excepciones de HE_Detect.lua:105.
+Las entradas antiguas de Errors.txt no desaparecen por instalar el parche.
+
+El parche se preparó contra Hunter Expansion 0.6.3 y debe revisarse si el autor
+cambia su cálculo de suciedad. Para retirarlo, desactívalo y reinicia el juego.
+La comprobación con objetos simulados no sustituye la prueba en la partida.
+
+PRUEBA LOCAL
+Requiere Python con Lupa. Desde la carpeta del parche:
+python tests/verify.py "RUTA_AL_HE_Detect.lua_ORIGINAL"
+El script utiliza el HE_Detect.lua instalado como referencia y no lo modifica.

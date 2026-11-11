@@ -1,0 +1,8 @@
+{
+    "IGUI_AnomalousStormOptions":  "Anomalous Storm",
+    "IGUI_AnomalousStormZombieSlow":  "Exposed zombie speed (%)",
+    "IGUI_AnomalousStormZombieSlowTooltip":  "Percent of normal speed from the start of the thunderstorm until rain ends. Default: 10.",
+    "IGUI_AnomalousStormZombieDamage":  "Exposure damage per 10 minutes",
+    "IGUI_AnomalousStormZombieDamageTooltip":  "Health points in hundredths for exposed zombies and animals. 10 means 0.10 health every 10 minutes; 0 disables gradual damage. The lethal exposure point still applies.",
+    "IGUI_AnomalousStormMassDeath":  "The rain has killed all exposed zombies and animals in the area."
+}

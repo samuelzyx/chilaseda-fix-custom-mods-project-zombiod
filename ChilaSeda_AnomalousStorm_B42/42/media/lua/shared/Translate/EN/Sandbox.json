@@ -1,0 +1,22 @@
+{
+    "Sandbox_AnomalousStormDaysMin":  "Anomalous Storm: Minimum Frequency",
+    "Sandbox_AnomalousStormDaysMin_tooltip":  "Minimum days between emissions, inclusive. The original minimum is 3 days.",
+    "Sandbox_AnomalousStormDaysMax":  "Anomalous Storm: Maximum Frequency",
+    "Sandbox_AnomalousStormDaysMax_tooltip":  "Maximum days between emissions, inclusive. The original code produces 3-6 days by default.",
+    "Sandbox_AnomalousStormLength":  "Anomalous Storm: Storm Duration",
+    "Sandbox_AnomalousStormLength_tooltip":  "Duration of the strong storm phase in hours. Default 1 hour matches the original mod.",
+    "Sandbox_AnomalousStormWarningMinutes":  "Anomalous Storm: Optional Red Warning (Minutes)",
+    "Sandbox_AnomalousStormWarningMinutes_tooltip":  "A red-sky phase without rain before the storm. Default 0, matching the original; higher values add a custom warning.",
+    "Sandbox_AnomalousStormThunderDelayMinutes":  "Anomalous Storm: Thunder Delay (Minutes)",
+    "Sandbox_AnomalousStormThunderDelayMinutes_tooltip":  "Time from the start of STAGE_STORM until thunder and exposure damage begin. Default 60 matches the original mod.",
+    "Sandbox_AnomalousStormCalmRainMinutes":  "Anomalous Storm: Calm Rain after Thunder (Minutes)",
+    "Sandbox_AnomalousStormCalmRainMinutes_tooltip":  "How long exposed zombies remain slowed after the dangerous thunder phase ends. Default 60 matches the original overall timing.",
+    "Sandbox_AnomalousStormRedFadeMinutes":  "Anomalous Storm: Red Sky Fade (Minutes)",
+    "Sandbox_AnomalousStormRedFadeMinutes_tooltip":  "How long the fullscreen red mask remains after calm rain. Default 60 minutes; the effect continues until the cycle ends.",
+    "Sandbox_AnomalousStormZombieDamagePerTenMinutes":  "Anomalous Storm: Exposure damage per 10 minutes",
+    "Sandbox_AnomalousStormZombieDamagePerTenMinutes_tooltip":  "Health points in hundredths per 10 minutes for exposed zombies and animals. Default 10 means 0.10 health; 0 disables gradual damage. The lethal exposure point still applies.",
+    "Sandbox_AnomalousStormZombieSlowPercent":  "Anomalous Storm: Exposed Zombie Speed (%)",
+    "Sandbox_AnomalousStormZombieSlowPercent_tooltip":  "Exposed zombie movement speed after the thunderstorm begins; slowdown lasts until rain ends. Default 10%, very slow but still moving.",
+    "Sandbox_AnomalousStormLethalExposurePercent":  "Anomalous Storm: Lethal exposure point (%)",
+    "Sandbox_AnomalousStormLethalExposurePercent_tooltip":  "Exposed zombies, animals and zombie animals die when the electrical rain reaches this percentage of its duration. Default 75%."
+}

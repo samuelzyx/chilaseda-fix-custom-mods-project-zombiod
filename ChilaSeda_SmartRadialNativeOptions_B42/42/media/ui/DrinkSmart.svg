@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <g fill="none" stroke="#E8E8E8" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round">
+    <!-- Vaso medidor -->
+    <path d="M7 5h15l-2 23H9L7 5Z"/>
+    <!-- Nivel exacto del líquido -->
+    <path d="M8.2 18h12.3"/>
+    <!-- Marcas de medida -->
+    <path d="M18 10h3M17.5 14h3M18 22h2.5"/>
+    <!-- Gota -->
+    <path d="M13 11s-2 2.2-2 3.5a2 2 0 0 0 4 0c0-1.3-2-3.5-2-3.5Z"/>
+  </g>
+</svg>

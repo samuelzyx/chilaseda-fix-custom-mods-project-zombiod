@@ -1,0 +1,14 @@
+UI_ES = {
+    -- ChilaSeda Accessible Washing - Textos contextualizados para lavado de vendajes
+    UI_ChilaSeda_WashBandages = "Limpiar vendas",
+    UI_ChilaSeda_WashOne = "Lavar una",
+    UI_ChilaSeda_WashAll = "Lavar todas (%1)",
+    UI_ChilaSeda_WashPartial = "Lavar %1 de %2 según el agua disponible",
+    UI_ChilaSeda_WashAllRain = "Lavar todas (%1) con lluvia",
+    UI_ChilaSeda_WashNearbySource = "Limpiar vendas (fuente ambiental cercana)",
+    UI_ChilaSeda_WashAccessibleContainers = "Limpiar vendas (mochilas y contenedores accesibles)",
+    UI_ChilaSeda_UseExternalWaterSource = "Usa la fuente de agua externa o lluvia disponible",
+    UI_ChilaSeda_FillContainers = "Llenar recipientes",
+    UI_ChilaSeda_FillAll = "Llenar todos (%1)",
+    UI_ChilaSeda_FillOne = "Llenar: %1",
+}

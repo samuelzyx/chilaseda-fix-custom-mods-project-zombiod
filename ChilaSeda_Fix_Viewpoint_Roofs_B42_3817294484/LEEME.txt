@@ -1,0 +1,21 @@
+ChilaSeda Fix - Viewpoint Roofs Chunk Unload (B42), versión 0.1.0
+
+CORRECCIÓN
+Viewpoint Roofs 0.9.2 llama AddTileObject desde ViewpointRoofs_Backs.lua:add al
+procesar LoadChunk. Si el callback coincide con IsoChunk.removeFromWorld, el
+cuadrado todavía existe pero ya tiene square.chunk == null. AddTileObject activa
+pathfinding nativo y produce el NPE de SquareUpdateTask.init/getLoadID.
+
+El parche Java local usa ZombieBuddy para omitir solo AddTileObject cuando
+getChunk() devuelve null. Las inserciones en cuadrados que conservan chunk siguen
+su flujo original. Escribe un solo aviso cuando omite una inserción. El Workshop
+original no se modifica.
+
+DEPENDENCIAS Y ORDEN
+Requiere ViewpointRoofs (3817294484) y ZombieBuddy 2.3.4 o posterior. mod.info
+declara ambas dependencias y carga después de ellas.
+
+VALIDACIÓN
+La causa se atribuyó a la llamada de Viewpoint Roofs y al estado de descarga del
+chunk. Falta validar en Jill que la misma descarga ya no registre el Lua error ni
+el NPE nativo. El parche está pensado para omitir únicamente cuadrados sin chunk.

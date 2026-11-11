@@ -1,0 +1,3 @@
+ARCHIVO HISTORICO DEL PARCHE SEPARADO; la guardia de identificación se integró en ChilaSeda_Translations_ES_B42.
+
+El parche conservaba WFI.isIdentified y evitaba consultas sobre objetos que no eran InventoryItem.

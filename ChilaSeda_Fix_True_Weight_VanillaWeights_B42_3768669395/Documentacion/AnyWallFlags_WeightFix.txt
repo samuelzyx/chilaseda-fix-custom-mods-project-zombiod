@@ -1,0 +1,9 @@
+ChilaSeda - Any Wall Flags 3D Weight Fix (B42)
+
+Sets DGVFlags flag and banner definition weights to 0.15 kg. The estimate
+models a light 3x5 ft cloth flag and does not include a pole.
+
+This component is included in ChilaSeda's combined Weight Fixes
+package. DGVFlags and True Weight are optional. The script scans loaded item
+definitions, changes matching items when DGVFlags is present, and otherwise
+does nothing. Workshop files are unchanged.

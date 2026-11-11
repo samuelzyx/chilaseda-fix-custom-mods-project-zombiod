@@ -1,0 +1,6 @@
+﻿name=ChilaSeda Fix - Project Zomboid - Auto Tools (B42, Vanilla)
+id=ChilaSeda_Fix_Project_Zomboid_AutoTools_B42_Vanilla
+authors=ChilaSeda
+description=Restores previous hand items and returns automatically equipped tools, including movable dismantling tools and animal butchering knives, to their source containers.
+versionMin=42.20
+modversion=1.0.2

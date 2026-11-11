@@ -1,0 +1,296 @@
+SOLICITUDES DE PERMISO PARA TRADUCCIONES
+Parche local: ChilaSeda_Translations_ES_B42
+
+Este archivo contiene mensajes para pedir permiso a los autores. Envialos por
+separado y espera una respuesta afirmativa antes de agregar o ampliar las
+traducciones de estos mods. No se ha contactado a los autores todavia.
+
+QUE ESTAMOS PIDIENDO
+- Permiso para mantener (si corresponde) o crear una traduccion al español
+  latino en un parche separado, local y privado.
+- El parche no se subiria ni redistribuiria; los archivos originales de
+  Workshop no se modificarian.
+- Opcionalmente, permiso para enviar al autor el texto traducido, para que
+  decida si quiere integrarlo en el mod original.
+
+1. AUTO TAILORING
+Workshop ID: 3388183573
+Mod ID: AutoTailoring
+Pagina: https://steamcommunity.com/sharedfiles/filedetails/?id=3388183573
+
+Medio recomendado: deja un comentario en la pagina de Workshop para pedir
+contacto o autorizacion. La descripcion tambien dirige dudas al Discord
+oficial de Project Zomboid, canal mod_support:
+https://discord.gg/theindiestone
+Ese canal es una via para preguntar como contactar al autor; la pagina no dice
+que el autor tramite permisos directamente alli.
+
+ARCHIVOS Y ALCANCE DE LA SOLICITUD
+Carpeta instalada del mod: `J:\SteamLibrary\steamapps\workshop\content\108600\3388183573\mods\AutoTailoring`
+Fuentes (rutas completas en esta instalacion de Project Zomboid):
+- `J:\SteamLibrary\steamapps\workshop\content\108600\3388183573\mods\AutoTailoring\common\media\lua\shared\Translate\EN\ContextMenu.json`
+- `J:\SteamLibrary\steamapps\workshop\content\108600\3388183573\mods\AutoTailoring\common\media\lua\shared\Translate\EN\Moodles.json`
+- `J:\SteamLibrary\steamapps\workshop\content\108600\3388183573\mods\AutoTailoring\common\media\lua\shared\Translate\EN\Sandbox.json`
+Destinos propuestos, solo en el parche local:
+- `42/media/lua/shared/Translate/ES/ContextMenu.json`
+- `42/media/lua/shared/Translate/ES/Moodles.json`
+- `42/media/lua/shared/Translate/ES/Sandbox.json`
+Se solicita permiso para conservar las pocas cadenas ya traducidas y traducir
+el texto de esos catalogos, sin modificar los originales de Workshop.
+
+Mensaje para copiar (en ingles):
+
+Hello! I use Auto Tailoring and would like to ask your permission for a
+Spanish (Latin American) translation-only patch for personal, private use.
+Your Workshop page says the mod must not be modified by anyone else. I want to
+make sure a separate translation file is acceptable under your terms.
+
+I currently have a small local patch translating a few interface strings.
+May I keep those strings and translate text from
+`common/media/lua/shared/Translate/EN/ContextMenu.json`,
+`common/media/lua/shared/Translate/EN/Moodles.json`, and
+`common/media/lua/shared/Translate/EN/Sandbox.json` into matching ES catalogs
+inside my private local patch? I would not modify or include your original
+files, code, or assets, and would not upload or redistribute the patch. If you
+prefer, I can remove the existing translations.
+
+Would you also allow me to send you the translated text, so you can decide
+whether to include it in the original mod? I will wait for your permission
+before making further translations. Thank you!
+
+2. ANY WALL POSTERS 3D / DGVPOSTERS
+Workshop ID: 3818605173
+Mod ID: DGVPosters
+Pagina: https://steamcommunity.com/sharedfiles/filedetails/?id=3818605173
+
+Medio recomendado por el autor: Discord, indicado expresamente en la pagina.
+https://discord.gg/7Pcq8sybv
+Tambien puedes usar los comentarios de Workshop si prefieres dejar la
+solicitud alli.
+
+ARCHIVOS Y ALCANCE DE LA SOLICITUD
+Carpeta instalada del mod: `J:\SteamLibrary\steamapps\workshop\content\108600\3818605173\mods\DGVPosters`
+Fuentes (rutas completas en esta instalacion de Project Zomboid):
+- `J:\SteamLibrary\steamapps\workshop\content\108600\3818605173\mods\DGVPosters\common\media\lua\shared\Translate\EN\ContextMenu.json`
+- `J:\SteamLibrary\steamapps\workshop\content\108600\3818605173\mods\DGVPosters\common\media\lua\shared\Translate\EN\ItemName.json`
+- `J:\SteamLibrary\steamapps\workshop\content\108600\3818605173\mods\DGVPosters\common\media\lua\shared\Translate\EN\Sandbox.json`
+Destinos propuestos, solo en el parche local:
+- `42/media/lua/shared/Translate/ES/ContextMenu.json`
+- `42/media/lua/shared/Translate/ES/ItemName.json`
+- `42/media/lua/shared/Translate/ES/Sandbox.json`
+Se solicita permiso para traducir solo las cadenas de texto de esos catalogos.
+No se copiaran ni modificaran archivos originales, codigo, modelos o texturas.
+
+Mensaje para copiar (en ingles):
+
+Hello! Could I have your written permission to create a Spanish (Latin
+American) translation-only patch for Any Wall Posters 3D? The patch would be
+separate, local, and private. I would not reupload or redistribute your mod,
+modify its original files, or reuse its code, models, or textures.
+
+Your Workshop page says to ask before modifying or reusing any part of the
+mod. I want to confirm that a separate file containing only translated text
+is allowed. Would you permit this private local translation? If you wish, I
+can also send you the translated text for possible inclusion in the original
+mod. Specifically, I would translate text from
+`common/media/lua/shared/Translate/EN/ContextMenu.json`,
+`common/media/lua/shared/Translate/EN/ItemName.json`, and
+`common/media/lua/shared/Translate/EN/Sandbox.json` into matching ES catalogs
+in a separate local patch. I would not modify or redistribute any Workshop
+files. I will wait for your written permission before proceeding. Thank you!
+
+3. DIY GEAR
+Workshop ID: 3820870164
+Mod ID: DIYWeapons
+Pagina: https://steamcommunity.com/sharedfiles/filedetails/?id=3820870164
+Autor indicado en la pagina: Phinn
+
+Medio recomendado: comenta en la pagina de Workshop. La descripcion pide
+solicitar permiso para las traducciones, pero no especifica otro canal. Si los
+comentarios no estan disponibles, abre el perfil del autor desde la pagina y
+usa el mensaje solo si Steam lo permite.
+
+ARCHIVOS Y ALCANCE DE LA SOLICITUD
+Carpeta instalada del mod: `J:\SteamLibrary\steamapps\workshop\content\108600\3820870164\mods\DIYWeapons`
+Fuentes (rutas completas en esta instalacion de Project Zomboid):
+- `J:\SteamLibrary\steamapps\workshop\content\108600\3820870164\mods\DIYWeapons\42\media\lua\shared\Translate\EN\ItemName.json`
+- `J:\SteamLibrary\steamapps\workshop\content\108600\3820870164\mods\DIYWeapons\42\media\lua\shared\Translate\EN\Recipes.json`
+- `J:\SteamLibrary\steamapps\workshop\content\108600\3820870164\mods\DIYWeapons\42\media\lua\shared\Translate\EN\Sandbox.json`
+- `J:\SteamLibrary\steamapps\workshop\content\108600\3820870164\mods\DIYWeapons\42\media\lua\shared\Translate\EN\Tooltip.json`
+Destinos propuestos, solo en el parche local:
+- `42/media/lua/shared/Translate/ES/ItemName.json`
+- `42/media/lua/shared/Translate/ES/Recipes.json`
+- `42/media/lua/shared/Translate/ES/Sandbox.json`
+- `42/media/lua/shared/Translate/ES/Tooltip.json`
+Se solicita permiso para traducir solo las cadenas de esos cuatro catalogos.
+Los archivos originales de Workshop permanecerian intactos.
+
+Mensaje para copiar (en ingles):
+
+Hello! Your Workshop page says to ask for permission before making
+translations. May I create a Spanish (Latin American) translation-only patch
+for DIY Gear for my own private local use?
+
+I would keep it separate from your mod, would not upload or redistribute it,
+and would leave all original Workshop files untouched. If you are interested,
+I can also send you the translated text so you can decide whether to include
+it in the original mod. I will wait for your permission before translating.
+The source catalogs are
+`42/media/lua/shared/Translate/EN/ItemName.json`,
+`42/media/lua/shared/Translate/EN/Recipes.json`,
+`42/media/lua/shared/Translate/EN/Sandbox.json`, and
+`42/media/lua/shared/Translate/EN/Tooltip.json`. May I translate only their
+user-facing text into matching ES catalogs in my separate local patch? I would
+not modify or redistribute any Workshop files. I will wait for your written
+permission before translating. Thank you!
+
+4. AUTO COOK
+Workshop ID: 3388721641
+Mod ID: AutoCook
+Pagina: https://steamcommunity.com/sharedfiles/filedetails/?id=3388721641
+
+Medio recomendado: comentario en la pagina de Workshop o el canal de contacto
+que indique el autor en esa pagina. No se ha contactado al autor.
+
+ARCHIVOS Y ALCANCE DE LA SOLICITUD
+Carpeta instalada del mod: `J:\SteamLibrary\steamapps\workshop\content\108600\3388721641\mods\AutoCook`
+Fuentes (rutas completas en esta instalacion de Project Zomboid):
+- `J:\SteamLibrary\steamapps\workshop\content\108600\3388721641\mods\AutoCook\common\media\lua\shared\Translate\EN\ContextMenu.json`
+- `J:\SteamLibrary\steamapps\workshop\content\108600\3388721641\mods\AutoCook\common\media\lua\shared\Translate\EN\UI.json`
+Destinos propuestos, solo en el parche local:
+- `42/media/lua/shared/Translate/ES/ContextMenu.json`
+- `42/media/lua/shared/Translate/ES/UI.json`
+Se solicita permiso para traducir solo las cadenas de texto de esos catalogos;
+no se modificaran ni incluiran archivos originales de Workshop.
+
+Mensaje para copiar (en ingles):
+
+Hello! I use Auto Cook and would like to ask whether you permit a separate,
+local Spanish (Latin American) translation patch for personal use. I would
+not upload or redistribute the patch, and I would not modify or include your
+original Workshop files, code, or assets.
+
+Would you allow me to translate only the user-facing strings in
+`common/media/lua/shared/Translate/EN/ContextMenu.json` and
+`common/media/lua/shared/Translate/EN/UI.json`, placing the Spanish text in
+matching ES catalogs in a separate local patch? I would not modify or include
+your original Workshop files. If you prefer, I can send you the translated
+strings for possible inclusion in the original mod. I will wait for your
+written permission before translating. Thank you!
+
+5. TCHERNOLIB
+Workshop ID: 3389605231
+Mod ID: TchernoLib
+Pagina: https://steamcommunity.com/sharedfiles/filedetails/?id=3389605231
+
+Medio recomendado: comentario en la pagina de Workshop o el canal de contacto
+que indique el autor en esa pagina. No se ha contactado al autor.
+
+ARCHIVOS Y ALCANCE DE LA SOLICITUD
+Carpeta instalada del mod: `J:\SteamLibrary\steamapps\workshop\content\108600\3389605231\mods\TchernoLib`
+Catalogos fuente encontrados (rutas completas en esta instalacion de Project Zomboid):
+- `J:\SteamLibrary\steamapps\workshop\content\108600\3389605231\mods\TchernoLib\42.14\media\lua\shared\Translate\EN\IG_UI.json`
+- `J:\SteamLibrary\steamapps\workshop\content\108600\3389605231\mods\TchernoLib\42.14\media\lua\shared\Translate\EN\Sandbox.json`
+- `J:\SteamLibrary\steamapps\workshop\content\108600\3389605231\mods\TchernoLib\42.15\media\lua\shared\Translate\EN\IG_UI.json`
+- `J:\SteamLibrary\steamapps\workshop\content\108600\3389605231\mods\TchernoLib\42.15\media\lua\shared\Translate\EN\Sandbox.json`
+- `J:\SteamLibrary\steamapps\workshop\content\108600\3389605231\mods\TchernoLib\42.22\media\lua\shared\Translate\EN\IG_UI.json`
+- `J:\SteamLibrary\steamapps\workshop\content\108600\3389605231\mods\TchernoLib\42.22\media\lua\shared\Translate\EN\Sandbox.json`
+- `J:\SteamLibrary\steamapps\workshop\content\108600\3389605231\mods\TchernoLib\common\media\lua\shared\Translate\EN\IG_UI.json`
+- `J:\SteamLibrary\steamapps\workshop\content\108600\3389605231\mods\TchernoLib\common\media\lua\shared\Translate\EN\Sandbox.json`
+Destinos propuestos, solo en el parche local:
+- `42/media/lua/shared/Translate/ES/IG_UI.json`
+- `42/media/lua/shared/Translate/ES/Sandbox.json`
+Se solicita permiso para traducir las cadenas de esos catalogos correspondientes
+a Build 42; no se modificaran los originales de Workshop.
+
+Mensaje para copiar (en ingles):
+
+Hello! I use TchernoLib and would like to ask whether you permit a separate,
+local Spanish (Latin American) translation patch for personal use. I would
+not upload or redistribute the patch, and I would not modify or include your
+original Workshop files, code, or assets.
+
+Would you allow a separate local Spanish translation of the user-facing
+strings in your `IG_UI.json` and `Sandbox.json` catalogs for Build 42? The
+English catalogs I found are under `common/media/lua/shared/Translate/EN/`
+and the `42.14`, `42.15`, and `42.22` version folders. I would place only
+Spanish text in separate `42/media/lua/shared/Translate/ES/IG_UI.json` and
+`Sandbox.json` files in my local patch; I would not modify or include any
+Workshop files. If you prefer, I can send you the translated strings for
+possible inclusion in the original mod. I will wait for your written
+permission before translating. Thank you!
+
+DESPUES DE ENVIAR
+Guarda la respuesta de cada autor y anota si autoriza:
+1. Solo el uso local y privado.
+2. Tambien el envio de la propuesta de texto al autor.
+3. Alguna condicion de formato, atribucion o alcance.
+
+Si no hay respuesta, la autorizacion no se considera concedida y no se amplian
+las traducciones de ese mod. No hace falta que compartas contraseñas ni datos
+privados; basta con registrar el texto de la respuesta o resumir la decision.
+
+6. PROJECT VIEWPOINT: RECOIL & ADS
+Workshop ID: 3812612054
+Mod ID: ProjectViewpointADS
+Pagina: https://steamcommunity.com/sharedfiles/filedetails/?id=3812612054
+
+Medio recomendado: comentario en la pagina de Workshop o el canal de contacto
+que indique el autor en esa pagina. La licencia prohibe copiar, modificar o
+reutilizar los datos del mod en otros proyectos sin permiso escrito. No se
+añadiran sus traducciones a este parche hasta recibir autorizacion expresa.
+
+ARCHIVO Y ALCANCE DE LA SOLICITUD
+Carpeta instalada del mod: `J:\SteamLibrary\steamapps\workshop\content\108600\3812612054\mods\ProjectViewpointADS`
+- Archivo fuente (ruta completa en esta instalacion de Project Zomboid):
+  `J:\SteamLibrary\steamapps\workshop\content\108600\3812612054\mods\ProjectViewpointADS\42\media\lua\shared\Translate\EN\UI.json`
+- Claves solicitadas: las nueve etiquetas `UI_optionscreen_binding_ProjectViewpointADS`
+  y sus acciones `:ADS`, `:ZoomIn`, `:ZoomOut`, `:ZeroUp`, `:ZeroDown`,
+  `:Calibrator`, `:Steady` y `:Bipod`.
+- Archivo de destino propuesto (solo dentro de este parche local):
+  `42/media/lua/shared/Translate/ES/UI.json`
+- Se pide permiso para traducir esas cadenas y mantenerlas en el archivo ES
+  separado; no se solicita modificar el archivo EN ni ningun archivo de Workshop.
+
+Mensaje para copiar (en ingles):
+
+Hello! I use Project Viewpoint: Recoil & ADS and would like to ask for your
+written permission to create a Spanish (Latin American) translation-only
+patch for my own private local use. I understand that your license prohibits
+reusing the mod's data in other projects without written permission.
+
+Specifically, I would translate the nine user-facing keybind labels in
+`J:\SteamLibrary\steamapps\workshop\content\108600\3812612054\mods\ProjectViewpointADS\42\media\lua\shared\Translate\EN\UI.json`
+and place the Spanish strings in
+`42/media/lua/shared/Translate/ES/UI.json` inside a separate local patch.
+I would not modify your English file or any other Workshop files, code,
+calibration values, or assets, and I would not upload or redistribute the patch.
+
+Would you permit this separate local translation patch? If you prefer, may I
+also send you the translated strings for possible inclusion in the original
+mod? I will not add the translations before receiving your written permission.
+Thank you!
+
+---
+
+## Loot Tracker — traduccion de 152 textos IG_UI
+
+La licencia del mod reserva todos los derechos y prohibe copiar su texto en
+otro mod sin autorizacion escrita. No se añadira ninguna traduccion a este
+parche hasta recibir permiso expreso.
+
+Archivo fuente:
+`J:\SteamLibrary\steamapps\workshop\content\108600\3823828778\mods\LootTracker\media\lua\shared\Translate\EN\IG_UI.json`
+
+Mensaje para solicitar permiso (en ingles):
+
+Hello! I use Loot Tracker and would like to ask for your written permission
+to create a Spanish (Latin American) translation-only patch for my private
+local use. I would translate the 152 user-facing strings in
+`J:\SteamLibrary\steamapps\workshop\content\108600\3823828778\mods\LootTracker\media\lua\shared\Translate\EN\IG_UI.json`
+and place the translations in a separate local patch that depends on Loot
+Tracker. I would not modify or redistribute any of your Workshop files,
+code, art, or assets. I will not add the translated text before receiving
+your written permission. Would you allow this?
+
+Thank you!

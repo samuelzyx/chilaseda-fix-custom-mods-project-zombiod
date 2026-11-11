@@ -1,0 +1,9 @@
+﻿ChilaSeda WaterPipes ModData Recovery — Build 42
+
+Parche local para Waterpipes (Workshop 3546314080). WPGMD.lua inicializa WPModData como una tabla vacía al cargar Lua y normalmente completa sus colecciones durante OnInitGlobalModData. Si se reinicia Lua sin volver a ejecutar ese evento, el cliente puede llamar WPSprinkler.Process con Sprinklers ausente; el pairs(...) de WaterPipes se repite en cada render.
+
+Este parche envuelve GetWPModData. Cuando faltan las colecciones, intenta recuperar el objeto persistente mediante ModData.getOrCreate("WaterPipes") y normaliza únicamente las colecciones que no sean tablas. Así conserva los datos válidos y evita que la falta de Sprinklers provoque una ráfaga de errores. El original de Workshop no se modifica.
+
+Requiere Waterpipes y se carga después. ID: ChilaSeda_Fix_Water_Pipes_ModData_B42_3546314080. Versión 1.0.0.
+
+La validación final de la corrección requiere iniciar la partida normalmente y revisar que WPSprinkler.lua:84 no vuelva a generar errores.

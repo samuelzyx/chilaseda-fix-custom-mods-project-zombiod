@@ -1,0 +1,9 @@
+name=ChilaSeda Fix - Viewpoint Blood FX corpse limbs (B42)
+id=ChilaSeda_Fix_ViewpointBloodFX_CorpseLimbs_B42_3811472160
+authors=ChilaSeda
+description=Preserves the final dismemberment mask when a zombie becomes a loot corpse.
+require=\ZombieBuddy,\Viewpoint,\ViewpointBloodFX
+loadModAfter=ZombieBuddy,Viewpoint,ViewpointBloodFX
+versionMin=42.21.0
+versionMax=42.21
+modversion=0.1.0

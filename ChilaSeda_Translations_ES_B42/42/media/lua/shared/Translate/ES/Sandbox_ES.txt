@@ -1,0 +1,11 @@
+Sandbox_ES = {
+    Sandbox_CheckAround = "Revisar alrededores (Check Around)",
+    Sandbox_CheckAround_Radius = "Radio desde el extremo superior de la escalera",
+    Sandbox_CheckAround_Radius_tooltip = "Distancia maxima alrededor de la casilla del extremo superior de la escalera a la que el jugador puede detectar zombis.",
+    Sandbox_CheckAround_ShowZombieNametag = "Mostrar la posicion de los zombis",
+    Sandbox_CheckAround_ShowZombieNametag_tooltip = "Muestra una etiqueta sobre cada zombi para indicar su posicion.",
+    Sandbox_CheckAround_loreNameSingular = "Nombre de los zombis en singular",
+    Sandbox_CheckAround_loreNameSingular_tooltip = "Nombre en singular utilizado en las frases del personaje y las etiquetas de los zombis. Por defecto es 'zombi'. Deja el campo vacio para usar el nombre predeterminado.",
+    Sandbox_CheckAround_loreNamePlurial = "Nombre de los zombis en plural",
+    Sandbox_CheckAround_loreNamePlurial_tooltip = "Nombre en plural utilizado en las frases del personaje y las etiquetas de los zombis. Por defecto es 'zombis'. Deja el campo vacio para usar el nombre predeterminado.",
+}

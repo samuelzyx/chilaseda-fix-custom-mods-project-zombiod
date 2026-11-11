@@ -1,0 +1,10 @@
+name=ChilaSeda Fix - Reactive Sound Events - Viewpoint (B42)
+id=ChilaSeda_Fix_Reactive_Sound_Events_Viewpoint_B42_3656190498
+authors=ChilaSeda
+description=Rotates Reactive Sound Events indicators with the Viewpoint camera. Press Ctrl+Shift+F6 to cycle a UI-only direction test.
+require=ReactiveSE,Viewpoint,VisualSoundsKAViewpoint,ZombieBuddy
+loadModAfter=ReactiveSE,Viewpoint,VisualSoundsKAViewpoint
+versionMin=42.21
+versionMax=42.22
+modversion=1.1.2
+ZBVersionMin=2.3.0

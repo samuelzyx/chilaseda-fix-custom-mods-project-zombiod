@@ -1,0 +1,7 @@
+name=ChilaSeda - Weight Fixes (B42)
+id=ChilaSeda_Fix_True_Weight_VanillaWeights_B42_3768669395
+authors=ChilaSeda
+description=Rebalances vanilla and selected Workshop item weights, including machete variants, Any Wall Flags and Posters. Fixes apply only to item types that are loaded.
+loadModAfter=TrueWeight,ThisIsYourLife,ExtendedVanillaWeapons,AnimalRemasterApproved,DGVFlags,DGVPosters
+versionMin=42.21
+modversion=2.1.1

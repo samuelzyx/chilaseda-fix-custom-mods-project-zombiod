@@ -1,0 +1,109 @@
+ChilaSeda - Weight Monitor (B42) 1.9.7
+
+The monitor scans automatically while the game is running, even when its panel
+is closed. It scans every 120 ticks (every 30 ticks while the panel is open).
+It refreshes the game's nearby container lists before scanning the player's
+inventory, nested bags, and reachable containers. `SCAN_STATUS OK` is written
+only after both inventory pages refresh and every returned container is read.
+Missing pages, failed refreshes, or unreadable containers produce
+`SCAN_STATUS BLOCKED reason=...`; that scan does not mark unseen items Visto.
+The monitor panel stays optional; no item transfer or manual collection is needed.
+
+Each game session writes a dated UTF-8 text file under:
+  Zomboid/mods/PesosLogs/WeightMonitor_YYYY-MM-DD_HH-mm-ss_<id>.txt
+
+The monitor uses ZombieBuddy 2.3.0 or newer as an optional Java bridge. Without it, monitoring and its panel are skipped cleanly while the weight fixes remain active.
+
+Its glass targets are synchronized with VanillaWeightFix: `Base.BrokenGlass` is
+0.05 kg and `Base.GlassShiv` is 0.10 kg.
+
+The monitor logs every item type found in the player's inventory, nested bags,
+and nearby/reachable containers, including types without a configured target.
+`Base.CorpseAnimal` entries are separated by animal type; skeletal animals use a target equal to 16% of their species midpoint live weight. It scans every 120 ticks (every
+30 ticks while the panel is open). Each changed entry includes visible name,
+technical ID, unit weight, combined weight, target (or `sin_meta`), count, Tetris
+and script stack limits, stack status, and source container type/name/coordinates
+where available. Entries are grouped
+separately by container, so identical items in two containers keep independent
+weights and counts. It records Visto
+when a previously accessible type is no longer accessible. The panel is optional
+and can be opened with Ctrl+Shift+F7.
+
+At session start, the monitor also audits every loaded script item definition in
+batches through Inventory Tetris. `STACK_CATALOG_PART` records each technical ID,
+effective Tetris cap, original script cap, and `OK`/`REVISAR` status; the final
+`STACK_CATALOG_END` line summarizes the counts. Accessible item entries and the
+panel include `tetrisStack`, `scriptStack`, and `stackStatus`. A missing Tetris
+API or unreadable item is marked `REVISAR` instead of being treated as verified.
+
+Version 1.7.0 also emits `WEIGHT_CATALOG_PART` for every loaded definition with
+the technical ID, script weight, script actual weight, configured target, and coverage label:
+`MAPPED`, `DYNAMIC`, or `UNMAPPED`. `WEIGHT_CATALOG_END` gives the totals. This
+catalog is an audit input: `MAPPED` means a local target exists, not that its
+real-world value has been independently confirmed; `UNMAPPED` means the item
+still inherits its game/mod weight; dynamic entries require an instance reading.
+Version 1.7.2 labels the 12 hidden The Only Cure limb-display markers `BASE_OK`
+when their declared actual weight remains 0 kg; a changed value is reported as
+`REVIEW_MISMATCH`. It also shares the 0.25 kg target for `ThisIsYourLife.PreservedJournal`.
+Version 1.7.3 adds the 0.0035 kg target for `Base.22Bullets`.
+
+Statuses:
+  OK       The observed weight matches the target within 0.005 kg.
+  REVISAR  The observed weight differs from the target, or no target is configured yet.
+  Visto    Seen earlier in this session, but no longer in accessible locations.
+
+For stack limits, OK means Inventory Tetris reports exactly 100. REVISAR means
+the effective Tetris cap differs from 100 or could not be read.
+
+The monitor only reads item weights and stack limits; the neighboring weight-fix scripts change item
+weights. It is packaged in the same mod ID and loads after target mods when they are present.
+
+Version 1.6.4 adds a dynamic target synchronized with VanillaWeightFix for Base.WaterDispenserBottle: 0.80 kg empty plus 1.00 kg per liter, capped at 15 L.
+
+Version 1.6.5 adds synchronized targets Base.Katana_Broken 0.70 kg, Base.WoodenStick2 0.40 kg, and Base.AnimalBone 0.175 kg.
+
+Version 1.6.6 added the synchronized per-instance Base.AlcoholWipes target. In 1.6.9 it is corrected to 0.01 kg tare plus 0.05 kg multiplied by getUsedDelta (0.06 kg full, 0.01 kg empty), approximating five alcohol-pad pouches.
+
+Version 1.6.7 adds the synchronized Base.BlackSage target of 0.05 kg (the note's plant identity is inferred from the local item catalog).
+
+Version 1.6.9 synchronizes VanillaWeightFix 1.4.0: LargeAnimalBone 0.70 kg, SmallAnimalBone 0.10 kg, SharpBoneFragment 0.01 kg, Bowl (0.50 kg), FishingRod (1.00 kg), RubberHose (0.30 kg), and PetrolCan at 1.60 kg empty plus 0.75 kg/L gasoline (up to 10 L). AlcoholWipes is 0.01 kg tare plus 0.05 kg times getUsedDelta. These are targets, not runtime-validated readings.
+
+Version 1.7.4 adds base-weight review for 21 Authentic Z backpack upgrade variants. Their active Workshop script declarations specify 1.00 kg each; the value is plausible for 19 L duffel-style bags (physical analogs: 31 L travel duffel 0.99 kg, military canvas duffel 0.9 kg, medic assault bag about 1 kg). Catalog logs report BASE_OK when the loaded script weight remains 1.00 kg; this is a static base review, not an instance observation.
+
+
+Version 1.7.5 classifies 578 additional zero-weight definitions as BASE_OK after source review: 443 hidden WoundExpansion body overlays; 94 hidden vanilla bandage/wound overlays; 39 Extended Vanilla Weapons fake weapon attachments (WeightModifier carries their weapon-state effect); TOC.PistolVisual, a second visual copy of the real firearm; and HunterExpansion.YakPhoneLight, a temporary non-lootable helper spawned and removed by its torch app. BASE_OK is conditional on the loaded script weight matching 0.00 kg.
+
+Version 1.7.8 adds the 0.004 kg Base.SugarPacket target and checks AMRBirds321.PeafowlFeather at its source 0.001 kg base weight, consistent with measured Indian peafowl tail-feather mass (0.95 g average). Version 1.7.9 synchronizes Base.BluePen and Base.RedPen at 0.006 kg (BIC Cristal, 5.58–5.6 g) and Base.Pencil at 0.005 kg (published wooden-pencil masses, 5.0–5.4 g).
+
+Version 1.8.0 adds Base.Battery at 0.023 kg (Energizer E91 AA datasheet). Version 1.8.1 classifies Base.Acorn as DYNAMIC and computes 0.0057 kg times the remaining fraction from getHungerChange()/getBaseHunger().
+
+Version 1.8.2 adds Base.Key1 (0.009 kg), Base.CarKey (0.012 kg), and Base.Bandaid (0.001 kg), with masses cross-checked against key and adhesive-bandage product references.
+
+Version 1.8.3 adds Base.HandTorch at 0.20 kg, approximated from an Energizer flashlight body plus four AA cells.
+
+Version 1.8.4 adds Base.WristWatch_Left_DigitalDress at 0.021 kg, based on the Casio F-91W mass.
+
+Version 1.8.5 synchronizes the adult Animal Remaster cow and bull hide stage targets from VanillaWeightFix 1.4.11.
+
+
+Version 1.8.6 synchronizes the adult sheep hide stage targets from VanillaWeightFix 1.4.12.
+
+Version 1.8.7 adds adult pig skin stage targets; 1.8.8 aligns wet-stage targets with pig-skin moisture loss data.
+
+
+Version 1.8.9 sincroniza los objetivos adultos de piel de conejo Animal Remaster con VanillaWeightFix 1.4.15: 0.43 kg verde y 0.225 kg seco. Las variantes adultas húmedas y las juveniles continúan pendientes de auditoría física; 24 juveniles `Full` conservan una meta antigua de 0.10 kg sin fuente por edad.
+
+Version 1.9.0 sincroniza los cinco bandoleros vanilla a 0.40 kg con VanillaWeightFix 1.4.16.
+
+Version 1.9.1 sincroniza las etapas de cuero de becerro con VanillaWeightFix 1.4.17.
+
+Version 1.9.2 sincroniza las 56 pieles de cordero y 24 pieles adultas esquiladas con VanillaWeightFix 1.4.18.
+
+
+Version 1.9.3 synchronizes 60 Animal Remaster piglet hide stage targets with VanillaWeightFix 1.4.19.
+
+
+Version 1.9.4 synchronizes 48 adult Animal Remaster rabbit wet-tanned pelt targets with VanillaWeightFix 1.4.20.
+
+
+Version 1.9.5 synchronizes 96 juvenile Animal Remaster rabbit pelt stage targets with VanillaWeightFix 1.4.21.

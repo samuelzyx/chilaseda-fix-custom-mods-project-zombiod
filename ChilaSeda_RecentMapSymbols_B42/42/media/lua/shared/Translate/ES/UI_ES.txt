@@ -1,0 +1,7 @@
+UI_ES = {
+    IGUI_ChilaSeda_RecentMapSymbols = "Recientes",
+    IGUI_ChilaSeda_SearchMapSymbols = "Buscar",
+    IGUI_ChilaSeda_SearchMapSymbolsHint = "Buscar por nombre, ID o categoría",
+    IGUI_ChilaSeda_SearchMapSymbolsNoResults = "No hay símbolos coincidentes",
+    IGUI_ChilaSeda_SearchMapSymbolsLimit = "Hay demasiados; concreta la búsqueda",
+}

@@ -1,0 +1,8 @@
+name=Anomalous Storm - Build 42 Port
+id=ChilaSeda_AnomalousStorm_B42
+authors=ChilaSeda; original concept and code by Soul Filcher
+description=Local Build 42 port of Anomalous Storm (Workshop 2779946812). Red sky, staged rain and thunder, gradual exposure effects, and 10% zombie speed. Exposed zombies and animals take per-minute damage with a random 0.75x-2.25x actor factor; damage ramps after the configurable lethal-exposure point instead of killing everyone at once. Fixed-screen Halo notices announce storm phases and when all loaded exposed creatures have died, including in single-player. Exposure skips actors whose squares have no loaded chunk. The red overlay also works in Viewpoint while preserving True Weathers settings. Original Workshop files remain untouched.
+loadModAfter=Viewpoint,ViewpointTrueWeathers,ViewpointTrueWeathersGameplay,ChilaSeda_Fix_Viewpoint_BrokenGlassContainer_B42
+versionMin=42.21
+versionMax=42.22
+modversion=0.4.23

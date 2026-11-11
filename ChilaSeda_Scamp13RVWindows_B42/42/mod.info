@@ -1,0 +1,9 @@
+name=ChilaSeda - Scamp 13 RV Interior Windows (B42)
+id=ChilaSeda_Scamp13RVWindows_B42
+authors=ChilaSeda
+description=Adds a model-specific 3+1 window layout to the KI5 '87 Scamp 13 RV interior. Clears only exterior zombies while inside and restores the original walls on exit.
+require=PROJECTRVInterior42,KI5campers
+loadModAfter=PROJECTRVInterior42,KI5campers
+versionMin=42.21
+versionMax=42.22
+modversion=0.1.1

@@ -1,0 +1,35 @@
+# Changelog 0.2.3 - 2026-11-01 22:15:00 -06:00
+
+## Traducciones agregadas (Nivel 1 - Notas del 1 de Noviembre 2026)
+
+Agregadas cadenas faltantes reportadas en timestamps 17:05-17:55:
+
+### Acciones de clase IS* agregadas:
+- ISRemoveGlassAction → "Quitando cristales rotos"
+- ISReadWorldMap → "Leyendo mapa del mundo"  
+- ISDropItemAction → "Vaciando contenido"
+- ISPathFindAction / ISPathFind → "Buscando ruta"
+- ISPrepareSoup → "Preparar sopa"
+- ISPrepareStew → "Preparar guiso"
+- ISWalkToTimedAction → "Caminando hacia"
+
+### Variantes de cadenas en minúsculas agregadas:
+- "walk to" / "walking to" → "Caminando hacia"
+- "removing broken glass" / "removing cristales rotos" → "Quitando cristales rotos"
+- "read world map" → "Leyendo mapa del mundo"
+- "drop content" / "drop contents" → "Vaciando contenido"
+- "pathfinding" → "Buscando ruta"
+- "prepare soup" / "prepare stew" → "Preparar sopa" / "Preparar guiso"
+- "make salad" → "Hacer ensalada"
+- "complementar receta" → "Complementar receta"
+
+### Corrección aplicada:
+- "Poniéndose ropa" → "Poniendose ropa" (sin tilde, restricción Project Sonar)
+
+## Notas:
+- TODAS las cadenas sin tildes ni acentos (restricción motor B42/Project Sonar)
+- Nombres propios como "ValuTech" se conservan intactos
+- Total de nuevas traducciones: 17 entradas (7 IS*, 10 variantes lowercase)
+
+## Origen:
+Documento "Notas de Errores - 1 de Noviembre de 2026" - Nivel 1, Punto 1

@@ -1,0 +1,7 @@
+name=ChilaSeda Fix - Project Zomboid Floor Tile Capacity (B42)
+id=ChilaSeda_Fix_ProjectZomboid_FloorTileCapacity_B42_Vanilla
+authors=ChilaSeda
+description=Raises the floor tile inventory capacity from the vanilla 50 to 1000 weight units.
+loadModAfter=ChilaSeda_Fix_True_Weight_VanillaWeights_B42_3768669395
+versionMin=42.20
+modversion=0.1.0

@@ -1,0 +1,16 @@
+Weight Monitor — ChilaSeda Audit Suite 2.1.1
+
+Weight Monitor is one of four independent components in
+ChilaSeda_AuditSuite_B42. It reads loaded item weights and stack limits, writes
+session logs under Zomboid/mods/PesosLogs, and can show its existing debug panel.
+It does not change weights. The target IDs and goals are unchanged; see
+Manual_Pesos_B42_y_Monitor.md.
+
+The component needs ZombieBuddy's Java bridge to begin a session. If that bridge
+is missing, it skips logging, scans, and panel access without an error. The
+weight fixes remain in ChilaSeda_Fix_True_Weight_VanillaWeights_B42_3768669395.
+
+`Base.Magazine_Rich` (`“Alto Volador”`) has a synchronized 0.10 kg target. The
+Jill reading of 0.100 kg on 08/11 was logged as `REVISAR` because no target was
+present yet; it predates this change and does not validate `OK`. See
+Manual_Pesos_B42_y_Monitor.md for the estimate and references.

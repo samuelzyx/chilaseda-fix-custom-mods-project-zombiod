@@ -1,0 +1,6 @@
+name=ChilaSeda Fix - Project Zomboid Poison Knowledge Icon (B42, Vanilla)
+id=ChilaSeda_Fix_Project_Zomboid_PoisonKnowledgeIcon_B42_Vanilla
+authors=ChilaSeda
+description=Shows the poison skull for poisonous berries and mushrooms when Herbalist already identifies them, matching the vanilla item name.
+versionMin=42.21
+modversion=0.1.0

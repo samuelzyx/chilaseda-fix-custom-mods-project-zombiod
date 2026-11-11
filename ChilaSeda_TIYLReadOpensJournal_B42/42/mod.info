@@ -1,0 +1,6 @@
+name=ChilaSeda - Abrir Survivor Journal (B42)
+id=ChilaSeda_TIYLReadOpensJournal_B42
+require=ThisIsYourLife
+versionMin=42.20
+description=Pone Abrir diario tras equipar/recetas para el Survivor Journal propio en inventarios y contenedores accesibles; reutiliza el icono de libro vanilla y desactiva K por defecto.
+modversion=0.4.2

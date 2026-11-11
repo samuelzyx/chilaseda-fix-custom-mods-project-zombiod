@@ -1,0 +1,14 @@
+ChilaSeda - Weight Fixes (B42) 2.1.0
+
+ID: ChilaSeda_Fix_True_Weight_VanillaWeights_B42_3768669395
+
+This package contains VanillaWeightFix and the Any Wall Flags and Posters
+weight overrides. Weight Monitor is now in ChilaSeda_AuditSuite_B42.
+
+VanillaWeightFix assigns an estimated 0.10 kg target to `Base.Magazine_Rich`
+(`“Alto Volador”`). Weight Monitor uses the same target; the printed-magazine
+analogues are documented in Manual_Pesos_B42_y_Monitor.md.
+
+Target mods remain optional. The fixes scan loaded item definitions and ignore
+types whose source mod is absent. See Manual_Pesos_B42_y_Monitor.md for targets
+and evidence.

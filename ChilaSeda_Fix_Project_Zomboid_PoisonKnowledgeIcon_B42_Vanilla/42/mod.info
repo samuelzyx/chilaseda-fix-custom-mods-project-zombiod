@@ -1,0 +1,8 @@
+name=ChilaSeda Fix - Project Zomboid Poison Knowledge Icon (B42, Vanilla)
+id=ChilaSeda_Fix_Project_Zomboid_PoisonKnowledgeIcon_B42_Vanilla
+authors=ChilaSeda
+description=Keeps known poisonous berries and mushrooms labeled in tooltips, inventory icons, and foraging markers.
+loadModAfter=ChilaSeda_AutoCook_B42
+versionMin=42.21
+versionMax=42.22.2
+modversion=0.2.0

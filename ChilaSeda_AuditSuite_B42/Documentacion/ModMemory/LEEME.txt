@@ -1,0 +1,52 @@
+ChilaSeda Mod Memory Audit — Audit Suite 2.1.1
+
+OBJETIVO
+Relacionar los cambios globales de memoria entre sesiones con el inventario de
+recursos por mod y los vehículos presentes en chunks cargados. No modifica
+vehículos, partidas ni archivos de Workshop.
+
+MEDIDAS Y LÍMITES
+- MOD_ASSETS registra por mod el tamaño/contaje de assets instalados. PNG_RGBA
+  es una estimación width x height x 4 bytes, no una lectura de RAM del juego.
+- SAMPLE registra cada 10 segundos la memoria Kahlua consultada sin recolectar
+  basura, la posición, vehículos en la celda y chunks cargados desde la muestra
+  anterior. Los vehículos se atribuyen al mod por VehicleScript; los no
+  reconocidos quedan en `unknown`. También escribe cuando aparece un VehicleScript
+  nuevo o cambia el conteo por mod.
+- Cada 75 segundos, y ante una ráfaga de 10+ chunks o 5+ vehículos nuevos, pide
+  al Black Box una ventana de heap Java. Los valores `heap_used_bytes` quedan en
+  `ChilaPerformance.log`. El campo
+  `synthetic=true` significa que la ventana fue solicitada por el medidor; no
+  significa que el juego haya sufrido un tirón artificial.
+- PZ/Lua no expone una asignación exacta de RAM por mod. La memoria de Java,
+  texturas, modelos y caches se comparte; por eso los valores por mod son
+  inventario potencial y actividad observada, no RAM individual medida.
+- La memoria física de Windows puede contrastarse con los registros `[OldPoint]`
+  en `console.txt`. Viewpoint también informa sus pools de caché, memoria del
+  proceso, heap, memoria física libre, commit de Windows y memoria de video. El
+  tracker no muestra una interfaz en pantalla ni fuerza GC.
+
+REGISTROS
+- `ChilaSeda_ModMemoryAudit.log`: sesión, mods activos, inventario por mod y una
+  muestra de vehículos/memoria Kahlua y cargas de chunks cada 10 segundos.
+- `ChilaPerformance.log`: heap Java capturado durante ventanas programadas y
+  eventos del Black Box.
+- `console.txt`: memoria física libre de Windows informada por OldPoint.
+
+INVENTARIO
+El archivo compartido `ChilaSeda_ModMemoryAuditManifest_B42.lua` se genera desde
+la lista de la Sandbox. Si cambian los mods activos o se actualiza un mod,
+regenerar tamaños y el mapa de VehicleScript -> mod con:
+
+  powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\mods\ChilaSeda_AuditSuite_B42\tools\RefreshManifest.ps1"
+
+`ExecutionPolicy Bypass` solo se aplica a ese proceso de PowerShell; no cambia
+la política permanente del equipo. El escáner lee los mods del Workshop y
+escribe únicamente el manifiesto local. La cabecera del log indica la fecha del
+inventario para detectar datos viejos.
+
+El medidor se agrega a `B42 Aprobados Prueba` y a la Sandbox actual para que
+registre las siguientes sesiones. Primera validación pendiente en el juego.
+
+JAVA OPCIONAL
+Si ZombieBuddy no está activo, Mod Memory Audit conserva sus registros Lua. Las ventanas Java del Black Box quedan indicadas como no disponibles; no se lanza una llamada inexistente ni se detiene el auditor Lua.

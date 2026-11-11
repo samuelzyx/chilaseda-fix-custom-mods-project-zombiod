@@ -1,0 +1,8 @@
+name=ChilaSeda - Animal Balance and Handling (B42)
+id=ChilaSeda_AnimalBalance_B42
+authors=ChilaSeda
+description=Balances animal yields, routes products to the selected container or floor, and blocks carrying animals over 50 kg. Animals retaliate when attacked; Undead Wildlife hostile types are valid zombie prey.
+require=AnimalRemasterApproved,ChilaSeda_Fix_True_Weight_VanillaWeights_B42_3768669395,ChilaSeda_AuditSuite_B42
+loadModAfter=AnimalRemasterApproved,UndeadWildlife,ChilaSeda_Fix_True_Weight_VanillaWeights_B42_3768669395,ChilaSeda_AuditSuite_B42,HunterExpansion,LootTrackerB42,ChilaSeda_Fix_Project_Zomboid_AutoTools_B42_Vanilla
+versionMin=42.20
+modversion=2.3.0

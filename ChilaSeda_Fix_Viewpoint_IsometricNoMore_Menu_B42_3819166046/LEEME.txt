@@ -1,0 +1,16 @@
+ChilaSeda Fix - Viewpoint / Isometric No More Menu (B42) 1.0.2
+
+Corrige etiquetas de acciones del menú 3D de Viewpoint e Isometric No More.
+
+Cristales rotos:
+- Reconoce también la etiqueta singular «vidrio roto».
+- Si aparece más de una acción de recogida, conserva la acción funcional de
+  ISPickupBrokenGlass; si el callback no se expone, prefiere «Juntar» frente a
+  «Recoger».
+- Coloca «Juntar cristales rotos» como primera acción para que «Pasar a través»
+  no la desplace como opción principal.
+- Elimina la acción duplicada de quitar cristales cuando la opción nativa ya
+  está presente.
+
+El ID local es ChilaSeda_Fix_Viewpoint_IsometricNoMore_Menu_B42_3819166046.
+Los originales de Workshop permanecen intactos.

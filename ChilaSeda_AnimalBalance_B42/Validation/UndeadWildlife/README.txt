@@ -1,0 +1,3 @@
+Pruebas de desarrollo, no se cargan en el juego. Requieren Python + lupa y los archivos originales del usuario.
+run.py usa la estructura del workspace de desarrollo: uw_input/vanilla_actual/animal, uw_input/extracted/UndeadWildlife/42/media/lua, uw_build/tests y uw_build/ChilaSeda_AnimalBalance_B42. Para repetir: colocar run.py y harness.lua en uw_build/tests, con esas entradas, ejecutar python3 uw_build/tests/run.py.
+Los objetos Java del motor y el inventario se simulan; los ítems se modelan como Food para comparar operaciones y valores, sin afirmar cifras reales de calorías en juego. La lógica Lua de cálculo y tablas de partes sí son las suministradas, ejecutadas sin cambios.

@@ -1,0 +1,96 @@
+ChilaSeda - Vanilla Weight Fixes (B42)
+
+First-pass corrections for small vanilla objects outside True Weight's default
+manual, name-pattern and category rules. These item definitions are adjusted
+after True Weight on OnLoadedTileDefinitions:
+
+Base.Clipboard: 1.0 -> 0.25 kg
+Base.MagnifyingGlass: 0.5 -> 0.15 kg
+Base.TissueBox: 1.0 -> 0.15 kg
+Base.TongueDepressorBox: 1.0 -> 0.15 kg
+Base.ToiletBrush: 0.6 -> 0.20 kg
+Base.UmbrellaBlack/Blue/Red/TINTED/White: 1.5 -> 0.60 kg each
+Base.KitchenTongs/Ladle: 0.6 -> 0.15 kg each
+Base.PizzaCutter: 0.5 -> 0.12 kg
+Base.Spatula: 0.6 -> 0.12 kg
+Base.TinOpener: 0.6 -> 0.15 kg
+Base.Whisk: 0.6 -> 0.10 kg
+Base.CheeseGrater/Strainer: 1.0 -> 0.30 kg each
+
+These are conservative practical estimates for the listed household objects,
+not changes to all Build 42 items. The Workshop and base-game source files are
+left untouched. True Weight is optional; this patch also works without it and loads after it when present. Restart the game
+for the changed script definitions to take effect.
+
+Additional item targets (kg):
+Base.BrokenGlass 0.05; Base.GlassShiv 0.10; Base.KitchenKnife 0.20; KnifeFillet 0.10; KnifeShiv 0.15; Pillow 0.60; Hammer/HammerForged 0.70; BallPeenHammer 0.45; HammerStone 1.00; Screwdriver/Screwdriver_Old 0.10; Pliers 0.15; Fork/Spoon/WoodenSpoon 0.03; Pot/PotForged 0.80; Saucepan 0.50; Scissors 0.10; Whetstone 0.20; Stake 0.25; TinOpener_Old 0.15; DuctTape 0.30; Thread 0.05; Thread_Sinew 0.10; Matches 0.03; Lighter 0.02; Rope 0.50; packed cheap sleeping bags 2.00; WaterBottle 0.05; CrushedPepper 0.05.
+HomemadeThings.HomemadeHacksaw 0.75; HomemadeNeedle 0.05; HomemadeWoodenMallet 0.60; HomemadeSledgehammer 3.00; UndeadSurvivor.PrepperKnifeStab 0.20.
+
+Existing item instances are updated periodically while they are in the player's inventory, nested bags, or containers currently open in the inventory UI (including vehicle trunks and furniture). No item transfer is required. Closed containers are not scanned until opened.
+
+Expanded in 1.2.0: related pillow, knife, hammer, utensil, textile, packed sleeping bag, fruit, berry, wild herb, pepper/salt, bottle, rag, and HomemadeThings variants are also included. Targets are shared with the Weight Monitor now included in this package. Loose-food and dry-herb targets are separate; wet dishcloth and beer bottle keep their full-state targets. LTP boxed shaker packs remain 4 kg. Review Manual_Pesos_B42_y_Monitor.md for the item groups and in-game validation notes.
+
+In 1.2.3, accessible skeleton instances of `Base.CorpseAnimal` use a target equal
+to 16% of their species midpoint live weight. For a white-tailed doe (110-200 kg
+vanilla weight range), the target is 24.80 kg. Species are detected from API data,
+ModData, translations, or the item display name.
+
+In 1.2.4, `Base.BrokenGlass` targets 0.05 kg and `Base.GlassShiv` 0.10 kg. The
+glass shard estimate uses a 10 x 5 x 0.4 cm fragment at about 2.5 g/cm3; the shiv
+allows for a light wrapped grip. Weight Monitor shares these targets. The
+base-game scripts and Workshop files remain untouched.
+
+In 1.2.5, Base.WaterDispenserBottle uses 0.80 kg empty plus 1.00 kg per liter of water, capped at its 15 L capacity. Existing accessible instances are updated by the periodic migration. Weight Monitor uses the same formula. The empty weight is an estimate for a reusable plastic dispenser jug; the loaded target models water mass directly.
+
+In 1.2.6, Base.Katana_Broken targets 0.70 kg, Base.WoodenStick2 0.40 kg, and Base.AnimalBone 0.175 kg. These use the midpoint of the requested ranges for the katana, stick, and regular bone.
+
+In 1.4.0, Base.AlcoholWipes targets 0.01 kg tare plus 0.05 kg multiplied by getUsedDelta (0.06 kg full, 0.01 kg empty), approximating five 9 g alcohol-pad pouches plus the wipes. Weight Monitor shares the same per-instance formula.
+
+In 1.2.8, Base.BlackSage targets 0.05 kg for note 13. The identification of the note's 'wild magic sage' with vanilla Black Sage is an inference from the local item catalog; only the fresh Base.BlackSage item is changed, not BlackSageDried.
+
+In 1.4.0, Base.LargeAnimalBone targets 0.70 kg, a rounded estimate based on retail beef femur pieces averaging about 0.68 kg; this stays inside note 13 range of 0.6-0.8 kg. Base.SmallAnimalBone targets 0.10 kg as an inferred bundle/portion of small-bone pieces, not an individual bone. Base.SharpBoneFragment targets 0.01 kg as a small fragment estimate. Base.Bowl (0.50 kg), Base.FishingRod (1.00 kg), and Base.RubberHose (0.30 kg) retain explicit targets. Base.PetrolCan is 1.60 kg empty plus 0.75 kg per liter of gasoline, capped at its 10 L capacity (9.10 kg full). Weight Monitor shares these targets. The physical analogs and references are documented in Manual_Pesos_B42_y_Monitor.md.
+
+The 1.4.1 change for `ThisIsYourLife.PreservedJournal` corrects from 0 kg to 0.25 kg. Jill's Weight Monitor log 1.6.1 showed one copy in a waist bag at actual=0; the target approximates a small bound journal between manufacturer weights of 0.15 kg (A6) and 0.42 kg (A5). The local override is ordered after `ThisIsYourLife` when that mod is active.
+
+In 1.4.2, `Base.22Bullets` from Extended Vanilla Weapons is corrected from 0.005 kg to 0.0035 kg. The U.S. Army's published .22 LR ball cartridge weighs approximately 53.5 grains (3.47 g), so 3.5 g is the rounded full-cartridge target ([TM 9-280, via GovInfo](https://www.govinfo.gov/content/pkg/GOVPUB-W-9ff7daf9acdf2842ebbebd9ef3f9ecc9/pdf/GOVPUB-W-9ff7daf9acdf2842ebbebd9ef3f9ecc9.pdf)). The patch loads after `ExtendedVanillaWeapons`.
+
+
+In 1.4.3, AMRBirds321.PeafowlTrainFeather is raised from 0.001 to 0.0022 kg after its source script in Animal Remaster. A 2020 field study of Indian peafowl train feathers reports 2.2 g average for medium eye feathers; the target uses that category as the closest match for the generic train-feather item (https://ijarbs.com/pdfcopy/2020/mar2020/ijarbs9.pdf). The patch now loads after AnimalRemasterApproved.
+
+In 1.4.4, Base.SugarPacket targets 0.004 kg. Holliston lists individual 3.5 g sugar packets; 4 g is a rounded estimate including the paper sachet (https://hollistons.com/product/sugar-packets/).
+In 1.4.5, Base.BluePen and Base.RedPen target 0.006 kg from BIC's published 5.58–5.6 g Cristal mass; Base.Pencil targets 0.005 kg from published wooden-pencil masses of 5.0–5.4 g (OHTO wood-body pencil and rOtring woodcase pencil product data). Weight Monitor shares the targets.
+
+In 1.4.6, Base.Battery targets 0.023 kg from Energizer's E91 AA datasheet. In 1.4.7, Base.Acorn uses a dynamic target: 0.0057 kg (the measured 5.7 g full-acorn mean) multiplied by the remaining fraction from getHungerChange()/getBaseHunger(), so partially eaten portions retain proportional mass.
+
+In 1.4.8, Base.Key1 targets 0.009 kg, Base.CarKey 0.012 kg (Schlage SC1 blank package mass implies about 8.4 g per key; a key blank with a decorative head lists 13.6 g), and Base.Bandaid 0.001 kg (a 100-count Band-Aid box has estimated shipping mass 0.18 lb, about 0.82 g per bandage including its box). Weight Monitor shares the targets.
+
+In 1.4.9, Base.HandTorch targets 0.20 kg. An Energizer 2-in-1 handheld flashlight is 117 g without batteries; adding four E91 AA cells at 23 g each gives approximately 209 g.
+
+In 1.4.10, Base.WristWatch_Left_DigitalDress targets 0.021 kg, using the manufacturer-listed 21 g Casio F-91W as an analog for a lightweight digital wristwatch.
+
+In 1.4.11, adult Animal Remaster cow and bull hide targets follow processing stage: full/fur green hides 20 kg, wet-tanned hides 16 kg, and dried tanned hides 8 kg. Medium/small cut hides remain unaudited until cut area or mass is defined. References and limits are documented in Manual_Pesos_B42_y_Monitor.md.
+
+
+In 1.4.12, non-sheared adult Jacob, Dorper, Icelandic, and Shetland hides receive breed-class and tanning-stage targets. Sheared hides, lamb hides, and small cuts remain unaudited pending stage-specific physical mass data.
+
+
+In 1.4.13, adult Animal Remaster pig/boar skins use 14 kg green, 13.6 kg wet-salted, and 5.6 kg dried targets. In 1.4.14 the wet target is corrected to the 2-4% pig-skin loss range; piglets and small cuts remain unaudited.
+
+
+
+Version 1.4.15 añade objetivos al cuero adulto de conejo Animal Remaster: 0.43 kg verde y 0.225 kg curtido seco. Variantes húmedas y juveniles quedan sin meta por falta de masas comparables.
+
+Version 1.4.16 fija a 0.40 kg cinco bandoleros de munición vanilla sin masa declarada: AmmoStrap_Brown_Bullets, AmmoStrap_Brown_Shells, AmmoStrap_Bullets, AmmoStrap_Bullets_308 y AmmoStrap_Shells.
+
+Version 1.4.17 añade objetivos por etapa a 64 cueros Animal Remaster de becerro: 12.30 kg verdes, 9.84 kg húmedos y 4.92 kg secos.
+
+Version 1.4.18 añade metas a 56 pieles de cordero (4.95/4.00 kg verdes por clase, con etapas húmeda/seca) y 24 pieles adultas deslanadas (2.5 kg verdes, 2.0 kg húmedas, 1.0 kg curtidas).
+
+
+In 1.4.19, 60 Animal Remaster piglet skins receive stage targets: 3.75 kg green, 3.60 kg wet-salted, and 1.50 kg dried. These use the midpoint of B42's 15–110 kg piglet range and University of Maine's approximate 6% live-weight skin yield; piglet small cuts remain unaudited.
+
+
+In 1.4.20, 48 adult Animal Remaster rabbit pelts in the wet-tanned stage receive a 0.384 kg target, estimated from the dry-leather mass and measured moisture fractions for natural and semi-finished rabbit skin; juvenile pelts remain unaudited.
+
+
+In 1.4.21, juvenile Animal Remaster rabbit pelts receive 0.30 kg green/fur, 0.27 kg wet-tanned, and 0.16 kg dried targets across 96 IDs. The green target follows a published 299 g pelt at eight weeks; wet and dry targets scale the adult stage ratios. The previous unsupported 0.10 kg Full target was replaced.

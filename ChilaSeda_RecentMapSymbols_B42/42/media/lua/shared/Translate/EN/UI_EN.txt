@@ -1,0 +1,7 @@
+UI_EN = {
+    IGUI_ChilaSeda_RecentMapSymbols = "Recent",
+    IGUI_ChilaSeda_SearchMapSymbols = "Search",
+    IGUI_ChilaSeda_SearchMapSymbolsHint = "Search by name, ID, or category",
+    IGUI_ChilaSeda_SearchMapSymbolsNoResults = "No matching symbols",
+    IGUI_ChilaSeda_SearchMapSymbolsLimit = "Too many matches; refine your search",
+}

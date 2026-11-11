@@ -1,0 +1,9 @@
+﻿name=ChilaSeda Fix - Doggy Library - Ray Beam (B42)
+id=ChilaSeda_Fix_Doggy_Library_RayBeam_B42_3428272880
+authors=ChilaSeda
+description=Guards Doggy's Library ray beam against IsoObjects without a Lua-callable getType method.
+require=DoggyLibrary,CheckAround
+loadModAfter=DoggyLibrary,CheckAround
+versionMin=42.21
+versionMax=42.22
+modversion=1.0.0

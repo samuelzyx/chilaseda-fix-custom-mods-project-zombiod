@@ -1,0 +1,36 @@
+ARCHIVO HISTORICO DEL PAQUETE SEPARADO; su ID dejó de activarse al integrar la traducción en Traducciones ES.
+
+ChilaSeda - Wilderness QoL en español (B42), versión 1.0.0
+
+ID: ChilaSeda_WildernessQoL_ES_B42
+Original requerido: Wilderness QoL 0.8.11, Workshop 3779759338.
+
+La carpeta ya está instalada en el workspace de mods locales.
+Activa el original y este complemento en la lista de mods de la partida.
+Carga este complemento después de Wilderness QoL y de los demás complementos
+de traducción. El mod.info declara el orden respecto a los proveedores de
+traducciones conocidos en este workspace.
+Selecciona Español en el juego y reinicia Project Zomboid para cargarlo.
+
+CONTENIDO
+Traduce las 125 claves inglesas de Wilderness QoL 0.8.11:
+- ContextMenu.json: 10 acciones del menú contextual.
+- IG_UI.json: 32 nombres, resultados de identificación, avisos y opciones.
+- Sandbox.json: 45 nombres de ajustes y sus explicaciones.
+- Tooltip.json: 5 descripciones de acciones.
+- UI.json: 33 controles y explicaciones de recolección automática.
+
+Incluye los avisos Puedo oler zombis cerca... y Puedo escuchar zombis cerca...
+La habilidad Wilderness se llama Supervivencia silvestre. Se conserva Rebuscar,
+el nombre de la habilidad Foraging en la traducción española del juego base.
+
+Los cinco JSON usan UTF-8 y el formato de traducción de Build 42.20/42.21.
+Se conservan las claves, los argumentos %1, %2 y %3, los porcentajes %% y las
+etiquetas <LINE>. Los nombres propios Wilderness QoL y Auto Foraging se conservan.
+Solo incluye traducciones: no contiene código Lua ni reemplaza el mod original.
+Es compatible con ChilaSeda - Wilderness Identification Fix.
+
+Este complemento aún no se ha probado dentro de Project Zomboid.
+Revisa un aviso de peligro, Identificar alimento, Investigar zona y las opciones
+de Wilderness QoL en la siguiente sesión. Si el autor añade textos en una
+actualización, hará falta ampliar la traducción para las claves nuevas.

@@ -1,0 +1,8 @@
+name=ChilaSeda Fix - Mini Compass Position (B42)
+id=ChilaSeda_Fix_MiniCompass_Position_B42
+authors=ChilaSeda
+description=Restores the saved, draggable Mini Compass HUD position after each player entry.
+require=MiniCompass
+loadModAfter=MiniCompass
+versionMin=42.19.0
+modversion=0.1.1

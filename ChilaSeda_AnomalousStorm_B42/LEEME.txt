@@ -1,0 +1,31 @@
+Anomalous Storm - port local para Build 42
+
+Port de Anomalous Storm (Workshop 2779946812), cuyo concepto y codigo original son de Soul Filcher. Los archivos originales de Workshop permanecen intactos. Viewpoint True Weathers es opcional. El mismo rectangulo rojo fullscreen del mod original se dibuja en isometrica y Viewpoint; el mod deja intactos el shader y sus ajustes.
+
+## Ciclo de la emision
+
+Por defecto no hay una fase roja separada: `STAGE_STORM` y el primer tinte rojo comienzan juntos. Build 42 aumenta la intensidad de la lluvia gradualmente; una hora despues comienzan los truenos y la tormenta electrica. La mascara roja sube entonces de alfa 0.2 a 0.4, siguiendo la fase electrica. Las quemaduras del jugador, el dano y la ralentizacion de zombis expuestos empiezan con `Thunder`; la ralentizacion persiste hasta que termina la lluvia. La fase electrica dura lo que indique `AnomalousStormLength` (1 hora por defecto); despues cesan los truenos, sigue una hora de lluvia tranquila y el rojo se desvanece durante otra hora. `AnomalousStormWarningMinutes` permite agregar una fase roja sin lluvia, con valor predeterminado 0.
+
+El rojo usa el rectangulo fullscreen original en ambas vistas: llega a alfa 0.2 al comenzar `STAGE_STORM`, sube gradualmente a 0.4 con `Thunder`, vuelve a 0.15 al terminar los truenos y se desvanece al final. Como la mascara se dibuja sobre la vista, cambiar entre isometrica y Viewpoint no cambia ni pierde el rojo. True Weathers conserva sus perfiles y ajustes.
+
+Los truenos y el periodo de tormenta vienen del ClimateManager de Build 42. Durante el aviso no hay daño por lluvia. El daño del jugador conserva las tiradas del original y comienza cuando la tormenta alcanza la fase fuerte: solo si el personaje esta afuera y a pie, cada actualizacion del jugador elige una parte del cuerpo; una tirada 1/600 llama a `setBurned()` y las cinco siguientes aplican dano aleatorio de 1 a 3.
+
+El codigo Workshop original no modifica a los zombis. En este port, los zombis expuestos quedan ralentizados al porcentaje configurable de velocidad normal cuando inicia `Thunder` (10 % por defecto) y recuperan su velocidad previa al entrar bajo techo o al terminar la lluvia. Zombis y animales expuestos reciben dano gradual actualizado cada minuto: el valor configurable 10 conserva una base de 0.10 por cada diez minutos, repartida entre minutos. Cada actor recibe un multiplicador aleatorio estable entre 0.75 y 2.25. Al alcanzar el porcentaje configurable de exposicion letal (75 % por defecto), el dano aumenta progresivamente hasta 11.5 veces la base al final de los truenos. Los actores mas vulnerables pueden morir antes y los demas por dano acumulado cerca del final; no se fuerza la muerte de todos en una sola actualizacion. El valor de dano 0 desactiva ese dano.
+
+La exposicion omite actores cuya square ya no conserva un chunk cargado. Esto evita aplicar dano, cambiar velocidad o iniciar la ruta de muerte durante la ventana en que PZ descarga el chunk.
+
+Las opciones Sandbox permiten agregar una fase roja inicial (0 minutos por defecto, como en el original), cambiar la demora de los truenos, la lluvia tranquila y el desvanecimiento rojo. Viewpoint True Weathers conserva sus perfiles y opciones; el mismo rectangulo rojo fullscreen se dibuja en ambas vistas.
+
+Los avisos Halo de las fases y de la eliminacion de todos los actores expuestos tambien se envian en un jugador; necesitan un personaje local vivo. El mod intenta cargar `ChilaSeda_ViewpointHaloNotifications.showFixed`; si la API no acepta el texto, usa `HaloTextHelper` como respaldo. El primer aviso aceptado registra una sola vez en consola la ruta usada.
+
+Requiere Project Zomboid Build 42.21. Viewpoint True Weathers es opcional; la mascara fullscreen funciona tambien en sus camaras sin modificar sus ajustes. No actives simultaneamente la version original B41. El rojo, la lluvia visible, los truenos y las reacciones de zombis requieren validacion en partida.
+
+## Prueba rapida en un mundo nuevo
+
+Crea un mundo descartable con este mod y Viewpoint True Weathers. No hace falta `-debug`, opcion Sandbox ni permisos de administrador.
+
+Pulsa `Ctrl+Shift+F11`: limpia el clima anterior y comienza de nuevo con STAGE_STORM; la lluvia arranca leve y sube gradualmente. Los truenos empiezan una hora despues, cuando comienzan las quemaduras y los efectos a zombis. Con una hora de fase electrica, sigue una hora de lluvia tranquila y una hora de desvanecimiento rojo. Pulsa la misma combinacion para detener el ciclo. El comando Lua `AnomalousStormDebug.start()`, `AnomalousStormDebug.status()` y `AnomalousStormDebug.stop()` tambien esta disponible.
+
+Para probar la presentacion, inicia el ciclo y cambia entre isometrica y Viewpoint con True Weathers activo: la misma mascara roja debe permanecer y cambiar de intensidad con las fases, sin alterar los ajustes del shader.
+
+Para revisar la ralentizacion al nivel acordado, en el mundo descartable comprueba que `AnomalousStormZombieSlowPercent` este en 10. La partida Jill registrada en `DebugLog` tiene ese valor en 70, que conserva el 70 % de velocidad normal (solo 30 % de reduccion). El atajo de prueba no altera los valores Sandbox guardados.

@@ -1,0 +1,26 @@
+ChilaSeda - AutoCook Fixes (B42) 2.0.5
+
+This package combines mobility, auto-resume, exhausted-ingredient cleanup, and
+safe completion of prepared meals, and repair of salads containing poisonous
+ingredients. Each fix remains in a separate Lua script.
+
+The poisonous-ingredient action supports the Java item collections passed by
+the B42 inventory context menu, so it can resolve the selected meal reliably.
+The nutrition tooltip uses the vanilla B42 layout origin. `ISToolTipInv` has no
+`padLeft` value, so passing it to Java's integer-based layout renderer caused
+the null-to-integer exception when opening the inventory.
+
+When a poisonous ingredient is added to a meal, the patch stores its type,
+poison contribution, and supported nutrition values. Right-click the prepared
+meal and choose "Remove poisonous ingredients" to remove the recorded
+ingredients and reverse those values and their poison contribution. Existing meals made
+before this patch do not contain the ingredient-level poison history needed by
+the repair option.
+
+Food tooltips also show calories, carbohydrates, proteins, and fat for the
+item's full serving, using the game's translated labels. Characters with the
+Nutritionist trait continue to use the native nutrition display.
+
+AutoCook is optional. The scripts validate its API and skip with a concise
+message when the original mod is missing or incompatible. Workshop files are
+unchanged. Historical safe-completion notes are in Documentacion/.

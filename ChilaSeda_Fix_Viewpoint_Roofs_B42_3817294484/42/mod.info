@@ -1,0 +1,11 @@
+name=ChilaSeda Fix - Viewpoint Roofs Chunk Unload (B42)
+id=ChilaSeda_Fix_Viewpoint_Roofs_B42_3817294484
+authors=ChilaSeda
+description=Omite AddTileObject cuando el cuadrado de Viewpoint Roofs ya perdió su chunk y evita el NPE nativo de pathfinding durante la descarga.
+require=ViewpointRoofs,ZombieBuddy
+loadModAfter=ViewpointRoofs,ZombieBuddy
+versionMin=42.21
+modversion=0.1.0
+ZBVersionMin=2.3.4
+javaJarFile=media/java/client/ChilaSedaViewpointRoofsFix.jar
+javaPkgName=chilaseda.viewpointroofsfix

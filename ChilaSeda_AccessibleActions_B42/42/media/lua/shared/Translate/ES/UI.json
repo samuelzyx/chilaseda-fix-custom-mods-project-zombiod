@@ -1,0 +1,15 @@
+{
+    "UI_ChilaSeda_DeleteItem_ConfirmOne":  "Estas seguro de que deseas eliminar %1?",
+    "UI_ChilaSeda_DeleteItem_ConfirmMany":  "Estas seguro de que deseas eliminar %1 objetos?",
+    "UI_ChilaSeda_DeleteItem_OptionOne":  "Eliminar objeto",
+    "UI_ChilaSeda_DeleteItem_OptionMany":  "Eliminar %1 objetos",
+    "UI_ChilaSeda_DeleteFood_OptionRotten":  "Eliminar alimentos podridos (%1)",
+    "UI_ChilaSeda_DeleteFood_OptionStale":  "Eliminar alimentos rancios (%1)",
+    "UI_ChilaSeda_DeleteFood_OptionFresh":  "Eliminar alimentos frescos (%1)",
+    "UI_ChilaSeda_DeleteFood_StateRotten":  "podrido",
+    "UI_ChilaSeda_DeleteFood_StateStale":  "rancio",
+    "UI_ChilaSeda_DeleteFood_StateFresh":  "fresco",
+    "UI_ChilaSeda_DeleteFood_ConfirmOne":  "¿Eliminar permanentemente %1 del grupo %2? Esta acción no se puede deshacer.",
+    "UI_ChilaSeda_DeleteFood_ConfirmMany":  "¿Eliminar permanentemente %1 alimentos del grupo %2 en este contenedor? Esta acción no se puede deshacer.",
+    "UI_ChilaSeda_DeleteFood_Notification": "Eliminé %1 x %2"
+}
