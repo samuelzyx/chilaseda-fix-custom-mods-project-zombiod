@@ -20,9 +20,9 @@
 
 <table>
 <tr>
-<td align="center"><strong>📦 179</strong><br>mods en la colección</td>
+<td align="center"><strong>📦 174</strong><br>mods en la colección</td>
 <td align="center"><strong>✅ 171</strong><br>con algún ID activo en Jill</td>
-<td align="center"><strong>🔎 8</strong><br>sin coincidencia activa</td>
+<td align="center"><strong>🔎 3</strong><br>sin coincidencia activa</td>
 <td align="center"><strong>🧩 0</strong><br>mods activos faltantes</td>
 </tr>
 </table>
@@ -50,7 +50,7 @@ su ID no está activo en Jill.
 
 <a id="candidatos-para-quitar-de-la-coleccion"></a>
 
-Estos ocho mods no tienen un ID activo en Jill. Se recomiendan quitar de la **colección pública de
+Estos tres mods restantes no tienen un ID activo en Jill. Se recomiendan quitar de la **colección pública de
 esta partida**. La presencia de un parche local no cambia la recomendación si el mod no se carga en
 Jill.
 
@@ -62,22 +62,12 @@ Jill.
 </tr>
 </table>
 
-Los otros cinco candidatos:
-
-| Elemento de Workshop | ID interno | Motivo |
-|---|---|---|
-| [3d Blood VFX for Viewpoint (experimental)](https://steamcommunity.com/sharedfiles/filedetails/?id=3811472160) · `3811472160` | `ViewpointBloodFX` | Tiene parche local, pero no está activo en Jill. |
-| [Viewpoint - Roofs (WIP)](https://steamcommunity.com/sharedfiles/filedetails/?id=3817294484) · `3817294484` | `ViewpointRoofs` | Tiene parche local, pero no está activo en Jill. |
-| [Project Viewpoint - Isometric No More](https://steamcommunity.com/sharedfiles/filedetails/?id=3819166046) · `3819166046` | `isometricnomore` | No está activo en Jill; el título indica que no se necesita con Viewpoint 0.1.7+. |
-| [Wring Out Clothing](https://steamcommunity.com/sharedfiles/filedetails/?id=2696083206) · `2696083206` | `wringclothes` | No está activo en Jill. |
-| [Elemento sin título público](https://steamcommunity.com/sharedfiles/filedetails/?id=3032253803) · `3032253803` | `PZRPs11Zombies` | No está activo en Jill; Steam no entrega título ni portada. |
-
 ## ℹ️ Cómo leer esta lista
 
 <a id="como-leer-esta-lista"></a>
 
 - **Quitar de la colección** elimina el elemento de la lista pública, pero no cancela por sí solo tu
-  suscripción personal de Workshop. La lista recomienda quitar los ocho de la colección de Jill.
+  suscripción personal de Workshop.
 - **Desuscribirte** cambia tu cuenta; no elimina el mod de la colección pública.
 - **CVI** (`3749026793`) sí tiene un ID activo en Jill, por eso no aparece entre los candidatos.
 - Codex no ha cambiado la colección ni las suscripciones de tu cuenta.
