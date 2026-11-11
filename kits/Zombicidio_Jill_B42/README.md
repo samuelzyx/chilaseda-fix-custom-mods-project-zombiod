@@ -91,6 +91,19 @@ ChilaSeda_Translations_ES_B42
 | [`mods.txt`](mods.txt) | Orden de carga de referencia para Jill. |
 | [`map_ver.bin`](map_ver.bin) | Acompaña a `mods.txt` en el guardado. |
 | [`Sandbox Presets/Zombicidio.cfg`](Sandbox%20Presets/Zombicidio.cfg) | Preset para crear el mundo Sandbox. |
+| [`configs/`](configs/README.md) | Teclas, opciones de mods y ajustes de Viewpoint de Jill. |
+
+### 🛠️ Ajustes manuales de compatibilidad en `mod.info`
+
+Durante la preparación de Jill se hicieron estos ajustes locales de metadatos para B42.22.2:
+
+- [Viewpoint Foraging](https://steamcommunity.com/sharedfiles/filedetails/?id=3814994364) (`ViewpointForaging`): se ajustó el metadato de versión para incluir B42.22.2; la instalación actual declara `versionMin=42.21` y `versionMax=42.22.2`.
+- [6282 3D models for Viewpoint](https://steamcommunity.com/sharedfiles/filedetails/?id=3810302175) (`PZVoxelStudioViewpoint`): se corrigió `mod.info` en la copia local para B42.22.2. El Workshop actual también declara `versionMin=42.21.0` y `versionMax=42.22.2`.
+- [Grassier Grass (Viewpoint)](https://steamcommunity.com/sharedfiles/filedetails/?id=3818853354) (`GrassierGrassViewpoint`): se movió `mod.info` a la carpeta `42` y se ajustó a `versionMin=42.22` y `versionMax=42.22.2`, pero **el mod siguió sin funcionar en Jill**. No se presenta como compatibilidad resuelta.
+
+Los cambios de `mod.info` son metadatos locales y no garantizan que el código del mod funcione.
+Una actualización de Workshop puede reemplazarlos; revisa las notas del autor y vuelve a comprobar
+la compatibilidad antes de repetir un ajuste.
 
 La referencia usa **Project Zomboid Vanilla B42.22.2**. Las versiones instaladas de los mods de
 Workshop pueden cambiar; comprueba sus notas en Steam y revisa el registro de
@@ -104,6 +117,15 @@ Workshop pueden cambiar; comprueba sus notas en Steam y revisa el registro de
 2. Crea un mundo nuevo en Sandbox, selecciona el preset `Zombicidio` y activa los mods de la colección y las carpetas locales.
 3. Para la apariencia de Jill, instala `[COS] RE:3 Remake Jill` desde Workshop y selecciona `RE3_Jill`.
 4. Para recrear su personaje, elige la ocupación **Pescador** y los rasgos **Insensible, Manitas, Poca sed, Insomne, Propenso a enfermar, Sanador lento, Robusto, Bajo peso** y **Metabolismo lento**.
+
+## ⚙️ Carga las configuraciones de Jill
+
+La carpeta [`configs/`](configs/README.md) incluye las teclas del juego, opciones y teclas de
+mods, ajustes vivos de Viewpoint, posición de MiniCompass y pines manuales de rebusca. Con el juego
+cerrado, respalda tus archivos actuales y copia el contenido de `configs/` a `%USERPROFILE%\Zomboid\`,
+conservando la estructura. Esto reemplaza preferencias y teclas locales. El preset Sandbox está en
+[`Sandbox Presets/Zombicidio.cfg`](Sandbox%20Presets/Zombicidio.cfg); cópialo a
+`%USERPROFILE%\Zomboid\Sandbox Presets\` antes de crear el mundo.
 
 ## 📋 Coloca `mods.txt` y `map_ver.bin`
 

@@ -26,7 +26,7 @@ Este repositorio reúne mods y parches locales de ChilaSeda, junto con herramien
 | 🗂️ Ruta | ✨ Qué encontrarás |
 | --- | --- |
 | `ChilaSeda_*` | Mods propios y parches locales para Build 42. |
-| `kits/Zombicidio_Jill_B42/` | Guía, lista de suscripciones en pausa, `mods.txt`, `map_ver.bin` y preset de Jill. |
+| `kits/Zombicidio_Jill_B42/` | Guía, lista de suscripciones en pausa, `mods.txt`, `map_ver.bin`, preset y configuraciones de Jill. |
 | `docs/incidentes/` | Guía y plantilla para proponer notas comunitarias con evidencia. |
 | `docs/releases/` | Historial de versiones de mods y guía para descargar actualizaciones. |
 | `docs/Manual_Pesos_B42_y_Monitor.md` | Manual de objetivos de peso y del monitor. |
@@ -43,6 +43,7 @@ La guía [`kits/Zombicidio_Jill_B42/README.md`](kits/Zombicidio_Jill_B42/README.
 - 🎮 Partida de referencia: **Project Zomboid Vanilla B42.22.2**.
 - 🧺 [Colección ChilaSeda en Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3812814868).
 - 📋 [`mods.txt`](kits/Zombicidio_Jill_B42/mods.txt) y 🗺️ [`map_ver.bin`](kits/Zombicidio_Jill_B42/map_ver.bin), para colocar en el guardado después de crear el mundo y cerrar el juego.
+- ⚙️ [`configs/`](kits/Zombicidio_Jill_B42/configs/README.md) reúne opciones de mods, teclas y ajustes de Viewpoint para aproximar la configuración de Jill.
 - ⏸️ [`mods_en_pausa.md`](kits/Zombicidio_Jill_B42/mods_en_pausa.md) registra elementos de Workshop que no están activos en la lista de Jill y candidatos para desuscripción temporal.
 - ⚙️ [Preset de Sandbox](kits/Zombicidio_Jill_B42/Sandbox%20Presets/Zombicidio.cfg) y 📖 [descripción de la colección e instalación](kits/Zombicidio_Jill_B42/Descripcion_Coleccion_Zombicidio.txt).
 - 🧟 Los mods de terceros se descargan desde Workshop; el repo no redistribuye sus archivos.
