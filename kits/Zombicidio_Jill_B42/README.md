@@ -17,6 +17,12 @@
 > ⚠️ El kit comparte listas y ajustes; no redistribuye los mods de terceros. Haz una copia del
 > guardado antes de reemplazar archivos.
 
+### Accesos rápidos del catálogo
+
+- [🌱 Mods recomendados para evaluar](mods_en_pausa.md#recomendados-para-evaluar)
+- [🧪 Candidatos a ports locales Build 42](mods_en_pausa.md#candidatos-a-ports-locales-build-42)
+- [⏸️ Mods en pausa y sus fichas de Steam](mods_en_pausa.md#mods-en-pausa)
+
 ## ⬇️ Descarga el kit
 
 Clona el repositorio con Git:
@@ -158,6 +164,7 @@ cuando cada versión esté validada y publicada. También puedes seguir los dire
 ### 🔗 Otros enlaces de interés
 
 - [⚙️ Configuraciones del kit](configs/README.md)
+- [🌱 Recomendaciones y 🧪 ports locales](mods_en_pausa.md#recomendados-para-evaluar)
 - [⏸️ Mods en pausa](mods_en_pausa.md)
 - [🏠 Inicio del repositorio](../../README.md)
 - [🤝 Cómo contribuir](../../CONTRIBUTING.md)
