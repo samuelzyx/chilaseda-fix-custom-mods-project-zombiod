@@ -135,7 +135,7 @@ Estos mods se retiraron de la colección. La propuesta es revisar su contenido y
 
 Estos dos siguen suscritos y no se usan en Jill. Chila ya los quitó de la colección pública; quedan registrados aquí para revisar compatibilidad si después quiere recuperarlos.
 
-Isometric No More ya no está en pausa: se reintegró en Jill porque el nightly 0.1.7 RC4 probado omitía varias opciones de colocación necesarias. El anuncio del nightly avisa que la mayoría de addons estaban rotos, pero no confirma si esa falta fue una desactivación intencional. Esperaremos una publicación oficial antes de revisar de nuevo el addon; no instalar ni probar otra copia manual.
+Isometric No More (Workshop 2696083206) vuelve a quedar en pausa por decision de Chila el 2026-11-12. Se retiro del perfil activo de Jill y del kit. Mantenerlo pausado hasta que Chila decida reactivarlo.
 
 <table>
 <tr>

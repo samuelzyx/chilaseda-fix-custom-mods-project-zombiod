@@ -19,7 +19,6 @@ mods
     mod = ViewpointTrueBallistics,
     mod = ViewpointLivingProps,
     mod = ViewpointBarricade,
-    mod = isometricnomore,
     mod = ViewpointForaging,
     mod = GrassierGrassViewpoint,
     mod = ViewpointCropVisibility,
