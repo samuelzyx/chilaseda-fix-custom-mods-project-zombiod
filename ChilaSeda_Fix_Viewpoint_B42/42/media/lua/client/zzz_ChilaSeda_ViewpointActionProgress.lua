@@ -515,7 +515,7 @@ do
         local x, y = math.floor((width - barWidth) / 2), math.floor(height * 0.57)
         local font = UIFont.Small
         local textWidth = getTextManager():MeasureStringX(font, self.label)
-        self:drawText(self.label, math.floor((width - textWidth) / 2), y - 19,
+        self:drawText(self.label, math.floor((width - textWidth) / 2), y - 24,
             1, 1, 1, 1, font)
         self:drawRect(x, y, barWidth, 3, 0.9, 0.12, 0.12, 0.12)
         self:drawRect(x, y, math.floor(barWidth * self.fraction), 3,

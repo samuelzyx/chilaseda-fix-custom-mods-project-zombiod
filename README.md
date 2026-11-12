@@ -10,7 +10,7 @@
 <a href="#redes-y-streaming"><img alt="ChilaSeda · Canales" src="https://img.shields.io/badge/CHILASEDA-STREAMS_Y_REDES-E76F51?style=for-the-badge"></a>
 <a href="#colaborar"><img alt="Colaborar" src="https://img.shields.io/badge/COMUNIDAD-RAMAS_%2B_PRS-3A86FF?style=for-the-badge"></a>
 
-[📦 Mods](#contenido-del-repositorio) · [🧰 Kit Jill](#kit-zombicidio-jill) · [🤝 Colaborar](#colaborar) · [📝 Incidentes](#notas-de-la-comunidad) · [🚀 Releases](#releases) · [📺 Canales](#redes-y-streaming) · [🎨 Autoría](#creacion-propia-y-auditoria)
+[📦 Mods](#contenido-del-repositorio) · [🌩️ Anomalous Storm](#anomalous-storm) · [🧰 Kit Jill](#kit-zombicidio-jill) · [🤝 Colaborar](#colaborar) · [📝 Incidentes](#notas-de-la-comunidad) · [🚀 Releases](#releases) · [📺 Canales](#redes-y-streaming) · [🎨 Autoría](#creacion-propia-y-auditoria)
 
 </div>
 
@@ -32,6 +32,17 @@ Este repositorio reúne mods y parches locales de ChilaSeda, junto con herramien
 | `docs/Manual_Pesos_B42_y_Monitor.md` | Manual de objetivos de peso y del monitor. |
 | `tools/` · `tests/` | Herramientas de mantenimiento y pruebas que acompañan a los mods. |
 | `.agents/` · `.codex/` · `.claude/` · `.codemie/` | Instrucciones, skills y espacios portables para colaborar con herramientas de IA. |
+
+---
+
+<a id="anomalous-storm"></a>
+## 🌩️ Anomalous Storm · port local para Build 42
+
+Recuperamos para Build 42 el concepto de [Anomalous Storm de Soul Filcher](https://steamcommunity.com/sharedfiles/filedetails/?id=2779946812) mediante un port local, ahora activo en el perfil Jill. Los archivos originales de Workshop siguen intactos; la implementación vive en [`ChilaSeda_AnomalousStorm_B42/`](ChilaSeda_AnomalousStorm_B42/).
+
+El port conserva la máscara roja de pantalla completa en las vistas isométrica y Viewpoint sin cambiar los shaders ni los perfiles de Viewpoint True Weathers. También añade efectos graduales de exposición para zombis y animales, y opciones Sandbox para ajustar las fases y el daño. True Weathers es opcional.
+
+Consulta el [README del port](ChilaSeda_AnomalousStorm_B42/README.md) para ver sus fases, opciones y pasos de prueba.
 
 ---
 

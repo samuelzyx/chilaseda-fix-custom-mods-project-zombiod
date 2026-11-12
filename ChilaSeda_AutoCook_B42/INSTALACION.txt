@@ -12,10 +12,12 @@ the null-to-integer exception when opening the inventory.
 
 When a poisonous ingredient is added to a meal, the patch stores its type,
 poison contribution, and supported nutrition values. Right-click the prepared
-meal and choose "Remove poisonous ingredients" to remove the recorded
-ingredients and reverse those values and their poison contribution. Existing meals made
-before this patch do not contain the ingredient-level poison history needed by
-the repair option.
+meal to see the localized names and counts of the recorded poisonous
+ingredients in the removal option. This identifies the source after ingredients
+have already been combined. Choose the option to remove those ingredients and
+reverse their supported nutrition values and poison contribution. Existing meals
+made before this patch do not contain the ingredient-level poison history needed
+by the repair option.
 
 Food tooltips also show calories, carbohydrates, proteins, and fat for the
 item's full serving, using the game's translated labels. Characters with the

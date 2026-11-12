@@ -6,7 +6,7 @@ local iconPaths = {
 	drop = "media/ui/MP/mp_ui_droplist.png",
 	split = "media/ui/Icon_RecipeGroup_Partial_48x48.png",
 	inventory = "media/ui/Sidebar/48/Inventory_On_48.png",
-	health = "media/ui/Sidebar/48/Health_On_48.png",
+	health = "media/ui/Sidebar/48/Heart_On_48.png",
 }
 
 local iconCache = {}

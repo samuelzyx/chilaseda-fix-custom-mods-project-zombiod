@@ -68,6 +68,138 @@ if vanillaGetContainers then
 end
 
 local vanillaCreateInventoryContextMenu = ISInventoryPaneContextMenu.createMenu
+local watchDismantleFallbackLogged = {}
+local watchDismantleRestoredLogged = {}
+
+local function selectedSingleWatch(items)
+    local selected, seen = nil, {}
+    local function add(item)
+        if not item or not instanceof(item, "InventoryItem") then return end
+        local id = item:getID()
+        if seen[id] then return end
+        seen[id] = true
+        if selected then
+            selected = false
+        elseif selected == nil then
+            selected = item
+        end
+    end
+
+    for _, entry in ipairs(type(items) == "table" and items or {}) do
+        if instanceof(entry, "InventoryItem") then
+            add(entry)
+        elseif type(entry) == "table" and type(entry.items) == "table" then
+            for _, item in ipairs(entry.items) do add(item) end
+        end
+    end
+    if not selected then return nil end
+
+    local ok, fullType = pcall(function() return selected:getFullType() end)
+    if not ok or type(fullType) ~= "string"
+        or not string.find(string.lower(fullType), "wristwatch_", 1, true) then
+        return nil
+    end
+    return selected, fullType
+end
+
+local function contextHasDismantleRecipe(context, item, visited)
+    if not context or visited[context] then return false end
+    visited[context] = true
+    for _, option in ipairs(context.options or {}) do
+        if option and option.onSelect == ISInventoryPaneContextMenu.OnNewCraft
+            and option.target and type(option.target.getID) == "function"
+            and option.target:getID() == item:getID()
+            and option.param1 and type(option.param1.getTranslationName) == "function"
+            and option.param1:getTranslationName() == "DismantleElectronics" then
+            return true
+        end
+        if option and option.subOption and context.getSubMenu then
+            local ok, subMenu = pcall(context.getSubMenu, context, option.subOption)
+            if ok and contextHasDismantleRecipe(subMenu, item, visited) then return true end
+        end
+    end
+    return false
+end
+
+local function moveRecipeOptionAfterEquip(context, label)
+    local options = context and context.options
+    if type(options) ~= "table" then return end
+    local equipLabels = {
+        [getText("ContextMenu_Equip_Primary")] = true,
+        [getText("ContextMenu_Equip_Secondary")] = true,
+        [getText("ContextMenu_Equip_Two_Hands")] = true,
+    }
+    local optionIndex, lastEquipIndex
+    for index, option in ipairs(options) do
+        if option and option.name == label then optionIndex = index end
+        if option and equipLabels[option.name] then lastEquipIndex = index end
+    end
+    if not optionIndex then return end
+    local option = table.remove(options, optionIndex)
+    if lastEquipIndex and optionIndex <= lastEquipIndex then
+        lastEquipIndex = lastEquipIndex - 1
+    end
+    table.insert(options, (lastEquipIndex or 0) + 1, option)
+    for index, entry in ipairs(options) do entry.id = index end
+    pcall(function()
+        if context.calcHeight then context:calcHeight() end
+        if context.calcWidth and context.setWidth then context:setWidth(context:calcWidth()) end
+    end)
+end
+
+local function addMissingSecondaryWatchDismantle(player, isInPlayerInventory, context, items)
+    if not context or not isInPlayerInventory then return end
+    local playerObj = getSpecificPlayer(player)
+    local item, fullType = selectedSingleWatch(items)
+    local itemContainer = item and item:getContainer()
+    local inventory = playerObj and playerObj:getInventory()
+    if not item or not inventory or not itemContainer or itemContainer == inventory then
+        return
+    end
+
+    local containers = ISInventoryPaneContextMenu.getContainers(playerObj, item)
+    local ok, recipes = pcall(CraftRecipeManager.getUniqueRecipeItems,
+        item, playerObj, containers)
+    if not ok or not recipes then return end
+
+    local dismantleRecipe
+    for index = 0, recipes:size() - 1 do
+        local recipe = recipes:get(index)
+        if recipe and recipe:getTranslationName() == "DismantleElectronics" then
+            dismantleRecipe = recipe
+            break
+        end
+    end
+    if not dismantleRecipe then
+        if not watchDismantleFallbackLogged[fullType] then
+            watchDismantleFallbackLogged[fullType] = true
+            print("[ChilaSeda AccessibleActions][WatchDismantle] No available DismantleElectronics recipe for "
+                .. fullType .. " in a carried secondary bag.")
+        end
+        return
+    end
+
+    local label = getText(dismantleRecipe:getTranslationName())
+    if contextHasDismantleRecipe(context, item, {}) then return end
+
+    local fallbackRecipes = ArrayList.new()
+    fallbackRecipes:add(dismantleRecipe)
+    local okAdd, err = pcall(ISInventoryPaneContextMenu.addNewCraftingDynamicalContextMenu,
+        item, context, fallbackRecipes, player, containers)
+    if okAdd then
+        moveRecipeOptionAfterEquip(context, label)
+        if not watchDismantleRestoredLogged[fullType] then
+            watchDismantleRestoredLogged[fullType] = true
+            print("[ChilaSeda AccessibleActions][WatchDismantle] Restored missing recipe option for "
+                .. fullType .. " from a carried secondary bag.")
+        end
+    elseif not watchDismantleFallbackLogged[fullType] then
+        watchDismantleFallbackLogged[fullType] = true
+        print("[ChilaSeda AccessibleActions][WatchDismantle] Could not restore recipe option for "
+            .. fullType .. ": " .. tostring(err))
+    end
+end
+
 if vanillaCreateInventoryContextMenu then
     ISInventoryPaneContextMenu.createMenu = function(player, isInPlayerInventory, items, ...)
         local shared = ChilaSedaAccessibleActions
@@ -76,6 +208,10 @@ if vanillaCreateInventoryContextMenu then
 
         local results = { pcall(vanillaCreateInventoryContextMenu,
             player, isInPlayerInventory, items, ...) }
+        if results[1] then
+            pcall(addMissingSecondaryWatchDismantle,
+                player, isInPlayerInventory, results[2], items)
+        end
         if shared then shared.contextRecipeItems = previousItems end
         if not results[1] then error(results[2], 0) end
         local unpackValues = table.unpack or unpack

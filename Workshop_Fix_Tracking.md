@@ -1,17 +1,17 @@
-# Seguimiento de versiones de Workshop y fixes locales
+﻿# Seguimiento de versiones de Workshop y fixes locales
 
 Este registro sigue los mods de Workshop que sirven de objetivo a los fixes locales. El ID de
-Workshop y `time_updated` identifican la publicaciÃƒÂ³n; `modversion` se registra cuando el contenido
-instalado la declara. Una fecha nueva es una seÃƒÂ±al para revisar, no prueba de que el fix ya no haga
+Workshop y `time_updated` identifican la publicaciÃƒÆ’Ã‚Â³n; `modversion` se registra cuando el contenido
+instalado la declara. Una fecha nueva es una seÃƒÆ’Ã‚Â±al para revisar, no prueba de que el fix ya no haga
 falta.
 
-## LÃƒÂ­mite histÃƒÂ³rico
+## LÃƒÆ’Ã‚Â­mite histÃƒÆ’Ã‚Â³rico
 
-Los `mod.info` de los fixes no guardaban la versiÃƒÂ³n del mod original en la que se aplicÃƒÂ³ cada
-correcciÃƒÂ³n. No se puede reconstruir ese dato con certeza desde el workspace. La primera consulta del
-comprobador establece una lÃƒÂ­nea base fechada. Desde entonces, las diferencias quedan registradas y
-se comparan con la sesiÃƒÂ³n de Jill. No se debe presentar esa primera observaciÃƒÂ³n como la versiÃƒÂ³n
-histÃƒÂ³rica de aplicaciÃƒÂ³n.
+Los `mod.info` de los fixes no guardaban la versiÃƒÆ’Ã‚Â³n del mod original en la que se aplicÃƒÆ’Ã‚Â³ cada
+correcciÃƒÆ’Ã‚Â³n. No se puede reconstruir ese dato con certeza desde el workspace. La primera consulta del
+comprobador establece una lÃƒÆ’Ã‚Â­nea base fechada. Desde entonces, las diferencias quedan registradas y
+se comparan con la sesiÃƒÆ’Ã‚Â³n de Jill. No se debe presentar esa primera observaciÃƒÆ’Ã‚Â³n como la versiÃƒÆ’Ã‚Â³n
+histÃƒÆ’Ã‚Â³rica de aplicaciÃƒÆ’Ã‚Â³n.
 
 ## Revisiones actuales
 
@@ -25,10 +25,10 @@ de lectura no se cuenta como una actualizacion del Workshop. Las fechas anterior
 consulta ya estaban publicadas; no hay dato local de cuando llegaron al equipo ni de la version
 fuente exacta con la que se creo historicamente cada fix.
 
-Authentic Z se agregÃ³ al seguimiento al crear `ChilaSeda_Fix_Authentic_Z_InstantCraft_B42_2335368829`.
-La consulta del 2026-10-30 10:47:37 -06:00 registrÃ³ `time_updated=2026-09-13 23:01:38 UTC`.
+Authentic Z se agregÃƒÂ³ al seguimiento al crear `ChilaSeda_Fix_Authentic_Z_InstantCraft_B42_2335368829`.
+La consulta del 2026-10-30 10:47:37 -06:00 registrÃƒÂ³ `time_updated=2026-09-13 23:01:38 UTC`.
 El `mod.info` solo declara `version=42` (rama/build compatible), no `modversion`; el comprobador
-omite esa etiqueta para no confundirla con una versiÃ³n del contenido.
+omite esa etiqueta para no confundirla con una versiÃƒÂ³n del contenido.
 
 <!-- CURRENT_STATE_START -->
 | Mod original de Workshop | Workshop ID | Mod ID fuente | Fix local | Version del fix | Version fuente aplicada | Workshop actualizado | Version fuente instalada | Estado |
@@ -55,12 +55,12 @@ omite esa etiqueta para no confundirla con una versiÃ³n del contenido.
 
 ## Historial de cambios detectados
 
-El comprobador agrega aquÃƒÂ­ solo cambios posteriores a la primera lÃƒÂ­nea base. Cada cambio se revisa
+El comprobador agrega aquÃƒÆ’Ã‚Â­ solo cambios posteriores a la primera lÃƒÆ’Ã‚Â­nea base. Cada cambio se revisa
 contra el contenido instalado y la parte concreta que corrige el fix antes de recomendar conservar,
 adaptar o retirar el parche.
 
 <!-- CHANGE_LOG_START -->
-| Detectado | Mod | Workshop ID | `time_updated` anterior Ã¢â€ â€™ nuevo | VersiÃƒÂ³n instalada anterior Ã¢â€ â€™ nueva | RevisiÃƒÂ³n del fix |
+| Detectado | Mod | Workshop ID | `time_updated` anterior ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ nuevo | VersiÃƒÆ’Ã‚Â³n instalada anterior ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ nueva | RevisiÃƒÆ’Ã‚Â³n del fix |
 |---|---|---:|---|---|---|
 | 2026-10-31T01:40:21.8580859Z | Authentic Z | 2335368829 | 2026-09-13 23:01:38 UTC -> 2026-10-31 01:17:39 UTC | sin dato -> sin dato | Pendiente de revision |
 <!-- CHANGE_LOG_END -->
@@ -78,7 +78,7 @@ actualizacion recibida hoy o durante una sesion anterior porque no habia una lin
   La fuente no declara `modversion`.
 - **Viewpoint - Interface 0.14.0**, actualizado el 25 de octubre: la API instalada aun expone
   `VPProgressBar`, que usa el parche para mostrar el progreso de acciones en cola. No se encontro
-  evidencia de que el Workshop haya aÃ±adido esa integracion.
+  evidencia de que el Workshop haya aÃƒÂ±adido esa integracion.
 - **Reactive Sound Events 1.3.0**, actualizado el 24 de octubre: `setAngleFromPoint()` todavia
   calcula la direccion con proyeccion isometrica, sin aplicar el yaw de Viewpoint. El fix local
   adapta ese metodo para la camara; la actualizacion no parece resolver ese caso.
@@ -92,30 +92,45 @@ actualizacion recibida hoy o durante una sesion anterior porque no habia una lin
   noviembre, sin descripcion en su entrada de cambios. El JAR instalado conserva Viewpoint 0.1.6.2
   y no contiene `viewpoint.interact.ForageFinds`; los Lua instalados tampoco exponen
   `ViewpointForage.found`. El fix de neblina/calibracion integrado sigue dependiendo de esa API;
-  la actualizacion no permite retirar ni adaptar ese flujo todavía.
+  la actualizacion no permite retirar ni adaptar ese flujo todavÃ­a.
 
 Estas revisiones son comprobaciones estaticas de la fuente instalada, no validaciones dentro de Jill.
 
 ## Uso
 
-Ejecutar desde la raÃƒÂ­z `mods` con:
+Ejecutar desde la raÃƒÆ’Ã‚Â­z `mods` con:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\Check-WorkshopFixUpdates.ps1
 ```
 
-La tarea de Windows ejecuta el comprobador cada hora mientras la cuenta estÃ© iniciada y muestra una
-notificaciÃ³n visible si detecta una publicaciÃ³n o `modversion` instalada distinta. El detalle se
-conserva en `Workshop_Fix_Checker.log` y en los cambios agregados arriba. Antes/despuÃ©s de Jill y
-cuando se investigue un crash, comparar tambiÃ©n las horas registradas en esos archivos. Si no se
-puede consultar Steam o el contenido instalado, se conserva el Ãºltimo dato vÃ¡lido y se registra el
-fallo; no se marca una versiÃ³n como actual sin evidencia.
+La tarea de Windows ejecuta el comprobador cada hora mientras la cuenta estÃƒÂ© iniciada y muestra una
+notificaciÃƒÂ³n visible si detecta una publicaciÃƒÂ³n o `modversion` instalada distinta. El detalle se
+conserva en `Workshop_Fix_Checker.log` y en los cambios agregados arriba. Antes/despuÃƒÂ©s de Jill y
+cuando se investigue un crash, comparar tambiÃƒÂ©n las horas registradas en esos archivos. Si no se
+puede consultar Steam o el contenido instalado, se conserva el ÃƒÂºltimo dato vÃƒÂ¡lido y se registra el
+fallo; no se marca una versiÃƒÂ³n como actual sin evidencia.
 
 
 ---
 
-### 🔗 Otros enlaces de interés
+### ðŸ”— Otros enlaces de interÃ©s
 
-- [🏠 Inicio del repositorio](README.md)
-- [🤝 Cómo contribuir](CONTRIBUTING.md)
-- [🚀 Releases de mods](docs/releases/README.md)
+- [ðŸ  Inicio del repositorio](README.md)
+- [ðŸ¤ CÃ³mo contribuir](CONTRIBUTING.md)
+- [ðŸš€ Releases de mods](docs/releases/README.md)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

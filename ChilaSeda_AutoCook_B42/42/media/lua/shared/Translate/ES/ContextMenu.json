@@ -1,3 +1,4 @@
 {
-  "ContextMenu_ChilaSeda_RemovePoisonedMeal": "Quitar ingredientes venenosos"
+  "ContextMenu_ChilaSeda_RemovePoisonedMeal": "Quitar ingredientes venenosos",
+  "ContextMenu_ChilaSeda_RemovePoisonedMealWithSources": "Quitar ingredientes venenosos: %1"
 }

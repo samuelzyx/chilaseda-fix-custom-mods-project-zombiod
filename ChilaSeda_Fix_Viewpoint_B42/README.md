@@ -1,4 +1,4 @@
-# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.43
+# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.49
 
 <div align="center">
 
@@ -11,13 +11,29 @@
 
 > **Resumen:** paquete local de compatibilidad para Viewpoint y sus integraciones. Cada ajuste comprueba si existe la API correspondiente; las funciones que dependen de una API aún no publicada permanecen inactivas.
 
-## Version 2.0.43
+## Version 2.0.49
 
-- Dibuja Halo Notes detras de todas las ventanas, inventarios y tooltips y mantiene ese orden mientras el aviso esta visible.
+- Adds the same heap-pressure fallback to `TownPaving.join`, where six temporary float arrays caused the next OOM after the relief sweep guards ran.
+
+## Version 2.0.48
+
+- Extends the heap-pressure guard to `ReliefSweeps.between` and `bank`, whose scratch arrays run after `graded`. It also skips `blurred` allocations under pressure and reuses that method's input array as the fallback. This keeps the relief build from immediately moving the same OOM to the next allocation-heavy step.
+
+## Version 2.0.47
+
+- Fixes access to the heap guard's warning state from Viewpoint's inlined advice. The state is public so the transformed `ReliefSweeps.graded` method can use it without `IllegalAccessError`.
+
+## Version 2.0.46
+
+- Adds a heap-pressure guard to every `ReliefSweeps.graded` overload. Advice without argument binding avoids overload ambiguity; it skips grading below 1.5 GiB of heap headroom (scaled down for smaller heaps), leaves the incoming relief field unchanged, and logs the fallback once. Other Viewpoint features remain available; distant relief may be less graded in that session.
+
+## Version 2.0.44
+
+- Dibuja todos los Halo Notes del parche detras de ventanas, inventarios y tooltips, con texto compacto del mismo tamano que la etiqueta de la barra de progreso.
 
 ## 🧭 En esta página
 
-- [Cambios recientes](#version-2043)
+- [Cambios recientes](#version-2049)
 - [Barra de progreso](#barra-de-progreso-2036)
 - [Rebúsqueda, pines y neblina](#neblina-del-radio-de-rebúsqueda-integrada)
 - [Protección del menú del mundo](#objetos-sin-nombre-de-sprite-en-el-menú-del-mundo)

@@ -175,6 +175,73 @@ local function getRemovableRecords(item)
     return #available > 0 and available or nil
 end
 
+local function itemDisplayName(fullType)
+    if type(getItemNameFromFullType) == "function" then
+        local ok, name = pcall(getItemNameFromFullType, fullType)
+        if ok and type(name) == "string" and name ~= "" then
+            return name
+        end
+    end
+
+    if type(getScriptManager) == "function" then
+        local ok, name = pcall(function()
+            local manager = getScriptManager()
+            local scriptItem = manager and manager:FindItem(fullType)
+            return scriptItem and scriptItem:getDisplayName() or nil
+        end)
+        if ok and type(name) == "string" and name ~= "" then
+            return name
+        end
+    end
+
+    return tostring(fullType)
+end
+
+local function poisonousIngredientSummary(records)
+    local counts = {}
+    for _, record in ipairs(records or {}) do
+        if record and type(record.itemType) == "string" then
+            counts[record.itemType] = (counts[record.itemType] or 0) + 1
+        end
+    end
+
+    local entries = {}
+    local duplicateNames = {}
+    for fullType, count in pairs(counts) do
+        local name = itemDisplayName(fullType)
+        entries[#entries + 1] = {
+            fullType = fullType,
+            name = name,
+            count = count,
+        }
+        duplicateNames[name] = (duplicateNames[name] or 0) + 1
+    end
+
+    table.sort(entries, function(left, right)
+        if left.name == right.name then
+            return left.fullType < right.fullType
+        end
+        return left.name < right.name
+    end)
+
+    local labels = {}
+    for _, entry in ipairs(entries) do
+        local label = entry.name
+        local lowerName = string.lower(label)
+        if duplicateNames[label] > 1
+                or string.find(lowerName, "unknown", 1, true)
+                or string.find(lowerName, "desconocido", 1, true) then
+            label = label .. " [" .. entry.fullType .. "]"
+        end
+        if entry.count > 1 then
+            label = label .. " x" .. tostring(entry.count)
+        end
+        labels[#labels + 1] = label
+    end
+
+    return table.concat(labels, ", ")
+end
+
 local function subtractIngredientStats(meal, record)
     local stats = record.stats or {}
     for _, field in ipairs(statFields) do
@@ -196,6 +263,7 @@ local function removePoisonousIngredients(meal)
     local modData = meal:getModData()
     local records = modData[RECORDS_KEY]
     local removedRecords = {}
+    local removedIngredients = {}
     local poisonToRemove = 0
     local removedCount = 0
 
@@ -213,6 +281,9 @@ local function removePoisonousIngredients(meal)
             subtractIngredientStats(meal, record)
             poisonToRemove = poisonToRemove + record.poisonPower
             removedRecords[record] = true
+            removedIngredients[#removedIngredients + 1] = {
+                itemType = record.itemType,
+            }
             removedCount = removedCount + 1
         end
     end
@@ -243,7 +314,8 @@ local function removePoisonousIngredients(meal)
         ISInventoryPage.dirtyUI()
     end
     print(TAG .. "removed " .. tostring(removedCount)
-        .. " poisoned ingredient(s) from " .. tostring(meal:getFullType()))
+        .. " poisoned ingredient(s) from " .. tostring(meal:getFullType())
+        .. "; sources=" .. poisonousIngredientSummary(removedIngredients))
 end
 
 local function moveAfterEquipOptions(context, option)
@@ -277,8 +349,13 @@ local function addRemovePoisonedIngredientsOption(playerIndex, context, entries)
     local records = getRemovableRecords(meal)
     if not records then return end
 
-    local option = context:addOption(getText("ContextMenu_ChilaSeda_RemovePoisonedMeal"),
-        meal, removePoisonousIngredients)
+    local sourceSummary = poisonousIngredientSummary(records)
+    local optionLabel = getText("ContextMenu_ChilaSeda_RemovePoisonedMeal")
+    if sourceSummary ~= "" then
+        optionLabel = getText("ContextMenu_ChilaSeda_RemovePoisonedMealWithSources",
+            sourceSummary)
+    end
+    local option = context:addOption(optionLabel, meal, removePoisonousIngredients)
     if option then
         -- Reuse the vanilla B42 rat-poison item icon to make the cleanup action
         -- recognizable without adding a custom texture to this patch.

@@ -117,6 +117,10 @@ puedan revisar y ajustar de forma independiente.
   incluso desde mochilas anidadas.
 - Ajusta el orden de opciones y el retorno de componentes del mod opcional
   `DismantleAllAtOnce`; la funcion se omite cuando ese mod no esta activo.
+- Recupera la opcion vanilla `DismantleElectronics` para un reloj digital en una
+  mochila secundaria solo cuando `CraftRecipeManager` confirma que la receta
+  esta disponible. Si el juego no ofrece la receta, no crea una accion nueva;
+  deja una linea de diagnostico por tipo de reloj.
 - Conserva el equipo y la colocacion de objetos al desmontar y colocar elementos
   movibles. La compatibilidad especifica con Viewpoint se aplica solo cuando su
   API esta cargada.

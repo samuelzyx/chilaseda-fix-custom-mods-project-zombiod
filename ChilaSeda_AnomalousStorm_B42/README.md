@@ -11,6 +11,12 @@ Anomalous Storm - port local para Build 42
 
 Port de [Anomalous Storm en Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=2779946812), cuyo concepto y codigo original son de Soul Filcher. Los archivos originales de Workshop permanecen intactos. Viewpoint True Weathers es opcional. El mismo rectangulo rojo fullscreen del mod original se dibuja en isometrica y Viewpoint; el mod deja intactos el shader y sus ajustes.
 
+## Que recupera y que anade el port local
+
+Este port vuelve a llevar Anomalous Storm a Build 42 sin reemplazar ni editar la carpeta del mod original. Conserva la tormenta y su mascara roja en pantalla completa, incluso al cambiar entre la vista isometrica y Viewpoint. El dibujo del rojo no modifica el shader activo ni los perfiles o ajustes de Viewpoint True Weathers.
+
+Ademas del efecto original sobre el personaje, el port incorpora ralentizacion temporal y dano gradual por exposicion para zombis y animales. Sus tiempos y umbrales se ajustan en Sandbox; Viewpoint True Weathers sigue siendo opcional. La lista de cambios y la prueba rapida mas abajo describen el comportamiento implementado y los puntos que aun requieren validacion en partida.
+
 ## Ciclo de la emision
 
 Por defecto no hay una fase roja separada: `STAGE_STORM` y el primer tinte rojo comienzan juntos. Build 42 aumenta la intensidad de la lluvia gradualmente; una hora despues comienzan los truenos y la tormenta electrica. La mascara roja sube entonces de alfa 0.2 a 0.4, siguiendo la fase electrica. Las quemaduras del jugador, el dano y la ralentizacion de zombis expuestos empiezan con `Thunder`; la ralentizacion persiste hasta que termina la lluvia. La fase electrica dura lo que indique `AnomalousStormLength` (1 hora por defecto); despues cesan los truenos, sigue una hora de lluvia tranquila y el rojo se desvanece durante otra hora. `AnomalousStormWarningMinutes` permite agregar una fase roja sin lluvia, con valor predeterminado 0.

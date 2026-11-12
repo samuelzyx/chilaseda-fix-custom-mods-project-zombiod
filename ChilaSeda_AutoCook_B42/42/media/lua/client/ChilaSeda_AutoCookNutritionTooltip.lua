@@ -88,9 +88,8 @@ local function appendNutrition(tooltip, item, startY)
                 local line = layout:addItem()
                 line:setLabel(getText(row[1]) .. ":", 1, 1, 1, 1)
                 line:setValueRightNoPlus(value)
-                -- setValueRightNoPlus chooses its own dim value color; override
-                -- the public LayoutItem color fields to match the bright labels.
-                line.r1, line.g1, line.b1, line.a1 = 1, 1, 1, 1
+                -- Direct Lua writes to a Java LayoutItem are unsupported here;
+                -- keep the supported setter above to avoid table-index errors.
             end
         end
     end

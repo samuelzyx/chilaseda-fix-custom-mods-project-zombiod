@@ -15,7 +15,7 @@ Integra los 16 tipos de animales hostiles de Undead Wildlife con el indicador de
 
 El parche pasa los sonidos de animales hostiles al canal de señales de zombis, para que sigan visibles aunque se ignoren sonidos genéricos `LAMBDA`. Muestrea objetos `IsoAnimal` cercanos cada 250 ms dentro del radio de 15 baldosas del detector de Workshop y actualiza las señales antes de que expire su duración predeterminada de un segundo. Así evita que el retorno temprano por fuente duplicada de Workshop haga parpadear los avisos de proximidad.
 
-Los animales normales conservan los filtros de visibilidad y búsqueda `LAMBDA` y usan una paleta de distancia turquesa a ámbar. Los tipos `infected*` y `undead*` de Undead Wildlife usan texturas cian a magenta. Los archivos originales de Workshop permanecen intactos.
+Los animales normales conservan los filtros de visibilidad y busqueda `LAMBDA` y usan una escala azul: azul intenso cerca y celeste mas claro lejos. Los animales zombi usan una escala fucsia a morado, de color intenso cerca a lavanda clara lejos. Los tipos `infected*` y `undead*` de Undead Wildlife conservan su identificacion por tipo. Los archivos originales de Workshop permanecen intactos.
 
 ## Dependencias y carga
 

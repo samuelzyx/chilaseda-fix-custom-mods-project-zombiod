@@ -183,7 +183,8 @@ function ChilaSeda_ViewpointHaloNotifications:render()
 		return
 	end
 
-	local font = UIFont.Medium
+	-- Keep every fixed Halo notice at the same compact size as the action-bar label.
+	local font = UIFont.Small
 	local textHeight = getTextManager():getFontHeight(font)
 	local screenWidth = getCore():getScreenWidth()
 	local screenHeight = getCore():getScreenHeight()
