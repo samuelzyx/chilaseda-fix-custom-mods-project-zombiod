@@ -8,6 +8,7 @@ mods
     mod = UndeadWildlife,
     mod = ZombieBuddy,
     mod = Viewpoint,
+    mod = ViewpointGetObjectsFix,
     mod = ViewpointPixelReshade,
     mod = ProjectViewpointQOL,
     mod = ProjectViewpointADS,
