@@ -8,6 +8,12 @@ ChilaSeda_Translations_ES_B42 â€” Traducciones al espaÃ±ol para mods Buil
 
 ---
 
+## Cambios en 1.4.56
+
+- Agrega etiquetas en espanol para las acciones de menu de Viewpoint de agregar combustible, apagar fuego, recoger peces, colocar carnada, entrar a vehiculos y controles de colocar/confirmar/girar/cancelar.
+- Completa los textos de las opciones locales de neblina de rebusqueda y limite de FPS del menu.
+- No reemplaza traducciones de AutoTailoring pendientes de autorizacion del autor.
+
 
 INSTALACION
 1. Cierra Project Zomboid.

@@ -1,4 +1,4 @@
-# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.58
+# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.59
 
 <div align="center">
 
@@ -7,6 +7,10 @@
 </div>
 
 ---
+
+## Version 2.0.59
+
+- Localizes the native search-fog controls and Viewpoint's menu framerate labels in Spanish.
 
 ## Version 2.0.58
 

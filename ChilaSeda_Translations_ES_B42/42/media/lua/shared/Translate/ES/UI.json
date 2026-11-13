@@ -807,5 +807,11 @@
     "IGUI_ES_PZAPI_ProjectViewpointQOL_Automatically frees the mouse cursor when interacting with ovens, stoves, microwaves, televisions, radios, context menus, vehicle mechanics, and modal dialogs.": "Libera automaticamente el cursor al usar hornos, estufas, microondas, televisores, radios, menus contextuales, mecanica de vehiculos y dialogos.",
     "IGUI_ES_PZAPI_ProjectViewpointQOL_Hotbar Cycling (Modifier + Mouse Wheel)": "Cambiar objetos de acceso rapido (modificador + rueda)",
     "IGUI_ES_PZAPI_ProjectViewpointQOL_Enable First-Aid Hotkey": "Activar tecla para primeros auxilios",
-    "IGUI_ES_PZAPI_ProjectViewpointQOL_Zombie Slowdown Radius (tiles)": "Radio para reducir velocidad cerca de zombis (casillas)"
+    "IGUI_ES_PZAPI_ProjectViewpointQOL_Zombie Slowdown Radius (tiles)": "Radio para reducir velocidad cerca de zombis (casillas)",
+    "UI_ChilaSeda_ViewpointFix_Page": "Correccion de Viewpoint de ChilaSeda",
+    "UI_ChilaSeda_ViewpointFix_FogTitle": "Neblina de rebusqueda nativa",
+    "UI_ChilaSeda_ViewpointFix_FogStrength": "Intensidad de la neblina",
+    "UI_ChilaSeda_ViewpointFix_FogStrengthTooltip": "Reduce la intensidad de la neblina de rebusqueda. En 0 queda desactivada.",
+    "UI_ChilaSeda_Viewpoint_MenuFramerate": "Limite de FPS del menu",
+    "UI_ChilaSeda_Viewpoint_SameAsGame": "Igual que en el juego"
 }
