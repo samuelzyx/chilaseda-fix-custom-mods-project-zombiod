@@ -5,6 +5,12 @@ require "SRMMenuObject"
 local MOD_ID = "ChilaSeda_SmartRadialNativeOptions_B42"
 local INSTALL_KEY = "_ChilaSedaSmartRadialNativeOptionsInstalled"
 local DRINK_SMART_TEXTURE_PATH = "media/ui/DrinkSmart.png"
+local SCANNED_ITEM_LISTS = {
+    "foodItems", "smokeItems", "drinkItems", "medicalItems", "alarmItems",
+    "spiceItems", "readingItems", "mapItems", "researchableItems",
+    "clothingItems", "clothingWornItems", "craftingItems", "weaponItems",
+    "weaponItemsNotInInventory", "ammoItems",
+}
 
 local function isDrinkSmartOption(option)
     local label = string.lower(tostring(option.name or ""))
@@ -15,6 +21,32 @@ local function isDrinkSmartOption(option)
             or string.find(compactLabel, hint, 1, true) then return true end
     end
     return false
+end
+
+local function normalizeScannedItemLists(playerNum)
+    local scannedByPlayer = SRMRadialMenu and SRMRadialMenu.scannedItems
+    local scanned = scannedByPlayer and scannedByPlayer[playerNum]
+    if type(scanned) ~= "table" then return end
+
+    for _, key in ipairs(SCANNED_ITEM_LISTS) do
+        local items = scanned[key]
+        if type(items) ~= "table" then
+            local converted = {}
+            local ok, size = pcall(function() return items and items:size() end)
+            if ok and tonumber(size) then
+                for index = 0, tonumber(size) - 1 do
+                    local itemOk, item = pcall(function() return items:get(index) end)
+                    if itemOk and item then converted[#converted + 1] = item end
+                end
+            elseif items ~= nil then
+                print("[" .. MOD_ID .. "] replaced invalid Smart Radial item list: " .. key)
+            end
+            scanned[key] = converted
+            if items ~= nil then
+                print("[" .. MOD_ID .. "] normalized Smart Radial item list: " .. key)
+            end
+        end
+    end
 end
 
 local function isDrinkRadialAction(label)
@@ -343,26 +375,20 @@ local function install()
     SRMMenuObject.addSlice = function(self, text, texture, command, item,
         itemCount, extraTooltipText, craftingTooltipForced,
         arg1, arg2, arg3, arg4, arg5, arg6)
-        if type(command) == "function" and item
-            and instanceof(item, "InventoryItem")
-            and (isDrinkRadialAction(text) or isDrinkableItemSelection(text, item))
-            and not radialOwnedCallbacks[command] then
+        if type(command) == "function" and not radialOwnedCallbacks[command] then
             local menu = self
             local originalCommand = command
-            local radialAction = function()
+            command = function()
+                normalizeScannedItemLists(menu.playerNum)
                 originalCommand(arg1, arg2, arg3, arg4, arg5, arg6)
             end
-            radialOwnedCallbacks[radialAction] = true
-            command = function()
-                local playerObj = getSpecificPlayer(menu.playerNum)
-                openDrinkOptions(menu, playerObj, item, radialAction)
-            end
+            radialOwnedCallbacks[command] = true
         end
         return originalAddSlice(self, text, texture, command, item,
             itemCount, extraTooltipText, craftingTooltipForced,
             arg1, arg2, arg3, arg4, arg5, arg6)
     end
-    print("[" .. MOD_ID .. "] native item actions enabled; mod actions sort first")
+    print("[" .. MOD_ID .. "] native Smart Radial actions preserved; invalid item lists are normalized (1.1.12)")
 end
 
 Events.OnGameBoot.Add(install)

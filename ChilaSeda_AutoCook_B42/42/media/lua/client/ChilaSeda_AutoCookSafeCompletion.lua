@@ -62,6 +62,31 @@ AutoCook.new = function(self, playerObj, recipe, baseItem, ...)
 	return job
 end
 
+local originalChooseItem = AutoCook.chooseItem
+if type(originalChooseItem) == "function" then
+	AutoCook.chooseItem = function(self, items, baseItem, recipe, ...)
+		if not self.ChilaSedaSafeCompletion or not items or items:size() == 0 then
+			return originalChooseItem(self, items, baseItem, recipe, ...)
+		end
+
+		local newTypes = ArrayList.new()
+		local seenTypes = {}
+		for index = 0, items:size() - 1 do
+			local item = items:get(index)
+			if item and item:getContainer() then
+				local itemType = item:getFullType()
+				if self:getNumberAlreadyUsed(itemType) == 0 and not seenTypes[itemType] then
+					seenTypes[itemType] = true
+					newTypes:add(item)
+				end
+			end
+		end
+
+		local chosen = originalChooseItem(self, newTypes, baseItem, recipe, ...)
+		newTypes:clear()
+		return chosen
+	end
+end
 AutoCook.filterFood = function(self, item, ...)
 	if self.ChilaSedaSafeCompletion then
 		if hasHarmfulMealEffect(item)

@@ -2,7 +2,9 @@
 
 ## Qué registra
 
-Este componente guarda una vez por sesión los errores que Error Magnifier ya procesó. No declara una dependencia obligatoria. Si falta Error Magnifier o no puede cargar la API esperada, registra un único mensaje de omisión y termina. Si no está disponible el puente Java de ZombieBuddy, no escribe archivos de sesión; los demás componentes de Audit Suite siguen funcionando.
+Este componente guarda una vez por sesion los errores que Error Magnifier ya proceso. Si su API aun no esta lista cuando se evalua el archivo, la busca de nuevo cada segundo en el menu y durante la partida; un fallo inicial ya no cancela el exportador. Si la API o el puente Java de ZombieBuddy nunca estan disponibles durante la partida, no se crea un reporte. Los demas componentes de Audit Suite siguen funcionando.
+
+Desde Error Session Logs 1.0.1, `[ChilaSeda Error Logs] Loaded` confirma que el recolector inicio un reporte para esa sesion. Si no hay reporte, no concluyas que no hubo errores: revisa primero el marcador en DebugLog/console.
 
 ## Archivos y alcance
 

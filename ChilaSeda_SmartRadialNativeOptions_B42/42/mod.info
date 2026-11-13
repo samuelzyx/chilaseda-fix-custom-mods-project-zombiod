@@ -5,5 +5,5 @@ description=Adds inventory actions to Smart Radial Menu and Drink Smart icons to
 require=SmartRadialMenu
 loadModAfter=SmartRadialMenu,Drink_Smart,ChilaSeda_AutoCookMobility_B42,ChilaSeda_LTPReduceAllFat_B42,ChilaSeda_LTPFatCombine_B42,ChilaSeda_AccessibleConsolidation_B42,DismantleAllAtOnce
 versionMin=42.19
-modversion=1.1.11
+modversion=1.1.12
 

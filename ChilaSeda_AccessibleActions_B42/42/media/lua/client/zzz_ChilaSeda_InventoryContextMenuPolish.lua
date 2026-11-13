@@ -4,9 +4,9 @@ local iconPaths = {
 	recipe = "media/ui/inventoryPanes/craftok.png",
 	salad = "media/textures/WorldItems/BowlSalad.png",
 	drop = "media/ui/MP/mp_ui_droplist.png",
+	pour = "media/ui/Entity/fluid_drop_icon.png",
 	split = "media/ui/Icon_RecipeGroup_Partial_48x48.png",
 	inventory = "media/ui/Sidebar/48/Inventory_On_48.png",
-	health = "media/ui/Sidebar/48/Heart_On_48.png",
 }
 
 local iconCache = {}
@@ -26,10 +26,6 @@ local function normalizedName(option)
 	local accents = { ["á"] = "a", ["é"] = "e", ["í"] = "i", ["ó"] = "o", ["ú"] = "u", ["ü"] = "u", ["ñ"] = "n" }
 	for accented, plain in pairs(accents) do name = name:gsub(accented, plain) end
 	return name
-end
-
-local function hasWord(name, word)
-	return name:find("%f[%w]" .. word .. "%f[%W]") ~= nil
 end
 
 local function cleanXannyLabel(option, name)
@@ -58,7 +54,9 @@ local function assignContextIcon(option, name)
 		key = "salad"
 	elseif name:find("verter en el suelo", 1, true)
 		or name:find("verter al suelo", 1, true)
-		or name == "soltar" or name == "drop" then
+		then
+		key = "pour"
+	elseif name == "soltar" or name == "drop" then
 		key = "drop"
 	elseif name:find("dividir objetos", 1, true)
 		or name == "split" or name:find("split items", 1, true) then
@@ -66,82 +64,137 @@ local function assignContextIcon(option, name)
 	elseif name == "tetris" or name:find("tetris", 1, true) then
 		key = "inventory"
 	elseif name == "secarse" or name == "dry off" or name == "dry yourself" then
-		key = "health"
+		local okManager, manager = pcall(getScriptManager)
+		if okManager and manager then
+			local okItem, item = pcall(manager.FindItem, manager, "Base.BathTowel")
+			if okItem and item and type(item.getNormalTexture) == "function" then
+				local okTexture, texture = pcall(item.getNormalTexture, item)
+				if okTexture and texture then option.iconTexture = texture end
+			end
+		end
 	end
 	if key then option.iconTexture = iconFor(key) end
 end
 
-local function optionOrder(option)
-	local name = normalizedName(option)
-	if name == "" then return 90 end
-	if name:find("mas acciones", 1, true) or name == "mas" or name == "more" then return 100 end
-	if name:find("equipar", 1, true) or name:find("equip", 1, true)
-		or name:find("vestir", 1, true) or name:find("wear", 1, true) then return 10 end
-	if name:find('cataplasma', 1, true) or name:find('poultice', 1, true) then return 12 end
-	-- Keep the two reported action labels immediately after the hand-equip block.
-	if name:find("cortar cabeza", 1, true) or name:find("quitar cabeza", 1, true)
-		or name:find("decap", 1, true) or name:find("cut head", 1, true)
-		or name:find("remove head", 1, true) then return 16 end
-	if name:find("xxanyarms", 1, true) or name:find("diagnost", 1, true)
-		or name:find("recargar", 1, true) or name:find("reload", 1, true)
-		or name:find("cargador", 1, true) or name:find("weapon", 1, true) then return 15 end
-	if (name:find("cintur", 1, true) or name:find("belt", 1, true))
-		and (name:find("acoplar", 1, true) or name:find("attach", 1, true)
-			or name:find("poner", 1, true) or name:find("equip", 1, true)) then return 16 end
-	if name:find("abrir", 1, true) or name:find("open", 1, true)
-		or name:find("inspeccionar", 1, true) or name:find("inspect", 1, true)
-		or name:find("leer", 1, true) or hasWord(name, "read") then return 20 end
-	if name:find("comer", 1, true) or name:find("beber", 1, true)
-		or name:find("usar", 1, true) or name:find("eat", 1, true)
-		or name:find("drink", 1, true) or hasWord(name, "use") then return 25 end
-	if name:find("receta", 1, true) or name:find("recipe", 1, true)
-		or name:find("ensalada", 1, true) or name:find("salad", 1, true)
-		or name:find("cocinar", 1, true) or name:find("cooking", 1, true)
-		or name:find("fabric", 1, true) or name:find("craft", 1, true)
-		or name:find("cordel", 1, true) or name:find("thread", 1, true) then return 30 end
-	if name:find("procesar", 1, true) or name:find("desarmar", 1, true)
-		or name:find("desmantelar", 1, true) or name:find("despiez", 1, true)
-		or name:find("reparar", 1, true) or name:find("repair", 1, true)
-		or name:find("lavar", 1, true) or name:find("limpiar", 1, true)
-		or name:find("butcher", 1, true) or name:find("process", 1, true) then return 40 end
-	if name:find("transferir", 1, true) or name:find("transfer", 1, true)
-		or name:find("guardar", 1, true) or name:find("contenedor", 1, true)
-		or name:find("mover", 1, true) or name:find("move", 1, true)
-		or name:find("recoger", 1, true) or name:find("take", 1, true)
-		or name:find("saquear", 1, true) or name:find("loot", 1, true)
-		or name:find("desempacar", 1, true) or name:find("unpack", 1, true)
-		or name:find("anadir a", 1, true) or name:find("add to", 1, true)
-		or name:find("tetris", 1, true) then return 50 end
-	if name:find("dividir", 1, true) or name:find("split", 1, true) then return 60 end
-	if name:find("colocar", 1, true) or name:find("constru", 1, true)
-		or name:find("place", 1, true) or name:find("build", 1, true) then return 70 end
-	if name:find("soltar", 1, true) or name:find("verter", 1, true)
-		or name:find("drop", 1, true) or name:find("tirar", 1, true) then return 80 end
-	if name:find("eliminar", 1, true) or name:find("borrar", 1, true)
-		or name:find("delete", 1, true) or name:find("remove", 1, true) then return 85 end
-	return 90
+local function findLastNamed(options, keys)
+	local labels = {}
+	for _, key in ipairs(keys) do labels[getText(key)] = true end
+	local found
+	for index, option in ipairs(options) do
+		if labels[option.name] then found = index end
+	end
+	return found
+end
+
+local function removeMarked(options, predicate)
+	local found = {}
+	for index = #options, 1, -1 do
+		local option = options[index]
+		if predicate(option) then
+			option.chilaSedaOriginalMenuIndex = index
+			table.remove(options, index)
+			table.insert(found, 1, option)
+		end
+	end
+	return found
+end
+
+local function insertAfter(options, option, index)
+	if not option then return index end
+	local at = index and (index + 1) or (#options + 1)
+	table.insert(options, at, option)
+	return at
+end
+
+local function defaultAnchor(options)
+	local more = findLastNamed(options, { "ContextMenu_More", "ContextMenu_MoreActions" })
+	return more and (more - 1) or nil
+end
+
+local foodCategoryOrder = { rotten = 1, stale = 2, fresh = 3, burnt = 4 }
+
+local function organizeLocalOptions(context)
+	local options = context.options
+	local attach
+	for _, option in ipairs(options) do
+		local name = normalizedName(option)
+		if name == "acoplar" or name == "attach" or name:find("acoplar ", 1, true) == 1 or name:find("attach ", 1, true) == 1 then attach = option end
+	end
+	if attach then
+		local index = findLastNamed(options, { "ContextMenu_Equip_Secondary" })
+		if index then
+			for current, option in ipairs(options) do
+				if option == attach then table.remove(options, current); break end
+			end
+			insertAfter(options, attach, findLastNamed(options, { "ContextMenu_Equip_Secondary" }))
+		end
+	end
+
+	local foodGroup = removeMarked(options, function(option)
+		return option.chilaSedaPoisonMealAction
+			or option.chilaSedaDeleteFoodCategory ~= nil
+			or option.chilaSedaDeleteObject
+	end)
+	if #foodGroup > 0 then
+		table.sort(foodGroup, function(left, right)
+			local function rank(option)
+				if option.chilaSedaPoisonMealAction then return 0 end
+				if option.chilaSedaDeleteFoodCategory then
+					return foodCategoryOrder[option.chilaSedaDeleteFoodCategory] or 10
+				end
+				return 20
+			end
+			local leftRank, rightRank = rank(left), rank(right)
+			if leftRank ~= rightRank then return leftRank < rightRank end
+			return left.chilaSedaOriginalMenuIndex < right.chilaSedaOriginalMenuIndex
+		end)
+		local anchor = findLastNamed(options, { "ContextMenu_Eat", "ContextMenu_OpenAndEat" })
+		if not anchor then anchor = defaultAnchor(options) end
+		for _, option in ipairs(foodGroup) do
+			anchor = insertAfter(options, option, anchor)
+			option.chilaSedaOriginalMenuIndex = nil
+		end
+	end
+
+	local craftGroup = removeMarked(options, function(option)
+		return option.chilaSedaFoodMenuAction
+			or option.chilaSedaResumeAutoCook
+			or option.chilaSedaDismantleAll
+	end)
+	if #craftGroup > 0 then
+		local anchor = findLastNamed(options, {
+			"ContextMenu_Recipes", "ContextMenu_Craft",
+			"ContextMenu_ShowCraftRecipesUsed", "ContextMenu_ResearchCraft",
+		})
+		if not anchor then anchor = defaultAnchor(options) end
+		for _, option in ipairs(craftGroup) do
+			local recipeName = option.chilaSedaDismantleRecipeName
+			local recipeAnchor
+			if recipeName then
+				for index, candidate in ipairs(options) do
+					if candidate.name == recipeName
+						or (type(candidate.name) == "string" and candidate.name:find(recipeName .. " (", 1, true) == 1) then
+						recipeAnchor = index
+					end
+				end
+			end
+			anchor = insertAfter(options, option, recipeAnchor or anchor)
+			option.chilaSedaOriginalMenuIndex = nil
+		end
+	end
 end
 
 local function polishInventoryMenu(player, context)
 	local options = context and context.options
 	if type(options) ~= "table" then return end
 
-	local sortable = {}
-	for index, option in ipairs(options) do
+	for _, option in ipairs(options) do
 		local name = normalizedName(option)
-		name = cleanXannyLabel(option, name)
+		cleanXannyLabel(option, name)
 		assignContextIcon(option, name)
-		sortable[#sortable + 1] = { option = option, index = index, rank = optionOrder(option) }
 	end
-	table.sort(sortable, function(left, right)
-		if left.rank ~= right.rank then return left.rank < right.rank end
-		return left.index < right.index
-	end)
-	for index, entry in ipairs(sortable) do
-		options[index] = entry.option
-		entry.option.id = index
-	end
-	for index = #sortable + 1, #options do options[index] = nil end
+	organizeLocalOptions(context)
+	for index, option in ipairs(options) do option.id = index end
 	pcall(function()
 		if context.calcHeight then context:calcHeight() end
 		if context.calcWidth and context.setWidth then
@@ -151,3 +204,18 @@ local function polishInventoryMenu(player, context)
 end
 
 Events.OnFillInventoryObjectContextMenu.Add(polishInventoryMenu)
+Events.OnFillWorldObjectContextMenu.Add(function(_, context)
+	local options = context and context.options
+	if type(options) ~= "table" then return end
+	for _, option in ipairs(options) do
+		local name = normalizedName(option)
+		cleanXannyLabel(option, name)
+		assignContextIcon(option, name)
+	end
+	organizeLocalOptions(context)
+	for index, option in ipairs(options) do option.id = index end
+	pcall(function()
+		if context.calcHeight then context:calcHeight() end
+		if context.calcWidth and context.setWidth then context:setWidth(context:calcWidth()) end
+	end)
+end)

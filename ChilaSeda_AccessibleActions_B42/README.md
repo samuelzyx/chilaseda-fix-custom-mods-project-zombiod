@@ -1,4 +1,4 @@
-# ChilaSeda - Acciones Accesibles (Build 42) 1.0.22
+# ChilaSeda - Acciones Accesibles (Build 42) 1.0.24
 
 <div align="center">
 
@@ -13,12 +13,23 @@
 
 ## 🧭 Contenido
 
-- [Cambios recientes](#cambios-de-1022)
+- [Cambios recientes](#cambios-de-1023)
 - [Funciones incluidas](#funciones-incluidas)
 - [Dependencias opcionales](#dependencias-opcionales)
 - [Validación pendiente](#validación-pendiente)
 - [Historial](#cambios-de-101)
 
+
+## Cambios de 1.0.24
+
+- Al comer un alimento que Jill ya identifico como venenoso, aparece la confirmacion nativa Si/No. Cancelar descarta la accion; aceptar la vuelve a encolar. El dialogo conserva el soporte vanilla de teclado y mando.
+
+## Cambios de 1.0.23
+
+- Conserva el orden nativo de las opciones de inventario; solo reubica las opciones locales marcadas.
+- Coloca **Acoplar** inmediatamente despues de Equipar secundaria y agrupa la limpieza de alimentos despues de Comer, con **Eliminar objeto** al final.
+- Agrega la eliminacion confirmada de comida quemada despues de la comida podrida, rancia y fresca.
+- Usa un icono de gota para verter al suelo, la textura de la toalla para **Secarse** y un icono de nausea para quitar ingredientes venenosos.
 
 ## Cambios de 1.0.22
 

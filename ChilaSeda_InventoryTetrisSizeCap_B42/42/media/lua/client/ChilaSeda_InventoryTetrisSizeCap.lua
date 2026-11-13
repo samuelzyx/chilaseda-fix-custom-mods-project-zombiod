@@ -311,6 +311,75 @@ local function installBackpackCapacityValidation()
     end
 
     local capacityNoticeByItem = setmetatable({}, { __mode = "k" })
+    local function containerName(player, container)
+        if container == player:getInventory() then return "Inventario principal" end
+        local item = container and container.getContainingItem
+            and container:getContainingItem() or nil
+        if item and item.getDisplayName then return item:getDisplayName() end
+        return container and container.getType and container:getType() or "Contenedor"
+    end
+
+    local function selectDestination(page, container)
+        if not page or not container then return end
+        if type(page.selectButtonForContainer) == "function" then
+            page:selectButtonForContainer(container)
+        end
+        if page.inventoryPane and page.inventoryPane.inventory ~= container
+                and type(page.setNewContainer) == "function" then
+            page:setNewContainer(container)
+        end
+        if page.inventoryPane then page.inventoryPane.lastinventory = container end
+        local player = type(getSpecificPlayer) == "function" and getSpecificPlayer(page.player) or nil
+        if player and HaloTextHelper and type(HaloTextHelper.addText) == "function" then
+            HaloTextHelper.addText(player, "Destino seleccionado: " .. containerName(player, container),
+                " ", 255, 220, 120)
+        end
+    end
+
+    local function showCapacityDestinations(player, blocked, item)
+        if not player or not ISContextMenu or type(ISContextMenu.get) ~= "function"
+                or type(getPlayerInventory) ~= "function" then return false end
+        local playerNum = player:getPlayerNum()
+        local page = getPlayerInventory(playerNum)
+        if not page then return false end
+
+        local destinations, seen = {}, {}
+        local function add(container)
+            if not container or container == blocked or seen[container] then return end
+            local ok, fits = pcall(function()
+                return container:isItemAllowed(item) and container:hasRoomFor(player, item)
+                    and container:getCapacityWeight() + item:getUnequippedWeight()
+                        <= container:getEffectiveCapacity(player)
+            end)
+            if ok and fits then
+                seen[container] = true
+                destinations[#destinations + 1] = container
+            end
+        end
+        add(player:getInventory())
+        local worn = player:getWornItems()
+        if worn then
+            for i = 0, worn:size() - 1 do
+                local wornItem = worn:getItemByIndex(i)
+                if wornItem and instanceof(wornItem, "InventoryContainer")
+                        and not player:isHandItem(wornItem) then
+                    add(wornItem:getInventory())
+                end
+            end
+        end
+        if #destinations == 0 then return false end
+        local x = type(getMouseX) == "function" and getMouseX() or 0
+        local y = type(getMouseY) == "function" and getMouseY() or 0
+        local menu = ISContextMenu.get(playerNum, x, y)
+        if not menu then return false end
+        local header = menu:addOption("La mochila esta llena. Elige a donde mandar el objeto:", nil, nil)
+        if header then header.notAvailable = true end
+        for _, destination in ipairs(destinations) do
+            menu:addOption(containerName(player, destination), page, selectDestination, destination)
+        end
+        return true
+    end
+
     local function notifyOverCapacity(self, transferredItem, targetContainer, targetPlayer)
         local player = targetPlayer or (self and self.character)
         local item = transferredItem or (self and self.item)
@@ -336,8 +405,10 @@ local function installBackpackCapacityValidation()
             return
         end
         capacityNoticeByItem[item] = { container = container, at = now }
-        pcall(HaloTextHelper.addText, player,
-            "No puedo llevarlo: la mochila ya esta llena.", " ", 255, 220, 120)
+        if not showCapacityDestinations(player, container, item) then
+            pcall(HaloTextHelper.addText, player,
+                "La mochila esta llena; el objeto se queda donde esta.", " ", 255, 220, 120)
+        end
     end
 
     local originalTransferIsValid = ISInventoryTransferAction.isValid

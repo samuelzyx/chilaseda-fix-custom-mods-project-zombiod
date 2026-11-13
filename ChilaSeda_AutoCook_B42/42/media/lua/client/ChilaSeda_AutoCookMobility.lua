@@ -237,6 +237,7 @@ local function addResumeOption(playerIndex, context, entries)
 
     local option = context:addOption("Reanudar AutoCook", job, resumeCancelledAutoCook, job.baseItem)
     if not option then return end
+    option.chilaSedaResumeAutoCook = true
     local okManager, manager = pcall(getScriptManager)
     if okManager and manager then
         local okItem, scriptItem = pcall(manager.FindItem, manager, "Base.Pot")
@@ -246,29 +247,6 @@ local function addResumeOption(playerIndex, context, entries)
         end
     end
 
-    local labels = {
-        [getText("ContextMenu_Equip_Primary")] = true,
-        [getText("ContextMenu_Equip_Secondary")] = true,
-        [getText("ContextMenu_Equip_Two_Hands")] = true,
-        [getText("ContextMenu_Recipes")] = true,
-        [getText("ContextMenu_Craft")] = true,
-    }
-    local optionIndex, insertAfter
-    for index, entry in ipairs(context.options or {}) do
-        if entry == option then optionIndex = index end
-        if entry ~= option and labels[entry.name] then insertAfter = index end
-    end
-    if optionIndex then
-        table.remove(context.options, optionIndex)
-        if insertAfter and optionIndex <= insertAfter then insertAfter = insertAfter - 1 end
-        insertAfter = insertAfter or math.min(1, #context.options)
-        table.insert(context.options, (insertAfter > 0 and insertAfter + 1 or 1), option)
-        for index, entry in ipairs(context.options) do entry.id = index end
-        pcall(function()
-            if context.calcHeight then context:calcHeight() end
-            if context.calcWidth and context.setWidth then context:setWidth(context:calcWidth()) end
-        end)
-    end
 end
 
 AutoCook.continue = function(self, ...)

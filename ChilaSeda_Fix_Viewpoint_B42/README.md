@@ -1,4 +1,4 @@
-# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.49
+# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.58
 
 <div align="center">
 
@@ -7,6 +7,10 @@
 </div>
 
 ---
+
+## Version 2.0.58
+
+- Offers the alternate destination menu for mixed Viewpoint loot batches whenever any item exceeds the selected container's capacity, while retaining items that already fit there.
 
 
 > **Resumen:** paquete local de compatibilidad para Viewpoint y sus integraciones. Cada ajuste comprueba si existe la API correspondiente; las funciones que dependen de una API aún no publicada permanecen inactivas.
@@ -88,6 +92,8 @@
 - The fog radius eases between updates; the fog color and desaturation use the active search
   overlay values. The patch has its own guarded renderer hook and does not require enabling the
   separate Viewpoint Foraging mod.
+- `Options > Mods > ChilaSeda Viewpoint Fix` includes a `Fog intensity` slider from 0 to 1;
+  lower it to make the native search fog less dense without changing the manual pin zoom.
 - The official installed Viewpoint 0.1.6.2 does not yet expose the integrated forage API, so the
   new path stays inactive until that API appears in an official release. Minecraft shader-pack
   radius overlays still need a separate depth-buffer layer.
@@ -104,6 +110,9 @@
   active camera shot's yaw, pitch, and roll.
 - The shortcut, stored offsets, and tuning bridge are checked locally by source review only. They
   still need confirmation in Jill with the official integrated Viewpoint release.
+- Pin zoom remains the manually selected global value. The native renderer reads the shared tuning
+  before drawing each frame; calibration writes only when that value changes, so routine pin draws
+  do not reset the selected zoom.
 - Its calibrator now has a unique Lua module name and separate config/report files from the
   Viewpoint Foraging calibrator. This prevents `require` caching and shortcut handling from
   crossing between the two active patches. When the installed Viewpoint lacks the integrated
@@ -119,6 +128,9 @@
   position, so the arrow follows the pin's projected direction while leaving the pin coordinates
   and marker placement unchanged. If the camera or pin data is unavailable, the native calculation
   remains as fallback.
+- The Java arrow projection is gated by the integrated `ViewpointForage.found` API. If that API is
+  absent, the patch leaves Viewpoint's original `ForageFinds.arrow` implementation untouched;
+  this keeps the local native-forage hooks inert when the separate Viewpoint Foraging addon is removed.
 - Requires Viewpoint and ZombieBuddy 2.3.4. Runtime confirmation in Jill is pending.
 
 ## Objetos sin nombre de sprite en el menú del mundo
@@ -354,3 +366,32 @@ Workshop files are unchanged. The unified local mod ID is
 - [🏠 Inicio del repositorio](../README.md)
 - [🤝 Cómo contribuir](../CONTRIBUTING.md)
 - [🚀 Releases de mods](../docs/releases/README.md)
+
+
+## 2.0.52 - Fishing cursor retention
+
+While the native FishingState is active, the local fix marks the active fishing interaction as a temporary Viewpoint QOL device state so its existing cursor-unlock path does not recapture the mouse. The marker clears as soon as fishing ends. The patch loads after ProjectViewpointQOL when that mod is installed.
+
+
+## 2.0.53 - Fishing action labels
+
+Adds named orange progress labels for the vanilla BBQ add-fuel and extinguish actions, fish pickup, and lure attachment actions reported by Chila.
+
+
+## 2.0.54 - More BBQ and fishing labels
+
+Adds named orange progress labels for the other native fishing net, bait, chum, rod, and BBQ propane actions found in B42 source.
+
+
+## 2.0.55 - Name drainable items in consolidation progress
+
+Consolidation progress uses the destination item name, such as Consolidando Hilo, rather than calling every drainable item a liquid.
+
+## 2.0.56 - Keep vanilla selected-container pickup routing available
+
+The selected-container patch no longer exits when the optional `Viewpoint_Loot` API is absent. Vanilla inventory transfers from floor items still route through the selected-container hook; Viewpoint-specific hooks remain conditional on their API.
+
+
+## 2.0.57 - Name the consolidation destination
+
+The consolidation progress label now uses intoItem:getName() first, with the consumed item name as a fallback. This identifies the object being consolidated, including thread and other non-liquid items.

@@ -50,8 +50,21 @@ local ACTION_LABELS = {
     ISLightFromLiterature = "Encendiendo fuego",
     ISLightFromLiteratura = "Encendiendo fuego",
     ISLightFromPetrol = "Encendiendo fuego",
-    ISBBQInsertFuelAction = "Insertando combustible",
-    ISBBQRemovePropaneTankAction = "Quitando tanque de propano",
+    ISBBQAddFuel = "Agregando combustible a la barbacoa",
+    ISBBQExtinguish = "Apagando fuego de la barbacoa",
+    ISBBQToggle = "Encendiendo o apagando la barbacoa",
+    ISBBQInsertPropaneTank = "Conectando tanque de propano",
+    ISBBQRemovePropaneTank = "Quitando tanque de propano",
+    ISPickupFishAction = "Recogiendo pez",
+    ISAddBaitToFishNetAction = "Poniendo carnada en la red",
+    ISRemoveFishingNetAction = "Retirando red de pesca",
+    ISPlaceFishingNetAction = "Colocando red de pesca",
+    ISCheckFishingNetAction = "Revisando red de pesca",
+    ISChangeFishingRodEquip = "Preparando caña de pescar",
+    AIAttachLureAction = "Colocando carnada en el anzuelo",
+    AIRemoveLureAction = "Retirando carnada del anzuelo",
+    AddChumToWaterAction = "Echando cebo al agua",
+    CreateChumFromGroundSandAction = "Preparando cebo",
     ISBuildAction = "Construyendo",
     ISCookAction = "Cocinando",
     ISCraftAction = "Fabricando",
@@ -66,7 +79,6 @@ local ACTION_LABELS = {
     ["put out campfire"] = "Apagando fogata",
 
     -- Acciones de inventario y transferencia
-    ISConsolidateDrainable = "Consolidando liquidos",
     ISDropItemAction = "Vaciando contenido",
     ISDumpWaterAction = "Vaciando agua",
     ISForageAction = "Rebuscando",
@@ -272,12 +284,25 @@ local function actionTypeName(action)
 end
 
 local function actionLabel(action)
+    local typeName = actionTypeName(action)
+    if typeName == "ISConsolidateDrainable" then
+        -- The destination is the object being consolidated into; its name is
+        -- the useful label when the consumed source is another compatible item.
+        local function itemName(item)
+            if not item or type(item.getName) ~= "function" then return nil end
+            local ok, name = pcall(item.getName, item)
+            if ok and type(name) == "string" and name ~= "" then return name end
+            return nil
+        end
+        local name = itemName(action.intoItem) or itemName(action.drainable)
+        if name then return "Consolidando " .. name end
+        return "Consolidando objeto"
+    end
     local explicit = action and (action.label or action.jobType or action.name)
     if explicit ~= nil and tostring(explicit) ~= "" then
         return localizedActionLabel(explicit)
     end
 
-    local typeName = actionTypeName(action)
     if typeName == "ISLightActions" then
         return LIGHT_ACTION_LABELS[action.mode] or "Modificando luz"
     end
@@ -312,6 +337,7 @@ local function actionLabel(action)
 end
 
 local function hasSpecificActionLabel(action, typeName)
+    if typeName == "ISConsolidateDrainable" then return true end
     local explicit = action and (action.label or action.jobType or action.name)
     if explicit ~= nil then
         local label = tostring(explicit)

@@ -4,6 +4,6 @@ authors=ChilaSeda
 description=Optional Error Magnifier session logs, mod-memory audit, performance recorder, and Weight Monitor with exact and variable-weight targets. Features skip safely when their source mod or Java bridge is unavailable.
 loadModAfter=errorMagnifier,ZombieBuddy,TrueWeight,ThisIsYourLife,ExtendedVanillaWeapons,AnimalRemasterApproved,DGVFlags,DGVPosters
 versionMin=42.21
-modversion=2.1.3
+modversion=2.1.4
 javaJarFile=media/java/client/ChilaSedaAuditSuite.jar
 javaPkgName=chilaseda

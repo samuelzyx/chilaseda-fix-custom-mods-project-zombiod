@@ -36,3 +36,8 @@ Version 1.3.0: la revision de Workshop y el codigo vanilla confirman que `ISInve
 Version 1.3.1: agrega el ultimo control de capacidad en ISTransferAction.transferItem, antes de retirar el objeto del contenedor de origen. Cubre arrastres entre ventanas de Inventory Tetris que alcancen la mutacion vanilla aunque se omitan las validaciones de cuadricula o de la accion; revisa el peso despues de cada objeto anterior de la cola y muestra el aviso Halo.
 
 El aviso de mochila llena usa "esta" sin tilde porque Jill mostraba la vocal acentuada como "?".
+
+
+Version 1.3.2: guards Inventory Tetris keyring container discovery when a Weight Fix update asks for carried containers before the inventory page exists. The fallback recursively lists carried containers and retains the Tetris path when the page is ready.
+
+Version 1.3.3: when an over-capacity transfer is rejected, offers a context menu with the main inventory and worn backpacks that have room. Choosing an option switches the active inventory container for follow-up interactions. If no destination is available, the Halo message says the item remains where it is.

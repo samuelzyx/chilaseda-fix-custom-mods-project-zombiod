@@ -70,6 +70,11 @@ local foodCleanupCategories = {
         stateKey = "UI_ChilaSeda_DeleteFood_StateFresh",
         icon = "media/ui/Moodles/32/Mood_Happy.png",
     },
+    {
+        key = "burnt",
+        optionKey = "UI_ChilaSeda_DeleteFood_OptionBurnt",
+        stateKey = "UI_ChilaSeda_DeleteFood_StateBurnt",
+    },
 }
 
 local function isInstance(item, className)
@@ -89,6 +94,9 @@ end
 local function getFoodState(item, container)
     if not isInstance(item, "Food") or isInstance(item, "InventoryContainer") then return nil end
     if isInsidePreparedFoodContainer(container) then return nil end
+
+    local okBurnt, burnt = pcall(function() return item:isBurnt() end)
+    if okBurnt and burnt then return "burnt" end
 
     local okRotten, rotten = pcall(function() return item:isRotten() end)
     if not okRotten then return nil end
@@ -293,6 +301,7 @@ local function addDeleteOption(playerIndex, context, items)
         and getText("UI_ChilaSeda_DeleteItem_OptionOne")
         or getText("UI_ChilaSeda_DeleteItem_OptionMany", #entries)
     local option = context:addOption(label, playerIndex, onDeleteOption, entries)
+    option.chilaSedaDeleteObject = true
     setOptionIcon(option, "media/ui/LootableMaps/map_garbage.png")
     if not option.iconTexture then
         setVanillaItemIcon(option, { "Base.Garbagebag", "Base.GarbageBag" })
@@ -354,7 +363,9 @@ local function addFoodCleanupOptions(playerIndex, context, items)
                         entries,
                         fullType
                     )
+                    option.chilaSedaDeleteFoodCategory = category.key
                     setOptionIcon(option, category.icon)
+                    if not option.iconTexture then setVanillaItemIcon(option, { fullType }) end
                     ChilaSedaFoodMenuOrder.move(context, option)
                 end
             end
@@ -374,6 +385,7 @@ local function addFloorContextOptions(playerIndex, context, worldobjects, test)
         and getText("UI_ChilaSeda_DeleteItem_OptionOne")
         or getText("UI_ChilaSeda_DeleteItem_OptionMany", #entries)
     local option = context:addOption(label, playerIndex, onDeleteOption, entries)
+    option.chilaSedaDeleteObject = true
     setOptionIcon(option, "media/ui/LootableMaps/map_garbage.png")
     if not option.iconTexture then
         setVanillaItemIcon(option, { "Base.Garbagebag", "Base.GarbageBag" })
@@ -408,7 +420,9 @@ local function addFloorContextOptions(playerIndex, context, worldobjects, test)
                     foodEntries,
                     fullType
                 )
+                foodOption.chilaSedaDeleteFoodCategory = category.key
                 setOptionIcon(foodOption, category.icon)
+                if not foodOption.iconTexture then setVanillaItemIcon(foodOption, { fullType }) end
                 ChilaSedaFoodMenuOrder.move(context, foodOption)
             end
         end

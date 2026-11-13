@@ -318,29 +318,6 @@ local function removePoisonousIngredients(meal)
         .. "; sources=" .. poisonousIngredientSummary(removedIngredients))
 end
 
-local function moveAfterEquipOptions(context, option)
-    local labels = {
-        [getText("ContextMenu_Equip_Primary")] = true,
-        [getText("ContextMenu_Equip_Secondary")] = true,
-        [getText("ContextMenu_Equip_Two_Hands")] = true,
-    }
-    local optionIndex, insertAfter
-    for index, entry in ipairs(context.options or {}) do
-        if entry == option then optionIndex = index end
-        if entry ~= option and labels[entry.name] then insertAfter = index end
-    end
-    if not optionIndex then return end
-
-    table.remove(context.options, optionIndex)
-    if insertAfter and optionIndex <= insertAfter then insertAfter = insertAfter - 1 end
-    table.insert(context.options, (insertAfter and insertAfter + 1 or 1), option)
-    for index, entry in ipairs(context.options) do entry.id = index end
-    pcall(function()
-        if context.calcHeight then context:calcHeight() end
-        if context.calcWidth and context.setWidth then context:setWidth(context:calcWidth()) end
-    end)
-end
-
 local function addRemovePoisonedIngredientsOption(playerIndex, context, entries)
     if not context or not context.addOption then return end
     local meal = getSingleSelectedFood(entries)
@@ -357,19 +334,9 @@ local function addRemovePoisonedIngredientsOption(playerIndex, context, entries)
     end
     local option = context:addOption(optionLabel, meal, removePoisonousIngredients)
     if option then
-        -- Reuse the vanilla B42 rat-poison item icon to make the cleanup action
-        -- recognizable without adding a custom texture to this patch.
-        if type(getScriptManager) == "function" then
-            local okManager, manager = pcall(getScriptManager)
-            if okManager and manager then
-                local okItem, scriptItem = pcall(manager.FindItem, manager, "Base.RatPoison")
-                if okItem and scriptItem and type(scriptItem.getNormalTexture) == "function" then
-                    local okTexture, texture = pcall(scriptItem.getNormalTexture, scriptItem)
-                    if okTexture and texture then option.iconTexture = texture end
-                end
-            end
-        end
-        moveAfterEquipOptions(context, option)
+        option.chilaSedaPoisonMealAction = true
+        local okTexture, texture = pcall(getTexture, "media/ui/Moodles/32/Mood_Nauseous.png")
+        if okTexture and texture then option.iconTexture = texture end
     end
 end
 

@@ -1,15 +1,14 @@
 local viewpointLoaded = pcall(require, "Viewpoint_Loot")
-if not viewpointLoaded or type(ViewpointLoot) ~= "table" then
-    print("[ChilaSeda_ViewpointSelectedContainer] Viewpoint loot API unavailable; patch skipped.")
-    return
+local viewpointLootAvailable = viewpointLoaded and type(ViewpointLoot) == "table"
+local TAG = "[ChilaSeda_ViewpointSelectedContainer] "
+if not viewpointLootAvailable then
+    print(TAG .. "Viewpoint loot API unavailable; continuing with vanilla transfer routing.")
 end
 pcall(require, "Foraging/ISForageIcon")
 pcall(require, "Foraging/ISWorldItemIcon")
 require "TimedActions/ISInventoryTransferUtil"
 require "TimedActions/ISInventoryTransferAction"
 require "ISUI/ISContextMenu"
-
-local TAG = "[ChilaSeda_ViewpointSelectedContainer] "
 
 local function selectedDestination(playerNum)
     local page = getPlayerInventory(playerNum)
@@ -300,7 +299,7 @@ local function installViewpointUI()
 					table.insert(selectedPlan, entry)
                 end
             end
-			if #overflowItems > 0 and #selectedPlan == 0 then
+			if #overflowItems > 0 then
 				showAlternateDestinationMenu(player, page, destination, overflowItems)
 			end
 			return selectedPlan
@@ -339,4 +338,4 @@ installViewpointUI()
 Events.OnGameStart.Add(installViewpointUI)
 Events.OnCreatePlayer.Add(installViewpointUI)
 
-print(TAG .. "Viewpoint and foraging loot routing installed")
+print(TAG .. "Selected-container transfer routing loaded")

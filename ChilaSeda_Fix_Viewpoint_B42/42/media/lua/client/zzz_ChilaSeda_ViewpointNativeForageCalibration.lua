@@ -7,6 +7,20 @@ local basePinHeight = nil
 local basePinUp = nil
 local lastPinHeight = nil
 local lastPinUp = nil
+local arrowProjectionStateReported = false
+
+local function setNativeArrowProjectionEnabled(enabled)
+    local bridge = ChilaSedaViewpointFogJ
+    if not bridge or type(bridge.setNativeForageEnabled) ~= "function" then return end
+    local active = enabled == true
+    pcall(bridge.setNativeForageEnabled, active)
+    if not arrowProjectionStateReported then
+        arrowProjectionStateReported = true
+        local state = active and "enabled; integrated API available"
+            or "inactive; integrated API unavailable, using native arrow"
+        print(TAG .. "native arrow projection " .. state)
+    end
+end
 
 local function warnOnce(message)
     if warned then return end
@@ -18,6 +32,7 @@ local function bindTuning()
     if binding then return binding end
     if type(ViewpointForage) ~= "table" or type(ViewpointForage.found) ~= "function"
             or not luajava or type(luajava.bindClass) ~= "function" then
+        setNativeArrowProjectionEnabled(false)
         return nil
     end
 
@@ -43,6 +58,7 @@ local function bindTuning()
     binding = result
     basePinHeight = result.basePinHeight
     basePinUp = result.basePinUp
+    setNativeArrowProjectionEnabled(true)
     Calibration.nativeIntegrated = true
     print(TAG .. "connected to Viewpoint native foraging pins")
     return binding

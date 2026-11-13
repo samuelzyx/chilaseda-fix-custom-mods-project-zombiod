@@ -1,0 +1,8 @@
+name=ChilaSeda Save Recovery (B42)
+id=ChilaSeda_SaveRecovery_B42
+authors=ChilaSeda
+description=One-time recovery of Jill's yellow field rucksack and saved contents at her feet.
+require=KnoxPacks,Authentic Z - Current,AnimalRemasterApproved
+loadModAfter=KnoxPacks,Authentic Z - Current,AnimalRemasterApproved
+versionMin=42.20
+modversion=1.0.0

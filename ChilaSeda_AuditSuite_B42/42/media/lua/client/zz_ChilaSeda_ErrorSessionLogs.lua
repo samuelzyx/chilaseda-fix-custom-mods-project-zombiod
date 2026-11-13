@@ -1,17 +1,6 @@
-local okMagnifier, magnifier = pcall(require, "errorMagnifier_Main")
-if not okMagnifier or type(magnifier) ~= "table"
-        or type(magnifier.parseErrors) ~= "function"
-        or type(magnifier.parsedErrors) ~= "table"
-        or type(magnifier.parsedErrorsKeyed) ~= "table"
-        or type(magnifier.getZomboidSettingsHeader) ~= "function" then
-    print("[ChilaSeda Error Logs] Error Magnifier unavailable; session exporter skipped")
-    return
-end
-if magnifier._ChilaSedaSessionLogs then return end
-
 local M = {pending = {}, order = {}, seen = {}, ready = false, busy = false, inGame = false,
     nextPoll = 0, nextWarning = 0, enabled = true}
-magnifier._ChilaSedaSessionLogs = M
+local magnifier
 
 local function warn(message)
     local now = getTimestampMs()
@@ -22,6 +11,7 @@ local function warn(message)
 end
 
 local function observe()
+    if not magnifier then return end
     if M.sourceTable ~= magnifier.parsedErrors then
         M.sourceTable = magnifier.parsedErrors
         M.seen = {}
@@ -40,6 +30,44 @@ local function observe()
     end
 end
 
+local function installMagnifier()
+    if magnifier then return true end
+    local ok, candidate = pcall(require, "errorMagnifier_Main")
+    if not ok or type(candidate) ~= "table"
+            or type(candidate.parseErrors) ~= "function"
+            or type(candidate.parsedErrors) ~= "table"
+            or type(candidate.parsedErrorsKeyed) ~= "table"
+            or type(candidate.getZomboidSettingsHeader) ~= "function" then
+        return false
+    end
+
+    local existing = candidate._ChilaSedaSessionLogs
+    if type(existing) == "table" and existing ~= M then
+        M = existing
+        magnifier = candidate
+        return true
+    end
+
+    magnifier = candidate
+    candidate._ChilaSedaSessionLogs = M
+    local originalParse = candidate.parseErrors
+    candidate.parseErrors = function(...)
+        local result = originalParse(...)
+        if M.enabled and not M.busy then
+            M.busy = true
+            local parsed, failure = pcall(observe)
+            M.busy = false
+            if not parsed then
+                M.enabled = false
+                warn("Observer stopped: " .. tostring(failure))
+            end
+        end
+        return result
+    end
+    observe()
+    return true
+end
+
 local function drain()
     if #M.order == 0 then return end
     for _, text in ipairs(M.order) do
@@ -52,12 +80,18 @@ local function drain()
 end
 
 local function update()
-    if not M.enabled or M.busy or not M.inGame then return end
+    if not M.enabled or M.busy then return end
     local now = getTimestampMs()
     if now < M.nextPoll then return end
     M.nextPoll = now + 1000
     M.busy = true
     local ok, failure = pcall(function()
+        local available = installMagnifier()
+        if not M.inGame then return end
+        if not available then
+            warn("Waiting for Error Magnifier API")
+            return
+        end
         observe()
         if not ChilaErrorLogJ then
             warn("Waiting for ZombieBuddy Java bridge")
@@ -70,7 +104,7 @@ local function update()
                 return
             end
             M.ready = true
-            print("[ChilaSeda Error Logs] Loaded v1.0.0; session=" .. tostring(path))
+            print("[ChilaSeda Error Logs] Loaded v1.0.1; session=" .. tostring(path))
         end
         drain()
         if not ChilaErrorLogJ.flush() then
@@ -84,28 +118,16 @@ local function update()
     end
 end
 
-local originalParse = magnifier.parseErrors
-magnifier.parseErrors = function(...)
-    local result = originalParse(...)
-    if M.enabled and not M.busy then
-        M.busy = true
-        local ok, failure = pcall(observe)
-        M.busy = false
-        if not ok then
-            M.enabled = false
-            warn("Observer stopped: " .. tostring(failure))
-        end
-    end
-    return result
-end
-
--- The same callbacks used by Error Magnifier cover the menu and paused gameplay.
+-- Keep trying in the menu and after entering a save; the optional API may not
+-- have finished loading when this file is first evaluated.
+installMagnifier()
 Events.OnTickEvenPaused.Add(update)
 Events.OnFETick.Add(update)
 Events.OnGameStart.Add(function()
     M.inGame = true
     M.ready = false
     M.nextPoll = 0
+    M.nextWarning = 0
     update()
 end)
 Events.OnMainMenuEnter.Add(function()
@@ -125,4 +147,3 @@ Events.OnMainMenuEnter.Add(function()
         end
     end
 end)
-observe()

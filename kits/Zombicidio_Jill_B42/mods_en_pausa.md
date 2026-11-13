@@ -15,14 +15,14 @@
 ---
 
 > 🧭 **Estos mods siguen suscritos, pero no se cargan en Jill por decision temporal, compatibilidad o una prueba pendiente.** La pausa aplica
-> Jill tiene 12 mods activos que no se agregaron a la coleccion; conservamos esta pagina para revisar compatibilidad, decisiones temporales y recuperaciones.
+> Jill tiene 8 mods activos que no se agregaron a la coleccion; conservamos esta pagina para revisar compatibilidad, decisiones temporales y recuperaciones.
 
 <table>
 <tr>
 <td align="center"><strong>📦 186</strong><br>elementos en la colección</td>
 <td align="center"><strong>✅ 190</strong><br>con algún ID activo en Jill</td>
 <td align="center"><strong>⏸️ 28</strong><br>suscritos y en pausa</td>
-<td align="center"><strong>🧩 12</strong><br>mods activos faltantes</td>
+<td align="center"><strong>8</strong><br>mods activos faltantes</td>
 </tr>
 </table>
 
@@ -199,7 +199,7 @@ El perfil Jill activa aqui mods declarados para 42.22 y pruebas solicitadas por 
 Tres fixes marcados [OBSOLETE] se excluyen de esta página; Chila planea desuscribirlos. Hasta que lo haga, siguen incluidos en el conteo de suscripciones en pausa.
 Los últimos tres que quedaban en la colección —**Viewpoint Better Terrain** (`3815223174`),
 **Viewpoint Binoculars** (`3818585720`) y **Viewpoint Rolling Hills** (`3815630947`)— ya fueron
-quitados. La verificación actual confirma que los 20 mods en pausa están fuera de la colección; Jill tiene otros 12 mods activos que no están en la colección.
+quitados. La verificación actual confirma que los 20 mods en pausa están fuera de la colección; Jill tiene otros 8 mods activos que no están en la colección.
 
 El elemento **Carry Visible Items In Hands** (`3749026793`) sí coincide con `CVI` activo en Jill, por eso no aparece como candidato.
 
@@ -216,6 +216,21 @@ El elemento **Carry Visible Items In Hands** (`3749026793`) sí coincide con `CV
 </table>
 
 ---
+
+## Steam collection audit (2026-11-13)
+
+The current collection has 186 items. Comparing its published item IDs with the active Workshop mods in `mods.txt` shows eight active mods missing from the collection. Add these if the collection should reproduce the current Jill profile:
+
+- [Wilderness QoL](https://steamcommunity.com/sharedfiles/filedetails/?id=3779759338) (`3779759338`)
+- [Blood FX for Viewpoint](https://steamcommunity.com/sharedfiles/filedetails/?id=3811472160) (`3811472160`)
+- [Viewpoint - Immersive Effects](https://steamcommunity.com/sharedfiles/filedetails/?id=3812984535) (`3812984535`)
+- [Viewpoint - Advanced Throwables](https://steamcommunity.com/sharedfiles/filedetails/?id=3813194971) (`3813194971`)
+- [Blood FX for Viewpoint - Fixes](https://steamcommunity.com/sharedfiles/filedetails/?id=3813801053) (`3813801053`)
+- [Viewpoint Tactical - 3D Weapons](https://steamcommunity.com/sharedfiles/filedetails/?id=3819385365) (`3819385365`)
+- [Wall Texture Fix for Viewpoint](https://steamcommunity.com/sharedfiles/filedetails/?id=3820609079) (`3820609079`)
+- [Viewpoint getObjects Fix](https://steamcommunity.com/sharedfiles/filedetails/?id=3837103588) (`3837103588`)
+
+No collection item is marked for removal: the collection intentionally retains paused mods for later review. The official Project Viewpoint item (`3809306528`) is in the collection but absent from the installed Workshop manifest in the current local Workshop manifest; keep it in the collection. These recommendations change only the collection's coverage; they do not imply that any mod has passed Jill runtime validation.
 
 ## 🧰 Cómo interpretar la pausa
 
@@ -234,7 +249,7 @@ Conservamos esos IDs para revisar si alguno puede recuperarse más adelante.
 
 <div align="center">
 
-**Actualizado el 12 de noviembre de 2026 · Inventario local**
+**Actualizado el 13 de noviembre de 2026 · Inventario local**
 
 </div>
 

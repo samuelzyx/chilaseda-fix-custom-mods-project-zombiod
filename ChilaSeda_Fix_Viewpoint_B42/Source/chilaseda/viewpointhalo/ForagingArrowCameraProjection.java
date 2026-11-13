@@ -23,6 +23,9 @@ public final class ForagingArrowCameraProjection {
             @Patch.Argument(3) float playerHeight,
             @Patch.Argument(4) int index,
             @Patch.Argument(5) float pinHeight) {
+        // This projection belongs only to Viewpoint's integrated forage API.
+        // Keep the original arrow path when that API is absent.
+        if (!SearchFogBridge.nativeForageEnabled()) return false;
         try {
             int[] xs = (int[]) field("xs").get(null);
             int[] ys = (int[]) field("ys").get(null);

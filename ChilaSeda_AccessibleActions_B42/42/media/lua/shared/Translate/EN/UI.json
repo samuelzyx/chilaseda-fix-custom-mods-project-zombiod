@@ -6,10 +6,14 @@
     "UI_ChilaSeda_DeleteFood_OptionRotten":  "Delete rotten food (%1)",
     "UI_ChilaSeda_DeleteFood_OptionStale":  "Delete stale food (%1)",
     "UI_ChilaSeda_DeleteFood_OptionFresh":  "Delete fresh food (%1)",
+    "UI_ChilaSeda_DeleteFood_OptionBurnt":  "Delete burnt food (%1)",
     "UI_ChilaSeda_DeleteFood_StateRotten":  "rotten",
     "UI_ChilaSeda_DeleteFood_StateStale":  "stale",
     "UI_ChilaSeda_DeleteFood_StateFresh":  "fresh",
+    "UI_ChilaSeda_DeleteFood_StateBurnt":  "burnt",
     "UI_ChilaSeda_DeleteFood_ConfirmOne":  "Permanently delete %1 from the %2 group? This cannot be undone.",
     "UI_ChilaSeda_DeleteFood_ConfirmMany":  "Permanently delete %1 food items from the %2 group in this container? This cannot be undone.",
     "UI_ChilaSeda_DeleteFood_Notification": "Removed %1 x %2"
+,
+    "UI_ChilaSeda_ConfirmKnownPoisonEat": "Jill has identified poison in %1. Are you sure you want to eat it?"
 }

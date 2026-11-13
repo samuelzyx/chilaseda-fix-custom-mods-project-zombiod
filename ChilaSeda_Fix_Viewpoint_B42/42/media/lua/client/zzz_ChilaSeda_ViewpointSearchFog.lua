@@ -56,7 +56,9 @@ local function updateFog()
         end
     end
 
-    local feather, style, strength = 3, 0, 1
+    local feather, style = 3, 0
+    local strength = type(ChilaSedaViewpointNativeFogStrength) == "number"
+        and math.max(0, math.min(1, ChilaSedaViewpointNativeFogStrength)) or 1
     if last.on == on and last.radius == radius and last.darkness == darkness and last.desat == desat
             and last.feather == feather and last.style == style and last.strength == strength then
         return

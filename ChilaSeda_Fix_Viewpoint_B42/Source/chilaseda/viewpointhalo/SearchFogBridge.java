@@ -9,6 +9,7 @@ import me.zed_0xff.zombie_buddy.Exposer;
 
 @Exposer.LuaClass(name = "ChilaSedaViewpointFogJ")
 public final class SearchFogBridge {
+    private static volatile boolean nativeForageEnabled;
     private static volatile boolean wanted;
     private static volatile float radius = 10.0f;
     private static volatile float feather = 3.0f;
@@ -38,6 +39,14 @@ public final class SearchFogBridge {
     private static final Map<Object, float[]> original = new IdentityHashMap<>();
 
     private SearchFogBridge() {}
+
+    public static void setNativeForageEnabled(boolean enabled) {
+        nativeForageEnabled = enabled;
+    }
+
+    public static boolean nativeForageEnabled() {
+        return nativeForageEnabled;
+    }
 
     public static boolean available() {
         return init();

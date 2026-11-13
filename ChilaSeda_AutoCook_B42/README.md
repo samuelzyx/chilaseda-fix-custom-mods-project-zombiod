@@ -1,4 +1,4 @@
-# ChilaSeda AutoCook Fixes · B42 2.0.11
+# ChilaSeda AutoCook Fixes · B42 2.0.12
 
 <div align="center">
 
@@ -15,7 +15,7 @@
 
 - **Moverse y reanudar:** permite caminar y apuntar durante acciones de AutoCook, reanuda después de otras acciones en cola y admite cancelación explícita.
 - **Limpiar ingredientes:** retira los ingredientes agotados después de que AutoCook los usa.
-- **Finalizar comidas de forma segura:** permite terminar una comida preparada con ingredientes seguros y conserva el filtro original de AutoCook para preparar comidas nuevas.
+- **Finalizar comidas de forma segura:** permite terminar una comida preparada con ingredientes seguros y conserva el filtro original de AutoCook para preparar comidas nuevas. Al continuar una comida, solo selecciona tipos de ingrediente que aún no estén presentes; mantiene los ingredientes actuales y conserva la variedad que reduce el aburrimiento.
 - **Retirar ingredientes venenosos:** registra cada ingrediente que aporta veneno y los cambios que causa en la comida. Al hacer clic derecho en una ensalada ya mezclada, la opción muestra los nombres y cantidades registrados antes de retirarlos, para identificar el origen sin adivinar por el icono. Al confirmar, elimina esos ingredientes y revierte sus valores nutricionales y su contribución venenosa. Las comidas preparadas antes de activar este registro no contienen historial por ingrediente y no pueden repararse de forma fiable.
 - **Devolver recipientes:** recuerda la mochila de origen cuando AutoCook toma un tazón u olla, devuelve allí el recipiente de la comida terminada y avisa el destino con Halo. Si la mochila no tiene espacio, deja el objeto en el piso e indica ese destino.
 - **Compatibilidad B42:** evita usar la global `next`, que no está disponible, al retirar veneno.

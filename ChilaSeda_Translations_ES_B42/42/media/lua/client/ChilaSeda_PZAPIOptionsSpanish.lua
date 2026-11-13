@@ -25,6 +25,10 @@ local function translateOption(option, pageId)
     if type(option.name) == "string" then option.name = translate(pageId, option.name) end
     if type(option.tooltip) == "string" then option.tooltip = translate(pageId, option.tooltip) end
     if type(option.text) == "string" then option.text = translate(pageId, option.text) end
+    if type(option.category) == "string" then option.category = translate(pageId, option.category) end
+    if type(option.title) == "string" then option.title = translate(pageId, option.title) end
+    if type(option.label) == "string" then option.label = translate(pageId, option.label) end
+    if type(option.description) == "string" then option.description = translate(pageId, option.description) end
 
     -- Combo-box labels are visible text; their values and selected indices are settings.
     if type(option.values) == "table" then
@@ -46,6 +50,7 @@ local function applyTranslations()
         local ok, page = pcall(modOptions.getOptions, modOptions, pageId)
         if ok and page then
             if type(page.name) == "string" then page.name = translate(pageId, page.name) end
+            if type(page.description) == "string" then page.description = translate(pageId, page.description) end
             if type(page.data) == "table" then
                 for _, option in ipairs(page.data) do translateOption(option, pageId) end
             end

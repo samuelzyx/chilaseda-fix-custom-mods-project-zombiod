@@ -183,7 +183,9 @@ local function isDismantleAllOption(option, selected)
         end
     end
 
-    local expected = getText(recipe:getTranslationName()) .. " (" .. #recipeItems .. ")"
+    local recipeName = getText(recipe:getTranslationName())
+    option.chilaSedaDismantleRecipeName = recipeName
+    local expected = recipeName .. " (" .. #recipeItems .. ")"
     if type(recipe.isAnySurfaceCraft) == "function" and recipe:isAnySurfaceCraft() then
         expected = expected .. getText(SURFACE_SUFFIX)
     end
@@ -195,13 +197,13 @@ local function moveDismantleAllAfterHandEquip(_, context, entries)
     local selected = selectedItemIds(entries)
     for index, option in ipairs(context.options) do
         if isDismantleAllOption(option, selected) then
+            option.chilaSedaDismantleAll = true
             if option.onSelect and not option.chilaSedaOriginalOnSelect then
                 option.chilaSedaOriginalOnSelect = option.onSelect
                 option.onSelect = function(target, groupItems, recipe, ...)
                     return invokeDismantleAll(option, target, groupItems, recipe, ...)
                 end
             end
-            moveAfterHandEquip(context, option)
             return
         end
     end
