@@ -79,6 +79,7 @@ local ACTION_LABELS = {
     ["put out campfire"] = "Apagando fogata",
 
     -- Acciones de inventario y transferencia
+    ISDetachItemHotbar = "Desprendiendo objeto",
     ISDropItemAction = "Vaciando contenido",
     ISDumpWaterAction = "Vaciando agua",
     ISForageAction = "Rebuscando",
@@ -86,6 +87,7 @@ local ACTION_LABELS = {
     ISPickUpGroundCoverItem = "Recogiendo cobertura del suelo",
     ISInventoryTransferAction = "Moviendo objeto",
     ISOpenContainerAction = "Abriendo contenedor",
+    ISOpenMechanicsUIAction = "Abriendo interfaz de mecanica",
     ISPourInAction = "Vertiendo liquido",
     ISPourOutAction = "Vaciando liquido",
     ISRemoveItemAction = "Quitando objeto",

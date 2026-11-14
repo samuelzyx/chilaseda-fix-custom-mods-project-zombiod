@@ -5,4 +5,4 @@ description=One-time recovery of Jill's yellow field rucksack and saved contents
 require=KnoxPacks,Authentic Z - Current,AnimalRemasterApproved
 loadModAfter=KnoxPacks,Authentic Z - Current,AnimalRemasterApproved
 versionMin=42.20
-modversion=1.0.0
+modversion=1.0.1

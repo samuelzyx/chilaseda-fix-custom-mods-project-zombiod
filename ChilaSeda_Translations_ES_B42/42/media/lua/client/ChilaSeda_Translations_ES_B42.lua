@@ -301,4 +301,43 @@ local function translateViewpointUI()
     end
 end
 
+local function translateViewpointRadial()
+    local wheel = ISBackButtonWheel
+    if not wheel or type(wheel.addCommands) ~= "function" or wheel.chilaSpanishLabelsInstalled then
+        return
+    end
+
+    local original = wheel.addCommands
+    wheel.addCommands = function(self, ...)
+        local addSlice = self.addSlice
+        if type(addSlice) ~= "function" then
+            return original(self, ...)
+        end
+
+        self.addSlice = function(target, label, ...)
+            if label == "First person" then
+                label = "Primera persona"
+            elseif label == "Third person" then
+                label = "Tercera persona"
+            elseif label == "Isometric view" then
+                label = "Vista isometrica"
+            elseif label == "Ground mode: on" then
+                label = "Modo de suelo: activado"
+            elseif label == "Ground mode: off" then
+                label = "Modo de suelo: desactivado"
+            elseif type(label) == "string" and label:sub(1, 16) == "Furniture mode: " then
+                label = "Modo de muebles: " .. label:sub(17)
+            end
+            return addSlice(target, label, ...)
+        end
+
+        local result = { pcall(original, self, ...) }
+        self.addSlice = addSlice
+        if not result[1] then error(result[2]) end
+        return unpack(result, 2)
+    end
+    wheel.chilaSpanishLabelsInstalled = true
+end
+
 Events.OnGameBoot.Add(translateViewpointUI)
+Events.OnGameBoot.Add(translateViewpointRadial)

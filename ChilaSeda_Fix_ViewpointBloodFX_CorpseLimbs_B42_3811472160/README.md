@@ -19,3 +19,9 @@ En Jill, desprende una o más partes durante el combate y mata al zombi. Comprue
 - [🏠 Inicio del repositorio](../README.md)
 - [🤝 Cómo contribuir](../CONTRIBUTING.md)
 - [🚀 Releases de mods](../docs/releases/README.md)
+
+## Viewpoint 0.1.7 combat compatibility
+
+When Blood FX is loaded, the patch disables Viewpoint's `lod.livePoses` GPU path for the current session. Viewpoint then uses its CPU pose path for living zombies, preserving Blood FX's cut-limb visibility during combat. This may cost some performance near zombies.
+
+The corpse handoff remains enabled: it copies the final combat cut mask to Viewpoint's loot-corpse model. Both the living zombie and the corpse should keep the severed head or limbs; the detached parts remain on the ground.

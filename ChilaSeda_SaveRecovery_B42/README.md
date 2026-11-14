@@ -56,3 +56,11 @@ The helper marks Jill's character data and the spawned bag so loading the save a
 create a second recovery bag. After Jill loads, the recovery log entry starts with
 `[ChilaSeda_SaveRecovery_B42]`. Keep this local helper enabled until Chila confirms the bag and
 contents appeared correctly.
+
+## 1.0.1 recovery fix
+
+Build 42 creates inventory items with the vanilla `instanceItem()` function. The initial helper
+used the unavailable `InventoryItemFactory` global, so it could not create the bag and repeated the
+same error every tick. Version 1.0.1 uses `instanceItem()` and stops retrying after one creation or
+placement failure, avoiding an error flood. The next Jill load still needs to confirm the bag and
+contents appear once.

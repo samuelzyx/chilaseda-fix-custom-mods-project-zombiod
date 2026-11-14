@@ -1,4 +1,4 @@
-# ChilaSeda - Acciones Accesibles (Build 42) 1.0.24
+# ChilaSeda - Acciones Accesibles (Build 42) 1.0.25
 
 <div align="center">
 
@@ -20,9 +20,13 @@
 - [Historial](#cambios-de-101)
 
 
+## Cambios de 1.0.25
+
+- Las confirmaciones de comer veneno conocido y eliminar objetos muestran **Si [E]** y **No [Esc]** en los botones. E confirma y Escape cancela; ambos atajos ejecutan los mismos callbacks que los botones.
+
 ## Cambios de 1.0.24
 
-- Al comer un alimento que Jill ya identifico como venenoso, aparece la confirmacion nativa Si/No. Cancelar descarta la accion; aceptar la vuelve a encolar. El dialogo conserva el soporte vanilla de teclado y mando.
+- Al comer un alimento que Jill ya identifico como venenoso, aparece la confirmacion Si/No. Cancelar descarta la accion; aceptar la vuelve a encolar.
 
 ## Cambios de 1.0.23
 

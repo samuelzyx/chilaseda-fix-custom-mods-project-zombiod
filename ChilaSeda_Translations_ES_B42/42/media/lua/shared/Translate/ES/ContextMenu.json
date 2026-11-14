@@ -281,5 +281,12 @@
   "ContextMenu_WFI_Gather": "Recolectar",
   "ContextMenu_WFI_GatherBranch": "Ramas",
   "ContextMenu_WFI_GatherTwigs": "Ramitas",
-  "ContextMenu_WFI_RipAllClothing": "Rasgar toda la ropa (%1)"
+  "ContextMenu_WFI_RipAllClothing": "Rasgar toda la ropa (%1)",
+  "ContextMenu_XannyArms_LaserOn": "Encender el láser",
+  "ContextMenu_XannyArms_LaserOff": "Apagar el láser",
+  "ContextMenu_KnoxPacks_NoKnoxBags": "No tienes una mochila de Knox Packs.",
+  "ContextMenu_KnoxPacks_NoQualityKits": "No tienes un kit de mejora de calidad.",
+  "ContextMenu_KnoxPacks_QualityChange": "Calidad: %1 -> %2",
+  "ContextMenu_KnoxPacks_UpgradeQuality": "Mejorar la calidad",
+  "ContextMenu_KnoxPacks_UpgradeQualityOf": "Mejorar la calidad de"
 }

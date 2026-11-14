@@ -15,8 +15,8 @@
     "Sandbox_AnomalousStormRedFadeMinutes_tooltip":  "Tiempo que la mascara roja fullscreen permanece despues de la lluvia tranquila. 60 minutos por defecto; el efecto sigue hasta terminar el ciclo.",
     "Sandbox_AnomalousStormZombieDamagePerTenMinutes":  "Tormenta anomala: dano por exposicion cada 10 minutos",
     "Sandbox_AnomalousStormZombieDamagePerTenMinutes_tooltip":  "Puntos de salud en centesimas cada 10 minutos para zombis y animales expuestos. 10 equivale a 0.10 de salud; 0 desactiva el dano gradual. El punto de exposicion letal sigue activo.",
-    "Sandbox_AnomalousStormZombieSlowPercent":  "Tormenta anomala: velocidad de zombis expuestos (%)",
-    "Sandbox_AnomalousStormZombieSlowPercent_tooltip":  "Porcentaje de velocidad normal tras comenzar la tormenta electrica; la ralentizacion dura hasta que termina la lluvia. 10 % por defecto, muy lentos pero aun se mueven.",
-    "Sandbox_AnomalousStormLethalExposurePercent":  "Tormenta anomala: punto de exposicion letal (%)",
-    "Sandbox_AnomalousStormLethalExposurePercent_tooltip":  "Los zombis, animales y animales zombis expuestos mueren al llegar a este porcentaje de la fase de lluvia electrica. 75 % por defecto."
+    "Sandbox_AnomalousStormZombieSlowPercent":  "Tormenta anomala: velocidad de zombis expuestos (%%)",
+    "Sandbox_AnomalousStormZombieSlowPercent_tooltip":  "Porcentaje de velocidad normal tras comenzar la tormenta electrica; la ralentizacion dura hasta que termina la lluvia. 10 %% por defecto, muy lentos pero aun se mueven.",
+    "Sandbox_AnomalousStormLethalExposurePercent":  "Tormenta anomala: punto de exposicion letal (%%)",
+    "Sandbox_AnomalousStormLethalExposurePercent_tooltip":  "Los zombis, animales y animales zombis expuestos mueren al llegar a este porcentaje de la fase de lluvia electrica. 75 %% por defecto."
 }

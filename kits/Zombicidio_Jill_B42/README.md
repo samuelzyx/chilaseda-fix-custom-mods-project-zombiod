@@ -42,7 +42,9 @@ resume estos pasos para compartirlos en Steam.
 1. Suscribete a los mods de terceros de la [coleccion Zombicidio](https://steamcommunity.com/sharedfiles/filedetails/?id=3812814868) y espera a que Workshop termine de descargarlos.
 2. Instala [ZombieBuddy](https://steamcommunity.com/sharedfiles/filedetails/?id=3619862853), requisito de Project Viewpoint.
 3. Suscribete a [Project Viewpoint](https://steamcommunity.com/sharedfiles/filedetails/?id=3809306528). La version de referencia confirmada para el kit es 0.1.6.2. Isometric No More queda en pausa por la decision del 12 de noviembre, despues de los problemas con el Viewpoint nativo; no lo agregues al perfil Jill por esta guia. No instales copias manuales de Viewpoint 0.1.7. Cuando aparezca una publicacion oficial, revisa primero la version y compatibilidad; no la actives automaticamente.
-4. Copia las **38 carpetas locales ChilaSeda** de este repositorio como carpetas hijas de
+4. Para que el clic derecho abra el menu del objeto bajo el cursor en primera/tercera persona, suscribete tambien a [Viewpoint - Right Click Fix](https://steamcommunity.com/sharedfiles/filedetails/?id=3819018807). Requiere Project Viewpoint y ZombieBuddy; queda activo en la lista de Jill.
+
+5. Copia las **38 carpetas locales ChilaSeda** de este repositorio como carpetas hijas de
    `%USERPROFILE%\Zomboid\mods\`. Conserva cada carpeta completa y sus subcarpetas `42`; no las
    copies a la carpeta de Workshop.
 

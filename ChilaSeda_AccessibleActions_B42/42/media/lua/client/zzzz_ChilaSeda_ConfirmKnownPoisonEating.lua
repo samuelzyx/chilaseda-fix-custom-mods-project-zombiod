@@ -1,5 +1,6 @@
 require "TimedActions/ISEatFoodAction"
 require "ISUI/ISModalDialog"
+local confirmationKeys = require "ChilaSeda_ConfirmationDialogKeys_B42"
 
 if ChilaSedaKnownPoisonEatingConfirmInstalled then return end
 if not ISTimedActionQueue or type(ISTimedActionQueue.add) ~= "function" then
@@ -27,6 +28,7 @@ ISTimedActionQueue.add = function(action, ...)
         local modal = ISModalDialog:new(0, 0, 420, 150, text, true,
             nil, onPoisonConfirmation, playerNum, payload)
         modal:initialise()
+        confirmationKeys.attach(modal)
         modal:addToUIManager()
         modal:setAlwaysOnTop(true)
         modal:bringToTop()

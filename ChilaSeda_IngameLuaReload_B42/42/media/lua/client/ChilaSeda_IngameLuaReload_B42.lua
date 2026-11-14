@@ -4,6 +4,34 @@ ChilaSedaIngameLuaReload = ChilaSedaIngameLuaReload or {}
 local M = ChilaSedaIngameLuaReload
 local TAG = "[ChilaSeda_IngameLuaReload_B42] "
 
+local function addConfirmationKeys(modal)
+    if not modal.yes or not modal.no then return end
+
+    modal.yes:setTitle(getText("UI_Yes") .. " [E]")
+    modal.no:setTitle(getText("UI_No") .. " [Esc]")
+
+    local inheritedOnKeyPress = modal.onKeyPress
+    modal.onKeyPress = function(self, key)
+        if not self.getIsVisible or self:getIsVisible() then
+            if key == Keyboard.KEY_E then
+                self:onClick(self.yes)
+                return true
+            end
+            if key == Keyboard.KEY_ESCAPE then
+                self:onClick(self.no)
+                return true
+            end
+        end
+        if type(inheritedOnKeyPress) == "function" then
+            return inheritedOnKeyPress(self, key)
+        end
+        return false
+    end
+
+    modal:setCapture(true)
+    modal:setWantKeyEvents(true)
+end
+
 local function isSinglePlayerSession()
     if isClient() or isServer() then return false end
     return getSpecificPlayer(0) ~= nil
@@ -36,6 +64,7 @@ local function askToReload()
 
     M.dialog = ISModalDialog:new(x, y, width, height, message, true, nil, onConfirmReload)
     M.dialog:initialise()
+    addConfirmationKeys(M.dialog)
     M.dialog:addToUIManager()
     M.dialog:setAlwaysOnTop(true)
     M.dialog:bringToTop()

@@ -40,4 +40,6 @@ El aviso de mochila llena usa "esta" sin tilde porque Jill mostraba la vocal ace
 
 Version 1.3.2: guards Inventory Tetris keyring container discovery when a Weight Fix update asks for carried containers before the inventory page exists. The fallback recursively lists carried containers and retains the Tetris path when the page is ready.
 
+Version 1.3.4: guards Inventory Tetris developer context menus when Viewpoint supplies a missing menu or an object without an options table. This prevents the null-options exception in ContextUtil.getSubMenu without changing regular inventory context menus.
+
 Version 1.3.3: when an over-capacity transfer is rejected, offers a context menu with the main inventory and worn backpacks that have room. Choosing an option switches the active inventory container for follow-up interactions. If no destination is available, the Halo message says the item remains where it is.

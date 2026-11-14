@@ -80,7 +80,7 @@ local function addContents(container, definitions)
         local amount = definition[2]
 
         for _ = 1, amount do
-            local item = InventoryItemFactory.CreateItem(fullType)
+            local item = instanceItem(fullType)
             if not item then
                 error("Item unavailable: " .. fullType)
             end
@@ -90,7 +90,7 @@ local function addContents(container, definitions)
 end
 
 local function makeRecoveryBag()
-    local bag = InventoryItemFactory.CreateItem(BAG_TYPE)
+    local bag = instanceItem(BAG_TYPE)
     if not bag then error("Item unavailable: " .. BAG_TYPE) end
 
     bag:setName(BAG_NAME)
@@ -124,7 +124,7 @@ local function finishPlayer(player, square)
     local ok, bagOrError = pcall(makeRecoveryBag)
     if not ok then
         log("Could not build recovery bag: " .. tostring(bagOrError))
-        return false
+        return false, true
     end
 
     local okPlace, placedOrError = pcall(function()
@@ -132,7 +132,7 @@ local function finishPlayer(player, square)
     end)
     if not okPlace or not placedOrError then
         log("Could not place recovery bag at player feet: " .. tostring(placedOrError))
-        return false
+        return false, true
     end
 
     playerData[PLAYER_FLAG] = true
@@ -153,8 +153,14 @@ local function onTick()
             pending[playerNum] = nil
         else
             local square = player and player:getCurrentSquare() or nil
-            if square and finishPlayer(player, square) then
-                pending[playerNum] = nil
+            if square then
+                local finished, stopRetrying = finishPlayer(player, square)
+                if finished or stopRetrying then
+                    pending[playerNum] = nil
+                else
+                    pending[playerNum] = player
+                    hasPending = true
+                end
             else
                 pending[playerNum] = player
                 hasPending = true

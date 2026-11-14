@@ -1,4 +1,5 @@
 require "ISUI/ISModalDialog"
+local confirmationKeys = require "ChilaSeda_ConfirmationDialogKeys_B42"
 require "ISUI/ISInventoryPaneContextMenu"
 require "ChilaSeda_FoodMenuOrder_B42"
 
@@ -280,6 +281,7 @@ local function askToDelete(playerIndex, entries, category, fullType)
         (core:getScreenHeight() - height) / 2, width, height, text, true,
         target, removeSelected, playerIndex)
     activeDialog:initialise()
+    confirmationKeys.attach(activeDialog)
     activeDialog:addToUIManager()
     activeDialog:setAlwaysOnTop(true)
     activeDialog:bringToTop()

@@ -254,6 +254,16 @@ local function withBackpackCapacityEnforced(container, callback, ...)
     error(results[2])
 end
 
+local function wouldExceedBackpackCapacity(player, container, item)
+    if not player or not container or not item then return false end
+    local ok, hasRoom = pcall(function()
+        return withBackpackCapacityEnforced(container, function()
+            return container:isItemAllowed(item) and container:hasRoomFor(player, item)
+        end)
+    end)
+    return ok and not hasRoom
+end
+
 local function installBackpackCapacityValidation()
     if TetrisItemData.ChilaSedaBackpackCapacityValidationInstalled then
         return
@@ -372,11 +382,22 @@ local function installBackpackCapacityValidation()
         local y = type(getMouseY) == "function" and getMouseY() or 0
         local menu = ISContextMenu.get(playerNum, x, y)
         if not menu then return false end
-        local header = menu:addOption("La mochila esta llena. Elige a donde mandar el objeto:", nil, nil)
+        -- Offset the menu from the click that triggered the rejected transfer.
+        -- Otherwise the same mouse release can land on the first destination.
+        local screenW = getCore and getCore():getScreenWidth() or 1920
+        local screenH = getCore and getCore():getScreenHeight() or 1080
+        local menuX = math.min(x + 28, math.max(0, screenW - 300))
+        local menuY = math.min(y + 28, math.max(0, screenH - 260))
+        if type(menu.setX) == "function" then menu:setX(menuX) end
+        if type(menu.setY) == "function" then menu:setY(menuY) end
+        local header = menu:addOption("La mochila destino esta llena.", nil, nil)
         if header then header.notAvailable = true end
+        local prompt = menu:addOption("Elige el destino de este objeto:", nil, nil)
+        if prompt then prompt.notAvailable = true end
         for _, destination in ipairs(destinations) do
             menu:addOption(containerName(player, destination), page, selectDestination, destination)
         end
+        menu:addOption("Cancelar movimiento", nil, nil)
         return true
     end
 
@@ -389,14 +410,8 @@ local function installBackpackCapacityValidation()
             return
         end
 
-        local ok, overCapacity = pcall(function()
-            if item:getContainer() == container then
-                return false
-            end
-            return container:getCapacityWeight() + item:getUnequippedWeight()
-                > container:getEffectiveCapacity(player)
-        end)
-        if not ok or not overCapacity then return end
+            if item:getContainer() == container
+                    or not wouldExceedBackpackCapacity(player, container, item) then return end
 
         local now = type(getTimestampMs) == "function"
             and getTimestampMs() or math.floor(os.clock() * 1000)
@@ -418,11 +433,7 @@ local function installBackpackCapacityValidation()
         local container = self and self.destContainer
         if player and item and container and isBackpackInventory(container)
                 and item:getContainer() ~= container then
-            local ok, overCapacity = pcall(function()
-                return container:getCapacityWeight() + item:getUnequippedWeight()
-                    > container:getEffectiveCapacity(player)
-            end)
-            if ok and overCapacity then
+            if wouldExceedBackpackCapacity(player, container, item) then
                 notifyOverCapacity(self)
                 return false
             end
@@ -445,11 +456,7 @@ local function installBackpackCapacityValidation()
             local container = self and self.destContainer
             if player and item and container and isBackpackInventory(container)
                     and item:getContainer() ~= container then
-                local ok, overCapacity = pcall(function()
-                    return container:getCapacityWeight() + item:getUnequippedWeight()
-                        > container:getEffectiveCapacity(player)
-                end)
-                if ok and overCapacity then
+                if wouldExceedBackpackCapacity(player, container, item) then
                     notifyOverCapacity(self, item)
                     return
                 end
@@ -472,11 +479,7 @@ local function installBackpackCapacityValidation()
             if player and item and destinationContainer
                     and isBackpackInventory(destinationContainer)
                     and item:getContainer() ~= destinationContainer then
-                local ok, overCapacity = pcall(function()
-                    return destinationContainer:getCapacityWeight() + item:getUnequippedWeight()
-                        > destinationContainer:getEffectiveCapacity(player)
-                end)
-                if ok and overCapacity then
+                if wouldExceedBackpackCapacity(player, destinationContainer, item) then
                     notifyOverCapacity(nil, item, destinationContainer, player)
                     return item
                 end

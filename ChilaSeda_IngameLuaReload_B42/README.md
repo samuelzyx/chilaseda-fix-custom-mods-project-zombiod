@@ -10,7 +10,7 @@ ChilaSeda - Recargar Lua dentro de partida (B42)
 
 
 Uso:
-  En una partida individual, pulsa Ctrl+Shift+F10 y confirma.
+  En una partida individual, pulsa Ctrl+Shift+F10. El modal muestra Si [E] y No [Esc]; E confirma y Escape cancela.
 
 El juego reinicia el entorno Lua y vuelve a cargar el guardado actual. Guarda primero:
 el mod no guarda automaticamente el mundo y los avances posteriores al ultimo guardado

@@ -8,6 +8,7 @@ mods
     mod = UndeadWildlife,
     mod = ZombieBuddy,
     mod = Viewpoint,
+    mod = ViewpointRightClick,
     mod = PZVoxelStudioViewpoint,
     mod = ViewpointGetObjectsFix,
     mod = ViewpointPixelReshade,
@@ -23,7 +24,6 @@ mods
     mod = GrassierGrassViewpoint,
     mod = ViewpointCropVisibility,
     mod = ViewpointVisualFixes,
-    mod = OldPointVPNightlyRC4,
     mod = damnlib,
     mod = KI5trailers,
     mod = isoContainers,
@@ -252,6 +252,7 @@ mods
     mod = ChilaSeda_Fix_Viewpoint_B42,
     mod = ChilaSeda_Fix_Viewpoint_Foraging_PinHeight_B42_3814994364,
     mod = ChilaSeda_Fix_CustomIntros_B42,
+    mod = ChilaSeda_Fix_ViewpointBloodFX_CorpseLimbs_B42_3811472160,
     mod = ZeroWeightKeys_B42,
 }
 

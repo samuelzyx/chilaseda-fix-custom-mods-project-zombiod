@@ -2900,5 +2900,15 @@
   "IGUI_ES_PZAPI_HeliEvent_Turns the pilot\u0027s loudspeaker and radio voicelines on or off.\nThis is purely cosmetic: it does not change how far the helicopter can be heard,\nby you or by zombies.": "Activa o desactiva los avisos del piloto por altavoz y radio.\nEste ajuste es solo visual y no cambia la distancia a la que t\u00fa o los zombis oyen el helic\u00f3ptero.",
   "IGUI_ES_PZAPI_P4HasBeenRead_Has Been Read": "Ya le\u00eddo",
   "IGUI_ES_PZAPI_CombatText_Current/Total HP": "Vida actual/total",
-  "UI_CT_options_CurrentTotalHp_Title": "Vida actual/total"
+  "UI_CT_options_CurrentTotalHp_Title": "Vida actual/total",
+"IGUI_VPRC_Title":  "Viewpoint: corrección del clic derecho",
+    "IGUI_VPRC_Enabled":  "Corregir clic derecho en la vista 3D",
+    "IGUI_VPRC_Enabled_tt":  "Con el cursor visible en primera o tercera persona, un clic derecho abre el menú del objeto señalado por el cursor, incluidos los animales. Al mirar alrededor con el mouse o en vista isométrica, el clic derecho conserva su funcionamiento normal.",
+    "IGUI_VPRC_Reach":  "Alcance del clic derecho (casillas)",
+    "IGUI_VPRC_Reach_tt":  "Distancia máxima entre Jill y el objeto para abrir su menú en la vista 3D. Si queda más lejos, no se abre ningún menú. La acción elegida se acerca al objeto como de costumbre."
+,
+  "IGUI_KnoxPacks_JobQuality": "Mejorando la calidad",
+  "IGUI_KnoxPacks_QualityStandard": "Estándar",
+  "IGUI_KnoxPacks_SlotsBonus": "Ranuras mejoradas: %1/%2 (incluye la bonificación de Sastrería)",
+  "IGUI_KnoxPacks_UsableCapacity": "Capacidad útil: %1"
 }

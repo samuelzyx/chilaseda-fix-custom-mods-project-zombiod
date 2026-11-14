@@ -2,6 +2,12 @@
 -- Los valores funcionales de los controles permanecen intactos.
 local TRANSLATED_PAGES = {
     ProjectViewpointQOL = true,
+    Viewpoint = true,
+    ProjectViewpointADS = true,
+    ViewpointBloodFX = true,
+    ViewpointBloodFXAddon = true,
+    ViewpointAdvancedThrowables = true,
+    ViewpointTactical = true,
     WayMoreCarsOptionsID = true,
     ["MiniCompass.Client"] = true,
     visual_sound_extended_b42 = true,

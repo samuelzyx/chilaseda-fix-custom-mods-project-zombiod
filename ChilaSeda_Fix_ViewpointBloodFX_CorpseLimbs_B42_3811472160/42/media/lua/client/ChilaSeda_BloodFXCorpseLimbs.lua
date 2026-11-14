@@ -193,4 +193,4 @@ if Events and Events.OnTick and Events.OnTick.Add then
     Events.OnTick.Add(onTick)
 end
 
-print("[ChilaSeda_BloodFXCorpseLimbs] v0.1.0 loaded; preserving final combat dismemberment mask")
+print("[ChilaSeda_BloodFXCorpseLimbs] v0.1.2 loaded; preserving final combat dismemberment mask")

@@ -117,12 +117,15 @@ local function showAlternateDestinationMenu(player, page, selected, items)
 	local y = type(getMouseY) == "function" and getMouseY() or 0
 	local menu = ISContextMenu.get(playerNum, x, y)
 	if not menu then return false end
-	local header = menu:addOption("La mochila seleccionada no tiene espacio. Elige destino:", nil, nil)
+	local header = menu:addOption("La mochila seleccionada esta llena.", nil, nil)
 	if header then header.notAvailable = true end
+	local prompt = menu:addOption("No se movio ningun objeto. Elige destino para intentar de nuevo:", nil, nil)
+	if prompt then prompt.notAvailable = true end
 	for _, container in ipairs(destinations) do
 		menu:addOption(destinationName(player, container), page,
 			selectDestinationFromMenu, container)
 	end
+	menu:addOption("Cancelar; dejar todo donde estaba", nil, nil)
 	return true
 end
 
@@ -301,6 +304,10 @@ local function installViewpointUI()
             end
 			if #overflowItems > 0 then
 				showAlternateDestinationMenu(player, page, destination, overflowItems)
+				-- Do not let the items that fit move while the player is still
+				-- deciding where the overflow should go. Dismissing the menu is
+				-- cancellation: the complete batch stays in its source container.
+				return {}
 			end
 			return selectedPlan
         end

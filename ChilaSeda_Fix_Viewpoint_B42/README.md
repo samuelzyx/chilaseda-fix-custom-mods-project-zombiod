@@ -1,4 +1,4 @@
-# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.59
+# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.60
 
 <div align="center">
 
@@ -7,6 +7,10 @@
 </div>
 
 ---
+
+## Version 2.0.60
+
+- Adds Spanish action labels for the logged `ISOpenMechanicsUIAction` and `ISDetachItemHotbar` classes.
 
 ## Version 2.0.59
 

@@ -1,7 +1,7 @@
 name=ChilaSeda - Acciones Accesibles (B42)
 id=ChilaSeda_AccessibleActions_B42
 authors=ChilaSeda
-description=Reune fabricacion accesible, llaves, consolidacion, lavado y destinos; ordena cataplasmas y recupera el menu de desmantelado de relojes digitales en mochilas cuando la receta esta disponible.
+description=Reune fabricacion accesible, llaves, consolidacion, lavado y destinos; ordena cataplasmas, recupera desmantelado de relojes y permite confirmar con E o cancelar con Esc en modales Si/No.
 versionMin=42.20
-modversion=1.0.24
+modversion=1.0.25
 loadModAfter=ConsolidatedAllFixB42,ChilaSeda_Fix_Water_Pipes_ModData_B42_3546314080,LongTermPreservationExtended,DismantleAllAtOnce,Viewpoint,ProjectViewpointQOL,ViewpointUI,INVENTORY_TETRIS,ChilaSeda_AutoCook_B42
