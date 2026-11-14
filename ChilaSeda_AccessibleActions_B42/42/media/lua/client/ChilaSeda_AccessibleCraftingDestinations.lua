@@ -52,31 +52,41 @@ local function tryMoveToContainer(item, sourceContainer, targetContainer, player
 end
 
 local function dropToGround(item, playerObj)
-	if not item or not playerObj then return end
+	if not item or not playerObj then return false end
 	local inventory = playerObj:getInventory()
 	local square = playerObj:getCurrentSquare()
-	if square and inventory:contains(item) then
-		inventory:Remove(item)
-		square:AddWorldInventoryItem(item,
-			playerObj:getX() - math.floor(playerObj:getX()),
-			playerObj:getY() - math.floor(playerObj:getY()),
-			playerObj:getZ() - math.floor(playerObj:getZ()))
+	if not square or not inventory:contains(item) then return false end
+	local okRemove = pcall(inventory.Remove, inventory, item)
+	if not okRemove or inventory:contains(item) then return false end
+	if type(sendRemoveItemFromContainer) == "function" then
+		sendRemoveItemFromContainer(inventory, item)
+	end
+	local okDrop, worldItem = pcall(square.AddWorldInventoryItem, square, item,
+		playerObj:getX() - math.floor(playerObj:getX()),
+		playerObj:getY() - math.floor(playerObj:getY()),
+		playerObj:getZ() - math.floor(playerObj:getZ()))
+	local okWorldObject, worldObject = pcall(item.getWorldItem, item)
+	if okDrop and worldItem and not inventory:contains(item) and okWorldObject and worldObject then
 		return true
+	end
+	pcall(inventory.AddItem, inventory, item)
+	if type(sendAddItemToContainer) == "function" and inventory:contains(item) then
+		sendAddItemToContainer(inventory, item)
 	end
 	return false
 end
 
-local function notifyDestination(playerObj, destination)
+local function notifyFloorResult(playerObj, label, dropped, failed)
 	if not HaloTextHelper or not HaloTextHelper.addText then return end
-	local label = "el suelo"
-	if destination == playerObj:getInventory() then
-		label = "inventario principal"
-	elseif destination then
-		local parent = destination.getParent and destination:getParent() or nil
-		label = parent and parent.getDisplayName and parent:getDisplayName()
-			or (destination.getType and destination:getType()) or "contenedor"
+	local message
+	if dropped > 0 and failed == 0 then
+		message = label .. ": objetos en el piso"
+	elseif dropped > 0 then
+		message = label .. ": algunos objetos quedaron en inventario"
+	elseif failed > 0 then
+		message = label .. ": no se pudieron soltar objetos"
 	end
-	HaloTextHelper.addText(playerObj, "Fabricado: " .. tostring(label), " ", 255, 220, 120)
+	if message then pcall(HaloTextHelper.addText, playerObj, message, " ", 255, 220, 120) end
 end
 
 local originalCraftComplete = ISCraftAction.complete
@@ -97,29 +107,14 @@ function ISCraftAction:complete()
 		newItems[#newItems + 1] = self.result
 	end
 
+	local dropped, failed = 0, 0
 	for _, item in ipairs(newItems) do
 		if inventory:contains(item) then
-			local sourceContainer = self.container
-			local activeContainer = getActiveContainer(playerObj)
-			local moved = false
-			local destination
-			local destinations = outputDestinations(playerObj, activeContainer, sourceContainer)
-			for _, target in ipairs(destinations) do
-				if target == inventory or target:contains(item) then
-					moved, destination = true, target
-					break
-				elseif tryMoveToContainer(item, inventory, target, playerObj) then
-					moved, destination = true, target
-					break
-				end
-			end
-
-			if not moved and dropToGround(item, playerObj) then
-				destination = nil
-			end
-			notifyDestination(playerObj, destination)
+			if dropToGround(item, playerObj) then dropped = dropped + 1
+			else failed = failed + 1 end
 		end
 	end
+	notifyFloorResult(playerObj, "Fabricacion", dropped, failed)
 
 	return result
 end
@@ -163,26 +158,15 @@ if originalDismantleComplete then
 		local inventory = playerObj:getInventory()
 
 		if self.result and self.result:size() then
-			local activeContainer = getActiveContainer(playerObj)
+			local dropped, failed = 0, 0
 			for i = 0, self.result:size() - 1 do
 				local item = self.result:get(i)
 				if inventory:contains(item) then
-					local moved = false
-					for _, target in ipairs(outputDestinations(playerObj, activeContainer)) do
-						if target == inventory or target:contains(item)
-								or tryMoveToContainer(item, inventory, target, playerObj) then
-							moved = true
-							break
-						end
-					end
-
-					if not moved then
-						if playerObj:getCurrentSquare() then
-							dropToGround(item, playerObj)
-						end
-					end
+					if dropToGround(item, playerObj) then dropped = dropped + 1
+					else failed = failed + 1 end
 				end
 			end
+			notifyFloorResult(playerObj, "Desmantelado", dropped, failed)
 		end
 
 		return result

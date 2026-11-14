@@ -7,8 +7,21 @@ local TAG = "[ChilaSeda_IngameLuaReload_B42] "
 local function addConfirmationKeys(modal)
     if not modal.yes or not modal.no then return end
 
-    modal.yes:setTitle(getText("UI_Yes") .. " [E]")
-    modal.no:setTitle(getText("UI_No") .. " [Esc]")
+    modal.yes:setTitle(getText("UI_Yes"))
+    modal.no:setTitle(getText("UI_No"))
+
+    local inheritedPrerender = modal.prerender
+    modal.prerender = function(self)
+        if type(inheritedPrerender) == "function" then inheritedPrerender(self) end
+        if self.yes then
+            self:drawTextCentre(getText("UI_Yes") .. " [E]",
+                self.yes.x + self.yes.width / 2, self.yes.y - 18, 1, 1, 1, 1, UIFont.Small)
+        end
+        if self.no then
+            self:drawTextCentre(getText("UI_No") .. " [Esc]",
+                self.no.x + self.no.width / 2, self.no.y - 18, 1, 1, 1, 1, UIFont.Small)
+        end
+    end
 
     local inheritedOnKeyPress = modal.onKeyPress
     modal.onKeyPress = function(self, key)
@@ -63,6 +76,7 @@ local function askToReload()
         .. "Guarda primero para conservar tus avances. ¿Continuar?"
 
     M.dialog = ISModalDialog:new(x, y, width, height, message, true, nil, onConfirmReload)
+    M.dialog.ChilaSedaSkipGlobalConfirmationKeys = true
     M.dialog:initialise()
     addConfirmationKeys(M.dialog)
     M.dialog:addToUIManager()

@@ -245,7 +245,6 @@ end
 
 local activeRecipeBatch
 local producingRecipeAction
-local notifyCraftingDestination
 
 local function safeMethod(object, methodName)
     if not object then return nil end
@@ -360,39 +359,28 @@ local function producesThreadItem(recipe)
     return threadOutputFullType(recipe) ~= nil
 end
 
-local function recipeDestinations(batch)
-	local player = batch and batch.player
-	local inventory = player and player:getInventory()
-	local destinations, seen = {}, {}
-	local function add(container)
-		if container and type(container.getType) == "function"
-				and container:getType() == "floor" then return end
-		if container and not seen[container] then
-			seen[container] = true
-			destinations[#destinations + 1] = container
-		end
-	end
-	add(batch and batch.selectedDestination)
-	local function addNested(container)
-		if not container or type(container.getItems) ~= "function" then return end
-		local items = container:getItems()
-		if not items then return end
-		for i = 0, items:size() - 1 do
-			local item = items:get(i)
-			if item and instanceof(item, "InventoryContainer") then
-				local nested = item:getInventory()
-				add(nested)
-				addNested(nested)
-			end
-		end
-	end
-	addNested(inventory)
-	add(batch and batch.sourceDestination)
-	add(batch and batch.destination)
-	add(inventory)
-	return destinations, inventory
-end
+local notifyHandcraftFloor
 
+local function dropCraftOutputToFloor(player, item)
+	local inventory = player and player:getInventory()
+	local square = player and player:getCurrentSquare()
+	if not item or not inventory or not square or not inventory:contains(item) then return false end
+	local okRemove = pcall(inventory.Remove, inventory, item)
+	if not okRemove or inventory:contains(item) then return false end
+	if type(sendRemoveItemFromContainer) == "function" then
+		sendRemoveItemFromContainer(inventory, item)
+	end
+	local okDrop, worldItem = pcall(square.AddWorldInventoryItem, square, item, 0.5, 0.5, 0)
+	local okWorldObject, worldObject = pcall(item.getWorldItem, item)
+	if okDrop and worldItem and not inventory:contains(item) and okWorldObject and worldObject then
+		return true
+	end
+	pcall(inventory.AddItem, inventory, item)
+	if type(sendAddItemToContainer) == "function" and inventory:contains(item) then
+		sendAddItemToContainer(inventory, item)
+	end
+	return false
+end
 local function finishRecipeBatch(batch)
     if not batch or batch.finished then return end
     batch.finished = true
@@ -418,65 +406,27 @@ local function finishRecipeBatch(batch)
             for _, item in ipairs(group) do remaining[#remaining + 1] = item end
         end
     end
+    local dropped, failed = 0, 0
     for _, item in ipairs(remaining) do
         local source = item and item:getContainer()
         local player = batch.player
         local inventory = player and player:getInventory()
         if item and source and inventory and inventory:contains(item) then
-			local destinations = recipeDestinations(batch)
-            local moved = false
-			local storedIn
-            for _, destination in ipairs(destinations) do
-                if destination == inventory then
-					moved, storedIn = true, inventory
-                    break
-                elseif destination and destination ~= source then
-                    local transfer = ISInventoryTransferAction:new(
-                        player, item, source, destination, nil)
-                    if transfer and transfer:isValid() then
-                        transfer:transferItem(item)
-                        if destination:contains(item) then
-							moved, storedIn = true, destination
-                            break
-                        end
-                    end
-                elseif destination == source then
-					moved, storedIn = true, destination
-                    break
-                end
-            end
-            if not moved then
-                local square = player:getCurrentSquare()
-                if square and inventory:contains(item) then
-                    inventory:Remove(item)
-                    square:AddWorldInventoryItem(item,
-                        player:getX() - math.floor(player:getX()),
-                        player:getY() - math.floor(player:getY()),
-                        player:getZ() - math.floor(player:getZ()))
-					storedIn = nil
-                end
-            end
-			if inventory:contains(item) then storedIn = inventory end
-			notifyCraftingDestination(player, storedIn)
+			if dropCraftOutputToFloor(player, item) then dropped = dropped + 1
+			else failed = failed + 1 end
         end
     end
+    notifyHandcraftFloor(batch.player, dropped, failed)
 end
 
 local originalAddOrDrop = Actions and Actions.addOrDropItem
-local function craftingDestinationLabel(character, destination)
-    if not destination then return nil end
-    if destination == character:getInventory() then return "inventario principal" end
-    local parent = destination.getParent and destination:getParent() or nil
-    if parent and parent.getDisplayName then return parent:getDisplayName() end
-    if destination.getType then return destination:getType() end
-    return "contenedor"
-end
-
-notifyCraftingDestination = function(character, destination)
+notifyHandcraftFloor = function(character, dropped, failed)
     if not HaloTextHelper or not HaloTextHelper.addText then return end
-    local label = destination and craftingDestinationLabel(character, destination)
-        or "el suelo"
-    HaloTextHelper.addText(character, "Fabricado: " .. tostring(label), " ", 255, 220, 120)
+    local message
+    if dropped > 0 and failed == 0 then message = "Fabricacion: objetos en el piso"
+    elseif dropped > 0 then message = "Fabricacion: algunos objetos quedaron en inventario"
+    elseif failed > 0 then message = "Fabricacion: no se pudieron soltar objetos" end
+    if message then pcall(HaloTextHelper.addText, character, message, " ", 255, 220, 120) end
 end
 
 if type(originalAddOrDrop) == "function" then
@@ -485,22 +435,7 @@ if type(originalAddOrDrop) == "function" then
             and character == producingRecipeAction.chilaSedaRecipeBatch.player and item then
             local batch = producingRecipeAction.chilaSedaRecipeBatch
             local inventory = character:getInventory()
-            local destinations = recipeDestinations(batch)
             if not inventory:contains(item) then inventory:AddItem(item) end
-            for _, destination in ipairs(destinations) do
-                if destination and destination ~= inventory and not destination:contains(item) then
-                    local transfer = ISInventoryTransferAction:new(
-                        character, item, inventory, destination, nil)
-                    if transfer and transfer:isValid() then
-                        transfer:transferItem(item)
-                        if destination:contains(item) then
-                            break
-                        end
-                    end
-                elseif destination == inventory or destination and destination:contains(item) then
-                    break
-                end
-            end
             batch.outputs[#batch.outputs + 1] = item
             return
         end
@@ -513,23 +448,7 @@ ISHandcraftAction.performRecipe = function(self, ...)
     local batch = self.chilaSedaRecipeBatch
     local ownsBatch = false
     if not batch then
-        local selectedDestination
-        local pane = ISInventoryPane and ISInventoryPane.getInventoryPane
-            and ISInventoryPane.getInventoryPane(self.character:getPlayerNum())
-        if pane then selectedDestination = pane.selected end
-        local sourceDestination
-        if self.items then
-            for i = 0, self.items:size() - 1 do
-                local item = self.items:get(i)
-                local container = item and item:getContainer()
-                if container and container ~= self.character:getInventory() then
-                    sourceDestination = container
-                    break
-                end
-            end
-        end
-        batch = { player = self.character, outputs = {},
-            selectedDestination = selectedDestination, sourceDestination = sourceDestination }
+        batch = { player = self.character, outputs = {} }
         self.chilaSedaRecipeBatch = batch
         ownsBatch = true
     end
@@ -583,8 +502,7 @@ local function queueThreadRecipe(option, player, selected, recipe)
         or not threadRecipeAllowed(selected, recipe) then return end
     local quantity = possibleContextRecipeCrafts(playerObj, recipe, selected)
     if quantity < 1 then return end
-    local batch = { player = playerObj, destination = selected:getContainer(),
-        outputs = {}, label = threadBatchLabel(recipe) }
+    local batch = { player = playerObj, outputs = {}, label = threadBatchLabel(recipe) }
     local logic = contextRecipeLogic(playerObj, recipe, selected)
     local previous = activeRecipeBatch
     activeRecipeBatch = batch

@@ -1,4 +1,4 @@
-# ChilaSeda - Acciones Accesibles (Build 42) 1.0.25
+# ChilaSeda - Acciones Accesibles (Build 42) 1.0.29
 
 <div align="center">
 
@@ -9,11 +9,24 @@
 ---
 
 
+## Version 1.0.29
+
+- En los 50 puntos de creacion vanilla de modales Si/No, E confirma y Escape cancela; cada tecla aparece arriba del boton correspondiente, incluidos los avisos para dormir en cama o vehiculo. Los botones conservan sus titulos Si y No.
+
+## Version 1.0.28
+
+- En los modales Si/No de eliminacion y veneno, E confirma y Escape cancela; los botones muestran sus teclas asignadas.
+
+## Version 1.0.27
+
+- Los resultados de fabricacion, fabricacion por lotes y desmantelado de objetos se sueltan directamente en el piso. Se quito la seleccion automatica de contenedor y el Halo confirma el destino; reparaciones y recipientes devueltos conservan su ruta anterior.
+
+
 > **Resumen:** ajustes locales de inventario, recetas, transferencias, limpieza y desmantelado para Build 42. Las integraciones con otros mods son opcionales y solo se aplican cuando sus APIs están disponibles.
 
 ## 🧭 Contenido
 
-- [Cambios recientes](#cambios-de-1023)
+- [Cambios recientes](#version-1029)
 - [Funciones incluidas](#funciones-incluidas)
 - [Dependencias opcionales](#dependencias-opcionales)
 - [Validación pendiente](#validación-pendiente)
@@ -23,6 +36,10 @@
 ## Cambios de 1.0.25
 
 - Las confirmaciones de comer veneno conocido y eliminar objetos muestran **Si [E]** y **No [Esc]** en los botones. E confirma y Escape cancela; ambos atajos ejecutan los mismos callbacks que los botones.
+
+## Cambios de 1.0.26
+
+- Las teclas E y Escape para los modales Si/No ahora se capturan con el evento global de teclado mientras el modal esta visible. Esto permite confirmar o cancelar aunque el modal no reciba `onKeyPress` desde el foco de la interfaz.
 
 ## Cambios de 1.0.24
 
@@ -229,7 +246,6 @@ este paquete aun no se considera validado dentro del juego.
   dejando la opción con flecha vacía.
 
 
----
 
 ### 🔗 Otros enlaces de interés
 
