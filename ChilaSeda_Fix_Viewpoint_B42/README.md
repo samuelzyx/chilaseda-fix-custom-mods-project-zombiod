@@ -1,4 +1,4 @@
-# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.60
+# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.61
 
 <div align="center">
 
@@ -7,6 +7,11 @@
 </div>
 
 ---
+
+## Version 2.0.61
+
+- Adds a local adapter for Wall Texture Fix's `WallMesher.wall` hook on Viewpoint 0.1.7, whose new `IsoGridSquare` argument shifted the addon's expected float argument. The adapter calls the addon's renderer with its original argument layout and leaves Viewpoint's renderer in control when the addon is absent or the adapter cannot run.
+- Orders this patch after Wall Texture Fix and PV Map Fix. The latter remains self-disabled until its Viewpoint 0.1.7 compatibility can be verified safely.
 
 ## Version 2.0.60
 
