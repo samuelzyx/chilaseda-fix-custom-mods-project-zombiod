@@ -5,4 +5,4 @@ description=Local Build 42 port of Anomalous Storm (Workshop 2779946812). Red sk
 loadModAfter=Viewpoint,ViewpointTrueWeathers,ViewpointTrueWeathersGameplay,ChilaSeda_Fix_Viewpoint_BrokenGlassContainer_B42
 versionMin=42.21
 versionMax=42.22
-modversion=0.4.23
+modversion=0.4.24

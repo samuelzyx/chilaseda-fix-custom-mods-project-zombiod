@@ -14,6 +14,14 @@ los iconos de Drink Smart.
   `#` a una coleccion no compatible.
 - Los iconos de Drink Smart en el menu contextual se mantienen.
 
+## Version 1.1.13
+
+- Drink Smart ocupa el primer lugar en el submenu radial de bebidas, incluso cuando
+  Smart Radial Menu agrega esa accion despues de las opciones nativas.
+- La accion aparece como `Beber`, manteniendo el porcentaje, la cantidad, el icono
+  y el callback original de Drink Smart.
+- Las opciones nativas copiadas al radial tambien colocan Drink Smart primero.
+
 ## Revision en Jill
 
 Abre una bebida y una comida desde Smart Radial; confirma que la accion concluya,

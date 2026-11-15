@@ -19,6 +19,8 @@ Ademas del efecto original sobre el personaje, el port incorpora ralentizacion t
 
 ## Ciclo de la emision
 
+Las transiciones de trueno, lluvia tranquila y desvanecimiento son idempotentes tras recargas de Lua. Una fase electrica ya vencida no vuelve a anunciarse en cada minuto de juego.
+
 Por defecto no hay una fase roja separada: `STAGE_STORM` y el primer tinte rojo comienzan juntos. Build 42 aumenta la intensidad de la lluvia gradualmente; una hora despues comienzan los truenos y la tormenta electrica. La mascara roja sube entonces de alfa 0.2 a 0.4, siguiendo la fase electrica. Las quemaduras del jugador, el dano y la ralentizacion de zombis expuestos empiezan con `Thunder`; la ralentizacion persiste hasta que termina la lluvia. La fase electrica dura lo que indique `AnomalousStormLength` (1 hora por defecto); despues cesan los truenos, sigue una hora de lluvia tranquila y el rojo se desvanece durante otra hora. `AnomalousStormWarningMinutes` permite agregar una fase roja sin lluvia, con valor predeterminado 0.
 
 El rojo usa el rectangulo fullscreen original en ambas vistas: llega a alfa 0.2 al comenzar `STAGE_STORM`, sube gradualmente a 0.4 con `Thunder`, vuelve a 0.15 al terminar los truenos y se desvanece al final. Como la mascara se dibuja sobre la vista, cambiar entre isometrica y Viewpoint no cambia ni pierde el rojo. True Weathers conserva sus perfiles y ajustes.

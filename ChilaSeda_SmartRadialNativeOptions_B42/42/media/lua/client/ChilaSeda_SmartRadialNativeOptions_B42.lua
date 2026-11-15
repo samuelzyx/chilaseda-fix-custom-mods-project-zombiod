@@ -23,6 +23,22 @@ local function isDrinkSmartOption(option)
     return false
 end
 
+local function isDrinkSmartSliceName(name)
+    local text = tostring(name or "")
+    local lower = string.lower(text)
+    return string.sub(lower, 1, 11) == "drink smart"
+        or (string.sub(lower, 1, 6) == "beber "
+            and string.find(text, "%d+%%") ~= nil)
+end
+
+local function localizeDrinkSmartName(name)
+    local text = tostring(name or "")
+    if string.sub(string.lower(text), 1, 11) == "drink smart" then
+        return "Beber" .. string.sub(text, 12)
+    end
+    return text
+end
+
 local function normalizeScannedItemLists(playerNum)
     local scannedByPlayer = SRMRadialMenu and SRMRadialMenu.scannedItems
     local scanned = scannedByPlayer and scannedByPlayer[playerNum]
@@ -134,7 +150,7 @@ local function copyContextOptions(context, rootContext, depth)
         local available = not option.notAvailable and not option.isDisabled
         if available and ((type(option.onSelect) == "function") or (children and #children > 0)) then
             entries[#entries + 1] = {
-                name = tostring(option.name or ""),
+                name = localizeDrinkSmartName(option.name),
                 target = option.target,
                 onSelect = option.onSelect,
                 params = {
@@ -146,13 +162,14 @@ local function copyContextOptions(context, rootContext, depth)
                 children = children,
                 isHandEquip = isHandEquipOption(option),
                 isMod = isModOption(option),
-                isDrinkSmart = isDrinkSmartOption(option),
+                isDrinkSmart = isDrinkSmartOption(option)
+                    or isDrinkSmartSliceName(option.name),
                 order = #entries + 1,
             }
         end
     end
 
-    -- Preserve order within groups: hand equip, Drink Smart, other mod actions, then native actions.
+    -- Put Drink Smart first, then hand equip, other mod actions, and native actions.
     for _, entry in ipairs(entries) do
         if entry.children and #entry.children > 0 then
             entry.children = sortContextOptions(entry.children)
@@ -171,10 +188,10 @@ end
 
 sortContextOptions = function(entries)
     table.sort(entries, function(a, b)
-        local aPriority = a.isHandEquipGroup and 3
-            or (a.isDrinkSmartGroup and 2 or (a.isModGroup and 1 or 0))
-        local bPriority = b.isHandEquipGroup and 3
-            or (b.isDrinkSmartGroup and 2 or (b.isModGroup and 1 or 0))
+        local aPriority = a.isDrinkSmartGroup and 4
+            or (a.isHandEquipGroup and 3 or (a.isModGroup and 1 or 0))
+        local bPriority = b.isDrinkSmartGroup and 4
+            or (b.isHandEquipGroup and 3 or (b.isModGroup and 1 or 0))
         if aPriority ~= bPriority then return aPriority > bPriority end
         return a.order < b.order
     end)
@@ -375,6 +392,8 @@ local function install()
     SRMMenuObject.addSlice = function(self, text, texture, command, item,
         itemCount, extraTooltipText, craftingTooltipForced,
         arg1, arg2, arg3, arg4, arg5, arg6)
+        local drinkSmartSlice = isDrinkSmartSliceName(text)
+        text = localizeDrinkSmartName(text)
         if type(command) == "function" and not radialOwnedCallbacks[command] then
             local menu = self
             local originalCommand = command
@@ -384,11 +403,16 @@ local function install()
             end
             radialOwnedCallbacks[command] = true
         end
-        return originalAddSlice(self, text, texture, command, item,
+        local result = originalAddSlice(self, text, texture, command, item,
             itemCount, extraTooltipText, craftingTooltipForced,
             arg1, arg2, arg3, arg4, arg5, arg6)
+        local slices = self and self.slices
+        if drinkSmartSlice and type(slices) == "table" and #slices > 1 then
+            table.insert(slices, 1, table.remove(slices, #slices))
+        end
+        return result
     end
-    print("[" .. MOD_ID .. "] native Smart Radial actions preserved; invalid item lists are normalized (1.1.12)")
+    print("[" .. MOD_ID .. "] Drink Smart is first and localized; native actions preserved (1.1.13)")
 end
 
 Events.OnGameBoot.Add(install)

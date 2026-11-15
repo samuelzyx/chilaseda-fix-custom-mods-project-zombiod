@@ -23,51 +23,11 @@ local function showNotice(player, message, red, green, blue, icon)
     end
 end
 
-local function isVehicleSealed(vehicle)
-    if not vehicle or not vehicle.getPartCount or not vehicle.getPartByIndex then
-        return false
-    end
-
-    local doorCount = 0
-    local windowCount = 0
-    for i = 0, vehicle:getPartCount() - 1 do
-        local part = vehicle:getPartByIndex(i)
-        if part then
-            if part.getDoor then
-                local door = part:getDoor()
-                if door then
-                    doorCount = doorCount + 1
-                    if not door.isOpen or door:isOpen() or not part.getCondition or part:getCondition() <= 0 then
-                        return false
-                    end
-                    -- A closed door with a missing/unreadable window is not
-                    -- treated as a sealed barrier.
-                    if not part.getWindow then
-                        return false
-                    end
-                    local doorWindow = part:getWindow()
-                    if not doorWindow or not doorWindow.isDestroyed or doorWindow:isDestroyed() then
-                        return false
-                    end
-                end
-            end
-            if part.getWindow then
-                local window = part:getWindow()
-                if window then
-                    windowCount = windowCount + 1
-                    if not window.isOpen or window:isOpen() then
-                        return false
-                    end
-                    if not window.isDestroyed or window:isDestroyed() then
-                        return false
-                    end
-                end
-            end
-        end
-    end
-
-    -- Fail open if this vehicle exposes no door/window state to Lua.
-    return doorCount > 0 and windowCount > 0
+local function getPlayerVehicle(player)
+    if not player or type(player.getVehicle) ~= "function" then return nil end
+    local ok, vehicle = pcall(player.getVehicle, player)
+    if ok then return vehicle end
+    return nil
 end
 
 local function isPlayerTarget(args, player)
@@ -121,15 +81,19 @@ local function onServerCommand(module, command, args)
             showNotice(player, getText("UI_ChilaSeda_UW_IncomingAttack"), 255, 120, 80)
         end
 
-        local vehicle = player:getVehicle()
-        if isVehicleSealed(vehicle) and now >= (interruptAt[id] or 0) then
+        local vehicle = getPlayerVehicle(player)
+        if vehicle and now >= (interruptAt[id] or 0) then
             interruptAt[id] = now + 1000
             sendClientCommand(player, "UndeadWildlife", "AnimalAttackInterrupt", { id = tonumber(args.animalID) })
+            print("[ChilaSeda_AnimalBalance][VehicleProtection] interrupt sent; animal=" .. id .. ", occupant=inside-vehicle")
         end
         return
     end
 
     if command == "AnimalAttack" then
+        if getPlayerVehicle(player) then
+            print("[ChilaSeda_AnimalBalance][VehicleProtection] attack result reached occupant inside vehicle; animal=" .. tostring(args.animalID))
+        end
         showInjuryNotice(player, args.animalID, true)
     end
 end

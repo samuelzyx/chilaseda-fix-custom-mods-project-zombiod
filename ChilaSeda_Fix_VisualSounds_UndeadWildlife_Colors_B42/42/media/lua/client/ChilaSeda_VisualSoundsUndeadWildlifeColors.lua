@@ -135,8 +135,48 @@ local function isAnimalSource(source)
     return ok and result == true
 end
 
+local function isZombieSource(source)
+    if not source or type(instanceof) ~= "function" then return false end
+    local ok, result = pcall(instanceof, source, "IsoZombie")
+    return ok and result == true
+end
+
 SDI.HandleWorldSound = function(self, x, y, z, radius, volume, source, ...)
     originalHandleWorldSound(self, x, y, z, radius, volume, source, ...)
+    if isZombieSource(source) then
+        local player = self.playerObj or getSpecificPlayer(0)
+        if not player then return end
+        local adjustedRadius = tonumber(radius) or 0
+        if CharacterTrait and CharacterTrait.DEAF and player:hasTrait(CharacterTrait.DEAF) then
+            adjustedRadius = 0
+        elseif CharacterTrait and CharacterTrait.KEEN_HEARING and player:hasTrait(CharacterTrait.KEEN_HEARING) then
+            adjustedRadius = adjustedRadius * 1.2
+        elseif CharacterTrait and CharacterTrait.HARD_OF_HEARING and player:hasTrait(CharacterTrait.HARD_OF_HEARING) then
+            adjustedRadius = adjustedRadius * 0.8
+        end
+        if IsoUtils.DistanceTo(player:getX(), player:getY(), x, y) >= adjustedRadius then return end
+        if SDIGetOption("ONLYINSEARCHMODE") then
+            local manager = ISSearchManager and ISSearchManager.getManager(player)
+            if not manager or not manager.isSearchMode then return end
+        end
+        if SDIGetOption("ONLYCROUCHED") and not player:isSneaking() then return end
+
+        for _, sound in ipairs(self.sounds or {}) do
+            if sound.objsource == source then
+                -- Refresh synthetic proximity cues before the SDI's normal expiry.
+                sound.x, sound.y, sound.z = x, y, z
+                sound.emissionTime = os.time()
+                sound.typesound = "ZOMBIES"
+                sound.loud = true
+                self:setDistance(IsoUtils.DistanceTo(player:getX(), player:getY(), x, y))
+                self:setAngleFromPoint(x, y)
+                self:setDuration(100)
+                self:setVisible(true)
+                return
+            end
+        end
+        return
+    end
     if not isAnimalSource(source) then return end
 
     local player = self.playerObj or getSpecificPlayer(0)
@@ -179,10 +219,12 @@ end
 
 local originalRender = SDI.render
 local distanceBands = { 1, 4, 6.5, 9, 11.5, 14, 20 }
-local ANIMAL_SCAN_INTERVAL_MS = 250
+local CREATURE_SCAN_INTERVAL_MS = 250
 local ANIMAL_RANGE = 15
 local ANIMAL_RANGE_SQ = ANIMAL_RANGE * ANIMAL_RANGE
-local nextAnimalScanAt = 0
+local ZOMBIE_RANGE = 15
+local ZOMBIE_RANGE_SQ = ZOMBIE_RANGE * ZOMBIE_RANGE
+local nextCreatureScanAt = 0
 
 local function cueBand(distance)
     for index, maxDistance in ipairs(distanceBands) do
@@ -250,7 +292,7 @@ SDI.render = function(self, ...)
     return zombieAnimalResult or normalAnimalResult or normalResult
 end
 
-local function scanNearbyAnimals()
+local function scanNearbyCreatures()
     if not SDIGetOption or not SDIGetOption("SDIEnabled")
             or type(SDI.OnWorldSound) ~= "function" then
         return
@@ -258,8 +300,8 @@ local function scanNearbyAnimals()
 
     local now = type(getTimestampMs) == "function"
         and getTimestampMs() or math.floor(os.clock() * 1000)
-    if now < nextAnimalScanAt then return end
-    nextAnimalScanAt = now + ANIMAL_SCAN_INTERVAL_MS
+    if now < nextCreatureScanAt then return end
+    nextCreatureScanAt = now + CREATURE_SCAN_INTERVAL_MS
 
     local player = getSpecificPlayer(0)
     if not player then return end
@@ -276,11 +318,11 @@ local function scanNearbyAnimals()
                 local objects = square and square:getMovingObjects()
                 if objects then
                     for index = 0, objects:size() - 1 do
-                        local animal = objects:get(index)
-                        if isAnimalSource(animal) then
+                        local source = objects:get(index)
+                        if isAnimalSource(source) then
                             local ok, x, y, z, dead = pcall(function()
-                                return animal:getX(), animal:getY(), animal:getZ(),
-                                    type(animal.isDead) == "function" and animal:isDead()
+                                return source:getX(), source:getY(), source:getZ(),
+                                    type(source.isDead) == "function" and source:isDead()
                             end)
                             if ok and not dead then
                                 local dxAnimal, dyAnimal = playerX - x, playerY - y
@@ -288,7 +330,20 @@ local function scanNearbyAnimals()
                                 if distanceSq < ANIMAL_RANGE_SQ then
                                     -- Refresh existing cues before their one-second lifetime
                                     -- expires; the Workshop returns early for duplicate sources.
-                                    SDI.OnWorldSound(x, y, z, ANIMAL_RANGE, 7, animal)
+                                    SDI.OnWorldSound(x, y, z, ANIMAL_RANGE, 7, source)
+                                end
+                            end
+                        elseif isZombieSource(source) then
+                            local ok, x, y, z, dead = pcall(function()
+                                return source:getX(), source:getY(), source:getZ(),
+                                    type(source.isDead) == "function" and source:isDead()
+                            end)
+                            if ok and not dead then
+                                local dxZombie, dyZombie = playerX - x, playerY - y
+                                local distanceSq = dxZombie * dxZombie + dyZombie * dyZombie
+                                if distanceSq < ZOMBIE_RANGE_SQ then
+                                    -- Feed the SDI directly; this does not emit a game WorldSound.
+                                    SDI.OnWorldSound(x, y, z, ZOMBIE_RANGE, 7, source)
                                 end
                             end
                         end
@@ -299,6 +354,6 @@ local function scanNearbyAnimals()
     end
 end
 
-Events.OnTick.Add(scanNearbyAnimals)
+Events.OnTick.Add(scanNearbyCreatures)
 
-print(TAG .. "SDI hooks loaded; normal animals use teal-to-amber cues; infected/undead animals use cyan-to-magenta cues")
+print(TAG .. "SDI hooks loaded; nearby zombies and animals receive proximity cues without WorldSound; infected/undead animals use cyan-to-magenta cues")

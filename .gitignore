@@ -1,4 +1,4 @@
-﻿# Local game and diagnostic data
+# Local game and diagnostic data
 /backups/
 /ErrorLogs/
 /PesosLogs/
@@ -59,3 +59,4 @@
 /.codemie/cache/
 /to-do list.txt
 /to-do list.archived-*.txt
+/.tools/

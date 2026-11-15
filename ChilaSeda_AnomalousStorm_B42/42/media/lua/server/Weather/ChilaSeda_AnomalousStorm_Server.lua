@@ -436,7 +436,10 @@ local function updateScheduledTimeline()
 		print("[Anomalous Storm] Scheduled phase rain-ramping.")
 	end
 
-	if state.Active == true and state.Thunder ~= true and now >= (tonumber(state.ThunderAt) or math.huge) then
+	if state.Active == true and state.Thunder ~= true
+		and state.Phase ~= "clearing" and state.Phase ~= "red-fade"
+		and now >= (tonumber(state.ThunderAt) or math.huge)
+		and now < (tonumber(state.ClearingAt) or math.huge) then
 		state.Thunder = true
 		state.ThunderStarted = true
 		state.Phase = "thunderstorm"

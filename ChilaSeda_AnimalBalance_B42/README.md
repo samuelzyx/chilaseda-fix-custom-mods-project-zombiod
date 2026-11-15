@@ -54,13 +54,13 @@ limite de carga. Si esta instalado, el paquete:
   usando temporalmente la definicion de avatar equivalente y restaurandola despues.
 - Permite despiezar un cuerpo desde un contenedor accesible del personaje, con cuchillo accesible,
   sin moverlo manualmente al inventario principal.
-- Interrumpe el ataque anunciado por Undead Wildlife si el personaje esta dentro de un vehiculo
-  con puertas cerradas y ventanas cerradas e intactas verificables por Lua. Si falta informacion,
-  permite el ataque.
+- Interrumpe los ataques anunciados por Undead Wildlife siempre que el personaje este dentro de
+  cualquier vehiculo. La proteccion ya no depende de que Lua pueda leer el estado de puertas o
+  ventanas; DebugLog registra el intento de interrupcion y si aun llega un resultado de ataque.
 - Muestra Halo notes de ataque, herida y victoria.
 
-La proteccion del vehiculo depende del evento temprano `AnimalAttackStart` y de que el mod acepte
-`AnimalAttackInterrupt`; su eficacia contra el impacto real debe confirmarse en partida.
+La proteccion usa el evento temprano `AnimalAttackStart` y el comando `AnimalAttackInterrupt` que
+Undead Wildlife procesa antes del impacto. El resultado final debe confirmarse en partida.
 
 ## Dependencias y validacion
 

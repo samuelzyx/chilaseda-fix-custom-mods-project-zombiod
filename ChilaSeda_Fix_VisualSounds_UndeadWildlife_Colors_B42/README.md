@@ -1,4 +1,4 @@
-# ChilaSeda Fix · colores de VisualSounds para Undead Wildlife (B42) 0.6.0
+# ChilaSeda Fix · proximidad de VisualSounds y colores de fauna no muerta (B42) 0.7.0
 
 <div align="center">
 
@@ -11,7 +11,9 @@
 
 ## Resumen
 
-Integra los 16 tipos de animales hostiles de Undead Wildlife con el indicador de dirección de sonido `SDI` de VisualSounds KA. El mod de Workshop no expone una tabla Lua `VisualSoundsKA`; el parche anterior apuntaba a esa API inexistente y registraba que se omitía.
+Integra VisualSounds KA con los zombis cercanos y los 16 tipos de animales hostiles de Undead Wildlife. El mod de Workshop no expone una tabla Lua `VisualSoundsKA`; el parche anterior apuntaba a esa API inexistente y registraba que se omitía.
+
+Cada 250 ms, el parche revisa los objetos vivos dentro de 15 baldosas y entrega al indicador `SDI` señales de proximidad para los zombis aunque no hayan emitido sonido. Esto solo crea señales visuales: no genera un `WorldSound` ni atrae zombis. Las señales se actualizan con la posicion actual y vencen al alejarse o morir la fuente. Se conservan los filtros de escucha, modo de busqueda y sigilo configurados en VisualSounds.
 
 El parche pasa los sonidos de animales hostiles al canal de señales de zombis, para que sigan visibles aunque se ignoren sonidos genéricos `LAMBDA`. Muestrea objetos `IsoAnimal` cercanos cada 250 ms dentro del radio de 15 baldosas del detector de Workshop y actualiza las señales antes de que expire su duración predeterminada de un segundo. Así evita que el retorno temprano por fuente duplicada de Workshop haga parpadear los avisos de proximidad.
 
@@ -30,6 +32,12 @@ Los animales normales conservan los filtros de visibilidad y busqueda `LAMBDA` y
 Reconoce estos tipos hostiles: `infectedraccoon`, `infectedcockerel`, `infectedchicken`, `infectedturkey`, `infectedrabbit`, `infectedpiglet`, `infectedfarmpig`, `infecteddeerdoe`, `infecteddeerstag`, `infectedcow`, `infectedcowcalf`, `infectedbull`, `infectedewe`, `infectedram`, `infectedlamb` e `infectedrat`. También reconoce otros tipos de Undead Wildlife que empiezan con `infected` o `undead`, incluidas variantes esqueléticas.
 
 ## Cambios
+
+### 0.7.0
+
+- Detecta zombis vivos dentro de 15 baldosas aunque no produzcan sonidos, actualizando sus señales cada 250 ms.
+- Refresca la duracion y posicion de cada señal y conserva los filtros de VisualSounds.
+- No emite sonidos de mundo; solo alimenta el indicador visual.
 
 ### 0.4.0
 

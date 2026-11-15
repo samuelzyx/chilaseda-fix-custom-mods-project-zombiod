@@ -1,4 +1,4 @@
-# ChilaSeda - Acciones Accesibles (Build 42) 1.0.29
+# ChilaSeda - Acciones Accesibles (Build 42) 1.0.30
 
 <div align="center">
 
@@ -7,6 +7,10 @@
 </div>
 
 ---
+
+## Version 1.0.30
+
+- Desmontar objetos del inventario y rasgar ropa ahora conserva las acciones pendientes al caminar o combatir y las reanuda al terminar la interrupcion. El mobiliario del mundo conserva su flujo vanilla.
 
 
 ## Version 1.0.29

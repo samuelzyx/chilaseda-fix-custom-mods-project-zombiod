@@ -85,9 +85,46 @@ ISHandcraftAction.setOnComplete = function(self, callback, target)
     end
     self.chilaSedaReturnCallbackWrapped = true
     return originalSetOnComplete(self, function(callbackTarget)
-        callback(callbackTarget)
-        returnProducedItems(context)
+        if self.chilaSedaFinishingCraft then
+            callback(callbackTarget)
+            returnProducedItems(context)
+        elseif context.chilaSedaResumeJob
+                and context.chilaSedaResumeJob.cancelled then
+            callback(callbackTarget)
+        end
     end, target)
+end
+
+-- The Workshop batch callback also runs when an action is canceled. Keep its
+-- normal cleanup, but only return outputs after an actual craft completion.
+local originalHandcraftPerform = ISHandcraftAction.perform
+ISHandcraftAction.perform = function(self, ...)
+    self.chilaSedaFinishingCraft = true
+    local shared = ChilaSedaAccessibleActions
+    local previousContext = shared and shared.dismantleQueueContext
+    if shared and self.chilaSedaDismantleContext then
+        shared.dismantleQueueContext = self.chilaSedaDismantleContext
+    end
+    local results = { pcall(originalHandcraftPerform, self, ...) }
+    self.chilaSedaFinishingCraft = nil
+    if shared then shared.dismantleQueueContext = previousContext end
+    if not results[1] then error(results[2]) end
+    return unpack(results, 2)
+end
+
+local originalHandcraftComplete = ISHandcraftAction.complete
+ISHandcraftAction.complete = function(self, ...)
+    self.chilaSedaFinishingCraft = true
+    local shared = ChilaSedaAccessibleActions
+    local previousContext = shared and shared.dismantleQueueContext
+    if shared and self.chilaSedaDismantleContext then
+        shared.dismantleQueueContext = self.chilaSedaDismantleContext
+    end
+    local results = { pcall(originalHandcraftComplete, self, ...) }
+    self.chilaSedaFinishingCraft = nil
+    if shared then shared.dismantleQueueContext = previousContext end
+    if not results[1] then error(results[2]) end
+    return unpack(results, 2)
 end
 
 local originalReturnItemToContainer = ISCraftingUI.ReturnItemToContainer
@@ -110,6 +147,7 @@ local function invokeDismantleAll(option, target, groupItems, recipe, ...)
     local previousContext = activeDismantleContext
     local shared = ChilaSedaAccessibleActions
     local previousRecipeItems = shared and shared.contextRecipeItems
+    local previousQueueContext = shared and shared.dismantleQueueContext
     local firstItem = type(groupItems) == "table" and groupItems[1] or nil
     activeDismantleContext = {
         player = target,
@@ -117,11 +155,17 @@ local function invokeDismantleAll(option, target, groupItems, recipe, ...)
         outputs = {},
         outputsReturned = false,
     }
-    if shared then shared.contextRecipeItems = groupItems end
+    if shared then
+        shared.contextRecipeItems = groupItems
+        shared.dismantleQueueContext = activeDismantleContext
+    end
     local ok, a, b, c, d = pcall(option.chilaSedaOriginalOnSelect,
         target, groupItems, recipe, ...)
     activeDismantleContext = previousContext
-    if shared then shared.contextRecipeItems = previousRecipeItems end
+    if shared then
+        shared.contextRecipeItems = previousRecipeItems
+        shared.dismantleQueueContext = previousQueueContext
+    end
     if not ok then error(a) end
     return a, b, c, d
 end
