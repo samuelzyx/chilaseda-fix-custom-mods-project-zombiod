@@ -1,12 +1,12 @@
 name=ChilaSeda Fix - Viewpoint Workshop Fixes (B42)
 id=ChilaSeda_Fix_Viewpoint_B42
 authors=ChilaSeda
-description=Local fixes for Viewpoint search pins and progress, corpse actions, selected loot destinations, Halo notices, and far-relief heap pressure.
+description=Local Viewpoint fixes for search pins, progress, loot, Halo notices, heap pressure, graphics startup, and clearing obstructive windows when movable camera activates.
 require=ZombieBuddy
 loadModAfter=Viewpoint,ViewpointUI,ProjectViewpointQOL,WallTextureFixForViewpoint,PV-modmapbakefix,NeatUI_ProgressBar,INVENTORY_TETRIS,ChilaSeda_AccessibleActions_B42,ChilaSeda_Translations_ES_B42,ZombieBuddy
 versionMin=42.21
 versionMax=42.22.2
-modversion=2.0.61
+modversion=2.0.65
 ZBVersionMin=2.3.4
-javaJarFile=media/java/client/ChilaSedaViewpointHalo.jar
+javaJarFile=media/java/client/ChilaSedaViewpointHalo-2.0.65.jar
 javaPkgName=chilaseda.viewpointhalo

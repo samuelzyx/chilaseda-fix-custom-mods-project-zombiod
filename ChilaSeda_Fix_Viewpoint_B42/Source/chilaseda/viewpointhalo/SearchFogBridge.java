@@ -1,6 +1,7 @@
 package chilaseda.viewpointhalo;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -35,6 +36,8 @@ public final class SearchFogBridge {
     private static Field fogG;
     private static Field fogB;
     private static Field sceneDesaturation;
+    private static volatile Method settingsWindowUpdate;
+    private static volatile Field freeCamActive;
     private static final Map<Object, float[]> written = new IdentityHashMap<>();
     private static final Map<Object, float[]> original = new IdentityHashMap<>();
 
@@ -59,6 +62,51 @@ public final class SearchFogBridge {
         } catch (Throwable ignored) {
             return false;
         }
+    }
+
+    /** Loads Viewpoint's saved live graphics settings through ZombieBuddy's Lua bridge. */
+    public static int initializeGraphicsSettings() {
+        try {
+            Method update = settingsWindowUpdate;
+            if (update == null) {
+                update = viewpointClass("viewpoint.platform.SettingsWindow").getMethod("update");
+                settingsWindowUpdate = update;
+            }
+            update.invoke(null);
+            return 1;
+        } catch (ClassNotFoundException | NoSuchMethodException | LinkageError unavailable) {
+            return -1;
+        } catch (Throwable failed) {
+            return 0;
+        }
+    }
+
+    /** Returns -1 while Viewpoint is unavailable, otherwise 0 or 1 for FreeCam.active. */
+    public static int movableCameraState() {
+        try {
+            Field active = freeCamActive;
+            if (active == null) {
+                active = viewpointClass("viewpoint.input.FreeCam").getField("active");
+                freeCamActive = active;
+            }
+            return active.getBoolean(null) ? 1 : 0;
+        } catch (ClassNotFoundException | NoSuchFieldException | LinkageError unavailable) {
+            return -1;
+        } catch (Throwable failed) {
+            return -2;
+        }
+    }
+
+    private static Class<?> viewpointClass(String name) throws ClassNotFoundException {
+        ClassLoader context = Thread.currentThread().getContextClassLoader();
+        if (context != null) {
+            try {
+                return Class.forName(name, false, context);
+            } catch (ClassNotFoundException ignored) {
+                // Try the loader that loaded this ZombieBuddy-exposed bridge.
+            }
+        }
+        return Class.forName(name, false, SearchFogBridge.class.getClassLoader());
     }
 
     public static void setSearchFog(boolean on, double radius, double feather,

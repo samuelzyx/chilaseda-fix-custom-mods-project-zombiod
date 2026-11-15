@@ -1,4 +1,4 @@
-# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.61
+# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.65
 
 <div align="center">
 
@@ -7,6 +7,23 @@
 </div>
 
 ---
+
+## Version 2.0.65
+
+- Calls Viewpoint graphics settings and movable-camera state through the existing ZombieBuddy-exposed Java bridge. The bridge resolves and caches `SettingsWindow.update` and `FreeCam.active`, so the Lua code does not depend on the unavailable `luajava.bindClass` global.
+
+## Version 2.0.64
+
+- Waited quietly for the Lua Java bridge during startup and movable-camera monitoring. Version 2.0.65 now uses the existing ZombieBuddy-exposed bridge instead.
+
+## Version 2.0.63
+
+- Detects the transition into Viewpoint's movable-camera state, not the key press itself. It closes visible unpinned windows and collapses pinned windows, including vanilla inventory pages and Inventory Tetris windows/popups. If hiding an unpinned inventory page would also close a pinned Tetris popup, that page is collapsed to preserve the pinned popup. Pin states are preserved; windows stay closed or collapsed after the camera is released.
+- Uses Viewpoint's `FreeCam.active` state from its local 0.1.7-rc4 JAR. No key bindings or Workshop files are changed.
+
+## Version 2.0.62
+
+- Schedules Viewpoint's graphics settings initialization once on the first game tick after OnGameStart, using its regular SettingsWindow.update path. This loads the saved live properties and links the selected shader pack before the player needs to open the panel with Delete. The bridge retries for up to 120 ticks if the Java class is not ready; runtime validation in Jill is pending.
 
 ## Version 2.0.61
 
@@ -50,7 +67,7 @@
 
 ## 🧭 En esta página
 
-- [Cambios recientes](#version-2049)
+- [Cambios recientes](#version-2065)
 - [Barra de progreso](#barra-de-progreso-2036)
 - [Rebúsqueda, pines y neblina](#neblina-del-radio-de-rebúsqueda-integrada)
 - [Protección del menú del mundo](#objetos-sin-nombre-de-sprite-en-el-menú-del-mundo)
