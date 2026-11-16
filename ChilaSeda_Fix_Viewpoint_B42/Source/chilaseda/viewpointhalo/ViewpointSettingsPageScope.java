@@ -11,11 +11,19 @@ public final class ViewpointSettingsPageScope {
 
     @Patch.OnEnter
     public static void begin(@Patch.Argument(0) Object page) {
+        beginScope(page);
+    }
+
+    public static void beginScope(Object page) {
         CURRENT.set(new Frame(page));
     }
 
     @Patch.OnExit(onThrowable = Throwable.class)
     public static void end() {
+        endScope();
+    }
+
+    public static void endScope() {
         CURRENT.remove();
     }
 

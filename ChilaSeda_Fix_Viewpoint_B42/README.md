@@ -1,4 +1,4 @@
-# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.73
+# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.74
 
 <div align="center">
 
@@ -7,6 +7,10 @@
 </div>
 
 ---
+
+## Version 2.0.74
+
+- Fixes Viewpoint disabling its settings window when `SettingsPages` opens. The `@Patch` entry and exit advice now call public bridge methods, keeping private state access inside the patch class.
 
 ## Version 2.0.73
 
