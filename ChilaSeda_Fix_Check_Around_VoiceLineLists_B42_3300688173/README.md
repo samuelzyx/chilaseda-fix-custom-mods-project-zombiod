@@ -1,6 +1,10 @@
 # Check Around · reparación de listas de voces
 
-> Parche local para [Check Around 1.4.0](https://steamcommunity.com/sharedfiles/filedetails/?id=3300688173), hoy marcado como deprecated en Workshop, en Project Zomboid B42.21.
+## Version 0.1.2
+
+- Corrige el error al iniciar Check Around desde una puerta en Build 42.22. `rollCreek` llamaba la API retirada `HasTrait("nombre")`; el parche usa `hasTrait(CharacterTrait)` y conserva compatibilidad con la API anterior. La barra puede completar el inicio de la accion y su vector de barrido queda inicializado.
+
+> Parche local para [Check Around 1.4.0](https://steamcommunity.com/sharedfiles/filedetails/?id=3300688173), hoy marcado como deprecated en Workshop, en Project Zomboid Build 42.22.2.
 
 ## Qué hace
 

@@ -1,0 +1,6 @@
+name=ChilaSeda Recovery - Car Battery Charger (B42)
+id=ChilaSeda_Recovery_CarBatteryCharger_B42
+authors=ChilaSeda
+description=One-time recovery of Jill's missing Base.CarBatteryCharger into her inventory.
+versionMin=42.20
+modversion=0.1.0

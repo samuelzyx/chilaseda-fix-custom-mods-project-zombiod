@@ -85,6 +85,53 @@ if type(originalSetVoicelines) == "function" then
     end
 end
 
+-- Check Around still calls the pre-B42.22 character:HasTrait("name") API in
+-- rollCreek. Build 42.22 exposes hasTrait(CharacterTrait) instead; the nil
+-- method call aborts start() before its beam is initialized, causing the later
+-- setDirection errors. Keep the mod's sound chance calculation with both APIs.
+local function hasTrait(character, legacyName, trait)
+    if not character then return false end
+    if character.hasTrait and trait then
+        local ok, result = pcall(character.hasTrait, character, trait)
+        if ok then return result == true end
+    end
+    if character.HasTrait then
+        local ok, result = pcall(character.HasTrait, character, legacyName)
+        if ok then return result == true end
+    end
+    return false
+end
+
+ISCheckBehindObject.rollCreek = function(self, object)
+    local character = self and self.character
+    if not character or not object then return end
+
+    local lightfoot = character:getPerkLevel(Perks.Lightfoot)
+    local nimble = character:getPerkLevel(Perks.Nimble)
+    local sneak = character:getPerkLevel(Perks.Sneak)
+    local traits = CharacterTrait
+    local graceful = hasTrait(character, "Graceful", traits and traits.GRACEFUL) and 10 or 0
+    local inconspicuous = hasTrait(character, "Inconspicuous", traits and traits.INCONSPICUOUS) and 10 or 0
+    local conspicuous = hasTrait(character, "Conspicuous", traits and traits.CONSPICUOUS) and 10 or 0
+    local clumsy = hasTrait(character, "Clumsy", traits and traits.CLUMSY) and 10 or 0
+    local crouching = character:isSneaking() and 20 or 0
+
+    local stats = character:getStats()
+    local panic = stats:getPanic() / 2
+    local stress = stats:getStress() * 100 / 2
+    local pain = stats:getPain() / 2
+    local doorHealth = object:getHealth() / object:getMaxHealth() * 100
+    local successChance = doorHealth + lightfoot + nimble + sneak + graceful + inconspicuous
+        + crouching - conspicuous - clumsy - panic - stress - pain
+
+    if successChance < GENERAL_RANDOM:random(0, 100) then
+        local square = object:getSquare()
+        getWorld():getFreeEmitter():playSoundImpl("DoorCreek", square)
+        local radius = SandboxVars.CheckAround.Radius + 1
+        addSound(nil, square:getX(), square:getY(), square:getZ(), radius, radius)
+    end
+end
+
 local originalApplyVoiceline = CheckAround.ApplyVoiceline
 if type(originalApplyVoiceline) == "function" then
     CheckAround.ApplyVoiceline = function(player, zombiesAmount, noZombieLines, zombieLines, ...)

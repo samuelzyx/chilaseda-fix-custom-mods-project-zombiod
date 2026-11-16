@@ -243,36 +243,20 @@ local function install()
         return false
     end
 
-    local originalIsClean = core.isCleanAppearanceEnabled
-    core.isCleanAppearanceEnabled = function (player)
-        if isJill(player) then return true end
-        return originalIsClean(player)
-    end
-
-    local originalOptions = core.getCleanAppearanceOptions
-    core.getCleanAppearanceOptions = function (player, ...)
-        local options = originalOptions(player, ...)
-        if isJill(player) and type(options) == "table" then
-            options.blood = true
-            options.holes = true
-            options.patches = true
-        end
-        return options
-    end
-
     local originalPreview = core.createAppearancePreviewSurvivorDesc
     core.createAppearancePreviewSurvivorDesc = function (player, cleanAppearance, state, ...)
         if not isJill(player) then
             return originalPreview(player, cleanAppearance, state, ...)
         end
-        local descriptor, warning = originalPreview(player, true, state, ...)
-        cleanPreviewDescriptor(descriptor)
+        local shouldClean = cleanAppearance == true
+        local descriptor, warning = originalPreview(player, shouldClean, state, ...)
+        if shouldClean then cleanPreviewDescriptor(descriptor) end
         return descriptor, warning
     end
 
     local originalCapture = core.captureAppearanceTexturesImpl
     core.captureAppearanceTexturesImpl = function (player, desiredClean, requiresModelReset, ...)
-        if not isJill(player) then
+        if not isJill(player) or desiredClean ~= true then
             return originalCapture(player, desiredClean, requiresModelReset, ...)
         end
 
@@ -288,12 +272,15 @@ local function install()
     core.beginAppearanceRenderBridge = function (player, ...)
         local began, reason = originalBegin(player, ...)
         if began and isJill(player) then
-            local bridge = core.appearanceRenderBridges and
-                    core.appearanceRenderBridges[player] or nil
-            local ok, err = pcall(sanitizeSnapshot, bridge)
-            if not ok and not warned then
-                warned = true
-                print(TAG .. " snapshot sanitization skipped: " .. tostring(err))
+            local stateOk, cleanEnabled = pcall(core.isCleanAppearanceEnabled, player)
+            if stateOk and cleanEnabled == true then
+                local bridge = core.appearanceRenderBridges and
+                        core.appearanceRenderBridges[player] or nil
+                local ok, err = pcall(sanitizeSnapshot, bridge)
+                if not ok and not warned then
+                    warned = true
+                    print(TAG .. " snapshot sanitization skipped: " .. tostring(err))
+                end
             end
         end
         return began, reason

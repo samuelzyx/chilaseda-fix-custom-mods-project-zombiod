@@ -19,21 +19,21 @@ public final class ViewpointSettingsPageScope {
         CURRENT.remove();
     }
 
-    static String pageName(Object page, String value) {
+    public static String pageName(Object page, String value) {
         Frame frame = CURRENT.get();
         if (frame == null || frame.page != page) return value;
         int call = frame.nameCalls++;
         return call == 1 ? translate(value) : value;
     }
 
-    static String pageLine(Object page, String value) {
+    public static String pageLine(Object page, String value) {
         Frame frame = CURRENT.get();
         if (frame == null || frame.page != page) return value;
         int call = frame.lineCalls++;
         return call == 2 ? translate(value) : value;
     }
 
-    static String translate(String value) {
+    public static String translate(String value) {
         if (value == null || value.isEmpty()) return value;
         try {
             String translated = Translator.getTextOrNull(KEY_PREFIX + value);

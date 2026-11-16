@@ -44,12 +44,12 @@ omite esa etiqueta para no confundirla con una versiÃƒÂ³n del contenido.
 | [Any Wall Posters 3D - Project Viewpoint [B42]](https://steamcommunity.com/sharedfiles/filedetails/?id=3818605173) | 3818605173 | DGVPosters | ChilaSeda_Fix_Any_Wall_Posters_3D_Weight_B42_3818605173 | sin etiqueta | Sin registro histórico | 2026-10-25 14:51:56 UTC | no disponible en disco | En seguimiento |
 | [Reactive Sound Events](https://steamcommunity.com/sharedfiles/filedetails/?id=3656190498) | 3656190498 | ReactiveSE | ChilaSeda_Fix_Reactive_Sound_Events_Viewpoint_B42_3656190498 | 1.1.2 | Sin registro histórico | 2026-10-24 18:30:23 UTC | 1.3.0 | En seguimiento |
 | [[B42+] Sandbox Options](https://steamcommunity.com/sharedfiles/filedetails/?id=3386906181) | 3386906181 | SandboxSettings | ChilaSeda_Fix_Sandbox_Options_ContextMenu_B42_3386906181 | 1.0.0 | Sin registro histórico | 2026-10-03 13:19:51 UTC | no disponible en disco | En seguimiento |
-| [Undead Wildlife [B42 Stable]](https://steamcommunity.com/sharedfiles/filedetails/?id=3781571720) | 3781571720 | UndeadWildlife | ChilaSeda_AnimalBalance_B42 | 2.3.0 | Sin registro histórico | 2026-08-16 00:03:32 UTC | 1.1.0 | En seguimiento |
+| [Undead Wildlife [B42 Stable]](https://steamcommunity.com/sharedfiles/filedetails/?id=3781571720) | 3781571720 | UndeadWildlife | ChilaSeda_AnimalBalance_B42 | 2.3.1 | Sin registro histórico | 2026-08-16 00:03:32 UTC | 1.1.0 | En seguimiento |
 | [True Weight](https://steamcommunity.com/sharedfiles/filedetails/?id=3768669395) | 3768669395 | TrueWeight | ChilaSeda_Fix_True_Weight_VanillaWeights_B42_3768669395 | 2.1.1 | Sin registro histórico | 2026-08-01 23:04:10 UTC | 1.10 | En seguimiento |
 | [Viewpoint - Interface](https://steamcommunity.com/sharedfiles/filedetails/?id=3812616893) | 3812616893 | ViewpointUI | ChilaSeda_Fix_Viewpoint_Interface_ActionProgress_B42_3812616893 | sin etiqueta | Sin registro histórico | 2026-10-25 15:03:41 UTC | 0.14.0 | En seguimiento |
 | [Viewpoint Foraging](https://steamcommunity.com/sharedfiles/filedetails/?id=3814994364) | 3814994364 | ViewpointForaging | ChilaSeda_Fix_ViewpointForaging_B42_3814994364 | 1.3.15 | Sin registro histórico | 2026-10-14 20:24:31 UTC | 0.3.0 | En seguimiento |
 | [[B42] Water Pipes](https://steamcommunity.com/sharedfiles/filedetails/?id=3546314080) | 3546314080 | Waterpipes | ChilaSeda_Fix_Water_Pipes_ModData_B42_3546314080 | 1.0.0 | Sin registro histórico | 2026-08-22 20:05:37 UTC | no disponible en disco | En seguimiento |
-| [Wilderness QoL [B42.21]](https://steamcommunity.com/sharedfiles/filedetails/?id=3779759338) | 3779759338 | Wilderness QoL | ChilaSeda_Fix_Wilderness_QoL_Identification_B42_3779759338 | sin etiqueta | Sin registro histórico | 2026-09-28 21:36:06 UTC | 0.8.11 | En seguimiento |
+| [Wilderness QoL [B42]](https://steamcommunity.com/sharedfiles/filedetails/?id=3779759338) | 3779759338 | Wilderness QoL | ChilaSeda_Translations_ES_B42/ChilaSeda_WFIIdentificationFix.lua | sin etiqueta | Sin registro histórico | 2026-11-14 14:58:47 UTC | 0.8.13 | En seguimiento |
 | Project Zomboid (juego base) | - | - | ChilaSeda_Fix_Project_Zomboid_AutoTools_B42_Vanilla | 1.0.1 | No aplica | No aplica | No aplica | Sin Workshop original |
 <!-- CURRENT_STATE_END -->
 
@@ -63,6 +63,7 @@ adaptar o retirar el parche.
 | Detectado | Mod | Workshop ID | `time_updated` anterior ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ nuevo | VersiÃƒÆ’Ã‚Â³n instalada anterior ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ nueva | RevisiÃƒÆ’Ã‚Â³n del fix |
 |---|---|---:|---|---|---|
 | 2026-10-31T01:40:21.8580859Z | Authentic Z | 2335368829 | 2026-09-13 23:01:38 UTC -> 2026-10-31 01:17:39 UTC | sin dato -> sin dato | Pendiente de revision |
+| 2026-11-16T03:55:01.8833823Z | Wilderness QoL [B42] | 3779759338 | 2026-09-28 21:36:06 UTC -> 2026-11-14 14:58:47 UTC | 0.8.11 -> 0.8.13 | Sigue necesario: `WFI.isIdentified` aun llama `getModData()` sin validar el tipo del objeto |
 <!-- CHANGE_LOG_END -->
 
 ## Revision de actualizaciones recientes en la primera linea base
@@ -96,6 +97,10 @@ actualizacion recibida hoy o durante una sesion anterior porque no habia una lin
 
 Estas revisiones son comprobaciones estaticas de la fuente instalada, no validaciones dentro de Jill.
 
+## Wilderness QoL 0.8.13, revision del 15 de noviembre
+
+La version instalada conserva `WFI.isIdentified(item) = item and item:getModData().WFI_identified == true`; no comprueba que el objeto sea un `InventoryItem`. El guard activo en `ChilaSeda_Translations_ES_B42/42/media/lua/client/ChilaSeda_WFIIdentificationFix.lua` devuelve `false` para objetos nulos o de otro tipo antes de llamar a la funcion original, asi que sigue siendo necesario. Se cotejaron las cinco tablas EN contra ES: 125 claves y ninguna faltante. La pagina publica muestra aun la actualizacion del 28 de septiembre y sus notas de noviembre no estuvieron disponibles (la consulta de Change Notes dio cache miss); no se atribuye el cambio de codigo a notas que no pudimos leer. Revision estatica, sin validacion runtime.
+
 ## Uso
 
 Ejecutar desde la raÃƒÆ’Ã‚Â­z `mods` con:
@@ -119,19 +124,3 @@ fallo; no se marca una versiÃƒÂ³n como actual sin evidencia.
 - [ðŸ  Inicio del repositorio](README.md)
 - [ðŸ¤ CÃ³mo contribuir](CONTRIBUTING.md)
 - [ðŸš€ Releases de mods](docs/releases/README.md)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

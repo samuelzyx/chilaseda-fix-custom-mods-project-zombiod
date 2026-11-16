@@ -900,7 +900,7 @@ MOD Y RUTA DEL ARCHIVO FUENTE
 
 
 WILDERNESS QOL Y PARCHE DE IDENTIFICACION
-La cobertura de Wilderness QoL 0.8.11 estÃ¡ integrada en este catÃ¡logo (125 claves). Las claves que ya existÃ­an conservan el texto central revisado; se aÃ±adieron las faltantes de Sandbox, Tooltip y UI. La guardia de identificaciÃ³n tambiÃ©n vive aquÃ­ y solo se aplica si Wilderness QoL expone WFI/WFI_Core. Si el original estÃ¡ ausente, la traducciÃ³n no causa errores y la guardia se omite. El antiguo ID ChilaSeda_WildernessQoL_ES_B42 y el ID del parche separado dejan de activarse. Referencia y validaciÃ³n anteriores: ChilaSeda_AuditSuite_B42/Documentacion/WildernessQoL/.
+La cobertura de Wilderness QoL 0.8.13 estÃ¡ integrada en este catÃ¡logo (125 claves). Las claves que ya existÃ­an conservan el texto central revisado; se aÃ±adieron las faltantes de Sandbox, Tooltip y UI. La guardia de identificaciÃ³n tambiÃ©n vive aquÃ­ y solo se aplica si Wilderness QoL expone WFI/WFI_Core. Si el original estÃ¡ ausente, la traducciÃ³n no causa errores y la guardia se omite. El antiguo ID ChilaSeda_WildernessQoL_ES_B42 y el ID del parche separado dejan de activarse. Referencia y validaciÃ³n anteriores: ChilaSeda_AuditSuite_B42/Documentacion/WildernessQoL/.
 
 FUENTES DE TRADUCCION â€” RECETAS VANILLA B42 (mod 1.4.51)
 Se aÃ±adieron las claves oficiales `MakeSalad` y `MakeFruitSalad` de

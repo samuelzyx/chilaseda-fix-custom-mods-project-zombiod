@@ -1,12 +1,12 @@
 name=ChilaSeda Fix - Viewpoint Workshop Fixes (B42)
 id=ChilaSeda_Fix_Viewpoint_B42
 authors=ChilaSeda
-description=Local Viewpoint fixes for search pins, progress, loot, Halo notices, heap pressure, graphics startup, and clearing obstructive windows when movable camera activates.
+description=Local Viewpoint fixes for search pins, progress, loot, Spanish settings labels, battery charger menus and 3D models, Lua compile-error source tracing, graphics startup, heap pressure, and movable-camera windows.
 require=ZombieBuddy
 loadModAfter=Viewpoint,ViewpointUI,ProjectViewpointQOL,WallTextureFixForViewpoint,PV-modmapbakefix,NeatUI_ProgressBar,INVENTORY_TETRIS,ChilaSeda_AccessibleActions_B42,ChilaSeda_Translations_ES_B42,MirageWardrobe42,ZombieBuddy
 versionMin=42.21
 versionMax=42.22.2
-modversion=2.0.67
+modversion=2.0.73
 ZBVersionMin=2.3.4
-javaJarFile=media/java/client/ChilaSedaViewpointHalo-2.0.67.jar
+javaJarFile=media/java/client/ChilaSedaViewpointHalo-2.0.73.jar
 javaPkgName=chilaseda.viewpointhalo

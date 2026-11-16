@@ -1,4 +1,4 @@
-# ChilaSeda - Acciones Accesibles (Build 42) 1.0.30
+# ChilaSeda - Acciones Accesibles (Build 42) 1.0.33
 
 <div align="center">
 
@@ -7,6 +7,18 @@
 </div>
 
 ---
+
+## Version 1.0.33
+
+- Secarse ya no intenta reanudarse en bucle mientras Jill sigue caminando o corriendo; espera a que se detenga y restaura el avance de la barra al reanudar. Escape sigue cancelando la accion.
+
+## Version 1.0.32
+
+- Secarse conserva la accion pendiente si otra tarea interrumpe la cola y la reanuda al terminar. Caminar, correr y apuntar no interrumpen el secado; la humedad ya reducida y los usos de la toalla se conservan.
+
+## Version 1.0.31
+
+- Evita que una entidad sin sprite interrumpa la construccion del menu contextual; la opcion de interfaz de entidad se omite y el resto del menu puede continuar.
 
 ## Version 1.0.30
 

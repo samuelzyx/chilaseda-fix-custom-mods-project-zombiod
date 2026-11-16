@@ -1,11 +1,22 @@
 require "ActionManager"
 require "Entity/TimedActions/ISHandcraftAction"
+require "TimedActions/ISDryMyself"
 
 local TAG = "[ChilaSeda_InventoryWorkResume] "
 local jobsByPlayer = {}
 local originalHandcraftNew = ISHandcraftAction.new
+local originalDryMyselfNew = ISDryMyself.new
 local originalQueueAdd = ISTimedActionQueue.add
 local originalQueueReset = ISTimedActionQueue.resetQueue
+
+ISDryMyself.new = function(self, character, item, ...)
+    local action = originalDryMyselfNew(self, character, item, ...)
+    if action then
+        action.chilaSedaResumeDrying = true
+        action.chilaSedaResumeBaseMaxTime = action.maxTime
+    end
+    return action
+end
 
 local function recipeLooksLikeInventoryWork(recipe)
     if not recipe then return false end
@@ -55,16 +66,31 @@ local function jobForQueuedWork(player, action, context)
         job = context.chilaSedaResumeJob or makeJob(player)
         context.chilaSedaResumeJob = job
         job.batchContext = context
-    elseif action and action.chilaSedaInventoryWork then
+    elseif action and (action.chilaSedaInventoryWork
+            or action.chilaSedaResumeDrying) then
         job = jobsByPlayer[player] or makeJob(player)
     end
     if not job then return nil end
     if context then action.chilaSedaInventoryWork = true end
     action.chilaSedaInventoryWorkJob = job
+    if action.chilaSedaResumeDrying then
+        action.chilaSedaResumeDryingJob = job
+    end
     action.stopOnWalk = false
     action.stopOnRun = false
     action.stopOnAim = false
     return job
+end
+
+local function isPlayerMoving(player)
+    for _, methodName in ipairs({ "isWalking", "isRunning" }) do
+        local method = player and player[methodName]
+        if type(method) == "function" then
+            local ok, moving = pcall(method, player)
+            if ok and moving == true then return true end
+        end
+    end
+    return false
 end
 
 ISTimedActionQueue.add = function(action, ...)
@@ -82,7 +108,15 @@ ISTimedActionQueue.resetQueue = function(queue, ...)
     local snapshot = {}
     if job and queue.queue then
         for _, action in ipairs(queue.queue) do
-            if action.chilaSedaInventoryWorkJob == job then
+            if action.chilaSedaInventoryWorkJob == job
+                    or action.chilaSedaResumeDryingJob == job then
+                if action.chilaSedaResumeDryingJob == job
+                        and type(action.getJobDelta) == "function" then
+                    local ok, delta = pcall(action.getJobDelta, action)
+                    if ok and type(delta) == "number" then
+                        action.chilaSedaResumeDelta = math.max(0, math.min(1, delta))
+                    end
+                end
                 snapshot[#snapshot + 1] = action
             end
         end
@@ -93,7 +127,7 @@ ISTimedActionQueue.resetQueue = function(queue, ...)
     if job and #snapshot > 0 then
         job.pendingActions = snapshot
         job.pendingResume = true
-        print(TAG .. "inventory work paused; queued actions will resume after the interruption")
+        print(TAG .. "queued inventory work or drying paused; pending actions will resume after the interruption")
     end
     return unpack(results, 2)
 end
@@ -107,12 +141,34 @@ local function resumeAfterInterruption()
                 local queue = ISTimedActionQueue.getTimedActionQueue(player)
                 if queue and queue.queue and #queue.queue == 0 then
                     local actions = job.pendingActions or {}
-                    job.pendingActions = nil
-                    job.pendingResume = false
-                    for _, action in ipairs(actions) do
-                        originalQueueAdd(action)
+                    local dryingIsMoving = false
+                    if isPlayerMoving(player) then
+                        for _, action in ipairs(actions) do
+                            if action.chilaSedaResumeDryingJob == job then
+                                dryingIsMoving = true
+                                break
+                            end
+                        end
                     end
-                    print(TAG .. "resumed " .. tostring(#actions) .. " pending actions")
+                    if not dryingIsMoving then
+                        job.pendingActions = nil
+                        job.pendingResume = false
+                        for _, action in ipairs(actions) do
+                            if action.chilaSedaResumeDryingJob == job
+                                    and type(action.chilaSedaResumeBaseMaxTime) == "number" then
+                                action.maxTime = action.chilaSedaResumeBaseMaxTime
+                            end
+                            originalQueueAdd(action)
+                            local delta = action.chilaSedaResumeDelta
+                            if action.chilaSedaResumeDryingJob == job
+                                    and type(delta) == "number"
+                                    and type(action.setJobDelta) == "function" then
+                                pcall(action.setJobDelta, action, delta)
+                                action.chilaSedaResumeDelta = nil
+                            end
+                        end
+                        print(TAG .. "resumed " .. tostring(#actions) .. " pending actions")
+                    end
                 end
             end
         else
@@ -136,4 +192,4 @@ end
 
 Events.OnTick.Add(resumeAfterInterruption)
 Events.OnKeyStartPressed.Add(cancelOnEscape)
-print(TAG .. "installed for inventory dismantling and rip clothing")
+print(TAG .. "installed for inventory dismantling, rip clothing, and drying")

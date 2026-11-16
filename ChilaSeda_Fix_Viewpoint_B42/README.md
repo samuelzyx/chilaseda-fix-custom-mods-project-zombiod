@@ -1,4 +1,4 @@
-# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.67
+# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.73
 
 <div align="center">
 
@@ -7,6 +7,27 @@
 </div>
 
 ---
+
+## Version 2.0.73
+
+- Adds a temporary diagnostic hook around the Lua compiler. If parsing a script throws, it prints the active source path and chunk basename to `DebugLog.txt`; it does not suppress or alter the error.
+
+## Version 2.0.72
+
+- Adds a local Viewpoint model-pack provider for `IsoCarBatteryCharger`. It selects an empty or battery-connected 3D model from the charger's live battery state; the isometric sprite and the Viewpoint Workshop files remain untouched.
+- Fixes the battery-charger texture guard advice so ZombieBuddy can apply it. The previous hook put `@Patch.Return` on `OnEnter`; the DebugLog showed ZombieBuddy rejecting it, which left the original null-sprite crash unguarded. The entry hook now skips `getTexture()` when the charger has no sprite, naturally returning null for the reference type.
+
+## Version 2.0.70
+
+- The Jill appearance adapter now respects MirageWardrobe's saved Clean Appearance state and per-option settings. Its renderer cleanup runs only while the setting is enabled, so the wardrobe can read, toggle, and verify the setting without showing the change-failed message.
+
+## Version 2.0.69
+
+- Prevents a Viewpoint battery charger menu error when `IsoCarBatteryCharger.chargerSprite` is null. The Java getter returns a null texture in that case, allowing the vanilla menu to omit only its icon and continue building the charger's actions.
+
+## Version 2.0.68
+
+- Fixes an `IllegalAccessError` that disabled Viewpoint's settings window: helper methods used by injected settings-page hooks are now public across the Viewpoint package boundary.
 
 ## Version 2.0.67
 

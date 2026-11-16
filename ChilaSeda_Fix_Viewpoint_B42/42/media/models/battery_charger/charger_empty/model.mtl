@@ -1,0 +1,29 @@
+newmtl housing
+Kd 1 1 1
+d 1
+map_Kd ../housing/texture.png
+
+newmtl accent
+Kd 1 1 1
+d 1
+map_Kd ../accent/texture.png
+
+newmtl screen
+Kd 1 1 1
+d 1
+map_Kd ../screen/texture.png
+
+newmtl battery
+Kd 1 1 1
+d 1
+map_Kd ../battery/texture.png
+
+newmtl terminal
+Kd 1 1 1
+d 1
+map_Kd ../terminal/texture.png
+
+newmtl cable
+Kd 1 1 1
+d 1
+map_Kd ../cable/texture.png
