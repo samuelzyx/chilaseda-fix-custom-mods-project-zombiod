@@ -1,4 +1,4 @@
-ChilaSeda - Hunter Expansion Filth Fix y traducción ES (B42), versión 1.1.1
+ChilaSeda - Hunter Expansion Filth Fix y traducción ES (B42), versión 1.1.2
 
 <div align="center">
 
@@ -8,6 +8,11 @@ ChilaSeda - Hunter Expansion Filth Fix y traducción ES (B42), versión 1.1.1
 
 ---
 
+
+CAMBIOS DE LA VERSION 1.1.2
+Elimina una sustitucion redundante del texto n / n del tooltip. En Build 42.22,
+su callback fallaba con __concat not defined al abrir el menu contextual de
+Hunter Expansion. El texto ya conserva ese formato sin modificarlo.
 
 CAMBIOS DE LA VERSIÓN 1.1.1
 Escapa el signo de porcentaje del consejo de cuidado animal como `%%` para que

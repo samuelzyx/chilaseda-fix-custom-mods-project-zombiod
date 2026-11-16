@@ -21,7 +21,7 @@
 <tr>
 <td align="center"><strong>📦 186</strong><br>elementos en la colección</td>
 <td align="center"><strong>✅ 190</strong><br>con algún ID activo en Jill</td>
-<td align="center"><strong>⏸️ 30</strong><br>suscritos y en pausa</td>
+<td align="center"><strong>⏸️ 31</strong><br>suscritos y en pausa</td>
 <td align="center"><strong>8</strong><br>mods activos faltantes</td>
 </tr>
 </table>
@@ -133,9 +133,11 @@ Estos mods se retiraron de la colección. La propuesta es revisar su contenido y
 
 <a id="pausados-con-parche-o-nota"></a>
 
-Estos dos siguen suscritos y no se usan en Jill. Chila ya los quitó de la colección pública; quedan registrados aquí para revisar compatibilidad si después quiere recuperarlos.
+Estos tres siguen suscritos y no se usan en Jill. Chila ya los quitó de la colección pública; quedan registrados aquí para revisar compatibilidad si después quiere recuperarlos.
 
 Isometric No More (Workshop 2696083206) vuelve a quedar en pausa por decision de Chila el 2026-11-12. Se retiro del perfil activo de Jill y del kit. Mantenerlo pausado hasta que Chila decida reactivarlo.
+
+Grassier Grass (Viewpoint), Workshop 3818853354, `GrassierGrassViewpoint`, se retiro del perfil del kit Jill el 2026-11-15 porque no funciono en la partida. El README conserva nota de ajustes locales a `mod.info`; se dejan intactos la instalacion y sus archivos. No se encontro un segundo ID de parche local en el perfil ni una carpeta de parche separada.
 
 <table>
 <tr>

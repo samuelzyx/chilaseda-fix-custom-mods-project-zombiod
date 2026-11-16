@@ -1,4 +1,4 @@
-# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.65
+# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.67
 
 <div align="center">
 
@@ -7,6 +7,14 @@
 </div>
 
 ---
+
+## Version 2.0.67
+
+- Localizes Viewpoint settings page titles, descriptions, section captions, subtab labels, and window button tooltips through the Spanish catalog. Page widget IDs remain unchanged: title hooks translate only the visible read, and tab IDs use page plus index while the label array is translated. Top-level header literals drawn directly through native ImGui calls remain outside these hooks.
+
+## Version 2.0.66
+
+- Adds a Jill-only appearance adapter for MirageWardrobe. Render snapshots use detached, dry clothing copies with blood, dirt, holes, and patches removed; the real worn items and character visual values remain available to gameplay. The patch is ordered after MirageWardrobe42. Runtime validation in Jill is pending.
 
 ## Version 2.0.65
 
@@ -29,6 +37,7 @@
 
 - Adds a local adapter for Wall Texture Fix's `WallMesher.wall` hook on Viewpoint 0.1.7, whose new `IsoGridSquare` argument shifted the addon's expected float argument. The adapter calls the addon's renderer with its original argument layout and leaves Viewpoint's renderer in control when the addon is absent or the adapter cannot run.
 - Orders this patch after Wall Texture Fix and PV Map Fix. The latter remains self-disabled until its Viewpoint 0.1.7 compatibility can be verified safely.
+- Does not bridge `WallMesher.back`: Wall Texture Fix `PatchBack.enter` expects six object arguments, boolean/int/boolean, five floats, and a flags array; Viewpoint 0.1.7 supplies a `HiddenFaces.Face`, three other objects, five floats, and flags. No safe one-to-one mapping is documented, so the adapter only covers `wall`.
 
 ## Version 2.0.60
 

@@ -20,7 +20,6 @@ mods
     mod = ViewpointLivingProps,
     mod = ViewpointBarricade,
     mod = ViewpointForaging,
-    mod = GrassierGrassViewpoint,
     mod = ViewpointCropVisibility,
     mod = ViewpointVisualFixes,
     mod = damnlib,

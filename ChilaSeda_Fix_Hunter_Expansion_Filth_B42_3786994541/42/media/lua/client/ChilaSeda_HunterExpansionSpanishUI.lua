@@ -1,7 +1,7 @@
 -- Presentation-only Spanish layer for Hunter Expansion's feeder and journal.
 -- The Workshop files contain hard-coded English strings, so this file adapts
 -- only their visible UI after the original mod has loaded.
-local VERSION = "1.1.0"
+local VERSION = "1.1.2"
 local PREFIX = "IGUI_HE_ES_"
 
 local EXACT = {
@@ -190,7 +190,6 @@ local function localizeRichText(value)
     value = value:gsub("(%d+) days", function(n) return n .. " días" end)
     value = value:gsub("Animal Care (%d+)  x([%d%.]+)", function(a, b) return "Cuidado de animales " .. a .. "  x" .. b end)
     value = value:gsub("(%d+) of (%d+) units of ([^%.<]+)%.", function(a, b, c) return localize(a .. " of " .. b .. " units of " .. c .. ".") end)
-    value = value:gsub("(%d+) / (%d+)", function(a, b) return a .. " / " .. b end)
     return localize(value)
 end
 

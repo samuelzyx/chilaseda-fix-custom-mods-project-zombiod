@@ -118,5 +118,8 @@
   "Tooltip_WFI_IdentifyAll": "Identifica todos los alimentos desconocidos que cumplan los requisitos en tus inventarios y en los contenedores accesibles. <LINE> Probabilidad de éxito: %1%% <LINE> Tiempo por alimento: %2 minutos de juego <LINE> Alimentos en cola: %3 <LINE> Si falla un examen, ese alimento queda bloqueado hasta el siguiente nivel de Rebuscar.",
   "Tooltip_WFI_RetryAfterLevel": "El examen de este alimento ya falló a tu nivel actual de Rebuscar. Sube un nivel de Rebuscar para volver a intentarlo con este alimento.",
   "Tooltip_WFI_EatAllForaged": "Añade a la cola los %1 alimentos recolectables seleccionados para comerlos. Se mantienen los límites de saciedad, el envenenamiento y los tiempos de consumo habituales.",
-  "Tooltip_WFI_RipAllClothing": "Añade a la cola la acción normal de rasgar para las %1 prendas seleccionadas que no lleves puestas y que se puedan rasgar. El algodón no requiere herramientas; la tela vaquera y el cuero siguen requiriendo tijeras o un cuchillo afilado."
+  "Tooltip_WFI_RipAllClothing": "Añade a la cola la acción normal de rasgar para las %1 prendas seleccionadas que no lleves puestas y que se puedan rasgar. El algodón no requiere herramientas; la tela vaquera y el cuero siguen requiriendo tijeras o un cuchillo afilado.",
+  "Tooltip_weapon_Laser": "Láser",
+  "Tooltip_ReflexSight": "Mira réflex compacta y cerrada para pistolas con corredera plana.",
+  "Tooltip_Common_Sense": "La pistola de Ayane, de aspecto adorable. No digas tonterías delante de ella y nunca tendrás que verla."
 }
