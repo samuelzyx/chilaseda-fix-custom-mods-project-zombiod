@@ -1,1 +1,1 @@
-﻿-- No-op: native Viewpoint owns the free-cursor toggle during fishing.
+-- No-op: native Viewpoint owns the free-cursor toggle during fishing.

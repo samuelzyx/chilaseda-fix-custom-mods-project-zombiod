@@ -1,0 +1,8 @@
+name=ChilaSeda Map Symbol Size Slider - Extra Map Symbols Fix (B42)
+id=ChilaSeda_MapSymbolSizeSlider_ExtraMapSymbolsFix_B42
+authors=ChilaSeda
+description=Prevents Map Symbol Size Slider prerender recursion with the local Extra Map Symbols port.
+require=MapSymbolSizeSlider,ChilaSeda_RecentMapSymbols_ExtraMapSymbols_B42
+loadModAfter=MapSymbolSizeSlider,ChilaSeda_RecentMapSymbols_ExtraMapSymbols_B42
+versionMin=42.20
+modversion=0.1.0

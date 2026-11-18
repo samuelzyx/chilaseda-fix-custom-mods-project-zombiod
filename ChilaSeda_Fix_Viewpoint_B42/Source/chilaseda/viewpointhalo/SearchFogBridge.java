@@ -2,6 +2,7 @@ package chilaseda.viewpointhalo;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -18,6 +19,13 @@ public final class SearchFogBridge {
     private static volatile float desaturation;
     private static volatile int style;
     private static volatile float strength = 1.0f;
+    private static volatile boolean shaderPackFogEnabled = true;
+    static volatile float ownStart = 1000000.0f;
+    static volatile float ownEnd = 1000000.0f;
+    static volatile float ownAlpha;
+    static volatile float ownR;
+    static volatile float ownG;
+    static volatile float ownB;
     private static float blend;
     private static float currentRadius = -1.0f;
     private static float currentDarkness;
@@ -40,6 +48,7 @@ public final class SearchFogBridge {
     private static volatile Field freeCamActive;
     private static final Map<Object, float[]> written = new IdentityHashMap<>();
     private static final Map<Object, float[]> original = new IdentityHashMap<>();
+    private static final CameraProjection cameraProjection = new CameraProjection();
 
     private SearchFogBridge() {}
 
@@ -97,7 +106,7 @@ public final class SearchFogBridge {
         }
     }
 
-    private static Class<?> viewpointClass(String name) throws ClassNotFoundException {
+    static Class<?> viewpointClass(String name) throws ClassNotFoundException {
         ClassLoader context = Thread.currentThread().getContextClassLoader();
         if (context != null) {
             try {
@@ -118,6 +127,152 @@ public final class SearchFogBridge {
         SearchFogBridge.style = (int) style;
         SearchFogBridge.strength = clamp01((float) strength);
         wanted = on && SearchFogBridge.strength > 0.0f;
+    }
+
+    public static void setShaderPackFogEnabled(boolean enabled) {
+        shaderPackFogEnabled = enabled;
+        ShaderPackSearchFog.enabled = enabled;
+    }
+
+    static boolean shaderPackFogEnabled() {
+        return shaderPackFogEnabled;
+    }
+
+    static boolean shaderPackPresent() {
+        try {
+            Method drawn = viewpointClass("viewpoint.platform.IrisPacks").getMethod("drawn");
+            return active() && drawn.invoke(null) != null;
+        } catch (Throwable ignored) {
+            return false;
+        }
+    }
+
+    /** Prepare Viewpoint's own camera projection for a batch of native forage pins. */
+    public static boolean prepareNativeForagePins(double playerIndex) {
+        return cameraProjection.prepare((int) playerIndex);
+    }
+
+    /** Project one native forage pin; call prepareNativeForagePins first. */
+    public static boolean projectNativeForagePin(double x, double y, double z, double lift) {
+        return cameraProjection.project((float) x, (float) y, (float) z, (float) lift);
+    }
+
+    public static double nativeForagePinScreenX() { return cameraProjection.screenX; }
+    public static double nativeForagePinScreenY() { return cameraProjection.screenY; }
+    public static double nativeForagePinScreenWidth() { return cameraProjection.width; }
+    public static double nativeForagePinScreenHeight() { return cameraProjection.height; }
+
+    /** Uses Viewpoint's own WorldToScreen so selection agrees with its 3D camera and shader projection. */
+    private static final class CameraProjection {
+        private Field frames;
+        private Field frameNumber;
+        private Field freeCamActive;
+        private Field freeCamPlace;
+        private Method screenWidth;
+        private Method screenHeight;
+        private Method setCamera;
+        private Method projectPixel;
+        private Object worldToScreen;
+        private final float[] pixel = new float[2];
+        private long preparedFrame = Long.MIN_VALUE;
+        private int preparedPlayer = -1;
+        private boolean initialized;
+        private boolean ready;
+        private boolean warnedProjection;
+        private double screenX;
+        private double screenY;
+        private double width;
+        private double height;
+
+        private synchronized boolean prepare(int player) {
+            if (!initialize()) return false;
+            try {
+                Object[] frameArray = (Object[]) frames.get(null);
+                if (frameArray == null) return false;
+                Object latest = null;
+                long latestNumber = Long.MIN_VALUE;
+                for (Object frame : frameArray) {
+                    if (frame == null) continue;
+                    long number = frameNumber.getLong(frame);
+                    if (number > latestNumber) {
+                        latestNumber = number;
+                        latest = frame;
+                    }
+                }
+                if (latest == null) return false;
+
+                int viewportWidth = ((Number) screenWidth.invoke(null, player)).intValue();
+                int viewportHeight = ((Number) screenHeight.invoke(null, player)).intValue();
+                if (viewportWidth <= 0 || viewportHeight <= 0) return false;
+                if (preparedFrame == latestNumber && preparedPlayer == player
+                        && width == viewportWidth && height == viewportHeight) return true;
+
+                Object place = freeCamActive.getBoolean(null) ? freeCamPlace.get(null) : null;
+                setCamera.invoke(worldToScreen, latest, place,
+                        (float) viewportWidth, (float) viewportHeight);
+                preparedFrame = latestNumber;
+                preparedPlayer = player;
+                width = viewportWidth;
+                height = viewportHeight;
+                return true;
+            } catch (Throwable error) {
+                warnProjection("could not prepare Viewpoint camera projection: " + error);
+                return false;
+            }
+        }
+
+        private synchronized boolean project(float x, float y, float z, float lift) {
+            if (preparedFrame == Long.MIN_VALUE || worldToScreen == null) return false;
+            try {
+                boolean inFront = (Boolean) projectPixel.invoke(worldToScreen,
+                        x, y, z, lift, pixel);
+                screenX = pixel[0];
+                screenY = pixel[1];
+                return inFront;
+            } catch (Throwable error) {
+                warnProjection("could not project native forage pin: " + error);
+                return false;
+            }
+        }
+
+        private boolean initialize() {
+            if (initialized) return ready;
+            initialized = true;
+            try {
+                Class<?> fp = viewpointClass("viewpoint.FP");
+                Class<?> frame = viewpointClass("viewpoint.core.Frame");
+                Class<?> freeCam = viewpointClass("viewpoint.input.FreeCam");
+                Class<?> place = viewpointClass("viewpoint.input.FreeCam$Place");
+                Class<?> camera = viewpointClass("viewpoint.game.WorldToScreen");
+                Class<?> isoCamera = viewpointClass("zombie.iso.IsoCamera");
+
+                frames = field(fp, "frames");
+                frameNumber = field(frame, "number");
+                freeCamActive = field(freeCam, "active");
+                freeCamPlace = field(freeCam, "place");
+                Constructor<?> constructor = camera.getDeclaredConstructor();
+                constructor.setAccessible(true);
+                worldToScreen = constructor.newInstance();
+                setCamera = camera.getDeclaredMethod("set", frame, place, float.class, float.class);
+                setCamera.setAccessible(true);
+                projectPixel = camera.getDeclaredMethod("pixel",
+                        float.class, float.class, float.class, float.class, float[].class);
+                projectPixel.setAccessible(true);
+                screenWidth = isoCamera.getMethod("getScreenWidth", int.class);
+                screenHeight = isoCamera.getMethod("getScreenHeight", int.class);
+                ready = true;
+            } catch (Throwable error) {
+                warnProjection("Viewpoint WorldToScreen API unavailable: " + error);
+                ready = false;
+            }
+            return ready;
+        }
+
+        private void warnProjection(String message) {
+            if (warnedProjection) return;
+            warnedProjection = true;
+            System.out.println("[ChilaSeda_ViewpointNativeForagePickup] " + message);
+        }
     }
 
     private static synchronized boolean init() {
@@ -209,8 +364,15 @@ public final class SearchFogBridge {
             float endTarget = style == 1 ? currentRadius + feather * 2.5f : currentRadius + feather;
             float start = Math.min(lerp(base[0], startTarget, alpha), base[0]);
             float end = Math.min(lerp(base[1], endTarget, alpha), base[1]);
+            boolean depthLayerDrawing = shaderPackFogEnabled
+                    && !ShaderPackSearchFog.failed() && ShaderPackSearchFog.drawing();
+            if (depthLayerDrawing) {
+                start = base[0];
+                end = base[1];
+            }
             end = Math.max(end, start + 0.5f);
-            float darken = style == 0 ? Math.min(0.92f, 0.55f + currentDarkness * 0.6f) * alpha : 0.0f;
+            float darken = style == 0 && !depthLayerDrawing
+                    ? Math.min(0.92f, 0.55f + currentDarkness * 0.6f) * alpha : 0.0f;
             float desat = Math.max(base[5], lerp(base[5], currentDesaturation, alpha));
             float[] adjusted = new float[] { start, end,
                     base[2] * (1.0f - darken), base[3] * (1.0f - darken),
@@ -218,6 +380,13 @@ public final class SearchFogBridge {
             write(scene, adjusted);
             written.put(scene, adjusted);
             original.put(scene, base.clone());
+            ownStart = startTarget;
+            ownEnd = Math.max(endTarget, startTarget + 0.5f);
+            ownR = base[2] * (1.0f - darken);
+            ownG = base[3] * (1.0f - darken);
+            ownB = base[4] * (1.0f - darken);
+            ownAlpha = alpha;
+            if (shaderPackFogEnabled) ShaderPackSearchFog.queue();
         } catch (Throwable error) {
             warnOnce("could not apply search fog: " + error);
         }

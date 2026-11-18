@@ -1,4 +1,4 @@
-﻿# Seguimiento de versiones de Workshop y fixes locales
+# Seguimiento de versiones de Workshop y fixes locales
 
 Este registro sigue los mods de Workshop que sirven de objetivo a los fixes locales. El ID de
 Workshop y `time_updated` identifican la publicaciÃƒÆ’Ã‚Â³n; `modversion` se registra cuando el contenido
@@ -34,7 +34,7 @@ omite esa etiqueta para no confundirla con una versiÃƒÂ³n del contenido.
 | Mod original de Workshop | Workshop ID | Mod ID fuente | Fix local | Version del fix | Version fuente aplicada | Workshop actualizado | Version fuente instalada | Estado |
 |---|---:|---|---|---:|---|---|---|---|
 | [Glue & Duct Tape Crafting](https://steamcommunity.com/sharedfiles/filedetails/?id=3767335348) | 3767335348 | XGlueTapeCrafting | ChilaSeda_Fix_XGlueTapeCrafting_Translation_B42_3767335348 | sin etiqueta | Sin registro histórico | 2026-08-30 09:23:32 UTC | mod.info sin modversion | En seguimiento |
-| [[DEPRECATED] Check Around](https://steamcommunity.com/sharedfiles/filedetails/?id=3300688173) | 3300688173 | CheckAround | ChilaSeda_Fix_Check_Around_VoiceLineLists_B42_3300688173 | 0.1.1 | Sin registro histórico | 2025-12-13 21:23:16 UTC | 1.4.0 | En seguimiento |
+| [[DEPRECATED] Check Around](https://steamcommunity.com/sharedfiles/filedetails/?id=3300688173) | 3300688173 | CheckAround | ChilaSeda_Fix_Check_Around_VoiceLineLists_B42_3300688173 | 0.1.2 | Sin registro histórico | 2025-12-13 21:23:16 UTC | 1.4.0 | En seguimiento |
 | [Authentic Z](https://steamcommunity.com/sharedfiles/filedetails/?id=2335368829) | 2335368829 | Authentic Z - Current | ChilaSeda_Fix_Authentic_Z_InstantCraft_B42_2335368829 | 0.1.0 | Sin registro histórico | 2026-10-31 01:17:39 UTC | mod.info sin modversion | En seguimiento |
 | [Any Wall Flags 3D - Project Viewpoint [B42]](https://steamcommunity.com/sharedfiles/filedetails/?id=3818605688) | 3818605688 | DGVFlags | ChilaSeda_Fix_Any_Wall_Flags_3D_Weight_B42_3818605688 | sin etiqueta | Sin registro histórico | 2026-10-25 14:52:17 UTC | no disponible en disco | En seguimiento |
 | [Dismantle All at Once](https://steamcommunity.com/sharedfiles/filedetails/?id=3761218629) | 3761218629 | DismantleAllAtOnce | ChilaSeda_Fix_Dismantle_All_at_Once_MenuOrder_B42_3761218629 | sin etiqueta | Sin registro histórico | 2026-08-08 21:55:02 UTC | no disponible en disco | En seguimiento |
@@ -49,7 +49,7 @@ omite esa etiqueta para no confundirla con una versiÃƒÂ³n del contenido.
 | [Viewpoint - Interface](https://steamcommunity.com/sharedfiles/filedetails/?id=3812616893) | 3812616893 | ViewpointUI | ChilaSeda_Fix_Viewpoint_Interface_ActionProgress_B42_3812616893 | sin etiqueta | Sin registro histórico | 2026-10-25 15:03:41 UTC | 0.14.0 | En seguimiento |
 | [Viewpoint Foraging](https://steamcommunity.com/sharedfiles/filedetails/?id=3814994364) | 3814994364 | ViewpointForaging | ChilaSeda_Fix_ViewpointForaging_B42_3814994364 | 1.3.15 | Sin registro histórico | 2026-10-14 20:24:31 UTC | 0.3.0 | En seguimiento |
 | [[B42] Water Pipes](https://steamcommunity.com/sharedfiles/filedetails/?id=3546314080) | 3546314080 | Waterpipes | ChilaSeda_Fix_Water_Pipes_ModData_B42_3546314080 | 1.0.0 | Sin registro histórico | 2026-08-22 20:05:37 UTC | no disponible en disco | En seguimiento |
-| [Wilderness QoL [B42]](https://steamcommunity.com/sharedfiles/filedetails/?id=3779759338) | 3779759338 | Wilderness QoL | ChilaSeda_Translations_ES_B42/ChilaSeda_WFIIdentificationFix.lua | sin etiqueta | Sin registro histórico | 2026-11-14 14:58:47 UTC | 0.8.13 | En seguimiento |
+| [Wilderness QoL [B42]](https://steamcommunity.com/sharedfiles/filedetails/?id=3779759338) | 3779759338 | Wilderness QoL | ChilaSeda_Fix_Wilderness_QoL_Identification_B42_3779759338 | sin etiqueta | Sin registro histórico | 2026-11-14 14:58:47 UTC | 0.8.13 | En seguimiento |
 | Project Zomboid (juego base) | - | - | ChilaSeda_Fix_Project_Zomboid_AutoTools_B42_Vanilla | 1.0.1 | No aplica | No aplica | No aplica | Sin Workshop original |
 <!-- CURRENT_STATE_END -->
 

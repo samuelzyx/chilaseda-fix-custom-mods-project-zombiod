@@ -647,58 +647,88 @@ local function rebalanceContainer(container, visited)
     return changed
 end
 
-local function rebalanceAccessibleItems()
-    local playerCount = getNumActivePlayers and getNumActivePlayers() or 1
-    for playerIndex = 0, playerCount - 1 do
-        local player = getSpecificPlayer and getSpecificPlayer(playerIndex)
-        if player then
-            local visited = {}
-            local changed = rebalanceContainer(player:getInventory(), visited)
-            local paneMenu = rawget(_G, "ISInventoryPaneContextMenu")
+local function rebalanceAccessiblePlayer(player, playerNum)
+    if not player then return end
+    local visited = {}
+    local changed = rebalanceContainer(player:getInventory(), visited)
+    local paneMenu = rawget(_G, "ISInventoryPaneContextMenu")
 
-            -- Match Weight Monitor's container discovery. Refreshing both pages
-            -- populates the nearby container list before getContainers(player).
-            local playerNum = 0
-            if type(player.getPlayerNum) == "function" then
-                local ok, value = pcall(function() return player:getPlayerNum() end)
-                if ok and tonumber(value) then playerNum = tonumber(value) end
-            end
-            local getInventoryPage = rawget(_G, "getPlayerInventory")
-            local getLootPage = rawget(_G, "getPlayerLoot")
-            local function refreshBackpackList(getter)
-                if type(getter) ~= "function" then return end
-                local ok, page = pcall(getter, playerNum)
-                if ok and page and page.inventoryPane
-                    and type(page.refreshBackpacks) == "function" then
-                    pcall(page.refreshBackpacks, page)
-                end
-            end
-            refreshBackpackList(getInventoryPage)
-            refreshBackpackList(getLootPage)
+    -- Match Weight Monitor's container discovery. Refreshing both pages
+    -- populates the nearby container list before getContainers(player).
+    playerNum = tonumber(playerNum) or 0
+    if type(player.getPlayerNum) == "function" then
+        local ok, value = pcall(function() return player:getPlayerNum() end)
+        if ok and tonumber(value) then playerNum = tonumber(value) end
+    end
+    local getInventoryPage = rawget(_G, "getPlayerInventory")
+    local getLootPage = rawget(_G, "getPlayerLoot")
+    local function refreshBackpackList(getter)
+        if type(getter) ~= "function" then return end
+        local ok, page = pcall(getter, playerNum)
+        if ok and page and page.inventoryPane
+            and type(page.refreshBackpacks) == "function" then
+            pcall(page.refreshBackpacks, page)
+        end
+    end
+    refreshBackpackList(getInventoryPage)
+    refreshBackpackList(getLootPage)
 
-            if paneMenu and paneMenu.getContainers then
-                local ok, containers = pcall(function() return paneMenu.getContainers(player) end)
-                if ok and containers then
-                    for i = 0, containers:size() - 1 do
-                        changed = changed + rebalanceContainer(containers:get(i), visited)
-                    end
-                end
-            end
-            if changed > 0 then
-                print("[ChilaSeda_VanillaWeightFix] updated " .. tostring(changed)
-                    .. " existing item instance(s) in inventory, bags, and open containers")
+    if paneMenu and paneMenu.getContainers then
+        local ok, containers = pcall(function() return paneMenu.getContainers(player) end)
+        if ok and containers then
+            for i = 0, containers:size() - 1 do
+                changed = changed + rebalanceContainer(containers:get(i), visited)
             end
         end
     end
+    if changed > 0 then
+        print("[ChilaSeda_VanillaWeightFix] sleep rebalance updated " .. tostring(changed)
+            .. " existing item instance(s) in inventory, bags, and open containers")
+    end
 end
 
-local tickCounter = 0
-local function onTick()
-    tickCounter = tickCounter + 1
-    if tickCounter < 120 then return end
-    tickCounter = 0
-    rebalanceAccessibleItems()
+local sleepRebalanced = {}
+
+local function playerIndexFor(player)
+    if player and type(player.getPlayerNum) == "function" then
+        local ok, value = pcall(function() return player:getPlayerNum() end)
+        if ok and tonumber(value) then return tonumber(value) end
+    end
+    return 0
+end
+
+local function onPlayerUpdate(player)
+    if not player then return end
+    local playerIndex = playerIndexFor(player)
+    if not sleepRebalanced[playerIndex] then return end
+    if type(player.isAsleep) ~= "function" then return end
+
+    local ok, asleep = pcall(function() return player:isAsleep() end)
+    if ok and not asleep then sleepRebalanced[playerIndex] = nil end
+end
+
+local function onSleepingTick(playerIndex)
+    playerIndex = tonumber(playerIndex)
+    if playerIndex == nil or sleepRebalanced[playerIndex] then return end
+
+    -- Consume this sleep session before any checks so it can never retry while
+    -- the player remains asleep, including when health is not at its maximum.
+    sleepRebalanced[playerIndex] = true
+    local player = getSpecificPlayer and getSpecificPlayer(playerIndex)
+    if not player then
+        print("[ChilaSeda_VanillaWeightFix] sleep rebalance skipped: player unavailable")
+        return
+    end
+
+    local ok, health = pcall(function() return player:getHealth() end)
+    if not ok or type(health) ~= "number" or health < 100 then
+        print("[ChilaSeda_VanillaWeightFix] sleep rebalance skipped: health is not full")
+        return
+    end
+
+    rebalanceAccessiblePlayer(player, playerIndex)
 end
 
 Events.OnLoadedTileDefinitions.Add(rebalanceVanillaItems)
-if Events.OnTick then Events.OnTick.Add(onTick) end
+if Events.OnSleepingTick then Events.OnSleepingTick.Add(onSleepingTick) end
+if Events.OnPlayerUpdate then Events.OnPlayerUpdate.Add(onPlayerUpdate) end

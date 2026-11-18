@@ -4,5 +4,4 @@ authors=ChilaSeda
 description=Allows adding equipped firewood to campfires and BBQs without transferring it.
 loadModAfter=Viewpoint,ViewpointUI
 versionMin=42.21
-versionMax=42.22
 modversion=1.0.0

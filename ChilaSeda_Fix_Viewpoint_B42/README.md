@@ -1,4 +1,4 @@
-# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.74
+# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.80
 
 <div align="center">
 
@@ -7,6 +7,45 @@
 </div>
 
 ---
+
+## Version 2.0.80
+
+- Ports Viewpoint Foraging's separate circular depth-buffer fog renderer into this local fix.
+  It draws a round search-radius layer over Viewpoint's 3D scene and reads the active Viewpoint
+  depth/projection data, including the Iris path used by shader packs. The new `Round depth fog
+  layer` option defaults on; turn it off to keep only Viewpoint's built-in fog. Viewpoint
+  Foraging itself remains optional and is not enabled by this port.
+- Keeps the fog layer tied to the existing native search-mode state, radius, style, intensity,
+  and feather settings. Local compile and archive checks passed; Jill runtime behavior still
+  needs confirmation.
+
+## Version 2.0.79
+
+- Retargets the assignable forage key to the closest seen native 3D search pin around
+  the screen centre, using Viewpoint's own camera projection. Pressing the key delegates to the
+  pin's normal `ISForageIcon` pickup callback; it does not enable Viewpoint Foraging.
+- Uses the addon's former targeting limits as defaults: within 110 screen pixels and 12 tiles.
+
+## Version 2.0.78
+
+- Adds local controls for native search fog: enable/disable, Dark or Mist style, intensity,
+  and edge feather. These options feed the existing Viewpoint fog bridge without enabling
+  Viewpoint Foraging.
+
+## Version 2.0.77
+
+- Adds an assignable key in the local fix options to pick up the identified native forage pin
+  under the cursor through the vanilla `ISForageIcon` action.
+- Labels the fog and search-pin bridges as Viewpoint 0.1.7 native API integrations; the separate
+  Viewpoint Foraging addon remains optional and is not needed for these functions.
+
+## Version 2.0.76
+
+- Fixes the 2.0.75 guard crash by exposing all injected helper state/methods to Viewpoint's package; the DebugLog showed an IllegalAccessError at the first game tick.
+
+## Version 2.0.75
+
+- Adds a null-slot guard for Viewpoint's zombie skeleton batch; if a batch is incomplete, the local patch clears it so animation falls back to the game's normal path.
 
 ## Version 2.0.74
 
@@ -156,11 +195,23 @@
 - The fog radius eases between updates; the fog color and desaturation use the active search
   overlay values. The patch has its own guarded renderer hook and does not require enabling the
   separate Viewpoint Foraging mod.
-- `Options > Mods > ChilaSeda Viewpoint Fix` includes a `Fog intensity` slider from 0 to 1;
-  lower it to make the native search fog less dense without changing the manual pin zoom.
-- The official installed Viewpoint 0.1.6.2 does not yet expose the integrated forage API, so the
-  new path stays inactive until that API appears in an official release. Minecraft shader-pack
-  radius overlays still need a separate depth-buffer layer.
+- `Options > Mods > ChilaSeda Viewpoint Fix` includes an enable toggle, `Dark`/`Mist` style,
+  intensity slider from 0 to 1, and edge feather slider. These adjust native search fog without
+  changing the manual pin zoom.
+- The bridge and options use Viewpoint 0.1.7's native `ViewpointForage.found` API; the separate
+  Viewpoint Foraging addon is not required or activated. Minecraft shader-pack radius overlays
+  still need a separate depth-buffer layer; the addon source that implements it is not installed
+  in this workspace.
+
+## Recoleccion de hallazgos nativos por tecla
+
+- `Options > Mods > ChilaSeda Viewpoint Fix` includes an assignable `Pick up aimed find` key
+  (default G). During native search mode, aim the cursor at a visible, identified forage pin and
+  press the key. The patch calls the vanilla `ISForageIcon` double-click path, which queues the
+  normal `ISForageAction`, validates container space and walks to the find as usual.
+- This binding reads only native `ISSearchManager.forageIcons`; it does not load or require
+  `ViewpointForaging/VPF_Core`, nor does it change vanilla collection behavior when the key is not
+  pressed. Runtime confirmation in Jill is pending.
 
 ## Calibración de la rebúsqueda integrada
 
@@ -179,8 +230,9 @@
   do not reset the selected zoom.
 - Its calibrator now has a unique Lua module name and separate config/report files from the
   Viewpoint Foraging calibrator. This prevents `require` caching and shortcut handling from
-  crossing between the two active patches. When the installed Viewpoint lacks the integrated
-  forage API, its calibrator shortcut stays inactive and leaves the Foraging calibrator available.
+  crossing between the two patches. The native path requires Viewpoint 0.1.7's `ViewpointForage.found`
+  API and `Tuning` fields; it does not require the `ViewpointForaging` addon ID. If the native API
+  or fields are unavailable, only this native calibration shortcut stays inactive.
 
 ## Zoom global para pines
 
@@ -192,9 +244,9 @@
   position, so the arrow follows the pin's projected direction while leaving the pin coordinates
   and marker placement unchanged. If the camera or pin data is unavailable, the native calculation
   remains as fallback.
-- The Java arrow projection is gated by the integrated `ViewpointForage.found` API. If that API is
-  absent, the patch leaves Viewpoint's original `ForageFinds.arrow` implementation untouched;
-  this keeps the local native-forage hooks inert when the separate Viewpoint Foraging addon is removed.
+- The Java arrow projection is gated by Viewpoint 0.1.7's native `ViewpointForage.found` API. If
+  that API is absent, the patch leaves Viewpoint's original `ForageFinds.arrow` implementation
+  untouched. This gate is independent of the separate Viewpoint Foraging addon ID.
 - Requires Viewpoint and ZombieBuddy 2.3.4. Runtime confirmation in Jill is pending.
 
 ## Objetos sin nombre de sprite en el menú del mundo

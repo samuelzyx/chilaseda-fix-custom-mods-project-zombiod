@@ -93,6 +93,17 @@ local function isPlayerMoving(player)
     return false
 end
 
+local function dryingActionIsValid(action)
+    if not action or type(action.isValid) ~= "function" then return false end
+    local item = action.item
+    if item and type(item.getCurrentUsesFloat) == "function" then
+        local usesOk, uses = pcall(item.getCurrentUsesFloat, item)
+        if not usesOk or type(uses) ~= "number" or uses <= 0 then return false end
+    end
+    local ok, valid = pcall(action.isValid, action)
+    return ok and valid == true
+end
+
 ISTimedActionQueue.add = function(action, ...)
     if action and action.character then
         local shared = ChilaSedaAccessibleActions
@@ -110,14 +121,22 @@ ISTimedActionQueue.resetQueue = function(queue, ...)
         for _, action in ipairs(queue.queue) do
             if action.chilaSedaInventoryWorkJob == job
                     or action.chilaSedaResumeDryingJob == job then
-                if action.chilaSedaResumeDryingJob == job
-                        and type(action.getJobDelta) == "function" then
-                    local ok, delta = pcall(action.getJobDelta, action)
-                    if ok and type(delta) == "number" then
-                        action.chilaSedaResumeDelta = math.max(0, math.min(1, delta))
+                if action.chilaSedaResumeDryingJob == job then
+                    if not dryingActionIsValid(action) then
+                        print(TAG .. "drying action is no longer valid; not resuming it")
+                    else
+                        -- Queued actions have no engine action until begin() runs.
+                        if action.action and type(action.getJobDelta) == "function" then
+                            local ok, delta = pcall(action.getJobDelta, action)
+                            if ok and type(delta) == "number" then
+                                action.chilaSedaResumeDelta = math.max(0, math.min(1, delta))
+                            end
+                        end
+                        snapshot[#snapshot + 1] = action
                     end
+                else
+                    snapshot[#snapshot + 1] = action
                 end
-                snapshot[#snapshot + 1] = action
             end
         end
     end
@@ -153,21 +172,28 @@ local function resumeAfterInterruption()
                     if not dryingIsMoving then
                         job.pendingActions = nil
                         job.pendingResume = false
+                        local resumedCount = 0
                         for _, action in ipairs(actions) do
-                            if action.chilaSedaResumeDryingJob == job
-                                    and type(action.chilaSedaResumeBaseMaxTime) == "number" then
-                                action.maxTime = action.chilaSedaResumeBaseMaxTime
-                            end
-                            originalQueueAdd(action)
-                            local delta = action.chilaSedaResumeDelta
-                            if action.chilaSedaResumeDryingJob == job
-                                    and type(delta) == "number"
-                                    and type(action.setJobDelta) == "function" then
-                                pcall(action.setJobDelta, action, delta)
-                                action.chilaSedaResumeDelta = nil
+                            if action.chilaSedaResumeDryingJob ~= job
+                                    or dryingActionIsValid(action) then
+                                if action.chilaSedaResumeDryingJob == job
+                                        and type(action.chilaSedaResumeBaseMaxTime) == "number" then
+                                    action.maxTime = action.chilaSedaResumeBaseMaxTime
+                                end
+                                originalQueueAdd(action)
+                                local delta = action.chilaSedaResumeDelta
+                                if action.chilaSedaResumeDryingJob == job
+                                        and type(delta) == "number"
+                                        and type(action.setJobDelta) == "function" then
+                                    pcall(action.setJobDelta, action, delta)
+                                    action.chilaSedaResumeDelta = nil
+                                end
+                                resumedCount = resumedCount + 1
+                            else
+                                print(TAG .. "drying action became invalid before resume; not re-queued")
                             end
                         end
-                        print(TAG .. "resumed " .. tostring(#actions) .. " pending actions")
+                        print(TAG .. "resumed " .. tostring(resumedCount) .. " pending actions")
                     end
                 end
             end

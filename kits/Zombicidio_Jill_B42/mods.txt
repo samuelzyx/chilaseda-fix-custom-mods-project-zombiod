@@ -242,7 +242,6 @@ mods
     mod = ChilaSeda_Fix_Authentic_Z_InstantCraft_B42_2335368829,
     mod = ChilaSeda_AlbumDelSuperviviente_B42,
     mod = ChilaSeda_AuditSuite_B42,
-    mod = ChilaSeda_RecentMapSymbols_ExtraMapSymbols_B42,
     mod = ChilaSeda_Fix_Project_Zomboid_PoisonKnowledgeIcon_B42_Vanilla,
     mod = ChilaSeda_Fix_BetterFlashlights_Lighting_B42,
     mod = ChilaSeda_AnimalBalance_B42,
@@ -253,6 +252,7 @@ mods
     mod = ChilaSeda_Fix_CustomIntros_B42,
     mod = ChilaSeda_Recovery_CarBatteryCharger_B42,
     mod = ChilaSeda_Recovery_SpiffoKeys_B42,
+    mod = ChilaSeda_MapSymbolSizeSlider_ExtraMapSymbolsFix_B42,
     mod = ZeroWeightKeys_B42,
 }
 

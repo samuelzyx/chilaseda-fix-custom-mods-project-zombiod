@@ -1,4 +1,4 @@
-﻿name=ChilaSeda - Inventory Tetris Size Cap (B42)
+name=ChilaSeda - Inventory Tetris Size Cap (B42)
 id=ChilaSeda_InventoryTetrisSizeCap_B42
 authors=ChilaSeda
 description=Normaliza stacks, limita rejillas y valida el peso de mochilas. Ofrece destinos disponibles al rechazar traslados por capacidad y protege la carga temprana de la interfaz.

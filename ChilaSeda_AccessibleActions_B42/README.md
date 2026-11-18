@@ -1,4 +1,4 @@
-# ChilaSeda - Acciones Accesibles (Build 42) 1.0.33
+# ChilaSeda - Acciones Accesibles (Build 42) 1.0.35
 
 <div align="center">
 
@@ -7,6 +7,14 @@
 </div>
 
 ---
+
+## Version 1.0.35
+
+- Al reanudar Secar, solo lee el avance si ya existe la accion interna; las acciones aun en cola se conservan sin provocar `getJobDelta` nulo.
+
+## Version 1.0.34
+
+- Si el trapo se agota o Secarse deja de ser valido, no vuelve a reencolar la accion en bucle; la accion termina sin dejar la barra naranja congelada.
 
 ## Version 1.0.33
 

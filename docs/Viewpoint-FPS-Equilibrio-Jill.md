@@ -48,11 +48,11 @@ La auditoria de fuentes de Viewpoint 0.1.7 y del addon confirma estas diferencia
 
 | Funcion | Viewpoint nativo 0.1.7 | Fix local | Solo addon ViewpointForaging |
 |---|---|---|---|
-| Pines 3D de hallazgos de rebusca | Si | Calibracion de altura por zona y zoom global persistente | Escala de pin ligada a profundidad |
+| Pines 3D de hallazgos de rebusca | Si | Calibracion de altura por zona, zoom global y proyeccion del pin nativo para apuntarlo con G | Escala de pin ligada a profundidad |
 | Flechas de hallazgos | Si | Corrige la orientacion segun la camara | Tamano/borde configurables y asistencia de borde |
 | Radio de busqueda | Si, la API nativa expone hallazgos y radio | El puente de niebla consulta el radio nativo | Modos de burbuja y ajustes de alcance propios |
-| Niebla de busqueda | No encontre el control configurable del addon en el nativo | Slider `Fog intensity` reduce o apaga la niebla de Viewpoint | Estilos dark/mist, feather y capas de niebla para shader packs |
-| Recoleccion con tecla apuntando al pin | Tiene API y acciones normales de cosecha/menu | La tecla asignable esta en desarrollo; su selector actual busca iconos UI que Viewpoint oculta al renderizar los pines 3D. No probarla ni considerarla lista hasta adaptar el objetivo a la proyeccion nativa | Aro/objetivo de mira, asistencia por alcance y pickup por pin proyectado |
+| Niebla de busqueda | Viewpoint nativo expone la niebla de escena, pero no una burbuja circular configurable para shader packs | El fix local 2.0.80 porta la capa de profundidad circular del addon, con opcion propia; los controles nativos Dark/Mist, intensidad y suavizado siguen disponibles | Falta confirmar en Jill con shader pack que la burbuja siga el radio y se desvanezca al salir del modo de busqueda |
+| Recoleccion con tecla apuntando al pin | Tiene API y acciones normales de cosecha/menu | G selecciona el pin nativo visible mas cercano al centro de pantalla, dentro de 110 px y 12 tiles, y llama su accion normal | Aro/objetivo visual, asistencia por alcance y pickup por pin proyectado |
 | Marcadores 3D | Pines de hallazgos de rebusca | Ajustes de altura/zoom para esos pines | Marcadores de objetos del mundo, escondites y huellas; trazos/seguimiento |
 
-Por tanto, el zoom del panel y la calibracion de altura siguen conectados al pin nativo y no necesitan el addon. La niebla del fix es una integracion parcial: no reproduce los estilos y capas del addon. La recoleccion con tecla requiere terminarse primero. El addon tambien recorria categorias de iconos que no aparecen en la lista nativa de hallazgos, asi que no se debe asumir que el nativo da marcadores 3D para objetos, escondites o huellas.
+Por tanto, el zoom del panel, la calibracion de altura y la niebla circular pueden funcionar con las API nativas de Viewpoint sin activar el addon. La recoleccion con tecla requiere validacion runtime. El addon tambien recorria categorias de iconos que no aparecen en la lista nativa de hallazgos, asi que no se debe asumir que el nativo da marcadores 3D para objetos, escondites o huellas.

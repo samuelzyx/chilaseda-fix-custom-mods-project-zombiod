@@ -9,7 +9,7 @@ local function warnOnce(message)
     print(TAG .. message)
 end
 
-local function integratedForageAvailable()
+local function nativeForageAvailable()
     return type(ViewpointForage) == "table" and type(ViewpointForage.found) == "function"
 end
 
@@ -35,10 +35,13 @@ end
 local function updateFog()
     local bridge = ChilaSedaViewpointFogJ
     if not bridge or type(bridge.setSearchFog) ~= "function" then return end
+    if type(bridge.setShaderPackFogEnabled) == "function" then
+        pcall(bridge.setShaderPackFogEnabled, ChilaSedaViewpointShaderPackFogEnabled ~= false)
+    end
 
     local player = type(getSpecificPlayer) == "function" and getSpecificPlayer(0) or nil
     local manager = searchManager(player)
-    local active = integratedForageAvailable() and bridgeActive()
+    local active = nativeForageAvailable() and bridgeActive()
     local inVehicle = false
     if player then
         local ok, vehicle = pcall(player.getVehicle, player)
@@ -56,9 +59,12 @@ local function updateFog()
         end
     end
 
-    local feather, style = 3, 0
+    local feather = type(ChilaSedaViewpointNativeFogFeather) == "number"
+        and math.max(0.5, math.min(10, ChilaSedaViewpointNativeFogFeather)) or 3
+    local style = ChilaSedaViewpointNativeFogStyle == 1 and 1 or 0
     local strength = type(ChilaSedaViewpointNativeFogStrength) == "number"
         and math.max(0, math.min(1, ChilaSedaViewpointNativeFogStrength)) or 1
+    if ChilaSedaViewpointNativeFogEnabled == false then on = false end
     if last.on == on and last.radius == radius and last.darkness == darkness and last.desat == desat
             and last.feather == feather and last.style == style and last.strength == strength then
         return
@@ -70,7 +76,7 @@ local function updateFog()
 end
 
 local function clearVanillaOverlay(manager)
-    if not integratedForageAvailable() or not bridgeActive() or manager.isOverride then return end
+    if not nativeForageAvailable() or not bridgeActive() or manager.isOverride then return end
     local overlay = manager.searchModeOverlay
     if not overlay then return end
     pcall(function()

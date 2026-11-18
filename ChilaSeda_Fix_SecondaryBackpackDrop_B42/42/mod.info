@@ -4,5 +4,4 @@ authors=ChilaSeda
 description=Keeps a held backpack in the player's inventory when equipping a flashlight in the secondary hand instead of letting the heavy-item equip hook drop it.
 loadModAfter=BetterFlashlightsFixed,ChilaSeda_Fix_Project_Zomboid_AutoTools_B42_Vanilla
 versionMin=42.21
-versionMax=42.22
 modversion=0.1.0

@@ -1,8 +1,12 @@
-# ChilaSeda Fix · pesos vanilla y overrides (B42) 2.1.1
+# ChilaSeda Fix · pesos vanilla y overrides (B42) 2.1.2
 
 ## Contenido del paquete
 
 Incluye VanillaWeightFix y los overrides de peso para Any Wall Flags y Posters. Weight Monitor ahora forma parte de `ChilaSeda_AuditSuite_B42`.
+
+## Reajuste de instancias
+
+El reajuste de objetos accesibles corre una sola vez por episodio de sueno y solo si la salud esta completa (100). Si no esta al maximo, se omite hasta el siguiente sueno. No hay sondeo periodico mientras el personaje juega.
 
 ## Metas de peso documentadas
 

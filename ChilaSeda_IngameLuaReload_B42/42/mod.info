@@ -3,5 +3,4 @@ id=ChilaSeda_IngameLuaReload_B42
 authors=ChilaSeda
 description=Abre una confirmacion dentro de una partida individual; E confirma y Esc cancela. Ctrl+Shift+F10.
 versionMin=42.21
-versionMax=42.22
 modversion=0.1.3

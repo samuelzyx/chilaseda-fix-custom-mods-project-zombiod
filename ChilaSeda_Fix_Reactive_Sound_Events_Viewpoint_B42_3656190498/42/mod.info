@@ -5,6 +5,5 @@ description=Rotates Reactive Sound Events indicators with the Viewpoint camera. 
 require=ReactiveSE,Viewpoint,VisualSoundsKAViewpoint,ZombieBuddy
 loadModAfter=ReactiveSE,Viewpoint,VisualSoundsKAViewpoint
 versionMin=42.21
-versionMax=42.22
 modversion=1.1.2
 ZBVersionMin=2.3.0

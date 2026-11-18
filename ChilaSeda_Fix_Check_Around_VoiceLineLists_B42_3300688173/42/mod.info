@@ -1,9 +1,8 @@
-﻿name=ChilaSeda Fix - Check Around - Voice Line Lists (B42)
+name=ChilaSeda Fix - Check Around - Voice Line Lists (B42)
 id=ChilaSeda_Fix_Check_Around_VoiceLineLists_B42_3300688173
 authors=ChilaSeda
 description=Repara las frases de voz y el chequeo de rasgos de Check Around en Build 42.22; evita que la barra de progreso quede sin inicializar.
 require=DoggyLibrary,CheckAround
 loadModAfter=DoggyLibrary,CheckAround
 versionMin=42.21
-versionMax=42.22.2
 modversion=0.1.2
