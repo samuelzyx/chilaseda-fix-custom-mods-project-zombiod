@@ -11,7 +11,7 @@
 
 Paquete local para rendimiento, productos y manipulacion de animales. ID:
 `ChilaSeda_AnimalBalance_B42`. Reune Animal Yield, Heavy Animal Pickup y las reparaciones
-locales de Undead Wildlife. Version 2.3.0. No modifica archivos de Workshop.
+locales de Undead Wildlife. Version 2.3.2. No modifica archivos de Workshop.
 
 La opción de carnicería desde contenedor usa el icono vanilla B42 de cuchilla y
 queda tras las opciones nativas de equipar/recetas.
@@ -57,6 +57,9 @@ limite de carga. Si esta instalado, el paquete:
 - Interrumpe los ataques anunciados por Undead Wildlife siempre que el personaje este dentro de
   cualquier vehiculo. La proteccion ya no depende de que Lua pueda leer el estado de puertas o
   ventanas; DebugLog registra el intento de interrupcion y si aun llega un resultado de ataque.
+- Reduce a la mitad los intervalos de vocalizaciones ambientales (idle, caminando/volando y
+  estres) de los tipos hostiles registrados por Undead Wildlife. Conserva los mismos sonidos y no
+  modifica volumen ni alcance de sonido.
 - Muestra Halo notes de ataque, herida y victoria.
 
 La proteccion usa el evento temprano `AnimalAttackStart` y el comando `AnimalAttackInterrupt` que
