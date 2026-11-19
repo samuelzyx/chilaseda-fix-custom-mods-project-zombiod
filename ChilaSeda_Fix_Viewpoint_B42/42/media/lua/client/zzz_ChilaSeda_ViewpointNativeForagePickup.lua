@@ -6,6 +6,7 @@ local AIM_RADIUS = 110
 local MAX_REACH = 12
 local PIN_LIFT = 0.35
 local PICKUP_PROMPT_GAP = 8
+local PROMPT_REFRESH_MS = 16
 local warned = false
 local pickupPrompt
 
@@ -89,6 +90,44 @@ local function eachNativeIcon(manager, callback)
     end
 end
 
+local function displayName(item)
+    if not item then return nil end
+    for _, methodName in ipairs({"getDisplayName", "getName"}) do
+        local method = item[methodName]
+        if type(method) == "function" then
+            local ok, name = pcall(method, item)
+            if ok and type(name) == "string" and name ~= "" then return name end
+        end
+    end
+    return nil
+end
+
+local function foundItemName(icon)
+    if icon and icon.identified then
+        local itemList = icon.itemList
+        local listHasItems = false
+        if itemList and type(itemList.isEmpty) == "function" then
+            local ok, empty = pcall(itemList.isEmpty, itemList)
+            listHasItems = ok and empty ~= true
+        end
+        if listHasItems and type(itemList.get) == "function" then
+            local ok, item = pcall(itemList.get, itemList, 0)
+            if ok then
+                local name = displayName(item)
+                if name then return name end
+            end
+        end
+        local name = displayName(icon.itemObj)
+        if name then return name end
+    end
+    if type(getText) == "function" then
+        local key = "UI_ChilaSeda_ViewpointNativeForageFound"
+        local ok, value = pcall(getText, key)
+        if ok and type(value) == "string" and value ~= "" and value ~= key then return value end
+    end
+    return nil
+end
+
 local function aimedForagePin(manager)
     local bridge = ChilaSedaViewpointFogJ
     if not bridge or type(bridge.prepareNativeForagePins) ~= "function"
@@ -113,6 +152,7 @@ local function aimedForagePin(manager)
             bestDistance = distance
         end
     end)
+    if best then best.itemName = foundItemName(best.icon) end
     return best
 end
 
@@ -194,7 +234,9 @@ function PickupPrompt:prerender()
     local now = type(getTimestampMs) == "function"
         and getTimestampMs() or math.floor(os.clock() * 1000)
     if now < self.nextTargetUpdate then return end
-    self.nextTargetUpdate = now + 100
+    -- Viewpoint moves the projected pin with each camera frame; refresh at roughly
+    -- render rate instead of letting a throttled sample lag behind the camera.
+    self.nextTargetUpdate = now + PROMPT_REFRESH_MS
     self.target = pickupKeyName() and aimedFindForPickup() or nil
 end
 
@@ -203,26 +245,53 @@ function PickupPrompt:render()
     local keyName = pickupKeyName()
     if not target or not keyName then return end
 
-    local text = "[" .. keyName .. "]"
-    local width = 42
+    local textKey = "UI_ChilaSeda_ViewpointNativeForagePrompt"
+    local text = keyName
+    if type(getText) == "function" then
+        local ok, translated = pcall(getText, textKey, keyName)
+        if ok and type(translated) == "string" and translated ~= "" and translated ~= textKey then
+            text = translated
+        end
+    end
+    local nameText = target.itemName
+    local font = UIFont and (UIFont.Small or UIFont.Medium) or nil
+    local function textWidth(value)
+        if type(getTextManager) == "function" and font then
+            local ok, measured = pcall(function()
+                return getTextManager():MeasureStringX(font, value)
+            end)
+            if ok and type(measured) == "number" then return measured + 12 end
+        end
+        return math.max(42, #value * 7 + 12)
+    end
+
+    local width = textWidth(text)
     if type(getTextManager) == "function" and UIFont and UIFont.Small then
-        local ok, measured = pcall(function()
-            return getTextManager():MeasureStringX(UIFont.Small, text)
-        end)
-        if ok and type(measured) == "number" then width = measured + 12 end
+        width = math.max(42, width)
     end
     local height = 20
-    local x = target.screenX - width / 2
-    local y = target.screenY - height - PICKUP_PROMPT_GAP
     local core = getCore and getCore() or nil
     local screenWidth = core and core:getScreenWidth() or nil
-    if type(screenWidth) == "number" then
-        x = math.max(4, math.min(x, math.max(4, screenWidth - width - 4)))
+    local function centeredX(textWidthValue)
+        local x = target.screenX - textWidthValue / 2
+        if type(screenWidth) == "number" then
+            x = math.max(4, math.min(x, math.max(4, screenWidth - textWidthValue - 4)))
+        end
+        return x
     end
-    y = math.max(4, y)
 
-    self:drawRect(x, y, width, height, 0.82, 0.02, 0.02, 0.02)
-    self:drawTextCentre(text, x + width / 2, y + 2, 1, 0.86, 0.35, 1, UIFont and UIFont.Small or UIFont.Medium)
+    local keyX = centeredX(width)
+    local keyY = math.max(4, target.screenY - height - PICKUP_PROMPT_GAP)
+    self:drawRect(keyX, keyY, width, height, 0.82, 0.02, 0.02, 0.02)
+    self:drawTextCentre(text, keyX + width / 2, keyY + 2, 1, 0.86, 0.35, 1, font)
+
+    if type(nameText) == "string" and nameText ~= "" then
+        local nameWidth = textWidth(nameText)
+        local nameX = centeredX(nameWidth)
+        local nameY = math.max(4, keyY - height - 2)
+        self:drawRect(nameX, nameY, nameWidth, height, 0.82, 0.02, 0.02, 0.02)
+        self:drawTextCentre(nameText, nameX + nameWidth / 2, nameY + 2, 1, 1, 1, 1, font)
+    end
 end
 
 local function createPickupPrompt()

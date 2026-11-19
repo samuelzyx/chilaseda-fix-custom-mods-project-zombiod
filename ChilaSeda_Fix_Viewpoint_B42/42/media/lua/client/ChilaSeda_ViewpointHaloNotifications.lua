@@ -9,8 +9,37 @@ end
 local TAG = "[ChilaSeda_ViewpointHaloNotifications] "
 local MAX_NOTIFICATIONS = 3
 local DISPLAY_MS = 6000
-local TRAIT_ICON_DEFAULT = "media/ui/Moodles/32/Mood_Concentrating.png"
 local LEVEL_UP_GREEN = { r = 0.35, g = 1, b = 0.48 }
+local XP_ICON_DEFAULT = "media/ui/SkillPanel/SkillUnit_fill.png"
+local PERK_ICONS = {
+	carpentry = "media/ui/Sidebar/48/Carpentry_On_48.png",
+	foraging = "media/ui/Sidebar/48/Search_On_48.png",
+	plantscavenging = "media/ui/Sidebar/48/Search_On_48.png",
+	fishing = "media/ui/survival_guide_spiffo/category_fishing.png",
+	farming = "media/ui/survival_guide_spiffo/category_farming.png",
+	cooking = "media/ui/survival_guide_spiffo/category_food_and_water.png",
+	mechanics = "media/ui/survival_guide_spiffo/category_vehicles.png",
+	firstaid = "media/ui/survival_guide_spiffo/mood_first_aid.png",
+	tailoring = "media/ui/Traits/trait_tailor.png",
+	trapping = "media/ui/survival_guide_spiffo/category_ranching.png",
+	aiming = "media/ui/Reticle/aimCircle08.png",
+	reloading = "media/ui/survival_guide_spiffo/category_combat.png",
+	axe = "media/ui/survival_guide_spiffo/category_combat.png",
+	longblade = "media/ui/survival_guide_spiffo/category_combat.png",
+	longblunt = "media/ui/survival_guide_spiffo/category_combat.png",
+	smallblade = "media/ui/survival_guide_spiffo/category_combat.png",
+	smallblunt = "media/ui/survival_guide_spiffo/category_combat.png",
+	spear = "media/ui/survival_guide_spiffo/category_combat.png",
+	fitness = "media/ui/survival_guide_spiffo/category_movement.png",
+	strength = "media/ui/survival_guide_spiffo/category_movement.png",
+	lightfoot = "media/ui/survival_guide_spiffo/category_movement.png",
+	nimble = "media/ui/survival_guide_spiffo/category_movement.png",
+	sneak = "media/ui/survival_guide_spiffo/category_movement.png",
+	sprinting = "media/ui/survival_guide_spiffo/category_movement.png",
+	electricity = "media/ui/survival_guide_spiffo/category_crafting.png",
+	maintenance = "media/ui/survival_guide_spiffo/category_crafting.png",
+	metalwelding = "media/ui/survival_guide_spiffo/category_crafting.png",
+}
 local notifications = {}
 local overlay
 
@@ -38,12 +67,38 @@ local function wrapText(text, maxChars)
 	return lines
 end
 
+local function drawDirectionArrow(self, x, y, size, pointsUp, color, alpha)
+	local unit = math.max(1, math.floor(size / 8))
+	local centerX = x + math.floor(size / 2)
+	local headHeight = unit * 3
+	local stemWidth = unit * 3
+	local stemHeight = math.max(unit, size - headHeight)
+	local r, g, b = color.r, color.g, color.b
+	if pointsUp then
+		for row = 0, 2 do
+			local rowWidth = unit * (3 + row * 2)
+			self:drawRect(centerX - math.floor(rowWidth / 2), y + row * unit,
+				rowWidth, unit, alpha, r, g, b)
+		end
+		self:drawRect(centerX - math.floor(stemWidth / 2), y + headHeight,
+			stemWidth, stemHeight, alpha, r, g, b)
+	else
+		self:drawRect(centerX - math.floor(stemWidth / 2), y,
+			stemWidth, stemHeight, alpha, r, g, b)
+		for row = 0, 2 do
+			local rowWidth = unit * (7 - row * 2)
+			self:drawRect(centerX - math.floor(rowWidth / 2), y + stemHeight + row * unit,
+				rowWidth, unit, alpha, r, g, b)
+		end
+	end
+end
+
 local function drawInlineLine(self, line, y, font, color, icons, arrow, arrowColor)
 	local manager = getTextManager()
 	local parts = {}
 	if arrow ~= nil then
 		parts[#parts + 1] = {
-			text = arrow and "+ " or "- ",
+			direction = arrow,
 			color = arrowColor or color,
 		}
 	end
@@ -66,7 +121,7 @@ local function drawInlineLine(self, line, y, font, color, icons, arrow, arrowCol
 	local iconSize = manager:getFontHeight(font)
 	local totalWidth = 0
 	for _, part in ipairs(parts) do
-		if part.icon then
+		if part.icon or part.direction ~= nil then
 			part.width = iconSize
 		else
 			part.width = manager:MeasureStringX(font, part.text)
@@ -93,6 +148,11 @@ local function drawInlineLine(self, line, y, font, color, icons, arrow, arrowCol
 					drawWidth, drawHeight, 1)
 			end
 			x = x + part.width
+		elseif part.direction ~= nil then
+			drawDirectionArrow(self, x + 1, y + 1, iconSize, part.direction,
+				{ r = 0, g = 0, b = 0 }, 0.9)
+			drawDirectionArrow(self, x, y, iconSize, part.direction, part.color or color, 1)
+			x = x + part.width
 		else
 			local partColor = part.color or color
 			self:drawText(part.text, x + 1, y + 1, 0, 0, 0, 0.9, font)
@@ -113,6 +173,17 @@ local function isLocalPlayer(player)
 		and player:getPlayerNum() == localPlayer:getPlayerNum()
 end
 
+local function perkIconFor(perk)
+	if perk and type(perk.getId) == "function" then
+		local ok, perkId = pcall(perk.getId, perk)
+		if ok and type(perkId) == "string" and perkId ~= "" then
+			local key = perkId:lower():gsub("[%s_%-]", "")
+			if PERK_ICONS[key] then return PERK_ICONS[key] end
+		end
+	end
+	return XP_ICON_DEFAULT
+end
+
 local function traitSemanticColor(text)
 	local normalized = tostring(text or ""):lower()
 	local beneficial = { "poca sed", "menos sed", "low thirst", "less thirsty", "less thirst" }
@@ -121,7 +192,7 @@ local function traitSemanticColor(text)
 		if normalized:find(phrase, 1, true) then return LEVEL_UP_GREEN end
 	end
 	for _, phrase in ipairs(harmful) do
-		if normalized:find(phrase, 1, true) then return { r = 1, g = 0.38, b = 0.34 } end
+		if normalized:find(phrase, 1, true) then return { r = 1, g = 0.34, b = 0.56 } end
 	end
 	return nil
 end
@@ -131,19 +202,23 @@ local function traitIconForMessage(text)
 	if normalized:find("sed", 1, true) or normalized:find("thirst", 1, true) then
 		return "media/ui/Moodles/32/Status_Thirst.png"
 	end
+	if normalized:find("sanador lento", 1, true) or normalized:find("slow healer", 1, true) then
+		return "media/ui/Moodles/32/Status_InjuredMinor.png"
+	end
+	if normalized:find("propenso a enfermar", 1, true)
+			or normalized:find("prone to illness", 1, true) then
+		return "media/ui/Moodles/32/Mood_Ill.png"
+	end
 	if normalized:find("insomn", 1, true) or normalized:find("sleep", 1, true)
 			or normalized:find("fatig", 1, true) or normalized:find("cansad", 1, true) then
 		return "media/ui/Moodles/32/Mood_Sleepy.png"
-	end
-	if normalized:find("rasgo", 1, true) or normalized:find("trait", 1, true) then
-		return TRAIT_ICON_DEFAULT
 	end
 	return nil
 end
 
 local function addNotification(text, color, arrow, arrowColor, icon, traitStyle)
 	if type(text) ~= "string" or text == "" then return false end
-	if traitStyle and not icon then icon = traitIconForMessage(text) or TRAIT_ICON_DEFAULT end
+	if traitStyle and not icon then icon = traitIconForMessage(text) end
 	local icons = {}
 	if type(icon) == "string" and icon:match("%S") and not text:find("[img=", 1, true) then
 		text = "[img=" .. icon .. "] " .. text
@@ -257,8 +332,9 @@ local function onSkillLevelUp(player, perk, level, gainedLevel)
 			or type(perk.getName) ~= "function" then return end
 	local ok, perkName = pcall(perk.getName, perk)
 	if not ok or type(perkName) ~= "string" or perkName == "" then return end
-	ChilaSeda_ViewpointHaloNotifications.showFixed(
-		"+1 " .. perkName, LEVEL_UP_GREEN, "media/ui/ArrowUp.png")
+	if addNotification(getText("UI_ChilaSeda_ViewpointHalo_LevelUp", perkName), LEVEL_UP_GREEN, true, LEVEL_UP_GREEN, perkIconFor(perk)) then
+		createOverlay()
+	end
 end
 
 if Events and Events.LevelPerk then Events.LevelPerk.Add(onSkillLevelUp) end
@@ -278,8 +354,8 @@ local function installRuneExpHaloHook()
 				local xp = tonumber(amount)
 				local sign = xp > 0 and "+" or ""
 				ChilaSeda_ViewpointHaloNotifications.showFixed(
-					sign .. string.format("%.2f XP %s", xp, name),
-					{ r = 1, g = 0.78, b = 0.32 })
+					 getText("UI_ChilaSeda_ViewpointHalo_XP", sign .. string.format("%.2f", xp), name),
+					{ r = 1, g = 0.78, b = 0.32 }, perkIconFor(perk))
 			end
 		end
 		return original(self, perk, amount, ...)
@@ -320,11 +396,19 @@ local function installHaloTextHelperHook()
 			local args = { ... }
 			local player, message = args[1], args[2]
 			if isLocalPlayer(player) and type(message) == "string" then
-				if message == "Zombies nearby - slowing down" and type(getText) == "function" then
-					local translated = getText("UI_ChilaSeda_ZombiesNearbySlowingDown")
-					if translated and translated ~= "UI_ChilaSeda_ZombiesNearbySlowingDown" then
-						message = translated
+				local normalizedMessage = message:lower():gsub("%s+", " ")
+				if normalizedMessage:find("zombies nearby", 1, true)
+						and normalizedMessage:find("slowing down", 1, true) then
+					local key = "UI_ChilaSeda_ZombiesNearbySlowingDown"
+					local translated
+					if type(getText) == "function" then
+						local ok, value = pcall(getText, key)
+						if ok and type(value) == "string" and value ~= "" and value ~= key
+								and not value:lower():find("zombies nearby", 1, true) then
+							translated = value
+						end
 					end
+					message = translated or message
 				end
 				local color = colorSelector(args)
 				local arrow, arrowColor

@@ -1,4 +1,4 @@
-# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.83
+# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.91
 
 <div align="center">
 
@@ -7,6 +7,40 @@
 </div>
 
 ---
+
+## Version 2.0.91
+
+- Translates observed native and Workshop timed actions through the local Spanish overlay instead of showing their internal English class names.
+- Adds Spanish labels for entering and exiting vehicles, changing seats, engine and door controls, windows, trailers, washing, and fuel transfers.
+- Keeps the native forage pickup prompt synchronized with Viewpoint's projected pin and shows its key hint and identified item name above it.
+
+## Version 2.0.90
+
+- Routes custom progress, XP, level-up, and destination Halo text through the Spanish translation overlay. AutoMoveTo cursor travel now uses its localized action label.
+
+## Version 2.0.89
+
+- Translates the Viewpoint "Zombies nearby - slowing down" Halo notice into Spanish even when the custom translation key is not available at hook time.
+
+## Version 2.0.88
+
+- Adds context-matched vanilla B42 icons to XP and level-up notes, item destination notes, and recognized trait notices. Skill icons map to the closest matching B42 activity; unrecognized perks use the B42 skill-progress tile. Generic notices without a clear visual meaning stay text-only.
+
+## Version 2.0.87
+
+- Colors level-up text and its direction arrow green. Trait changes use the native arrow direction as a graphic shape instead of `+`/`-` text; beneficial traits are green and harmful traits pink-red, with matching arrow color.
+
+## Version 2.0.86
+
+- Shows one Halo note after each successful ground pickup, native forage pickup with G, or fish catch. Each note names the item and its actual destination, such as the selected backpack or main inventory; the catch note appears after vanilla fishing bookkeeping and any selected-backpack move.
+
+## Version 2.0.85
+
+- Routes vanilla ground-item pickups, including stones, branches, and twigs, into the selected backpack when the item is allowed and fits. If it does not fit, vanilla keeps the main inventory as the destination. Caught fish use the same priority after vanilla catch bookkeeping.
+
+## Version 2.0.84
+
+- Replaces Viewpoint 0.1.7's thin condition strip in inventory-list rows with a compact square while preserving its wear colors and selection behavior, including floating corpse-loot lists.
 
 ## Version 2.0.83
 
@@ -308,8 +342,11 @@
 
 - Intercepts the native Java `HaloTextHelper` call used by `IsoGameCharacter.LevelPerk`;
   skill level-ups now appear in the fixed Viewpoint overlay instead of the vanilla halo.
-- Colors the shown beneficial traits green and harmful traits red, including Low Thirst,
-  Slow Healer, and Prone to Illness, regardless of the direction arrow.
+- Colors the shown beneficial traits green and harmful traits pink-red, including Low Thirst,
+  Slow Healer, and Prone to Illness, regardless of the direction arrow. The overlay draws direction
+  arrows as graphics and applies the same semantic color to both arrow and message. Thirst, injury,
+  illness, and sleep traits use their matching vanilla Moodle icons; unmatched messages do not get
+  a generic decorative icon.
 - Requires ZombieBuddy 2.3.4 for the narrow Java hook.
 - Accessible Actions calls to `HaloTextHelper` use the same fixed notice overlay; its food-purge
   notices use the direct `showFixed` route to preserve each removed item's icon.

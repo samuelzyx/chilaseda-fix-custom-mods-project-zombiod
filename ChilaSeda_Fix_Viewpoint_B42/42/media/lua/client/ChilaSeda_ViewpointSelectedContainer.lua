@@ -6,9 +6,20 @@ if not viewpointLootAvailable then
 end
 pcall(require, "Foraging/ISForageIcon")
 pcall(require, "Foraging/ISWorldItemIcon")
+pcall(require, "TimedActions/ISGrabItemAction")
 require "TimedActions/ISInventoryTransferUtil"
 require "TimedActions/ISInventoryTransferAction"
 require "ISUI/ISContextMenu"
+
+local function translatedText(key, ...)
+	if type(getText) ~= "function" then return key end
+	local ok, value = pcall(getText, key)
+	if not ok or type(value) ~= "string" or value == "" or value == key then return key end
+	for index, replacement in ipairs({...}) do
+		value = value:gsub("%%" .. index, function() return tostring(replacement) end)
+	end
+	return value
+end
 
 local function selectedDestination(playerNum)
     local page = getPlayerInventory(playerNum)
@@ -41,7 +52,15 @@ local function itemDisplayName(item)
 		local translated = getText(key)
 		if translated and translated ~= key then return translated end
 	end
-	return display or itemType
+	return display or translatedText("UI_ChilaSeda_Viewpoint_ItemUnknown") or itemType
+end
+
+local function containerIcon(container)
+	if not container or type(container.getContainingItem) ~= "function" then return nil end
+	local ok, owner = pcall(container.getContainingItem, container)
+	if not ok or not owner or type(owner.getTexture) ~= "function" then return nil end
+	local textureOk, texture = pcall(owner.getTexture, owner)
+	return textureOk and texture or nil
 end
 
 local destinationName
@@ -59,7 +78,8 @@ local function selectDestinationFromMenu(page, container)
 	local player = getSpecificPlayer(page.player)
 	if player and HaloTextHelper and type(HaloTextHelper.addText) == "function" then
 		HaloTextHelper.addText(player,
-			"Destino seleccionado: " .. destinationName(player, container), " ", 255, 220, 120)
+			translatedText("UI_ChilaSeda_Viewpoint_DestinationSelected", destinationName(player, container)),
+			containerIcon(container) or " ", 255, 220, 120)
 	end
 end
 
@@ -107,8 +127,8 @@ local function showAlternateDestinationMenu(player, page, selected, items)
 	if #destinations == 0 then
 		if HaloTextHelper and type(HaloTextHelper.addText) == "function" then
 			HaloTextHelper.addText(player,
-				"La mochila seleccionada esta llena y no hay otro destino con espacio.",
-				" ", 255, 220, 120)
+				translatedText("UI_ChilaSeda_Viewpoint_NoAlternateDestination"),
+				containerIcon(selected) or " ", 255, 220, 120)
 		end
 		return false
 	end
@@ -117,15 +137,15 @@ local function showAlternateDestinationMenu(player, page, selected, items)
 	local y = type(getMouseY) == "function" and getMouseY() or 0
 	local menu = ISContextMenu.get(playerNum, x, y)
 	if not menu then return false end
-	local header = menu:addOption("La mochila seleccionada esta llena.", nil, nil)
+	local header = menu:addOption(translatedText("UI_ChilaSeda_Viewpoint_SelectedBackpackFull"), nil, nil)
 	if header then header.notAvailable = true end
-	local prompt = menu:addOption("No se movio ningun objeto. Elige destino para intentar de nuevo:", nil, nil)
+	local prompt = menu:addOption(translatedText("UI_ChilaSeda_Viewpoint_ChooseDestinationRetry"), nil, nil)
 	if prompt then prompt.notAvailable = true end
 	for _, container in ipairs(destinations) do
 		menu:addOption(destinationName(player, container), page,
 			selectDestinationFromMenu, container)
 	end
-	menu:addOption("Cancelar; dejar todo donde estaba", nil, nil)
+	menu:addOption(translatedText("UI_ChilaSeda_Viewpoint_CancelLeaveInPlace"), nil, nil)
 	return true
 end
 
@@ -147,7 +167,7 @@ local function findContainerOwnerItem(root, target, visited)
 end
 
 destinationName = function(player, container)
-    if container == player:getInventory() then return "inventario principal" end
+    if container == player:getInventory() then return translatedText("UI_ChilaSeda_Viewpoint_MainInventory") end
     local containingItem = container and container.getContainingItem
         and container:getContainingItem() or nil
     if not containingItem then
@@ -169,7 +189,42 @@ destinationName = function(player, container)
     end
     local parent = container and container.getParent and container:getParent() or nil
     if parent and parent.getDisplayName then return parent:getDisplayName() end
-    return container and container.getType and container:getType() or "contenedor"
+    return container and container.getType and container:getType()
+		or translatedText("UI_ChilaSeda_Viewpoint_Container")
+end
+
+local storedItemNoticeAt = setmetatable({}, { __mode = "k" })
+local function notifyStoredItem(player, item)
+	if not player or not item or not HaloTextHelper or type(HaloTextHelper.addText) ~= "function" then return end
+	local ok, container = pcall(item.getContainer, item)
+	if not ok or not container then return end
+	local now = type(getTimestampMs) == "function" and getTimestampMs() or math.floor(os.clock() * 1000)
+	local previous = storedItemNoticeAt[item]
+	if previous and now - previous < 500 then return end
+	storedItemNoticeAt[item] = now
+	local name = itemDisplayName(item) or translatedText("UI_ChilaSeda_Viewpoint_ItemUnknown")
+	local icon
+	if type(item.getTexture) == "function" then
+		local textureOk, texture = pcall(item.getTexture, item)
+		if textureOk then icon = texture end
+	end
+	HaloTextHelper.addText(player,
+		translatedText("UI_ChilaSeda_Viewpoint_ItemStored", name, destinationName(player, container)),
+		icon or " ", 255, 220, 120)
+end
+ChilaSeda_ViewpointNotifyStoredItem = notifyStoredItem
+
+local function attachStoredItemNotice(action, player, item)
+	if not action or not item or action.ChilaSedaDestinationNotice then return action end
+	local originalPerform = action.perform
+	if type(originalPerform) ~= "function" then return action end
+	action.ChilaSedaDestinationNotice = true
+	action.perform = function(self, ...)
+		local result = originalPerform(self, ...)
+		notifyStoredItem(player or self.character, item)
+		return result
+	end
+	return action
 end
 
 local originalTransferFactory = ISInventoryTransferUtil.newInventoryTransferAction
@@ -187,27 +242,72 @@ ISInventoryTransferUtil.newInventoryTransferAction = function(player, item, sour
     -- inventory first; ISEquipWeaponAction:isValid() searches that inventory
     -- by ID and cancels if corpse-loot routing sends it to a nested bag.
     if ChilaSeda_EquipFromCorpse == true and destination == main then
-        return originalTransferFactory(player, item, source, main, time, ...)
+        return attachStoredItemNotice(
+			originalTransferFactory(player, item, source, main, time, ...), player, item)
     end
 
     local target = selected or main
     if target ~= main and not canStoreIn(target, player, item) then target = main end
     local action = originalTransferFactory(player, item, source, target, time, ...)
     if action and action:isValid() then
-        if HaloTextHelper and HaloTextHelper.addText then
-            HaloTextHelper.addText(player, "Guardado en: " .. destinationName(player, target), " ", 255, 220, 120)
-        end
-        return action
+        return attachStoredItemNotice(action, player, item)
     end
 
     if target ~= main then
         target = main
         action = originalTransferFactory(player, item, source, target, time, ...)
     end
-    if action and action:isValid() and HaloTextHelper and HaloTextHelper.addText then
-        HaloTextHelper.addText(player, "Guardado en: " .. destinationName(player, target), " ", 255, 220, 120)
-    end
-    return action
+    if action and action:isValid() then return attachStoredItemNotice(action, player, item) end
+	return action
+end
+
+pcall(require, "TimedActions/ISForageAction")
+if ISForageAction and type(ISForageAction.perform) == "function"
+		and not ISForageAction.ChilaSedaDestinationNotice then
+	local originalForagePerform = ISForageAction.perform
+	local function snapshotStoredItems(container, itemSet, containerSet)
+		if not container or containerSet[container] then return end
+		containerSet[container] = true
+		local ok, items = pcall(container.getItems, container)
+		if not ok or not items then return end
+		for index = 0, items:size() - 1 do
+			local item = items:get(index)
+			if item and not itemSet[item] then
+				itemSet[item] = true
+				if item.getInventory then
+					local childOk, child = pcall(item.getInventory, item)
+					if childOk and child then snapshotStoredItems(child, itemSet, containerSet) end
+				end
+			end
+		end
+	end
+	ISForageAction.perform = function(action, ...)
+		local player = action.character
+		local before, after = {}, {}
+		if player and player.getInventory then
+			snapshotStoredItems(player:getInventory(), before, {})
+		end
+		local result = originalForagePerform(action, ...)
+		if player and player.getInventory then
+			snapshotStoredItems(player:getInventory(), after, {})
+			for item in pairs(after) do
+				if not before[item] then notifyStoredItem(player, item) end
+			end
+		end
+		return result
+	end
+	ISForageAction.ChilaSedaDestinationNotice = true
+end
+
+local originalGrabPerform = ISGrabItemAction and ISGrabItemAction.perform
+if type(originalGrabPerform) == "function" and not ISGrabItemAction.ChilaSedaDestinationNotice then
+	ISGrabItemAction.perform = function(action, ...)
+		local itemObject = action.item and action.item:getItem() or nil
+		local result = originalGrabPerform(action, ...)
+		notifyStoredItem(action.character, itemObject)
+		return result
+	end
+	ISGrabItemAction.ChilaSedaDestinationNotice = true
 end
 
 local function withSelectedPageInventory(playerNum, callback, ...)
