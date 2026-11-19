@@ -91,7 +91,7 @@ local vanillaTargets = {
     Apple = 0.15, Cherry = 0.05, Grapefruit = 0.20, Grapes = 0.15,
     Lemon = 0.15, Mango = 0.20, Orange = 0.15, Peach = 0.15,
     Pear = 0.15, Pineapple = 0.25, WatermelonSliced = 0.30,
-    Dandelions = 0.05, GrapeLeaves = 0.05, LemonGrass = 0.05,
+    Dandelions = 0.05, Ginseng = 0.02, GrapeLeaves = 0.05, LemonGrass = 0.05,
     MintHerb = 0.05, MintHerbDried = 0.03, WildGarlic2 = 0.05,
     WildGarlicDried = 0.03,
     -- Salt, pepper, shakers, loose rags, and small containers.
@@ -1762,7 +1762,7 @@ local function onGameStart()
         return
     end
     sessionActive = true
-    logLine("SESSION_START version=1.9.8 autoScan=true intervalTicks=120 stackAudit=true weightCatalog=true file=" .. tostring(path))
+    logLine("SESSION_START version=1.9.9 autoScan=true intervalTicks=120 stackAudit=true weightCatalog=true file=" .. tostring(path))
     startStackCatalog()
     flushLogLines()
 end
@@ -1787,6 +1787,6 @@ Events.OnKeyPressed.Add(onKeyPressed)
 if Events.OnTick then Events.OnTick.Add(onTick) end
 if Events.OnGameStart then Events.OnGameStart.Add(onGameStart) end
 if Events.OnMainMenuEnter then Events.OnMainMenuEnter.Add(onMainMenuEnter) end
-print("[ChilaSeda_WeightMonitor] loaded v1.9.8; weight and stack-limit scans active; Ctrl+Shift+F7 opens the panel")
+print("[ChilaSeda_WeightMonitor] loaded v1.9.9; weight and stack-limit scans active; Ctrl+Shift+F7 opens the panel")
 
 
