@@ -1,6 +1,6 @@
 -- Item-specific local weight targets for vanilla and selected mod items.
--- Definitions are changed after True Weight, then existing accessible
--- instances are periodically migrated to the same targets.
+-- Definitions are changed after True Weight. Existing accessible instances
+-- are rebalanced once per sleep episode when the player has full health.
 
 local TARGET_WEIGHTS = {
     AmmoStrap_Brown_Bullets = 0.40,
@@ -106,7 +106,7 @@ local TARGET_WEIGHTS = {
     Lemon = 0.15, Mango = 0.20, Orange = 0.15, Peach = 0.15,
     Pear = 0.15, Pineapple = 0.25, WatermelonSliced = 0.30,
     Dandelions = 0.05, GrapeLeaves = 0.05, LemonGrass = 0.05,
-    MintHerb = 0.05, MintHerbDried = 0.03, WildGarlic2 = 0.05,
+    MintHerb = 0.05, MintHerbDried = 0.03, Ginseng = 0.02, WildGarlic2 = 0.05,
     WildGarlicDried = 0.03,
     -- Salt, pepper, shakers, loose rags, and small containers.
     Pepper = 0.08, Peppercorn = 0.036, Salt = 0.10, SeasoningSalt = 0.10,

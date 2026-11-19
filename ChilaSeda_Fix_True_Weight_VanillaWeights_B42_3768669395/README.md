@@ -1,4 +1,4 @@
-# ChilaSeda Fix · pesos vanilla y overrides (B42) 2.1.2
+# ChilaSeda Fix · pesos vanilla y overrides (B42) 2.1.3
 
 ## Contenido del paquete
 
@@ -11,7 +11,8 @@ El reajuste de objetos accesibles corre una sola vez por episodio de sueno y sol
 ## Metas de peso documentadas
 
 - `Base.Magazine_Rich` (`Alto Volador`): 0.10 kg. Es una estimación razonada a partir de revistas impresas comparables. La meta equivalente y su evidencia están en `docs/Manual_Pesos_B42_y_Monitor.md`.
-- `Base.Machete` y `Base.Machete_Crude`: 0.71 kg; `Base.MacheteBlade_NoTang`, sin terminar: 0.48 kg. Las estimaciones usan la referencia de fabricación de UNIDO para un machete completo de 0.71 kg y un cuerpo de 0.48 kg. Weight Monitor 1.9.8 usa las mismas metas.
+- `Base.Ginseng`: meta de 0.02 kg para una raiz fresca, en lugar de los 0.10 kg vanilla; Weight Monitor 1.9.9 comprueba la misma meta.
+- `Base.Machete` y `Base.Machete_Crude`: 0.71 kg; `Base.MacheteBlade_NoTang`, sin terminar: 0.48 kg. Las estimaciones usan la referencia de fabricación de UNIDO para un machete completo de 0.71 kg y un cuerpo de 0.48 kg. Weight Monitor 1.9.9 usa las mismas metas, incluida la nueva meta de ginseng.
 
 ## Dependencias opcionales
 
