@@ -1,4 +1,4 @@
-ChilaSeda_Translations_ES_B42 â€” Traducciones al espaÃ±ol para mods Build 42 1.0.8
+# ChilaSeda_Translations_ES_B42 - Traducciones al espanol para mods Build 42 1.4.58
 
 <div align="center">
 
@@ -7,6 +7,17 @@ ChilaSeda_Translations_ES_B42 â€” Traducciones al espaÃ±ol para mods Buil
 </div>
 
 ---
+
+## Cambios en 1.4.58
+
+- Agrega traducciones centralizadas para las acciones de sutura, cataplasma, combustible, bateria, revision detras de objetos e interacciones de vehiculos que aparecian con sus nombres internos en las barras naranjas de Viewpoint, mas las etiquetas del pin de rebusqueda nativo.
+- Corrige `Field Rucksack` de KnoxPacks y confirma que el parche local cubra todas las llaves EN de Check Around (incluidos sus archivos sin catalogo ES) y que Industrial Fuel Tanks tenga sus catalogos ES completos; conserva los originales de Workshop.
+
+## Cambios en 1.4.57
+
+- Completa las claves `UI` y `Sandbox` de AutoMoveTo en el parche local y traduce la etiqueta de progreso que identifica su accion de caminar al cursor.
+- Corrige nombres ES de objetos herbales de Companion Dogs, categorias de menu y dos etiquetas de grupo; conserva intactos los originales Workshop.
+- Centraliza en `UI.json` las etiquetas y frases propias de Halo y barras de progreso de Viewpoint.
 
 ## Cambios en 1.4.56
 

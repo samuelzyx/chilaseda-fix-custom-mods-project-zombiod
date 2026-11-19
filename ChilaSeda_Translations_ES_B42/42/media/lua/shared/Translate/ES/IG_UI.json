@@ -2910,5 +2910,8 @@
   "IGUI_KnoxPacks_JobQuality": "Mejorando la calidad",
   "IGUI_KnoxPacks_QualityStandard": "Estándar",
   "IGUI_KnoxPacks_SlotsBonus": "Ranuras mejoradas: %1/%2 (incluye la bonificación de Sastrería)",
-  "IGUI_KnoxPacks_UsableCapacity": "Capacidad útil: %1"
+  "IGUI_KnoxPacks_UsableCapacity": "Capacidad útil: %1",
+  "IGUI_Animal_Group_dog": "Perros",
+  "IGUI_PD_RadialCategory": "Perros",
+  "IGUI_CraftingCategories_CompanionDogs": "Perros de compania"
 }
