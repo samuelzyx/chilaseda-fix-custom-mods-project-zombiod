@@ -5,6 +5,9 @@ Releases. **Estar en el repositorio no significa que ya exista un ZIP de Release
 validación en Jill solo se considera confirmada cuando se comprueba dentro del juego.
 
 ## Cambios de mods confirmados por Chila
+### ChilaSeda Fix - VisualSounds and Living World Proximity Colors
+
+- **0.8.7 (2026-11-18)** - Chila confirmo en Jill que las senales siguen la camara Viewpoint despues del reinicio. El puente de yaw evita errores de acceso al addon desde el hilo de render.
 
 ### PZ Custom Intros
 
