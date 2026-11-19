@@ -1,9 +1,12 @@
 -- Targets Viewpoint's native 3D forage pins and queues their normal pickup action.
+require "ISUI/ISUIElement"
+
 local TAG = "[ChilaSeda_ViewpointNativeForagePickup] "
 local AIM_RADIUS = 110
 local MAX_REACH = 12
 local PIN_LIFT = 0.35
 local warned = false
+local pickupPrompt
 
 local function warnOnce(message)
     if warned then return end
@@ -141,7 +144,7 @@ local function queueNativePickup(target)
     return ok
 end
 
-local function pickupAimedFind()
+local function aimedFindForPickup()
     if not nativeViewpointActive() or not nativeForageAvailable() then return end
     if type(isGamePaused) == "function" and isGamePaused() then return end
 
@@ -153,8 +156,77 @@ local function pickupAimedFind()
     local okVehicle, vehicle = pcall(player.getVehicle, player)
     if okVehicle and vehicle ~= nil then return end
 
-    local selected = aimedForagePin(manager)
+    return aimedForagePin(manager)
+end
+
+local function pickupAimedFind()
+    local selected = aimedFindForPickup()
     if selected then queueNativePickup(selected) end
+end
+
+local function pickupKeyName()
+    local key = ChilaSedaViewpointNativeForagePickupKey
+    if type(key) ~= "number" or key <= 0 then return nil end
+    if Keyboard and type(Keyboard.getKeyName) == "function" then
+        local ok, name = pcall(Keyboard.getKeyName, key)
+        if ok and type(name) == "string" and name ~= "" then return name end
+    end
+    return tostring(key)
+end
+
+local PickupPrompt = ISUIElement:derive("ChilaSedaViewpointNativeForagePickupPrompt")
+
+function PickupPrompt:new()
+    local o = ISUIElement.new(self, 0, 0, 1, 1)
+    o.anchorLeft, o.anchorTop = true, true
+    o.target = nil
+    o.nextTargetUpdate = 0
+    return o
+end
+
+function PickupPrompt:onMouseDown() return false end
+function PickupPrompt:onMouseUp() return false end
+function PickupPrompt:onRightMouseDown() return false end
+function PickupPrompt:onRightMouseUp() return false end
+
+function PickupPrompt:prerender()
+    local now = type(getTimestampMs) == "function"
+        and getTimestampMs() or math.floor(os.clock() * 1000)
+    if now < self.nextTargetUpdate then return end
+    self.nextTargetUpdate = now + 100
+    self.target = pickupKeyName() and aimedFindForPickup() or nil
+end
+
+function PickupPrompt:render()
+    local target = self.target
+    local keyName = pickupKeyName()
+    if not target or not keyName then return end
+
+    local text = "[" .. keyName .. "]"
+    local width = 42
+    if type(getTextManager) == "function" and UIFont and UIFont.Small then
+        local ok, measured = pcall(function()
+            return getTextManager():MeasureStringX(UIFont.Small, text)
+        end)
+        if ok and type(measured) == "number" then width = measured + 12 end
+    end
+    local height = 20
+    local x, y = target.screenX + 18, target.screenY - height / 2
+    local screenWidth = getCore and getCore():getScreenWidth() or nil
+    if type(screenWidth) == "number" then x = math.min(x, screenWidth - width - 4) end
+    x = math.max(4, x)
+    y = math.max(4, y)
+
+    self:drawRect(x, y, width, height, 0.82, 0.02, 0.02, 0.02)
+    self:drawTextCentre(text, x + width / 2, y + 2, 1, 0.86, 0.35, 1, UIFont and UIFont.Small or UIFont.Medium)
+end
+
+local function createPickupPrompt()
+    if pickupPrompt then pickupPrompt:removeFromUIManager() end
+    pickupPrompt = PickupPrompt:new()
+    pickupPrompt:initialise()
+    pickupPrompt:addToUIManager()
+    pcall(function() pickupPrompt:backMost() end)
 end
 
 local function onKeyPressed(key)
@@ -167,5 +239,9 @@ end
 if Events and Events.OnKeyPressed and type(Events.OnKeyPressed.Add) == "function" then
     Events.OnKeyPressed.Add(onKeyPressed)
 end
+if Events and Events.OnGameStart and type(Events.OnGameStart.Add) == "function" then
+    Events.OnGameStart.Add(createPickupPrompt)
+end
+createPickupPrompt()
 
-print(TAG .. "native 3D search pickup key handler loaded")
+print(TAG .. "native 3D search pickup key handler and pin prompt loaded")

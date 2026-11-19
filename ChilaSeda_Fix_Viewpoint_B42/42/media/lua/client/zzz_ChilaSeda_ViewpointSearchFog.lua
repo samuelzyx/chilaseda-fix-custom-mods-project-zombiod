@@ -26,10 +26,40 @@ local function searchManager(player)
     return ok and manager or nil
 end
 
+local function clamp(value, low, high)
+    return math.max(low, math.min(high, value))
+end
+
+local function numberOr(value, fallback)
+    local number = tonumber(value)
+    return number or fallback
+end
+
 local function searchRadius(manager)
-    if manager and type(manager.radius) == "number" then return manager.radius end
-    if manager and type(manager.maxRadius) == "number" then return manager.maxRadius end
-    return 3
+    if not manager then return 10 end
+    local modifiers = manager.modifiers
+    if type(modifiers) ~= "table" then
+        return numberOr(manager.radius, numberOr(manager.maxRadius, 3))
+    end
+
+    -- Match Viewpoint Foraging's default level-based bubble. The exact game radius
+    -- can be reduced to three tiles by stacked penalties at every Foraging level.
+    local baseMin = numberOr(manager.minRadius, 3)
+    local bonus = numberOr(modifiers.professionBonus, 0) + numberOr(modifiers.traitBonus, 0)
+    local minRadius = baseMin + bonus
+    local maxRadius = numberOr(manager.maxRadius, 10) + bonus
+    local level = clamp(numberOr(manager.perkLevel, 0), 0, 10)
+    local radius = minRadius + (maxRadius - minRadius) * (level / 10)
+
+    local penalty = numberOr(modifiers.panicPenalty, 1) * numberOr(modifiers.bodyPenalty, 1)
+        * numberOr(modifiers.exhaustionPenalty, 1) * numberOr(modifiers.clothingPenalty, 1)
+        * numberOr(modifiers.weatherPenalty, 1) * numberOr(modifiers.movementPenalty, 1)
+        * numberOr(modifiers.lightPenalty, 1)
+    radius = radius * (0.5 + 0.5 * clamp(penalty, 0, 1))
+
+    local vision = math.max(numberOr(modifiers.aimBonus, 1), numberOr(modifiers.sneakBonus, 1))
+    local cap = math.min(maxRadius * vision, numberOr(manager.maxRadiusCap, 15))
+    return clamp(radius * vision, baseMin, cap)
 end
 
 local function updateFog()

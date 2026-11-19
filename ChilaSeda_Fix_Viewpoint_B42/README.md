@@ -1,4 +1,4 @@
-# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.80
+# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.82
 
 <div align="center">
 
@@ -7,6 +7,14 @@
 </div>
 
 ---
+
+## Version 2.0.82
+
+- Shows the configured pickup key in a small label beside the native 3D forage pin targeted by the crosshair. The prompt uses the same pin selection and key binding as pickup, and hides when no eligible pin is aimed.
+
+## Version 2.0.81
+
+- Ports Viewpoint Foraging's default level-based search-bubble formula: the visible radius grows from the search minimum to maximum with Foraging level, applies profession/trait bonuses and visibility effects, and lets stacked penalties shrink it only to half of the level-based radius. It does not change the game's actual detection radius, search penalties, or item rolls. If manager modifiers are unavailable, it falls back to the exact game radius.
 
 ## Version 2.0.80
 
