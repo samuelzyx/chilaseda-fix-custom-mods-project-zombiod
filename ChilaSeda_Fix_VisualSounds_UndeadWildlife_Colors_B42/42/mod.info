@@ -5,4 +5,4 @@ description=Adds close-range cues for living zombies, animals, and Living World 
 require=VisualSoundsKA,VisualSoundsKAViewpoint,UndeadWildlife
 loadModAfter=VisualSoundsKA,VisualSoundsKAViewpoint,UndeadWildlife,LivingWorld
 versionMin=42.21
-modversion=0.8.1
+modversion=0.8.2

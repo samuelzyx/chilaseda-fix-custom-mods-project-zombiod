@@ -1,4 +1,4 @@
-# ChilaSeda Fix - VisualSounds and Living World Proximity Colors (B42) 0.8.1
+# ChilaSeda Fix - VisualSounds and Living World Proximity Colors (B42) 0.8.2
 <div align="center">
 
 [🏠 Repo](../README.md) · [🤝 Contribuir](../CONTRIBUTING.md) · [🚀 Releases](../docs/releases/README.md)
@@ -10,7 +10,7 @@
 
 ## Resumen
 
-Version 0.8.1 colors human zombie cues red, Living World team members green, and other Living World NPCs yellow. Normal and zombie wildlife retain their blue and fuchsia/purple palettes. Living World remains optional; NPC cues stay in the VisualSounds `PLAYERS` category and do not create game sound events.
+Version 0.8.2 leaves cue rotation to VisualSoundsKAViewpoint through `SDI.viewAngle`; this patch handles proximity and color only. Human zombie cues are red, Living World team members green, other Living World NPCs yellow, normal wildlife blue, and zombie wildlife fuchsia/purple.
 
 Integra VisualSounds KA con los zombis cercanos y los 16 tipos de animales hostiles de Undead Wildlife. El mod de Workshop no expone una tabla Lua `VisualSoundsKA`; el parche anterior apuntaba a esa API inexistente y registraba que se omitía.
 
@@ -34,6 +34,11 @@ Los animales normales conservan los filtros de visibilidad y busqueda `LAMBDA` y
 Reconoce estos tipos hostiles: `infectedraccoon`, `infectedcockerel`, `infectedchicken`, `infectedturkey`, `infectedrabbit`, `infectedpiglet`, `infectedfarmpig`, `infecteddeerdoe`, `infecteddeerstag`, `infectedcow`, `infectedcowcalf`, `infectedbull`, `infectedewe`, `infectedram`, `infectedlamb` e `infectedrat`. También reconoce otros tipos de Undead Wildlife que empiezan con `infected` o `undead`, incluidas variantes esqueléticas.
 
 ## Cambios
+
+### 0.8.2
+
+- Removes the local camera-yaw angle override. Cue placement and rotation now use the original VisualSounds render path and the Viewpoint compatibility addon's `SDI.viewAngle` implementation.
+- Keeps the local color palettes and Living World proximity cues.
 
 ### 0.8.0
 

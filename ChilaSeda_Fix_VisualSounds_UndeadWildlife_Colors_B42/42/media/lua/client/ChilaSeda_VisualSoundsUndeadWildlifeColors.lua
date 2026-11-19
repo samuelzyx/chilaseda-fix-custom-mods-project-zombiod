@@ -10,24 +10,6 @@ if not SDI or type(SDI.HandleWorldSound) ~= "function" or type(SDI.render) ~= "f
     return
 end
 
-local function setCueAngle(self, x, y)
-    local viewpoint = VisualSoundsViewpoint
-    if viewpoint and type(viewpoint.active) == "function" and type(viewpoint.yaw) == "function" then
-        local activeOk, active = pcall(function() return viewpoint.active() end)
-        if activeOk and active then
-            local yawOk, yaw = pcall(function() return viewpoint.yaw() end)
-            local player = self.playerObj or getSpecificPlayer(0)
-            if yawOk and type(yaw) == "number" and player then
-                local radians = math.atan2(y - player:getY(), x - player:getX())
-                    + math.pi + (-yaw - math.pi / 2)
-                self.angle = math.deg(radians) % 360
-                return
-            end
-        end
-    end
-    self:setAngleFromPoint(x, y)
-end
-
 local zombieAnimals = {
     infectedraccoon = true,
     infectedcockerel = true,
@@ -137,7 +119,7 @@ local function addZombieAnimalCue(self, x, y, z, radius, volume, source)
     end
 
     self:setDistance(distance)
-    setCueAngle(self, x, y)
+    self:setAngleFromPoint(x, y)
     self:setDuration(100)
     self:setVisible(true)
     table.insert(self.sounds, {
@@ -222,7 +204,7 @@ local function addLivingWorldNPCCue(self, x, y, z, radius, volume, source)
     end
 
     self:setDistance(distance)
-    setCueAngle(self, x, y)
+    self:setAngleFromPoint(x, y)
     self:setDuration(100)
     self:setVisible(true)
 end
@@ -259,7 +241,7 @@ SDI.HandleWorldSound = function(self, x, y, z, radius, volume, source, ...)
                 sound.typesound = "ZOMBIES"
                 sound.loud = true
                 self:setDistance(IsoUtils.DistanceTo(player:getX(), player:getY(), x, y))
-                setCueAngle(self, x, y)
+                self:setAngleFromPoint(x, y)
                 self:setDuration(100)
                 self:setVisible(true)
                 return
@@ -293,7 +275,7 @@ SDI.HandleWorldSound = function(self, x, y, z, radius, volume, source, ...)
             sound.typesound = isZombieAnimal(source) and "ZOMBIES" or "LAMBDA"
             sound.loud = isZombieAnimal(source) or sound.loud
             self:setDistance(IsoUtils.DistanceTo(player:getX(), player:getY(), x, y))
-            setCueAngle(self, x, y)
+            self:setAngleFromPoint(x, y)
             self:setDuration(100)
             self:setVisible(true)
             return
