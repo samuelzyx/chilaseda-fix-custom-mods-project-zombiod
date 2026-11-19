@@ -1,4 +1,4 @@
-# ChilaSeda Fix - VisualSounds and Living World Proximity Colors (B42) 0.8.2
+# ChilaSeda Fix - VisualSounds and Living World Proximity Colors (B42) 0.8.8
 <div align="center">
 
 [🏠 Repo](../README.md) · [🤝 Contribuir](../CONTRIBUTING.md) · [🚀 Releases](../docs/releases/README.md)
@@ -8,9 +8,13 @@
 ---
 
 
+## Version 0.8.8
+
+- Incluye el giro adicional `cameraShot.addYaw` del fotograma actual de Viewpoint al orientar las flechas de VisualSounds. La formula conserva el mismo sentido y desfase de `VisualSoundsKAViewpoint`, y ya no depende de llamar sus funciones Lua desde el render.
+
 ## Resumen
 
-Version 0.8.2 leaves cue rotation to VisualSoundsKAViewpoint through `SDI.viewAngle`; this patch handles proximity and color only. Human zombie cues are red, Living World team members green, other Living World NPCs yellow, normal wildlife blue, and zombie wildlife fuchsia/purple.
+Version 0.8.8 reads Viewpoint's published render-frame yaw and current camera-shot yaw through this mod's Java bridge. The SDI render path no longer calls VisualSoundsViewpoint.active/yaw, whose Lua exports reject this call path. When Viewpoint or the bridge is unavailable, cues use the isometric angle.
 
 Integra VisualSounds KA con los zombis cercanos y los 16 tipos de animales hostiles de Undead Wildlife. El mod de Workshop no expone una tabla Lua `VisualSoundsKA`; el parche anterior apuntaba a esa API inexistente y registraba que se omitía.
 
@@ -25,15 +29,39 @@ Los animales normales conservan los filtros de visibilidad y busqueda `LAMBDA` y
 - VisualSounds KA (`VisualSoundsKA`)
 - Visual Sounds KA Viewpoint (`VisualSoundsKAViewpoint`)
 - Undead Wildlife (`UndeadWildlife`)
+- ZombieBuddy (`ZombieBuddy`), for the render-safe Viewpoint frame bridge.
 - Living World is optional; it is used only to identify its NPC marks.
 
-`mod.info` requiere los tres y carga este parche después de ellos. El ID local es `ChilaSeda_Fix_VisualSounds_UndeadWildlife_Colors_B42`.
+`mod.info` requiere estos mods, incluyendo ZombieBuddy para exponer el puente Java, y carga este parche despues de ellos. El ID local es `ChilaSeda_Fix_VisualSounds_UndeadWildlife_Colors_B42`.
 
 ## Tipos de animales
 
 Reconoce estos tipos hostiles: `infectedraccoon`, `infectedcockerel`, `infectedchicken`, `infectedturkey`, `infectedrabbit`, `infectedpiglet`, `infectedfarmpig`, `infecteddeerdoe`, `infecteddeerstag`, `infectedcow`, `infectedcowcalf`, `infectedbull`, `infectedewe`, `infectedram`, `infectedlamb` e `infectedrat`. También reconoce otros tipos de Undead Wildlife que empiezan con `infected` o `undead`, incluidas variantes esqueléticas.
 
 ## Cambios
+
+### 0.8.7
+
+- Reads the latest `Frame.viewYaw`, applies the author's `-yaw - pi/2` formula, and avoids the thread-guarded Lua addon exports in render.
+- Uses a ZombieBuddy-exposed Java bridge in this mod; no angle is sampled from `OnTick` or `OnPlayerUpdate`.
+
+### 0.8.6
+
+- Attempts to cache the official angle provider on OnPlayerUpdate. Runtime later showed that event also cannot call the thread-guarded addon API; superseded by 0.8.7.
+
+### 0.8.5
+
+- Reads the Workshop SDI.viewAngle callback on the main-thread OnTick event and serves the cached result to render, avoiding the VisualSoundsViewpoint.active thread restriction without reimplementing the camera transform.
+- Preserves local cue colors, proximity detection, and sound filtering.
+
+### 0.8.4
+
+- Removes the duplicate local camera-angle calculation. VisualSoundsKAViewpoint remains the sole owner of camera orientation through its `SDI.viewAngle` API, which the native renderer uses for cue position and rotation.
+- Preserves the local cue palettes and proximity behavior for zombies, animals, and Living World NPCs.
+
+### 0.8.3
+
+- Attempts a local camera-yaw transform for VisualSounds cues; this calculation duplicated the Workshop integration and has been removed in 0.8.4.
 
 ### 0.8.2
 

@@ -9,6 +9,31 @@ if not SDI or type(SDI.HandleWorldSound) ~= "function" or type(SDI.render) ~= "f
     print(TAG .. "SDI API unavailable; patch skipped")
     return
 end
+local originalViewAngle = SDI.viewAngle
+local angleBridgeFailureReported = false
+
+local function renderSafeViewAngle()
+    if not SDIGetOption or not SDIGetOption("VIEWPOINT") then return originalViewAngle() end
+    local bridge = ChilaSedaVisualSoundsViewpointBridge
+    if bridge and type(bridge.angle) == "function" then
+        local ok, angle = pcall(bridge.angle)
+        if ok and type(angle) == "number" and angle == angle then return angle end
+    end
+    if not angleBridgeFailureReported then
+        angleBridgeFailureReported = true
+        print(TAG .. "Viewpoint frame-angle bridge unavailable; using the isometric cue angle")
+    end
+    return originalViewAngle()
+end
+
+local function installRenderSafeViewAngle()
+    local provider = SDI.viewAngle
+    if type(provider) ~= "function" or provider == originalViewAngle or provider == renderSafeViewAngle then return end
+    SDI.viewAngle = renderSafeViewAngle
+    print(TAG .. "VisualSoundsKAViewpoint angle replaced with Viewpoint frame yaw; no thread-guarded Lua addon calls")
+end
+
+Events.OnGameBoot.Add(installRenderSafeViewAngle)
 
 local zombieAnimals = {
     infectedraccoon = true,
@@ -119,7 +144,6 @@ local function addZombieAnimalCue(self, x, y, z, radius, volume, source)
     end
 
     self:setDistance(distance)
-    self:setAngleFromPoint(x, y)
     self:setDuration(100)
     self:setVisible(true)
     table.insert(self.sounds, {
@@ -204,7 +228,6 @@ local function addLivingWorldNPCCue(self, x, y, z, radius, volume, source)
     end
 
     self:setDistance(distance)
-    self:setAngleFromPoint(x, y)
     self:setDuration(100)
     self:setVisible(true)
 end
@@ -241,7 +264,6 @@ SDI.HandleWorldSound = function(self, x, y, z, radius, volume, source, ...)
                 sound.typesound = "ZOMBIES"
                 sound.loud = true
                 self:setDistance(IsoUtils.DistanceTo(player:getX(), player:getY(), x, y))
-                self:setAngleFromPoint(x, y)
                 self:setDuration(100)
                 self:setVisible(true)
                 return
@@ -275,7 +297,6 @@ SDI.HandleWorldSound = function(self, x, y, z, radius, volume, source, ...)
             sound.typesound = isZombieAnimal(source) and "ZOMBIES" or "LAMBDA"
             sound.loud = isZombieAnimal(source) or sound.loud
             self:setDistance(IsoUtils.DistanceTo(player:getX(), player:getY(), x, y))
-            self:setAngleFromPoint(x, y)
             self:setDuration(100)
             self:setVisible(true)
             return
@@ -290,6 +311,7 @@ SDI.HandleWorldSound = function(self, x, y, z, radius, volume, source, ...)
 end
 
 local originalRender = SDI.render
+-- Leave cue orientation to SDI.render; VisualSoundsKAViewpoint supplies SDI.viewAngle.
 local originalDrawIcon = SDI.drawIcon
 local distanceBands = { 1, 4, 6.5, 9, 11.5, 14, 20 }
 local ZOMBIE_COLORS = {
