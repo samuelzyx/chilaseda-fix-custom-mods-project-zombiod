@@ -1,8 +1,8 @@
 name=ChilaSeda Fix - VisualSounds Proximity and Undead Wildlife (B42)
 id=ChilaSeda_Fix_VisualSounds_UndeadWildlife_Colors_B42
 authors=ChilaSeda
-description=Adds close-range cues for living zombies and animals without emitting game sounds; undead wildlife uses fuchsia-to-lavender distance colors.
+description=Adds close-range cues for living zombies, animals, and Living World NPCs without emitting game sounds; zombies are red, allies are green, and other NPCs are yellow.
 require=VisualSoundsKA,VisualSoundsKAViewpoint,UndeadWildlife
-loadModAfter=VisualSoundsKA,VisualSoundsKAViewpoint,UndeadWildlife
+loadModAfter=VisualSoundsKA,VisualSoundsKAViewpoint,UndeadWildlife,LivingWorld
 versionMin=42.21
-modversion=0.7.0
+modversion=0.8.1

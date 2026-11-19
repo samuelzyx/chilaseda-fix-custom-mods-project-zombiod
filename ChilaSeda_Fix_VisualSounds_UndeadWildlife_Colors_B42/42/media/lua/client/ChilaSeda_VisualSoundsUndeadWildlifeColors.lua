@@ -10,6 +10,24 @@ if not SDI or type(SDI.HandleWorldSound) ~= "function" or type(SDI.render) ~= "f
     return
 end
 
+local function setCueAngle(self, x, y)
+    local viewpoint = VisualSoundsViewpoint
+    if viewpoint and type(viewpoint.active) == "function" and type(viewpoint.yaw) == "function" then
+        local activeOk, active = pcall(function() return viewpoint.active() end)
+        if activeOk and active then
+            local yawOk, yaw = pcall(function() return viewpoint.yaw() end)
+            local player = self.playerObj or getSpecificPlayer(0)
+            if yawOk and type(yaw) == "number" and player then
+                local radians = math.atan2(y - player:getY(), x - player:getX())
+                    + math.pi + (-yaw - math.pi / 2)
+                self.angle = math.deg(radians) % 360
+                return
+            end
+        end
+    end
+    self:setAngleFromPoint(x, y)
+end
+
 local zombieAnimals = {
     infectedraccoon = true,
     infectedcockerel = true,
@@ -119,7 +137,7 @@ local function addZombieAnimalCue(self, x, y, z, radius, volume, source)
     end
 
     self:setDistance(distance)
-    self:setAngleFromPoint(x, y)
+    setCueAngle(self, x, y)
     self:setDuration(100)
     self:setVisible(true)
     table.insert(self.sounds, {
@@ -141,8 +159,80 @@ local function isZombieSource(source)
     return ok and result == true
 end
 
+local function livingWorldNPCType(source)
+    if not source or type(source.getVariableBoolean) ~= "function" then return nil end
+    local ok, marked = pcall(source.getVariableBoolean, source, "LivingWorldNPC")
+    if not ok or marked ~= true then return nil end
+    if type(source.getVariableString) == "function" then
+        local typeOk, kind = pcall(source.getVariableString, source, "LivingWorldNPCType")
+        if typeOk and type(kind) == "string" and kind ~= "" then return kind end
+    end
+    return "other"
+end
+
+local function addLivingWorldNPCCue(self, x, y, z, radius, volume, source)
+    if not SDIGetOption or not SDIGetOption("SDIEnabled") then return end
+    local player = self.playerObj or getSpecificPlayer(0)
+    if not player or not source or source == player then return end
+    self.sounds = self.sounds or {}
+
+    local npcSound
+    for _, sound in ipairs(self.sounds) do
+        if sound.objsource == source then npcSound = sound; break end
+    end
+    if SDIGetOption("IGNOREPLAYERS") then
+        if npcSound then
+            for index = #self.sounds, 1, -1 do
+                if self.sounds[index].objsource == source then table.remove(self.sounds, index) end
+            end
+        end
+        return
+    end
+
+    local adjustedRadius = tonumber(radius) or 0
+    if CharacterTrait and CharacterTrait.DEAF and player:hasTrait(CharacterTrait.DEAF) then
+        adjustedRadius = 0
+    elseif CharacterTrait and CharacterTrait.KEEN_HEARING and player:hasTrait(CharacterTrait.KEEN_HEARING) then
+        adjustedRadius = adjustedRadius * 1.2
+    elseif CharacterTrait and CharacterTrait.HARD_OF_HEARING and player:hasTrait(CharacterTrait.HARD_OF_HEARING) then
+        adjustedRadius = adjustedRadius * 0.8
+    end
+    local distance = IsoUtils.DistanceTo(player:getX(), player:getY(), x, y)
+    if distance >= adjustedRadius then return end
+    if SDIGetOption("ONLYINSEARCHMODE") then
+        local manager = ISSearchManager and ISSearchManager.getManager(player)
+        if not manager or not manager.isSearchMode then return end
+    end
+    if SDIGetOption("ONLYCROUCHED") and not player:isSneaking() then return end
+
+    if npcSound then
+        npcSound.x, npcSound.y, npcSound.z = x, y, z
+        npcSound.radius, npcSound.volume = adjustedRadius, volume
+        npcSound.typesound, npcSound.loud = "PLAYERS", false
+        npcSound.emissionTime = os.time()
+    else
+        local maxCues = tonumber(SDIGetOption("MAXVISUALCUES"))
+        if maxCues and #self.sounds >= maxCues then return end
+        npcSound = {
+            x = x, y = y, z = z, radius = adjustedRadius, volume = volume,
+            typesound = "PLAYERS", emissionTime = os.time(), objsource = source,
+            zombieState = nil, loud = false,
+        }
+        table.insert(self.sounds, npcSound)
+    end
+
+    self:setDistance(distance)
+    setCueAngle(self, x, y)
+    self:setDuration(100)
+    self:setVisible(true)
+end
+
 SDI.HandleWorldSound = function(self, x, y, z, radius, volume, source, ...)
     originalHandleWorldSound(self, x, y, z, radius, volume, source, ...)
+    if livingWorldNPCType(source) then
+        addLivingWorldNPCCue(self, x, y, z, radius, volume, source)
+        return
+    end
     if isZombieSource(source) then
         local player = self.playerObj or getSpecificPlayer(0)
         if not player then return end
@@ -169,7 +259,7 @@ SDI.HandleWorldSound = function(self, x, y, z, radius, volume, source, ...)
                 sound.typesound = "ZOMBIES"
                 sound.loud = true
                 self:setDistance(IsoUtils.DistanceTo(player:getX(), player:getY(), x, y))
-                self:setAngleFromPoint(x, y)
+                setCueAngle(self, x, y)
                 self:setDuration(100)
                 self:setVisible(true)
                 return
@@ -203,7 +293,7 @@ SDI.HandleWorldSound = function(self, x, y, z, radius, volume, source, ...)
             sound.typesound = isZombieAnimal(source) and "ZOMBIES" or "LAMBDA"
             sound.loud = isZombieAnimal(source) or sound.loud
             self:setDistance(IsoUtils.DistanceTo(player:getX(), player:getY(), x, y))
-            self:setAngleFromPoint(x, y)
+            setCueAngle(self, x, y)
             self:setDuration(100)
             self:setVisible(true)
             return
@@ -218,7 +308,20 @@ SDI.HandleWorldSound = function(self, x, y, z, radius, volume, source, ...)
 end
 
 local originalRender = SDI.render
+local originalDrawIcon = SDI.drawIcon
 local distanceBands = { 1, 4, 6.5, 9, 11.5, 14, 20 }
+local ZOMBIE_COLORS = {
+    { 1.00, 0.04, 0.03 }, { 1.00, 0.08, 0.04 }, { 1.00, 0.13, 0.05 }, { 0.98, 0.19, 0.06 },
+    { 0.96, 0.25, 0.08 }, { 0.93, 0.32, 0.11 }, { 0.90, 0.39, 0.16 }, { 0.86, 0.47, 0.22 },
+}
+local ALLY_NPC_COLORS = {
+    { 0.08, 0.92, 0.16 }, { 0.11, 0.92, 0.23 }, { 0.17, 0.91, 0.30 }, { 0.25, 0.91, 0.37 },
+    { 0.34, 0.92, 0.45 }, { 0.44, 0.94, 0.54 }, { 0.56, 0.96, 0.65 }, { 0.68, 0.98, 0.76 },
+}
+local OTHER_NPC_COLORS = {
+    { 1.00, 0.78, 0.02 }, { 1.00, 0.80, 0.04 }, { 1.00, 0.82, 0.07 }, { 1.00, 0.84, 0.11 },
+    { 1.00, 0.86, 0.17 }, { 1.00, 0.88, 0.24 }, { 1.00, 0.90, 0.33 }, { 1.00, 0.92, 0.43 },
+}
 local CREATURE_SCAN_INTERVAL_MS = 250
 local ANIMAL_RANGE = 15
 local ANIMAL_RANGE_SQ = ANIMAL_RANGE * ANIMAL_RANGE
@@ -233,14 +336,33 @@ local function cueBand(distance)
     return #distanceBands + 1
 end
 
+local activeCueColors
+if type(originalDrawIcon) == "function" then
+    SDI.drawIcon = function(self, tex, cx, cy, angle, scale)
+        local colors = activeCueColors and activeCueColors[cueBand(self.distancetoPoint or 0)]
+        if not colors then return originalDrawIcon(self, tex, cx, cy, angle, scale) end
+        local radians = math.rad(180 + angle)
+        local cosine, sine = math.cos(radians), math.sin(radians)
+        local dx, dy = tex:getWidth() / 2 * scale, tex:getHeight() / 2 * scale
+        local xc, xs, yc, ys = cosine * dx, sine * dx, cosine * dy, sine * dy
+        local ox, oy = self:getAbsoluteX() + cx, self:getAbsoluteY() + cy
+        self.javaObject:DrawTexture(tex,
+            ox + xc - ys, oy + yc + xs, ox - xc - ys, oy + yc - xs,
+            ox - xc + ys, oy - yc - xs, ox + xc + ys, oy - yc + xs,
+            colors[1], colors[2], colors[3], 1)
+    end
+end
+
 SDI.render = function(self, ...)
     local zombiePalette = getZombieCuePalette()
     local normalPalette = getNormalCuePalette()
     if not zombiePalette or not normalPalette then return originalRender(self, ...) end
 
-    local otherSounds, normalAnimalSounds, zombieAnimalSounds = {}, {}, {}
+    local otherSounds, zombieSounds, normalAnimalSounds, zombieAnimalSounds = {}, {}, {}, {}
+    local alliedNpcSounds, otherNpcSounds = {}, {}
     for _, sound in ipairs(self.sounds or {}) do
         local source = sound.objsource
+        local npcType = livingWorldNPCType(source)
         local isAnimal = false
         if source and type(instanceof) == "function" then
             local okAnimal, isAnimalValue = pcall(instanceof, source, "IsoAnimal")
@@ -252,13 +374,23 @@ SDI.render = function(self, ...)
                 if okPosition then sound.x, sound.y, sound.z = x, y, z end
             end
         end
-        if isAnimal and isZombieAnimal(source) then
+        if npcType then
+            sound.typesound = "PLAYERS"
+            sound.loud = false
+            if npcType == "team" then
+                alliedNpcSounds[#alliedNpcSounds + 1] = sound
+            else
+                otherNpcSounds[#otherNpcSounds + 1] = sound
+            end
+        elseif isAnimal and isZombieAnimal(source) then
             sound.typesound = "ZOMBIES"
             sound.loud = true
             zombieAnimalSounds[#zombieAnimalSounds + 1] = sound
         elseif isAnimal then
             sound.typesound = "LAMBDA"
             normalAnimalSounds[#normalAnimalSounds + 1] = sound
+        elseif isZombieSource(source) or sound.typesound == "ZOMBIES" then
+            zombieSounds[#zombieSounds + 1] = sound
         else
             otherSounds[#otherSounds + 1] = sound
         end
@@ -281,15 +413,41 @@ SDI.render = function(self, ...)
     zombieAnimalSounds = self.sounds
 
     self.textures.ZOMBIES = originalZombieTextures
+    self.sounds = zombieSounds
+    activeCueColors = ZOMBIE_COLORS
+    local zombieResult = originalRender(self, ...)
+    zombieSounds = self.sounds
+
+    self.sounds = alliedNpcSounds
+    activeCueColors = ALLY_NPC_COLORS
+    local alliedNpcResult = originalRender(self, ...)
+    alliedNpcSounds = self.sounds
+
+    self.sounds = otherNpcSounds
+    activeCueColors = OTHER_NPC_COLORS
+    local otherNpcResult = originalRender(self, ...)
+    otherNpcSounds = self.sounds
+    activeCueColors = nil
+
+    self.textures.ZOMBIES = originalZombieTextures
     self.textures.LAMBDA = originalLambdaTextures
     self.sounds = otherSounds
+    for _, sound in ipairs(zombieSounds) do
+        self.sounds[#self.sounds + 1] = sound
+    end
     for _, sound in ipairs(normalAnimalSounds) do
         self.sounds[#self.sounds + 1] = sound
     end
     for _, sound in ipairs(zombieAnimalSounds) do
         self.sounds[#self.sounds + 1] = sound
     end
-    return zombieAnimalResult or normalAnimalResult or normalResult
+    for _, sound in ipairs(alliedNpcSounds) do
+        self.sounds[#self.sounds + 1] = sound
+    end
+    for _, sound in ipairs(otherNpcSounds) do
+        self.sounds[#self.sounds + 1] = sound
+    end
+    return otherNpcResult or alliedNpcResult or zombieResult or zombieAnimalResult or normalAnimalResult or normalResult
 end
 
 local function scanNearbyCreatures()
@@ -356,4 +514,4 @@ end
 
 Events.OnTick.Add(scanNearbyCreatures)
 
-print(TAG .. "SDI hooks loaded; nearby zombies and animals receive proximity cues without WorldSound; infected/undead animals use cyan-to-magenta cues")
+print(TAG .. "SDI hooks loaded; nearby zombies, animals, and Living World NPCs receive proximity cues without WorldSound; human zombies use red, NPC allies green, and other NPCs yellow")

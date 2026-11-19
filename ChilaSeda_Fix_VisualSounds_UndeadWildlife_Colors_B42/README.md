@@ -1,5 +1,4 @@
-# ChilaSeda Fix · proximidad de VisualSounds y colores de fauna no muerta (B42) 0.7.0
-
+# ChilaSeda Fix - VisualSounds and Living World Proximity Colors (B42) 0.8.1
 <div align="center">
 
 [🏠 Repo](../README.md) · [🤝 Contribuir](../CONTRIBUTING.md) · [🚀 Releases](../docs/releases/README.md)
@@ -10,6 +9,8 @@
 
 
 ## Resumen
+
+Version 0.8.1 colors human zombie cues red, Living World team members green, and other Living World NPCs yellow. Normal and zombie wildlife retain their blue and fuchsia/purple palettes. Living World remains optional; NPC cues stay in the VisualSounds `PLAYERS` category and do not create game sound events.
 
 Integra VisualSounds KA con los zombis cercanos y los 16 tipos de animales hostiles de Undead Wildlife. El mod de Workshop no expone una tabla Lua `VisualSoundsKA`; el parche anterior apuntaba a esa API inexistente y registraba que se omitía.
 
@@ -24,6 +25,7 @@ Los animales normales conservan los filtros de visibilidad y busqueda `LAMBDA` y
 - VisualSounds KA (`VisualSoundsKA`)
 - Visual Sounds KA Viewpoint (`VisualSoundsKAViewpoint`)
 - Undead Wildlife (`UndeadWildlife`)
+- Living World is optional; it is used only to identify its NPC marks.
 
 `mod.info` requiere los tres y carga este parche después de ellos. El ID local es `ChilaSeda_Fix_VisualSounds_UndeadWildlife_Colors_B42`.
 
@@ -32,6 +34,20 @@ Los animales normales conservan los filtros de visibilidad y busqueda `LAMBDA` y
 Reconoce estos tipos hostiles: `infectedraccoon`, `infectedcockerel`, `infectedchicken`, `infectedturkey`, `infectedrabbit`, `infectedpiglet`, `infectedfarmpig`, `infecteddeerdoe`, `infecteddeerstag`, `infectedcow`, `infectedcowcalf`, `infectedbull`, `infectedewe`, `infectedram`, `infectedlamb` e `infectedrat`. También reconoce otros tipos de Undead Wildlife que empiezan con `infected` o `undead`, incluidas variantes esqueléticas.
 
 ## Cambios
+
+### 0.8.0
+
+- Detects Living World NPCs through their `LivingWorldNPC` animation variable. Team members use a green distance gradient; other NPCs use orange/amber, separate from zombie wildlife's fuchsia palette.
+- Routes NPC proximity cues through VisualSounds' `PLAYERS` category and respects its ignore-players, search-mode, crouch, and hearing-range settings. It does not emit game `WorldSound` events.
+
+### 0.8.1
+
+- Colors human zombie cues red, Living World allies green, and other Living World NPCs yellow.
+- Keeps normal wildlife blue and zombie wildlife fuchsia/purple.
+
+### 0.7.1
+
+- Calculates the angle of synthetic zombie and animal proximity cues from Viewpoint's live camera yaw. When Viewpoint is inactive or the camera API is unavailable, it retains the VisualSounds default angle calculation. Cue colors and proximity behavior are unchanged.
 
 ### 0.7.0
 
