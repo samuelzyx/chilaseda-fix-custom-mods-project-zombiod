@@ -359,27 +359,23 @@ local function producesThreadItem(recipe)
     return threadOutputFullType(recipe) ~= nil
 end
 
-local notifyHandcraftFloor
+local notifyHandcraftDestinations
 
-local function dropCraftOutputToFloor(player, item)
+local function routeHandcraftOutput(player, item)
+	local router = rawget(_G, "ChilaSedaRouteCraftingOutput")
+	if type(router) == "function" then
+		local ok, destination = pcall(router, player, item)
+		if ok and (destination == "selected" or destination == "main"
+				or destination == "floor" or destination == "failed") then
+			return destination
+		end
+		print("[ChilaSeda_AccessibleCrafting] output destination route failed: " .. tostring(destination))
+		return "failed"
+	end
+	-- The output is already in the root inventory. If the shared destination
+	-- hook is unavailable, keeping it there is safer than dropping it blindly.
 	local inventory = player and player:getInventory()
-	local square = player and player:getCurrentSquare()
-	if not item or not inventory or not square or not inventory:contains(item) then return false end
-	local okRemove = pcall(inventory.Remove, inventory, item)
-	if not okRemove or inventory:contains(item) then return false end
-	if type(sendRemoveItemFromContainer) == "function" then
-		sendRemoveItemFromContainer(inventory, item)
-	end
-	local okDrop, worldItem = pcall(square.AddWorldInventoryItem, square, item, 0.5, 0.5, 0)
-	local okWorldObject, worldObject = pcall(item.getWorldItem, item)
-	if okDrop and worldItem and not inventory:contains(item) and okWorldObject and worldObject then
-		return true
-	end
-	pcall(inventory.AddItem, inventory, item)
-	if type(sendAddItemToContainer) == "function" and inventory:contains(item) then
-		sendAddItemToContainer(inventory, item)
-	end
-	return false
+	return inventory and inventory:contains(item) and "main" or "failed"
 end
 local function finishRecipeBatch(batch)
     if not batch or batch.finished then return end
@@ -406,26 +402,28 @@ local function finishRecipeBatch(batch)
             for _, item in ipairs(group) do remaining[#remaining + 1] = item end
         end
     end
-    local dropped, failed = 0, 0
+    local counts = { selected = 0, main = 0, floor = 0, failed = 0 }
     for _, item in ipairs(remaining) do
         local source = item and item:getContainer()
         local player = batch.player
         local inventory = player and player:getInventory()
         if item and source and inventory and inventory:contains(item) then
-			if dropCraftOutputToFloor(player, item) then dropped = dropped + 1
-			else failed = failed + 1 end
+			local destination = routeHandcraftOutput(player, item)
+			counts[destination] = counts[destination] + 1
         end
     end
-    notifyHandcraftFloor(batch.player, dropped, failed)
+    notifyHandcraftDestinations(batch.player, counts)
 end
 
 local originalAddOrDrop = Actions and Actions.addOrDropItem
-notifyHandcraftFloor = function(character, dropped, failed)
+notifyHandcraftDestinations = function(character, counts)
     if not HaloTextHelper or not HaloTextHelper.addText then return end
-    local message
-    if dropped > 0 and failed == 0 then message = "Fabricacion: objetos en el piso"
-    elseif dropped > 0 then message = "Fabricacion: algunos objetos quedaron en inventario"
-    elseif failed > 0 then message = "Fabricacion: no se pudieron soltar objetos" end
+    local destinations = {}
+    if counts.selected > 0 then destinations[#destinations + 1] = counts.selected .. " mochila seleccionada" end
+    if counts.main > 0 then destinations[#destinations + 1] = counts.main .. " inventario principal" end
+    if counts.floor > 0 then destinations[#destinations + 1] = counts.floor .. " piso" end
+    if counts.failed > 0 then destinations[#destinations + 1] = counts.failed .. " sin destino" end
+    local message = #destinations > 0 and ("Fabricacion: " .. table.concat(destinations, ", ")) or nil
     if message then pcall(HaloTextHelper.addText, character, message, " ", 255, 220, 120) end
 end
 

@@ -1,4 +1,4 @@
-# ChilaSeda - Acciones Accesibles (Build 42) 1.0.35
+# ChilaSeda - Acciones Accesibles (Build 42) 1.0.36
 
 <div align="center">
 
@@ -7,6 +7,10 @@
 </div>
 
 ---
+
+## Version 1.0.36
+
+- Los resultados de fabricar y fabricar por lotes van primero a la mochila seleccionada; si no caben, pasan al inventario principal y solo caen al piso si tampoco caben ahi. Se conservan la devolucion de recipientes y materiales, y el Halo indica los destinos.
 
 ## Version 1.0.35
 

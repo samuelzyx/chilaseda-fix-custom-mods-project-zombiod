@@ -1,7 +1,7 @@
 name=ChilaSeda - Acciones Accesibles (B42)
 id=ChilaSeda_AccessibleActions_B42
 authors=ChilaSeda
-description=Reune fabricacion accesible, llaves, consolidacion, lavado y destinos; protege el menu contextual de entidades sin sprite y reanuda desmontaje, rasgado y secado personal tras interrupciones sin reencolar secados invalidos.
+description=Reune fabricacion accesible, destinos priorizados para resultados de recetas, llaves, consolidacion y lavado; protege el menu contextual de entidades sin sprite y reanuda desmontaje, rasgado y secado personal tras interrupciones sin reencolar secados invalidos.
 versionMin=42.20
-modversion=1.0.35
+modversion=1.0.36
 loadModAfter=ConsolidatedAllFixB42,ChilaSeda_Fix_Water_Pipes_ModData_B42_3546314080,LongTermPreservationExtended,DismantleAllAtOnce,Viewpoint,ProjectViewpointQOL,ViewpointUI,INVENTORY_TETRIS,ChilaSeda_AutoCook_B42

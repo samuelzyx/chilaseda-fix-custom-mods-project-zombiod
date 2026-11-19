@@ -1,4 +1,5 @@
 require "TimedActions/ISCraftAction"
+require "TimedActions/ISInventoryTransferAction"
 
 local function getActiveContainer(playerObj)
 	if not playerObj then return nil end
@@ -76,6 +77,98 @@ local function dropToGround(item, playerObj)
 	return false
 end
 
+local function dropCraftOutputToGround(item, playerObj)
+	if not item or not playerObj then return false end
+	local source = item:getContainer()
+	local square = playerObj:getCurrentSquare()
+	if not square or not source or not source:contains(item) then return false end
+	local okRemove = pcall(source.Remove, source, item)
+	if not okRemove or source:contains(item) then return false end
+	if type(sendRemoveItemFromContainer) == "function" then
+		sendRemoveItemFromContainer(source, item)
+	end
+	local okDrop, worldItem = pcall(square.AddWorldInventoryItem, square, item,
+		playerObj:getX() - math.floor(playerObj:getX()),
+		playerObj:getY() - math.floor(playerObj:getY()),
+		playerObj:getZ() - math.floor(playerObj:getZ()))
+	local okWorldObject, worldObject = pcall(item.getWorldItem, item)
+	if okDrop and worldItem and not source:contains(item) and okWorldObject and worldObject then
+		return true
+	end
+	pcall(source.AddItem, source, item)
+	if type(sendAddItemToContainer) == "function" and source:contains(item) then
+		sendAddItemToContainer(source, item)
+	end
+	return false
+end
+
+local function canStoreCraftOutput(container, playerObj, item)
+	if not container or not playerObj or not item then return false end
+	local ok, fits = pcall(function()
+		if not container:isItemAllowed(item) then return false end
+		local currentWeight = container:getCapacityWeight()
+		local capacity = container:getEffectiveCapacity(playerObj)
+		if container:contains(item) then return currentWeight <= capacity end
+		return container:hasRoomFor(playerObj, item)
+			and currentWeight + item:getUnequippedWeight() <= capacity
+	end)
+	return ok and fits == true
+end
+
+local function tryTransferCraftOutput(playerObj, item, source, target)
+	if not playerObj or not item or not source or not target then return false end
+	if source == target then return target:contains(item) end
+	local ok, moved = pcall(function()
+		local transfer = ISInventoryTransferAction:new(playerObj, item, source, target, nil)
+		if not transfer or not transfer:isValid() then return false end
+		transfer:transferItem(item)
+		return target:contains(item)
+	end)
+	return ok and moved == true
+end
+
+local function routeCraftOutput(playerObj, item)
+	if not playerObj or not item then return "failed" end
+	local main = playerObj:getInventory()
+	local source = item:getContainer()
+	if not main or not source then return "failed" end
+
+	local selected = getActiveContainer(playerObj)
+	if selected == main or (selected and type(selected.getType) == "function"
+			and selected:getType() == "floor") then
+		selected = nil
+	end
+	if selected then
+		if source == selected or selected:contains(item) then return "selected" end
+		if canStoreCraftOutput(selected, playerObj, item)
+				and tryTransferCraftOutput(playerObj, item, source, selected) then
+			return "selected"
+		end
+	end
+
+	if source == main or main:contains(item) then
+		if canStoreCraftOutput(main, playerObj, item) then return "main" end
+	elseif canStoreCraftOutput(main, playerObj, item)
+			and tryTransferCraftOutput(playerObj, item, source, main) then
+		return "main"
+	end
+
+	return dropCraftOutputToGround(item, playerObj) and "floor" or "failed"
+end
+
+ChilaSedaRouteCraftingOutput = routeCraftOutput
+
+local function notifyOutputDestinations(playerObj, label, counts)
+	if not HaloTextHelper or not HaloTextHelper.addText then return end
+	local destinations = {}
+	if counts.selected > 0 then destinations[#destinations + 1] = counts.selected .. " mochila seleccionada" end
+	if counts.main > 0 then destinations[#destinations + 1] = counts.main .. " inventario principal" end
+	if counts.floor > 0 then destinations[#destinations + 1] = counts.floor .. " piso" end
+	if counts.failed > 0 then destinations[#destinations + 1] = counts.failed .. " sin destino" end
+	local message = #destinations > 0 and (label .. ": " .. table.concat(destinations, ", ")) or nil
+	if message then pcall(HaloTextHelper.addText, playerObj, message, " ", 255, 220, 120) end
+end
+
 local function notifyFloorResult(playerObj, label, dropped, failed)
 	if not HaloTextHelper or not HaloTextHelper.addText then return end
 	local message
@@ -107,14 +200,14 @@ function ISCraftAction:complete()
 		newItems[#newItems + 1] = self.result
 	end
 
-	local dropped, failed = 0, 0
+	local counts = { selected = 0, main = 0, floor = 0, failed = 0 }
 	for _, item in ipairs(newItems) do
 		if inventory:contains(item) then
-			if dropToGround(item, playerObj) then dropped = dropped + 1
-			else failed = failed + 1 end
+			local destination = routeCraftOutput(playerObj, item)
+			counts[destination] = counts[destination] + 1
 		end
 	end
-	notifyFloorResult(playerObj, "Fabricacion", dropped, failed)
+	notifyOutputDestinations(playerObj, "Fabricacion", counts)
 
 	return result
 end
