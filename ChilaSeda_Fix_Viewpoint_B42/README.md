@@ -1,4 +1,4 @@
-# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.82
+# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.83
 
 <div align="center">
 
@@ -7,6 +7,10 @@
 </div>
 
 ---
+
+## Version 2.0.83
+
+- Centers the configured pickup key label above the native 3D forage pin targeted by the crosshair, with a small gap and screen-edge clamping.
 
 ## Version 2.0.82
 

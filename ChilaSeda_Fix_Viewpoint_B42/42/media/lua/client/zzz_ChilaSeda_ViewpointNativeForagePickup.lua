@@ -5,6 +5,7 @@ local TAG = "[ChilaSeda_ViewpointNativeForagePickup] "
 local AIM_RADIUS = 110
 local MAX_REACH = 12
 local PIN_LIFT = 0.35
+local PICKUP_PROMPT_GAP = 8
 local warned = false
 local pickupPrompt
 
@@ -211,10 +212,13 @@ function PickupPrompt:render()
         if ok and type(measured) == "number" then width = measured + 12 end
     end
     local height = 20
-    local x, y = target.screenX + 18, target.screenY - height / 2
-    local screenWidth = getCore and getCore():getScreenWidth() or nil
-    if type(screenWidth) == "number" then x = math.min(x, screenWidth - width - 4) end
-    x = math.max(4, x)
+    local x = target.screenX - width / 2
+    local y = target.screenY - height - PICKUP_PROMPT_GAP
+    local core = getCore and getCore() or nil
+    local screenWidth = core and core:getScreenWidth() or nil
+    if type(screenWidth) == "number" then
+        x = math.max(4, math.min(x, math.max(4, screenWidth - width - 4)))
+    end
     y = math.max(4, y)
 
     self:drawRect(x, y, width, height, 0.82, 0.02, 0.02, 0.02)
