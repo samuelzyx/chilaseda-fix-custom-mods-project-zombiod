@@ -15,3 +15,7 @@ Requiere ZombieBuddy. No modifica los originales de Workshop. La validación den
 - [🏠 Inicio del repositorio](../README.md)
 - [🤝 Cómo contribuir](../CONTRIBUTING.md)
 - [🚀 Releases de mods](../docs/releases/README.md)
+
+## 1.0.1 - Fix ZombieBuddy package discovery
+
+Repackages the existing five compiled classes with standard forward-slash Java package paths and a manifest. The previous Windows-created JAR stored backslashes in its ZIP entry names, so ZombieBuddy could not match the `chilaseda.viewpointfixes` package declared in `mod.info`. All five class SHA-256 hashes remain unchanged. In-game validation is still pending.
