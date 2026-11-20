@@ -1,4 +1,4 @@
-# ChilaSeda Fix - VisualSounds and Living World Proximity Colors (B42) 0.8.8
+# ChilaSeda Fix - VisualSounds and Living World Proximity Colors (B42) 0.8.9
 <div align="center">
 
 [🏠 Repo](../README.md) · [🤝 Contribuir](../CONTRIBUTING.md) · [🚀 Releases](../docs/releases/README.md)
@@ -7,6 +7,10 @@
 
 ---
 
+
+## Version 0.8.9
+
+- Keeps the distance color on the cue slash, while auxiliary direction arrows use the original white drawing path.
 
 ## Version 0.8.8
 

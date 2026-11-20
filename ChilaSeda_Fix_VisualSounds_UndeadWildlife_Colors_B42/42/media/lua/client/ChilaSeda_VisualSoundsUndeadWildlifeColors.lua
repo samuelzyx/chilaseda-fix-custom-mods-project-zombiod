@@ -341,10 +341,21 @@ local function cueBand(distance)
 end
 
 local activeCueColors
+local function isCuePaletteTexture(self, texture)
+    local palette = self and self.textures and self.textures.ZOMBIES
+    if type(palette) ~= "table" then return false end
+    for _, cueTexture in ipairs(palette) do
+        if cueTexture == texture then return true end
+    end
+    return false
+end
+
 if type(originalDrawIcon) == "function" then
     SDI.drawIcon = function(self, tex, cx, cy, angle, scale)
         local colors = activeCueColors and activeCueColors[cueBand(self.distancetoPoint or 0)]
-        if not colors then return originalDrawIcon(self, tex, cx, cy, angle, scale) end
+        if not colors or not isCuePaletteTexture(self, tex) then
+            return originalDrawIcon(self, tex, cx, cy, angle, scale)
+        end
         local radians = math.rad(180 + angle)
         local cosine, sine = math.cos(radians), math.sin(radians)
         local dx, dy = tex:getWidth() / 2 * scale, tex:getHeight() / 2 * scale
