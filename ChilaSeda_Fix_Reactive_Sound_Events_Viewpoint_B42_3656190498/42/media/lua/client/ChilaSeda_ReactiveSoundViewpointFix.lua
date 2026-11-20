@@ -6,18 +6,15 @@ local originalSetAngleFromPoint = Marker and Marker.setAngleFromPoint
 if not originalSetAngleFromPoint then return end
 
 local function getViewpointAngle()
-    local viewpoint = VisualSoundsViewpoint
-    if not viewpoint then return nil end
+    -- ReactiveSE calls this from update() and render(), which may run off the
+    -- main thread. Read Viewpoint's published render-frame snapshot through
+    -- the Java bridge; never call VisualSoundsViewpoint.active/yaw here.
+    local bridge = ChilaSedaVisualSoundsViewpointBridge
+    if not bridge or type(bridge.angle) ~= "function" then return nil end
 
-    local ok, active = pcall(function() return viewpoint.active() end)
-    if not ok or not active then return nil end
-
-    local yawOk, yaw = pcall(function() return viewpoint.yaw() end)
-    if not yawOk or type(yaw) ~= "number" then return nil end
-
-    -- Match Visual Sounds KA's camera-yaw convention. ReactiveSE has its own
-    -- pointer texture calibration, applied below.
-    return -yaw - math.pi / 2
+    local ok, angle = pcall(bridge.angle)
+    if not ok or type(angle) ~= "number" or angle ~= angle then return nil end
+    return angle
 end
 
 function Marker:setAngleFromPoint()
