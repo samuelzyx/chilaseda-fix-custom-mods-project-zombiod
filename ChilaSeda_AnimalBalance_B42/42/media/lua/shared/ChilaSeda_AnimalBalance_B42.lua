@@ -314,6 +314,9 @@ local function moveNewItemsToSelectedContainer(player, inventory, snapshot)
     local destination = selectedLootContainer(player, inventory)
     local items = inventory:getItems()
     local movedToContainer, droppedToFloor, failed = 0, 0, 0
+    local detailedNotices = false
+    local canShowHalo = not (type(isClient) == "function" and isClient())
+        and not (type(isServer) == "function" and isServer())
     for i = items:size() - 1, 0, -1 do
         local item = items:get(i)
         if item and not snapshot[item] then
@@ -321,11 +324,23 @@ local function moveNewItemsToSelectedContainer(player, inventory, snapshot)
             if destination and destination:getType() ~= "floor"
                     and canStoreIn(destination, player, item) then
                 moved = moveItemToContainer(inventory, destination, item)
-                if moved then movedToContainer = movedToContainer + 1 end
+                if moved then
+                    movedToContainer = movedToContainer + 1
+                    if canShowHalo and type(ChilaSeda_ViewpointNotifyStoredItem) == "function" then
+                        detailedNotices = pcall(ChilaSeda_ViewpointNotifyStoredItem, player, item)
+                            or detailedNotices
+                    end
+                end
             end
             if not moved then
                 moved = dropItemToFloor(player, inventory, item)
-                if moved then droppedToFloor = droppedToFloor + 1 end
+                if moved then
+                    droppedToFloor = droppedToFloor + 1
+                    if canShowHalo and type(ChilaSeda_ViewpointNotifyDroppedItem) == "function" then
+                        detailedNotices = pcall(ChilaSeda_ViewpointNotifyDroppedItem, player, item)
+                            or detailedNotices
+                    end
+                end
             end
             if not moved then
                 failed = failed + 1
@@ -337,7 +352,7 @@ local function moveNewItemsToSelectedContainer(player, inventory, snapshot)
     if movedToContainer > 0 or droppedToFloor > 0 or failed > 0 then
         print("[ChilaSeda_AnimalBalance] OUTPUT_ROUTED container=" .. tostring(movedToContainer)
             .. " floor=" .. tostring(droppedToFloor) .. " failed=" .. tostring(failed))
-        if HaloTextHelper and type(HaloTextHelper.addText) == "function" then
+        if not detailedNotices and HaloTextHelper and type(HaloTextHelper.addText) == "function" then
             local message
             if movedToContainer > 0 and droppedToFloor > 0 then
                 message = "Carniceria: mochila seleccionada y piso"
