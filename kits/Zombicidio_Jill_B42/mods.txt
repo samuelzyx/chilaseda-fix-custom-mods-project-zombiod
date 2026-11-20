@@ -205,6 +205,7 @@ mods
     mod = BetterFlashlightsFixed,
     mod = LongTermPreservationExtendedAR,
     mod = Fletcher,
+    mod = FletcherViewpoint,
     mod = Railroader,
     mod = HydeCoUnderGround,
     mod = ViewpointBloodFX,
@@ -246,13 +247,14 @@ mods
     mod = ChilaSeda_Fix_BetterFlashlights_Lighting_B42,
     mod = ChilaSeda_AnimalBalance_B42,
     mod = ChilaSeda_Fix_MiniCompass_Position_B42,
-    mod = ChilaSeda_Fix_Reactive_Sound_Events_Viewpoint_B42_3656190498,
     mod = ChilaSeda_Fix_Viewpoint_B42,
+    mod = ChilaSeda_Fix_Reactive_Sound_Events_Viewpoint_B42_3656190498,
     mod = ChilaSeda_Fix_Viewpoint_Foraging_PinHeight_B42_3814994364,
     mod = ChilaSeda_Fix_CustomIntros_B42,
     mod = ChilaSeda_Recovery_CarBatteryCharger_B42,
     mod = ChilaSeda_Recovery_SpiffoKeys_B42,
     mod = ChilaSeda_MapSymbolSizeSlider_ExtraMapSymbolsFix_B42,
+    mod = ChilaSeda_OptionsSearch_B42,
     mod = ZeroWeightKeys_B42,
 }
 
