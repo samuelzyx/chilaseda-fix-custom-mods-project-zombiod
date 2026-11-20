@@ -1,0 +1,7 @@
+name=ChilaSeda Options Search (B42)
+id=ChilaSeda_OptionsSearch_B42
+authors=ChilaSeda
+description=Busca en todas las pestanas de Opciones, ordena categorias de Mods y filtra teclas asignadas sin cambiar ajustes guardados.
+versionMin=42.21
+modversion=1.0.0
+loadModAfter=ChilaSeda_Translations_ES_B42
