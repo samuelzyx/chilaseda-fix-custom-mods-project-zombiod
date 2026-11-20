@@ -19,3 +19,7 @@ Requiere ZombieBuddy. No modifica los originales de Workshop. La validación den
 ## 1.0.1 - Fix ZombieBuddy package discovery
 
 Repackages the existing five compiled classes with standard forward-slash Java package paths and a manifest. The previous Windows-created JAR stored backslashes in its ZIP entry names, so ZombieBuddy could not match the `chilaseda.viewpointfixes` package declared in `mod.info`. All five class SHA-256 hashes remain unchanged. In-game validation is still pending.
+
+## 1.0.2 - Fix inlined advice access
+
+Makes `MeleeTargetContext` and the members used by the inlined `CombatManager` advice public. ZombieBuddy applies the advice inside `zombie.CombatManager`; package-private helper access caused a fatal `IllegalAccessError` during target validation. The source is included under `Source/`. The existing targeting logic and the other patch classes are unchanged. In-game validation is pending.

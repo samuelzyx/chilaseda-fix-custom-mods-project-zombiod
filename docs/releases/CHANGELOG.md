@@ -5,6 +5,10 @@ Releases. **Estar en el repositorio no significa que ya exista un ZIP de Release
 validación en Jill solo se considera confirmada cuando se comprueba dentro del juego.
 
 ## Cambios de mods confirmados por Chila
+### Project Zomboid Forest Melee Fix
+
+- **1.0.2 (2026-11-20)** - Chila confirmo en Jill que Forest Melee volvio a funcionar muy bien. La version hace publicos los miembros que ZombieBuddy necesita al insertar el consejo en `CombatManager`, evitando el `IllegalAccessError` al validar objetivos.
+
 ### ChilaSeda Fix - VisualSounds and Living World Proximity Colors
 
 - **0.8.7 (2026-11-18)** - Chila confirmo en Jill que las senales siguen la camara Viewpoint despues del reinicio. El puente de yaw evita errores de acceso al addon desde el hilo de render.
