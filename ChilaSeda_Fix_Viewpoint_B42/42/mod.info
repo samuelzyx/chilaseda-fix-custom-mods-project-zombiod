@@ -1,11 +1,11 @@
 name=ChilaSeda Fix - Viewpoint Workshop Fixes (B42)
 id=ChilaSeda_Fix_Viewpoint_B42
 authors=ChilaSeda
-description=Local Viewpoint fixes for native and depth-buffer search fog, forage pickup, selected-backpack routing and item-named destination Halo notes, skill-aware XP icons, Spanish Halo notices, search pins, progress, loot, Spanish settings labels, battery charger menus and 3D models, Lua compile-error source tracing, graphics startup, heap pressure, movable-camera windows, and incomplete zombie-skeleton batches.
+description=Local Viewpoint fixes for native and depth-buffer search fog, forage pickup, animal corpse prompts and butchering loot routing, selected-backpack routing and item-named destination Halo notes, correct skill XP and native level-up icons, Spanish Halo notices, search pins, progress, loot, Spanish settings labels, battery charger menus and 3D models, Lua compile-error source tracing, graphics startup, heap pressure, movable-camera windows, and incomplete zombie-skeleton batches.
 require=ZombieBuddy
 loadModAfter=Viewpoint,ViewpointUI,ProjectViewpointQOL,WallTextureFixForViewpoint,PV-modmapbakefix,NeatUI_ProgressBar,INVENTORY_TETRIS,ChilaSeda_AccessibleActions_B42,ChilaSeda_Translations_ES_B42,MirageWardrobe42,ZombieBuddy
 versionMin=42.21
-modversion=2.0.91
+modversion=2.0.99
 ZBVersionMin=2.3.4
-javaJarFile=media/java/client/ChilaSedaViewpointHalo-2.0.80.jar
+javaJarFile=media/java/client/ChilaSedaViewpointHalo-2.0.99.jar
 javaPkgName=chilaseda.viewpointhalo

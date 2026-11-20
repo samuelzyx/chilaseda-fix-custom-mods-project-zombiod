@@ -1,4 +1,4 @@
-# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.91
+# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.99
 
 <div align="center">
 
@@ -7,6 +7,41 @@
 </div>
 
 ---
+
+## Version 2.0.99
+
+- Sets native search fog intensity to 0.9 by default and expands its slider to 2.0. Values above 1 strengthen the fog opacity without changing the search radius.
+- Translates the fog styles as `Oscuridad` and `Neblina`.
+
+## Version 2.0.98
+
+- Uses the native `ArrowUp` texture with the green `+1` text for skill level-ups, without a redundant skill icon. XP notices use the Carpentry icon for Woodwork and the B42 DumbBell item icon for Strength.
+
+## Version 2.0.97
+
+- Preflights Viewpoint floating-loot single-item and take-all actions. When the selected backpack cannot hold the pickup, it opens the alternate-destination menu instead of silently moving the item to the main inventory.
+
+## Version 2.0.96
+
+- Passes formatted arguments to the translator for item destination Halo notes, avoiding missing-argument warnings and preserving the item and destination names.
+- Exposes the floor-destination Halo helper so animal-yield outputs can report each item's actual destination.
+
+## Version 2.0.95
+
+- Adds Mod Options sliders for the floating corpse-loot panel zoom and item wear marker size. Panel zoom also enlarges text and icons.
+
+## Version 2.0.94
+
+- The native search `Dark` depth layer now uses black instead of Viewpoint's gray scene-fog color. `Mist` keeps the scene color. The Spanish Mod Options page is titled `Ajustes de rebusqueda Viewpoint`.
+- Butchered animal items now show a Halo with each item's backpack or floor destination.
+
+## Version 2.0.93
+
+- Adds aimed prompts and configurable keys for butchering and picking up animal corpses in Viewpoint. Butchered items go to the selected backpack; items that do not fit are dropped on the floor.
+
+## Version 2.0.92
+
+- The native forage height panel now opens with configurable F6 by default, with `Ctrl+Shift+Delete` retained. It uses Viewpoint's public tuning fields even when the Lua forage projection API is unavailable.
 
 ## Version 2.0.91
 
@@ -261,24 +296,28 @@
 
 ## Calibración de la rebúsqueda integrada
 
-- Ports the existing calibration window into this active Viewpoint fix package. It opens with
-  `Ctrl+Shift+Delete` when Viewpoint exposes its native `ViewpointForage.found` API.
+- The calibration panel opens with a configurable key in `Options > Mods > ChilaSeda Viewpoint Fix`
+  (F6 by default); `Ctrl+Shift+Delete` remains available as a shortcut.
 - Applies saved area height offsets to the native `findPinUp` tuning and visual zoom to
   `findPinHeight`. The current native renderer uses one scale for the pin and item image, so the
   panel's pin, circle, and icon zoom values are averaged into that shared scale.
+- The panel requires Viewpoint's public `Tuning` fields, but does not require the Lua
+  `ViewpointForage.found` API. When that API is available, the Java projection bridge also corrects
+  the arrow orientation; otherwise Viewpoint keeps drawing its native arrow while the height and
+  scale controls still apply.
 - Uses Viewpoint's own relief lift; it no longer requires the separate `ViewpointForaging` or
   `ViewpointRollingHills` projection hooks. The renderer orientation fix also accounts for the
   active camera shot's yaw, pitch, and roll.
 - The shortcut, stored offsets, and tuning bridge are checked locally by source review only. They
-  still need confirmation in Jill with the official integrated Viewpoint release.
+  still need confirmation in Jill with the active Viewpoint release.
 - Pin zoom remains the manually selected global value. The native renderer reads the shared tuning
   before drawing each frame; calibration writes only when that value changes, so routine pin draws
   do not reset the selected zoom.
 - Its calibrator now has a unique Lua module name and separate config/report files from the
   Viewpoint Foraging calibrator. This prevents `require` caching and shortcut handling from
-  crossing between the two patches. The native path requires Viewpoint 0.1.7's `ViewpointForage.found`
-  API and `Tuning` fields; it does not require the `ViewpointForaging` addon ID. If the native API
-  or fields are unavailable, only this native calibration shortcut stays inactive.
+  crossing between the two patches. It does not require the `ViewpointForaging` addon ID. If the
+  public `Tuning` fields are unavailable, calibration stays inactive; if only the Lua forage API is
+  unavailable, height and scale calibration remain available and arrow projection stays native.
 
 ## Zoom global para pines
 

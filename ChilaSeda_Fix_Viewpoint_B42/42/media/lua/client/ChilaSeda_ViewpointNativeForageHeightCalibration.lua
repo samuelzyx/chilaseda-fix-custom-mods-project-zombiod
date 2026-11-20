@@ -5,6 +5,7 @@ require "ISUI/ISTextEntryBox"
 local Calibration = {}
 local TAG = "[ChilaSeda_ViewpointNativeForageHeightCalibration] "
 Calibration.nativeIntegrated = false
+Calibration.nativeTuningAvailable = false
 local CONFIG_FILE = "ViewpointNativeForage_manual_offsets.txt"
 local RADIUS = 64
 local REPLACE_RADIUS = 12
@@ -791,7 +792,7 @@ function CalibrationWindow:onSettingChanged(_field, _entry)
 end
 
 function CalibrationWindow:refreshPinsAfterAdjustment()
-    if Calibration.nativeIntegrated then
+    if Calibration.nativeTuningAvailable then
         return true, "Viewpoint nativo aplica altura y escala en tiempo real."
     end
     local callOk, ok, message = pcall(Calibration.retryNearbyPins, self.originX, self.originY)
@@ -954,8 +955,8 @@ local function currentPlayerPosition()
 end
 
 local function toggleWindow()
-    if not Calibration.nativeIntegrated then
-        print(TAG .. "integrated Viewpoint foraging API is unavailable")
+    if not Calibration.nativeTuningAvailable then
+        print(TAG .. "Viewpoint native tuning is unavailable; calibration panel cannot open")
         return
     end
     if window and window:getIsVisible() then
@@ -996,6 +997,9 @@ local shortcutWasDown = false
 
 local function shortcutDown()
     if not Keyboard then return false end
+    local calibrationKey = ChilaSedaViewpointNativeForageCalibrationKey
+        or Keyboard.KEY_F6 or 64
+    if keyDown(calibrationKey) then return true end
     local deleteKey = Keyboard.KEY_DELETE
     if deleteKey == nil then return false end
     local control = keyDown(Keyboard.KEY_LCONTROL) or keyDown(Keyboard.KEY_RCONTROL)
@@ -1004,10 +1008,6 @@ local function shortcutDown()
 end
 
 local function handleShortcut(source)
-    if not Calibration.nativeIntegrated then
-        shortcutWasDown = false
-        return
-    end
     local down = shortcutDown()
     if down and not shortcutWasDown then
         shortcutWasDown = true
@@ -1027,6 +1027,14 @@ end
 
 if Events and Events.OnKeyPressed and type(Events.OnKeyPressed.Add) == "function" then
     Events.OnKeyPressed.Add(function(key)
+        local calibrationKey = ChilaSedaViewpointNativeForageCalibrationKey
+            or (Keyboard and Keyboard.KEY_F6) or 64
+        if key == calibrationKey and not shortcutWasDown then
+            shortcutWasDown = true
+            print(TAG .. "calibration key detected via OnKeyPressed")
+            local ok, err = pcall(toggleWindow)
+            if not ok then print(TAG .. "panel toggle failed: " .. safeText(err)) end
+        end
         local deleteKey = Keyboard and Keyboard.KEY_DELETE
         if deleteKey ~= nil and key == deleteKey then handleShortcut("OnKeyPressed") end
     end)
@@ -1047,6 +1055,6 @@ if Events and Events.OnTickEvenPaused and type(Events.OnTickEvenPaused.Add) == "
 end
 
 loadConfig()
-print(TAG .. "ready; Ctrl+Shift+Delete opens per-area pin height calibration (including while paused)")
+print(TAG .. "ready; configurable key (default F6) or Ctrl+Shift+Delete opens pin height calibration")
 
 return Calibration

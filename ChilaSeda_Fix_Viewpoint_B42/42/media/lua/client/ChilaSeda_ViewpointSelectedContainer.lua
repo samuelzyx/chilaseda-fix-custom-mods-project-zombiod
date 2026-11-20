@@ -13,7 +13,7 @@ require "ISUI/ISContextMenu"
 
 local function translatedText(key, ...)
 	if type(getText) ~= "function" then return key end
-	local ok, value = pcall(getText, key)
+	local ok, value = pcall(getText, key, ...)
 	if not ok or type(value) ~= "string" or value == "" or value == key then return key end
 	for index, replacement in ipairs({...}) do
 		value = value:gsub("%%" .. index, function() return tostring(replacement) end)
@@ -324,17 +324,52 @@ local function withSelectedPageInventory(playerNum, callback, ...)
     return result
 end
 
+local function collectViewpointLootItems(items)
+    local result = {}
+    if not items then return result end
+    if type(items) == "table" then
+        for _, item in ipairs(items) do
+            if item then result[#result + 1] = item end
+        end
+    elseif type(items.size) == "function" and type(items.get) == "function" then
+        for index = 0, items:size() - 1 do
+            local item = items:get(index)
+            if item then result[#result + 1] = item end
+        end
+    end
+    return result
+end
+
+local function deferViewpointPickupForDestination(player, items)
+    if not player then return false end
+    local destination, page = selectedDestination(player:getPlayerNum())
+    if not destination or not page or destination == page.inventory then return false end
+
+    local eligible = {}
+    for _, item in ipairs(items) do
+        local unwanted = type(item.isUnwanted) == "function" and item:isUnwanted(player)
+        local heavy = isForceDropHeavyItem and isForceDropHeavyItem(item)
+        if not unwanted and not heavy then eligible[#eligible + 1] = item end
+    end
+    if #eligible == 0 or canStoreBatch(destination, player, eligible) then return false end
+
+    showAlternateDestinationMenu(player, page, destination, eligible)
+    return true
+end
+
 if ViewpointLoot and type(ViewpointLoot.take) == "function" then
     local originalTake = ViewpointLoot.take
-    ViewpointLoot.take = function(player, ...)
-        return withSelectedPageInventory(player:getPlayerNum(), originalTake, player, ...)
+    ViewpointLoot.take = function(player, item, ...)
+        if deferViewpointPickupForDestination(player, { item }) then return end
+        return withSelectedPageInventory(player:getPlayerNum(), originalTake, player, item, ...)
     end
 end
 
 if ViewpointLoot and type(ViewpointLoot.takeAll) == "function" then
     local originalTakeAll = ViewpointLoot.takeAll
-    ViewpointLoot.takeAll = function(player, ...)
-        return withSelectedPageInventory(player:getPlayerNum(), originalTakeAll, player, ...)
+    ViewpointLoot.takeAll = function(player, items, ...)
+        if deferViewpointPickupForDestination(player, collectViewpointLootItems(items)) then return end
+        return withSelectedPageInventory(player:getPlayerNum(), originalTakeAll, player, items, ...)
     end
 end
 

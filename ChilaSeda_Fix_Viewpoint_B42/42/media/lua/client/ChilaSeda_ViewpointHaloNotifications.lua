@@ -11,8 +11,10 @@ local MAX_NOTIFICATIONS = 3
 local DISPLAY_MS = 6000
 local LEVEL_UP_GREEN = { r = 0.35, g = 1, b = 0.48 }
 local XP_ICON_DEFAULT = "media/ui/SkillPanel/SkillUnit_fill.png"
+local STRENGTH_ICON
 local PERK_ICONS = {
 	carpentry = "media/ui/Sidebar/48/Carpentry_On_48.png",
+	woodwork = "media/ui/Sidebar/48/Carpentry_On_48.png",
 	foraging = "media/ui/Sidebar/48/Search_On_48.png",
 	plantscavenging = "media/ui/Sidebar/48/Search_On_48.png",
 	fishing = "media/ui/survival_guide_spiffo/category_fishing.png",
@@ -31,7 +33,7 @@ local PERK_ICONS = {
 	smallblunt = "media/ui/survival_guide_spiffo/category_combat.png",
 	spear = "media/ui/survival_guide_spiffo/category_combat.png",
 	fitness = "media/ui/survival_guide_spiffo/category_movement.png",
-	strength = "media/ui/survival_guide_spiffo/category_movement.png",
+	strength = "Base.DumbBell",
 	lightfoot = "media/ui/survival_guide_spiffo/category_movement.png",
 	nimble = "media/ui/survival_guide_spiffo/category_movement.png",
 	sneak = "media/ui/survival_guide_spiffo/category_movement.png",
@@ -97,10 +99,7 @@ local function drawInlineLine(self, line, y, font, color, icons, arrow, arrowCol
 	local manager = getTextManager()
 	local parts = {}
 	if arrow ~= nil then
-		parts[#parts + 1] = {
-			direction = arrow,
-			color = arrowColor or color,
-		}
+		parts[#parts + 1] = { direction = arrow, color = arrowColor or color }
 	end
 	local cursor = 1
 	while true do
@@ -178,7 +177,28 @@ local function perkIconFor(perk)
 		local ok, perkId = pcall(perk.getId, perk)
 		if ok and type(perkId) == "string" and perkId ~= "" then
 			local key = perkId:lower():gsub("[%s_%-]", "")
-			if PERK_ICONS[key] then return PERK_ICONS[key] end
+			local icon = PERK_ICONS[key]
+			if icon == "Base.DumbBell" then
+				if not STRENGTH_ICON and ScriptManager and ScriptManager.instance then
+					local okItem, item = pcall(function()
+						return ScriptManager.instance:getItem(icon)
+					end)
+					if okItem and item then
+						local okTexture, texture = pcall(function()
+							local icon = item:getNormalTexture()
+							local variants = item:getIconsForTexture()
+							if variants and not variants:isEmpty() then icon = variants:get(0) end
+							return icon
+						end)
+						if okTexture then STRENGTH_ICON = texture or false end
+					end
+				end
+				if STRENGTH_ICON then
+					return STRENGTH_ICON ~= false and STRENGTH_ICON or XP_ICON_DEFAULT
+				end
+			elseif icon then
+				return icon
+			end
 		end
 	end
 	return XP_ICON_DEFAULT
@@ -332,7 +352,9 @@ local function onSkillLevelUp(player, perk, level, gainedLevel)
 			or type(perk.getName) ~= "function" then return end
 	local ok, perkName = pcall(perk.getName, perk)
 	if not ok or type(perkName) ~= "string" or perkName == "" then return end
-	if addNotification(getText("UI_ChilaSeda_ViewpointHalo_LevelUp", perkName), LEVEL_UP_GREEN, true, LEVEL_UP_GREEN, perkIconFor(perk)) then
+	-- Keep the native level-up indicator and the +1 text; no extra skill icon.
+	if addNotification(getText("UI_ChilaSeda_ViewpointHalo_LevelUp", perkName),
+			LEVEL_UP_GREEN, nil, nil, "media/ui/ArrowUp.png") then
 		createOverlay()
 	end
 end

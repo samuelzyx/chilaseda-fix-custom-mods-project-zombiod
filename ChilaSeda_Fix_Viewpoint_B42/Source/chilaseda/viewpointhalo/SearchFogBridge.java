@@ -18,7 +18,7 @@ public final class SearchFogBridge {
     private static volatile float darkness = 0.1f;
     private static volatile float desaturation;
     private static volatile int style;
-    private static volatile float strength = 1.0f;
+    private static volatile float strength = 0.9f;
     private static volatile boolean shaderPackFogEnabled = true;
     static volatile float ownStart = 1000000.0f;
     static volatile float ownEnd = 1000000.0f;
@@ -125,7 +125,7 @@ public final class SearchFogBridge {
         SearchFogBridge.darkness = clamp01((float) darkness);
         SearchFogBridge.desaturation = clamp01((float) desaturation);
         SearchFogBridge.style = (int) style;
-        SearchFogBridge.strength = clamp01((float) strength);
+        SearchFogBridge.strength = Math.max(0.0f, Math.min(2.0f, (float) strength));
         wanted = on && SearchFogBridge.strength > 0.0f;
     }
 
@@ -323,7 +323,7 @@ public final class SearchFogBridge {
         long now = System.nanoTime();
         float dt = lastNanos == 0L ? 0.0f : Math.min(0.1f, (now - lastNanos) / 1.0e9f);
         lastNanos = now;
-        float targetBlend = wanted && viewOn ? strength : 0.0f;
+        float targetBlend = wanted && viewOn ? 1.0f : 0.0f;
         if (blend < targetBlend) blend = Math.min(targetBlend, blend + dt * 2.0f);
         else if (blend > targetBlend) blend = Math.max(targetBlend, blend - dt * 2.0f);
         float smoothing = dt <= 0.0f ? 1.0f : (float) (1.0 - Math.exp(-dt / 0.6));
@@ -372,7 +372,7 @@ public final class SearchFogBridge {
             }
             end = Math.max(end, start + 0.5f);
             float darken = style == 0 && !depthLayerDrawing
-                    ? Math.min(0.92f, 0.55f + currentDarkness * 0.6f) * alpha : 0.0f;
+                    ? Math.min(0.98f, (0.92f + currentDarkness * 0.2f) * alpha * strength) : 0.0f;
             float desat = Math.max(base[5], lerp(base[5], currentDesaturation, alpha));
             float[] adjusted = new float[] { start, end,
                     base[2] * (1.0f - darken), base[3] * (1.0f - darken),
@@ -382,10 +382,15 @@ public final class SearchFogBridge {
             original.put(scene, base.clone());
             ownStart = startTarget;
             ownEnd = Math.max(endTarget, startTarget + 0.5f);
-            ownR = base[2] * (1.0f - darken);
-            ownG = base[3] * (1.0f - darken);
-            ownB = base[4] * (1.0f - darken);
-            ownAlpha = alpha;
+            // The depth layer has its own distance mask, so Oscuridad uses black
+            // instead of Viewpoint's gray scene-fog color. Neblina keeps that color.
+            float layerRed = style == 0 ? 0.0f : adjusted[2];
+            float layerGreen = style == 0 ? 0.0f : adjusted[3];
+            float layerBlue = style == 0 ? 0.0f : adjusted[4];
+            ownR = layerRed;
+            ownG = layerGreen;
+            ownB = layerBlue;
+            ownAlpha = Math.min(1.0f, alpha * strength);
             if (shaderPackFogEnabled) ShaderPackSearchFog.queue();
         } catch (Throwable error) {
             warnOnce("could not apply search fog: " + error);
