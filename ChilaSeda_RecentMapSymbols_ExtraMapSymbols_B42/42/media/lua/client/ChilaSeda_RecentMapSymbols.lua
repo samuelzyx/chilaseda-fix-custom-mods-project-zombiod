@@ -5,7 +5,8 @@ require "ISUI/Maps/ISWorldMapSymbols"
 
 local MOD_DATA_KEY = "ChilaSeda_RecentMapSymbols"
 local MAX_RECENT_SYMBOLS = 20
-local MAX_SEARCH_RESULTS = 48
+local MAX_SEARCH_RESULTS = 8
+local SEARCH_ZOOM_LEVELS = { 1.0, 1.5, 2.0 }
 local RECENT_RETRY_INTERVAL_FRAMES = 60
 local MAX_RECENT_RETRIES = 20
 local RECENT_TAB_LABEL = "IGUI_ChilaSeda_RecentMapSymbols"
@@ -379,10 +380,113 @@ local ACCENTS = {
 }
 local SEARCH_ALIASES = {
     bag="mochila", bags="mochila", backpack="mochila", backpacks="mochila",
-    backpag="mochila", backpak="mochila", rucksack="mochila", pack="mochila",
+    backpag="mochila", backpak="mochila", rucksack="mochila", duffel="mochila",
+    duffle="mochila", pack="mochila",
+    duffelbag="mochila", dufflebag="mochila", rucksacks="mochila",
+    packs="mochila", satchel="mochila", satchels="mochila",
     bolsa="mochila", bolso="mochila", mochila="mochila",
     arrow="flecha", arrows="flecha", flecha="flecha", flechas="flecha",
     north="norte", south="sur", east="este", west="oeste",
+}
+local BACKPACK_SEARCH_PREFIXES = {
+    "bag", "bags", "backpack", "backpacks", "backpag", "backpak",
+    "rucksack", "rucksacks", "pack", "packs", "duffelbag", "dufflebag",
+    "satchel", "satchels",
+}
+local EXTRA_SYMBOL_INFO = {
+    book = { "Libro", "libro manual revista lectura" },
+    sledge = { "Mazo", "mazo martillo herramienta romper" },
+    pipeWrench = { "Llave grifa", "plomeria fontaneria tuberia herramienta" },
+    sheriff = { "Insignia de sheriff", "policia sheriff estrella placa" },
+    axe2 = { "Hacha", "hacha herramienta talar madera" },
+    medic = { "Botiquin", "medicina medico salud curacion cruz" },
+    shirt = { "Camisa", "ropa camiseta vestimenta" },
+    helmet = { "Casco", "casco proteccion armadura cabeza" },
+    ammo = { "Municion", "balas cartuchos arma disparos" },
+    vhs = { "Videocasete", "vhs pelicula cinta video" },
+    fuel = { "Combustible", "gasolina diesel carburante gasolinera" },
+    fuel2 = { "Tanque de combustible", "gasolina diesel combustible deposito tanque" },
+    water = { "Agua", "agua gota beber cantimplora" },
+    car = { "Auto", "auto coche carro vehiculo transporte" },
+    truck = { "Camion", "camion auto coche vehiculo transporte" },
+    helicopter = { "Helicoptero", "helicoptero aeronave avion transporte" },
+    parachute = { "Paracaidas", "paracaidas avion caida" },
+    marine = { "Mar", "barco bote lancha agua marina" },
+    loot = { "Botin", "botin saqueo objetos tesoro" },
+    bed = { "Cama", "cama dormir descanso mueble" },
+    meet = { "Punto de encuentro", "reunion encuentro grupo personas" },
+    school = { "Escuela", "escuela colegio educacion" },
+    warehouse = { "Almacen", "almacen bodega deposito industria" },
+    cross = { "Cruz", "cruz primeros auxilios medicina" },
+    line1 = { "Linea", "linea camino ruta sendero" },
+    line2 = { "Linea doble", "linea camino ruta sendero" },
+    line3 = { "Linea punteada", "linea camino ruta sendero" },
+    line4 = { "Linea", "linea camino ruta sendero" },
+    dot = { "Punto", "punto marca ubicacion circulo" },
+    x_small = { "Marca pequena", "marca x cruz ubicacion" },
+    trashpanda = { "Mapache", "mapache animal fauna basura" },
+}
+local SYMBOL_SEARCH_TERMS = {
+    Apple = "comida alimento fruta manzana",
+    Burger = "comida alimento hamburguesa",
+    KnifeFork = "comida alimento cubiertos cocina restaurante",
+    Fish = "comida alimento pesca pez",
+    Egg = "comida alimento gallina huevo",
+    Gun = "arma pistola rifle disparo defensa",
+    Bullets = "arma balas municion cartuchos",
+    CrossedSwords = "arma combate pelea espadas",
+    Knife = "arma cuchillo combate",
+    Axe = "arma herramienta hacha cortar madera",
+    Wrench = "herramienta reparar llave inglesa",
+    Hammer = "herramienta reparar martillo",
+    Fuel = "combustible gasolina diesel gasolinera",
+    Car = "vehiculo auto coche carro transporte",
+    Tire = "vehiculo llanta neumatico rueda",
+    SteeringWheel = "vehiculo volante manejar conduccion",
+    Boat = "vehiculo barco bote lancha transporte",
+    Helicopter = "vehiculo avion aeronave transporte",
+    House = "edificio casa refugio hogar",
+    Door = "edificio puerta entrada salida",
+    Bed = "edificio cama dormir descanso",
+    Tent = "edificio tienda campamento refugio",
+    Skyscraper = "edificio ciudad torre rascacielos",
+    Warehouse = "edificio almacen bodega deposito",
+    Tree = "naturaleza arbol bosque madera",
+    Leaf = "naturaleza hoja planta bosque",
+    Flower = "naturaleza flor planta jardin",
+    Pawprint = "animal huella rastro",
+    Cow = "animal ganado vaca",
+    Deer = "animal venado ciervo",
+    Rabbit = "animal conejo",
+    Chicken = "animal gallina pollo",
+    Pig = "animal cerdo puerco",
+    Sheep = "animal oveja",
+    Bird = "animal pajaro ave",
+    Raccoon = "animal mapache fauna",
+    Skull = "peligro muerte zombi calavera",
+    Radiation = "peligro toxico veneno contaminacion radiacion",
+    Bomb = "peligro explosion bomba",
+    Trap = "peligro trampa caza",
+    Exclamation = "peligro alerta aviso cuidado",
+    Question = "pregunta duda interrogacion",
+    MedCross = "medicina salud hospital curacion",
+    Pill = "medicina salud pastilla farmaco",
+    Heart = "medicina salud vida corazon",
+    Fire = "peligro fuego incendio fogata",
+    Garbage = "basura residuos desperdicios",
+    DollarSign = "dinero comercio valor precio",
+    Book = "libro lectura manual",
+    VHS = "video pelicula videocasete cinta",
+    Lock = "cerradura candado llave seguridad",
+    Key = "cerradura candado llave seguridad",
+    Sun = "clima dia sol luz",
+    Moon = "clima noche luna oscuridad",
+    Snowflake = "clima frio invierno nieve",
+    Waves = "agua mar rio olas inundacion",
+    ArrowNorth = "direccion norte arriba",
+    ArrowSouth = "direccion sur abajo",
+    ArrowEast = "direccion este derecha",
+    ArrowWest = "direccion oeste izquierda",
 }
 local SEARCH_STOP_WORDS = { de=true, del=true, la=true, las=true, el=true, los=true, un=true, una=true, the=true, of=true, ["and"]=true }
 
@@ -395,7 +499,16 @@ end
 local function searchTokens(value)
     local result = {}
     for token in foldSearchText(value):gmatch("[%w]+") do
-        token = SEARCH_ALIASES[token] or token
+        local alias = SEARCH_ALIASES[token]
+        if not alias and #token >= 2 then
+            for _, prefix in ipairs(BACKPACK_SEARCH_PREFIXES) do
+                if prefix:sub(1, #token) == token then
+                    alias = "mochila"
+                    break
+                end
+            end
+        end
+        token = alias or token
         if #token > 0 and not SEARCH_STOP_WORDS[token] then result[#result + 1] = token end
     end
     return result
@@ -423,10 +536,14 @@ local function symbolSearchMatches(symbolId, searchText)
         tab = definition:getTab()
         texturePath = definition:getTexturePath()
     end)
-    local name = humanizeSymbolId(symbolId)
-    local translationKey = "IGUI_Map_Symbol_" .. tostring(symbolId)
+    local baseId = tostring(symbolId):gsub("//alt=.*$", "")
+    local extraName = baseId:match("^extra:(.+)$")
+    local extraInfo = extraName and EXTRA_SYMBOL_INFO[extraName] or nil
+    local name = extraInfo and extraInfo[1] or humanizeSymbolId(baseId)
+    local translationKey = "IGUI_Map_Symbol_" .. baseId
     local translatedName = getText(translationKey)
-    if translatedName and translatedName ~= translationKey then name = translatedName
+    if extraInfo then name = extraInfo[1]
+    elseif translatedName and translatedName ~= translationKey then name = translatedName
     else
         local tokens = {}
         for token in name:gmatch("[^%s]+") do
@@ -445,6 +562,7 @@ local function symbolSearchMatches(symbolId, searchText)
     local fields = table.concat({
         tostring(symbolId), name, tostring(texturePath or ""), tostring(tab or ""),
         tostring(translatedName or ""), tostring(translatedTab or ""),
+        extraInfo and extraInfo[2] or "", SYMBOL_SEARCH_TERMS[baseId] or "",
     }, " ")
     local candidates = {}
     for token in foldSearchText(fields):gmatch("[%w]+") do
@@ -500,7 +618,18 @@ local function refreshSearchTab(symbolsUI)
     local searchText = view.searchEntry and view.searchEntry:getText() or ""
     local normalizedQuery = normalizeSearch(searchText)
     if normalizedQuery == "" then
-        view.searchMessage = getText("IGUI_ChilaSeda_SearchMapSymbolsHint")
+        local suggestionRow = {}
+        for _, button in ipairs(view.suggestionButtons or {}) do
+            suggestionRow[#suggestionRow + 1] = button
+            if #suggestionRow == 3 then
+                view:insertNewListOfButtons(suggestionRow)
+                suggestionRow = {}
+            end
+        end
+        if #suggestionRow > 0 then view:insertNewListOfButtons(suggestionRow) end
+    end
+    if normalizedQuery == "" then
+        view.searchMessage = nil
         return
     end
 
@@ -515,10 +644,20 @@ local function refreshSearchTab(symbolsUI)
         end
     end
 
-    local buttonHeight = getTextManager():getFontHeight(UIFont.Small) + 6
+    local searchHeight = getTextManager():getFontHeight(UIFont.Small) + 6
+    local zoom = SEARCH_ZOOM_LEVELS[view.searchZoomIndex or 1] or 1.0
+    local iconSize = math.floor(38 * zoom)
+    local gap = UI_BORDER_SPACING
     local x = UI_BORDER_SPACING + 1
-    local y = UI_BORDER_SPACING + buttonHeight + UI_BORDER_SPACING + 1
-    local columns = 8
+    local suggestionsHeight = view.lastSearchText == "" and (view.suggestionRows or 0) or 0
+    local y = UI_BORDER_SPACING + searchHeight + getTextManager():getFontHeight(UIFont.Small)
+        + gap * 2 + suggestionsHeight + 1
+    local columns = 1
+    local cardWidth = math.floor((view.width - UI_BORDER_SPACING * 3 - 2) / columns)
+    local availableHeight = math.max(0, view:getHeight() - y - UI_BORDER_SPACING)
+    local cardHeight = math.max(1, math.min(math.max(46, iconSize + 8), availableHeight))
+    local fitRows = math.max(1, math.floor((availableHeight + gap) / (cardHeight + gap)))
+    local displayLimit = math.min(MAX_SEARCH_RESULTS, fitRows * columns)
     local column = 0
     local row = {}
     local matches = {}
@@ -532,45 +671,64 @@ local function refreshSearchTab(symbolsUI)
         return a.id < b.id
     end)
     local matchCount = #matches
-    for index = 1, math.min(matchCount, MAX_SEARCH_RESULTS) do
+    for index = 1, math.min(matchCount, displayLimit) do
         local match = matches[index]
         local symbolId, displayName = match.id, match.name
         local definition = symbolDefinition(symbolId)
         local texturePath = definition and definition:getTexturePath()
         if texturePath then
-                    local button = ISButton:new(
-                        x, y, buttonHeight, buttonHeight, "",
-                        symbolsUI, ISWorldMapSymbols.onButtonClick
-                    )
-                    button:initialise()
-                    button:instantiate()
-                    button.borderColor = { r = 0, g = 0, b = 0, a = 0 }
-                    button.backgroundColor = { r = 0.5, g = 0.5, b = 0.5, a = 1 }
-                    button.textureColor = {
-                        r = textureColor.r, g = textureColor.g, b = textureColor.b, a = textureColor.a
-                    }
-                    button.image = getTexture(texturePath)
-                    button.tex = symbolId
-                    button.symbol = true
-                    button.tab = "SearchSymbols"
-                    button.tooltip = displayName .. " (" .. tostring(symbolId) .. ")"
-                    button.enable = symbolsUI:canWrite()
-                    if not button.enable then button.tooltip = getText("Tooltip_Map_CantWrite") end
+            local button = ISButton:new(
+                x, y, cardWidth, cardHeight, "", symbolsUI, ISWorldMapSymbols.onButtonClick
+            )
+            button:initialise()
+            button:instantiate()
+            button.borderColor = { r = 0, g = 0, b = 0, a = 0 }
+            button.backgroundColor = { r = 0.32, g = 0.32, b = 0.32, a = 1 }
+            button.textureColor = {
+                r = textureColor.r, g = textureColor.g, b = textureColor.b, a = textureColor.a
+            }
+            button.symbolTexture = getTexture(texturePath)
+            button.symbolName = displayName
+            button.image = nil
+            local originalButtonRender = button.render
+            button.render = function(self)
+                originalButtonRender(self)
+                if self.symbolTexture then
+                    local iconSize = math.max(1, math.min(self.height - 8, math.floor(38 * zoom)))
+                    self:drawTextureScaledAspect(self.symbolTexture, 4,
+                        math.floor((self.height - iconSize) / 2), iconSize, iconSize, 1,
+                        self.textureColor.r, self.textureColor.g, self.textureColor.b)
+                end
+                local labelX = math.min(self.height + 5, math.floor(38 * zoom) + 9)
+                local maxTextWidth = self.width - labelX - 5
+                local label = self.symbolName or ""
+                local textManager = getTextManager()
+                while #label > 3 and textManager:MeasureStringX(UIFont.Small, label) > maxTextWidth do
+                    label = label:sub(1, #label - 4) .. "..."
+                end
+                self:drawText(label, labelX, math.floor((self.height - textManager:getFontHeight(UIFont.Small)) / 2),
+                    1, 1, 1, 1, UIFont.Small)
+            end
+            button.tex = symbolId
+            button.symbol = true
+            button.tab = "SearchSymbols"
+            button.enable = symbolsUI:canWrite()
+            if not button.enable then button.tooltip = getText("Tooltip_Map_CantWrite") end
 
-                    view:addChild(button)
-                    symbolsUI.buttonList[#symbolsUI.buttonList + 1] = button
-                    symbolsUI.searchSymbolButtons[#symbolsUI.searchSymbolButtons + 1] = button
-                    row[#row + 1] = button
-                    column = column + 1
-                    if column == columns then
-                        view:insertNewListOfButtons(row)
-                        row = {}
-                        x = UI_BORDER_SPACING + 1
-                        y = y + buttonHeight + UI_BORDER_SPACING
-                        column = 0
-                    else
-                        x = x + buttonHeight + UI_BORDER_SPACING
-                    end
+            view:addChild(button)
+            symbolsUI.buttonList[#symbolsUI.buttonList + 1] = button
+            symbolsUI.searchSymbolButtons[#symbolsUI.searchSymbolButtons + 1] = button
+            row[#row + 1] = button
+            column = column + 1
+            if column == columns then
+                view:insertNewListOfButtons(row)
+                row = {}
+                x = UI_BORDER_SPACING + 1
+                y = y + cardHeight + gap
+                column = 0
+            else
+                x = x + cardWidth + gap
+            end
         end
     end
     if #row > 0 then view:insertNewListOfButtons(row) end
@@ -590,6 +748,93 @@ local function refreshSearchTab(symbolsUI)
         view.joypadButtons = view.joypadButtonsY[view.joypadIndexY]
         view.joypadIndex = math.max(1, math.ceil(#view.joypadButtons / 2))
     end
+end
+
+local SEARCH_SUGGESTIONS = {
+    { label = "IGUI_ChilaSeda_MapSuggestionFood", query = "comida" },
+    { label = "IGUI_ChilaSeda_MapSuggestionVehicle", query = "vehiculo" },
+    { label = "IGUI_ChilaSeda_MapSuggestionHealth", query = "medicina" },
+    { label = "IGUI_ChilaSeda_MapSuggestionWeapons", query = "armas" },
+    { label = "IGUI_ChilaSeda_MapSuggestionHome", query = "hogar" },
+    { label = "IGUI_ChilaSeda_MapSuggestionDanger", query = "peligro" },
+    { label = "IGUI_ChilaSeda_MapSuggestionAnimals", query = "animal" },
+    { label = "IGUI_ChilaSeda_MapSuggestionNature", query = "naturaleza" },
+    { label = "IGUI_ChilaSeda_MapSuggestionSupplies", query = "recursos" },
+}
+
+local function refreshSearchSuggestions(symbolsUI)
+    local view = symbolsUI.searchSymbolsView
+    if not view then return end
+    for _, button in ipairs(view.suggestionButtons or {}) do view:removeChild(button) end
+    view.suggestionButtons = {}
+    local query = view.searchEntry and view.searchEntry:getText() or ""
+    if query ~= "" then
+        view.suggestionRows = 0
+        return
+    end
+
+    local columns = 3
+    local gap = 4
+    local buttonWidth = math.floor((view.width - UI_BORDER_SPACING * 2 - gap * (columns - 1)) / columns)
+    local buttonHeight = getTextManager():getFontHeight(UIFont.Small) + 6
+    local startY = UI_BORDER_SPACING + view.searchEntry.height + 5
+    local row = {}
+    for index, suggestion in ipairs(SEARCH_SUGGESTIONS) do
+        local column = (index - 1) % columns
+        local line = math.floor((index - 1) / columns)
+        local suggestionQuery = suggestion.query
+        local button = ISButton:new(UI_BORDER_SPACING + 1 + column * (buttonWidth + gap),
+            startY + line * (buttonHeight + gap), buttonWidth, buttonHeight,
+            getText(suggestion.label), view, function(self)
+                view.searchEntry:setText(suggestionQuery)
+                view.lastSearchText = suggestionQuery
+                refreshSearchSuggestions(symbolsUI)
+                refreshSearchTab(symbolsUI)
+            end)
+        button:initialise()
+        button:instantiate()
+        button.backgroundColor = { r = 0.28, g = 0.28, b = 0.28, a = 1 }
+        button.borderColor = { r = 0.55, g = 0.55, b = 0.55, a = 1 }
+        view:addChild(button)
+        view.suggestionButtons[#view.suggestionButtons + 1] = button
+        row[#row + 1] = button
+        if column == columns - 1 or index == #SEARCH_SUGGESTIONS then row = {} end
+    end
+    view.suggestionRows = math.ceil(#SEARCH_SUGGESTIONS / columns) * (buttonHeight + gap)
+end
+
+local pendingSearchRefreshes = setmetatable({}, { __mode = "k" })
+local function flushPendingSearchRefreshes()
+    for view, symbolsUI in pairs(pendingSearchRefreshes) do
+        local entry = view.searchEntry
+        if not entry then
+            pendingSearchRefreshes[view] = nil
+        else
+            local query = entry:getText() or ""
+            if query ~= view.lastSearchText then
+                view.lastSearchText = query
+                refreshSearchSuggestions(symbolsUI)
+                refreshSearchTab(symbolsUI)
+                pendingSearchRefreshes[view] = nil
+            else
+                -- ISTextEntryBox can raise onTextChange before Java commits the
+                -- new text. Retry on the next tick, including while paused.
+                local retries = (pendingSearchRefreshes[view] or 0) + 1
+                if retries >= 3 then
+                    pendingSearchRefreshes[view] = nil
+                else
+                    pendingSearchRefreshes[view] = retries
+                end
+            end
+        end
+    end
+end
+
+if Events and Events.OnTick and type(Events.OnTick.Add) == "function" then
+    Events.OnTick.Add(flushPendingSearchRefreshes)
+end
+if Events and Events.OnTickEvenPaused and type(Events.OnTickEvenPaused.Add) == "function" then
+    Events.OnTickEvenPaused.Add(flushPendingSearchRefreshes)
 end
 
 local function addSearchTab(symbolsUI)
@@ -620,25 +865,87 @@ local function addSearchTab(symbolsUI)
     end
     view:initialise()
 
-    local searchEntry = ISTextEntryBox:new("", UI_BORDER_SPACING + 1,
-        UI_BORDER_SPACING + 1, view.width - UI_BORDER_SPACING * 2 - 2, buttonHeight)
+    local zoomButtonWidth = 28
+    local zoomLabelWidth = 38
+    local zoomOutWidth = 22
+    local zoomY = UI_BORDER_SPACING + 1
+    local zoomX = view.width - UI_BORDER_SPACING - zoomOutWidth - zoomLabelWidth - zoomButtonWidth - 8
+    local searchX = UI_BORDER_SPACING + 1
+    local clearSearchWidth = 24
+    local searchEntryWidth = math.max(1, zoomX - 8 - clearSearchWidth - 4 - searchX)
+    local searchEntry = ISTextEntryBox:new("", searchX, zoomY,
+        searchEntryWidth, buttonHeight)
     searchEntry:initialise()
+    searchEntry:instantiate()
+    searchEntry:setPlaceholderText(getText("IGUI_ChilaSeda_SearchMapSymbols"))
     searchEntry.target = symbolsUI
+    view.lastSearchText = searchEntry:getText() or ""
     searchEntry.onTextChangeFunction = function()
-        -- ISTextEntryBox callback signatures vary across B42 UI paths. Bind the
-        -- symbols window that owns this field instead of trusting callback args.
-        refreshSearchTab(symbolsUI)
+        pendingSearchRefreshes[view] = 0
     end
-    searchEntry.tooltip = getText("IGUI_ChilaSeda_SearchMapSymbolsHint")
+    -- Read the committed Java text after each UI input update. This avoids the
+    -- one-character delay caused by onTextChange firing before getText changes.
+    local originalSearchEntryUpdate = searchEntry.update
+    searchEntry.update = function(self, ...)
+        if originalSearchEntryUpdate then originalSearchEntryUpdate(self, ...) end
+        local query = self:getText() or ""
+        if query ~= view.lastSearchText then
+            view.lastSearchText = query
+            refreshSearchSuggestions(symbolsUI)
+            refreshSearchTab(symbolsUI)
+        end
+    end
     view:addChild(searchEntry)
     view.searchEntry = searchEntry
-    view.searchMessage = getText("IGUI_ChilaSeda_SearchMapSymbolsHint")
+    view.searchMessage = nil
+    local clearSearchButton = ISButton:new(searchX + searchEntryWidth + 4, zoomY,
+        clearSearchWidth, buttonHeight, "X", view, function()
+            searchEntry:setText("")
+            view.lastSearchText = ""
+            refreshSearchSuggestions(symbolsUI)
+            refreshSearchTab(symbolsUI)
+        end)
+    clearSearchButton:initialise()
+    clearSearchButton:instantiate()
+    view:addChild(clearSearchButton)
+    view.searchEntryClearButton = clearSearchButton
+    view.searchZoomIndex = 1
+    local zoomLabel
+    zoomLabel = ISButton:new(zoomX + zoomOutWidth + 4, zoomY, zoomLabelWidth, buttonHeight, "100%", view,
+        function()
+            view.searchZoomIndex = 1
+            zoomLabel:setTitle("100%")
+            refreshSearchTab(symbolsUI)
+        end)
+    zoomLabel:initialise()
+    zoomLabel:instantiate()
+    view:addChild(zoomLabel)
+    local function updateZoomLabel()
+            local percent = math.floor(SEARCH_ZOOM_LEVELS[view.searchZoomIndex] * 100)
+            zoomLabel:setTitle(tostring(percent) .. "%")
+            refreshSearchTab(symbolsUI)
+    end
+    local zoomOutButton = ISButton:new(zoomX, zoomY, zoomOutWidth, buttonHeight, "-", view, function()
+        view.searchZoomIndex = math.max(1, (view.searchZoomIndex or 1) - 1)
+        updateZoomLabel()
+    end)
+    zoomOutButton:initialise()
+    zoomOutButton:instantiate()
+    view:addChild(zoomOutButton)
+    local zoomButton = ISButton:new(zoomX + zoomOutWidth + 4 + zoomLabelWidth + 4, zoomY,
+        zoomButtonWidth, buttonHeight, "+", view, function()
+            view.searchZoomIndex = math.min(#SEARCH_ZOOM_LEVELS, (view.searchZoomIndex or 1) + 1)
+            updateZoomLabel()
+        end)
+    zoomButton:initialise()
+    zoomButton:instantiate()
+    view:addChild(zoomButton)
     local originalRender = view.render
     view.render = function(self)
         originalRender(self)
         if self.searchMessage then
             self:drawText(self.searchMessage, UI_BORDER_SPACING + 2,
-                UI_BORDER_SPACING + buttonHeight + UI_BORDER_SPACING + 4,
+                UI_BORDER_SPACING + searchEntry.height + UI_BORDER_SPACING + 4,
                 0.85, 0.85, 0.85, 1, UIFont.Small)
         end
     end
@@ -656,6 +963,7 @@ local function addSearchTab(symbolsUI)
 
     symbolsUI.searchSymbolsView = view
     symbolsUI.searchSymbolButtons = {}
+    refreshSearchSuggestions(symbolsUI)
     refreshSearchTab(symbolsUI)
 end
 

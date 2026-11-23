@@ -1,7 +1,18 @@
 {
   "IGUI_ChilaSeda_RecentMapSymbols": "Recent",
   "IGUI_ChilaSeda_SearchMapSymbols": "Search symbols",
-  "IGUI_ChilaSeda_SearchMapSymbolsHint": "Search by name, ID, or category",
+  "IGUI_ChilaSeda_SearchMapSymbolsHint": "Search what it represents: food, vehicle, medicine, danger...",
+  "IGUI_ChilaSeda_MapSuggestionFood": "Food",
+  "IGUI_ChilaSeda_MapSuggestionVehicle": "Vehicles",
+  "IGUI_ChilaSeda_MapSuggestionHealth": "Medicine",
+  "IGUI_ChilaSeda_MapSuggestionWeapons": "Weapons",
+  "IGUI_ChilaSeda_MapSuggestionHome": "Home",
+  "IGUI_ChilaSeda_MapSuggestionDanger": "Danger",
+  "IGUI_ChilaSeda_MapSuggestionAnimals": "Animals",
+  "IGUI_ChilaSeda_MapSuggestionNature": "Nature",
+  "IGUI_ChilaSeda_MapSuggestionSupplies": "Supplies",
+  "IGUI_ChilaSeda_MapSearchZoomHint": "Increase symbol size",
+  "IGUI_ChilaSeda_MapSearchZoomOutHint": "Reduce symbol size",
   "IGUI_ChilaSeda_SearchMapSymbolsNoResults": "No matching symbols",
-  "IGUI_ChilaSeda_SearchMapSymbolsLimit": "Too many results; refine your search"
+  "IGUI_ChilaSeda_SearchMapSymbolsLimit": "More results are hidden; lower zoom or refine your search"
 }

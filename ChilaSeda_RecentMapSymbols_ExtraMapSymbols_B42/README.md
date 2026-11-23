@@ -17,7 +17,7 @@ Recientes aparece primero y muestra hasta 20 símbolos distintos, ordenados del 
 
 Los IDs recientes se guardan en ModData del personaje, en ModData del mundo por jugador y en un archivo Lua individual. Así la lista sobrevive a la recarga aunque falte o se restablezca el ModData del personaje. Los IDs desconocidos se conservan si un paquete de símbolos no está disponible temporalmente; sus iconos reaparecen cuando se registran sus definiciones.
 
-Buscar recorre las mismas definiciones que usa la paleta vanilla y acepta nombres en español o inglés, ID, nombre de textura y categoría. Los términos se separan en tokens y se ordenan por relevancia: por ejemplo, `bag de backpag` puede encontrar alias de mochilas sin coincidir con nombres ajenos como `Garbage`. Los resultados se pueden colocar en el mapa y conservan el color seleccionado.
+Buscar recorre las mismas definiciones que usa la paleta vanilla y acepta nombres en español o inglés, ID, nombre de textura y conceptos relacionados para todo el catalogo (por ejemplo comida, vehiculos, medicina, animales, naturaleza y peligro). Al abrir la pestana muestra accesos sugeridos por categoria; al escribir filtra en cada tecla. La `X` junto al campo borra toda la busqueda. Cada resultado enseña su nombre en espanol junto al icono, y los botones `-`/`+` amplian o reducen los simbolos hasta el doble. La lista calcula cuantas tarjetas caben a ese zoom y muestra un aviso si hay mas resultados; ya no se dibuja por debajo de los botones del panel. El texto de ayuda queda como marcador dentro del campo y no tapa las sugerencias. Los terminos en ingles como `bag`, `backpack`, `duffel bag` y `rucksack` siguen encontrando la mochila. Los resultados se pueden colocar en el mapa conservando el color seleccionado.
 
 Las pestañas usan las definiciones y la acción de colocación vanilla. Cuando el atajo normal abre el mapa del jugador, recentra la vista en el personaje después de que vanilla restaura la vista anterior; las llamadas con coordenadas explícitas conservan ese centro.
 
@@ -25,6 +25,9 @@ Este porte integra las definiciones y recursos de símbolos. No carga el antiguo
 
 ## Historial de cambios
 
+- **0.3.5:** filtra resultados desde el evento de cambio de texto y procesa el texto confirmado durante la pausa, igual que el campo del menu vanilla de construccion.
+- **0.3.3:** evita leer el control de busqueda antes de instanciar su objeto UI nativo, que podia interrumpir la apertura del mapa.
+- **0.3.2:** agrega sugerencias por categoria, nombres visibles en los resultados, zoom ajustable de iconos y busqueda semantica para el catalogo completo.
 - **0.3.0:** integra Extra Map Symbols para B42.22, conserva los IDs `extra:` y renombra el mod unificado.
 - **0.2.7:** actualiza los símbolos recientes después de crear el panel del mapa y mientras la pestaña está visible si los IDs o definiciones llegan tarde; no guarda lecturas vacías. La búsqueda acepta coincidencias exactas, prefijos y subcadenas dentro de tokens, así que `flech` y `flecha` encuentran `Flechas`.
 - **0.2.5:** corrige una palabra reservada de Lua en la tabla de palabras vacías, que impedía cargar todo el script de pestañas.

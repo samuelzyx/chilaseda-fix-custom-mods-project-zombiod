@@ -11,9 +11,10 @@ local function register(name, variant)
         id = id .. "//alt=" .. tostring(variant)
         texture = texture .. "." .. tostring(variant)
     end
-    local ok, err = pcall(function()
-        definitions:addTexture(id, texture .. ".png")
-    end)
+    local existing = nil
+    pcall(function() existing = definitions:getSymbolById(id) end)
+    if existing then return end
+    local ok, err = pcall(function() definitions:addTexture(id, texture .. ".png") end)
     if not ok then
         print("[ChilaSeda Extra Map Symbols] Could not register " .. id .. ": " .. tostring(err))
     end
@@ -22,9 +23,10 @@ end
 local function registerVanillaAlternative(name, variant)
     local id = name .. "//alt=" .. tostring(variant)
     local texture = "media/ui/ExtraMapSymbols/alt/" .. name .. "." .. tostring(variant) .. ".png"
-    local ok, err = pcall(function()
-        definitions:addTexture(id, texture)
-    end)
+    local existing = nil
+    pcall(function() existing = definitions:getSymbolById(id) end)
+    if existing then return end
+    local ok, err = pcall(function() definitions:addTexture(id, texture) end)
     if not ok then
         print("[ChilaSeda Extra Map Symbols] Could not register " .. id .. ": " .. tostring(err))
     end
