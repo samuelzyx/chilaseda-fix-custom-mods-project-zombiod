@@ -1,0 +1,15 @@
+UI_ES = {
+    UI_ChilaSeda_InventoryTetris_FoodSortSuccessFreshness = "Organizados por frescura: %1 alimentos.",
+    UI_ChilaSeda_InventoryTetris_FoodSortSuccessCalories = "Organizados por calorias: %1 alimentos.",
+    UI_ChilaSeda_InventoryTetris_FoodSortNoSpace = "Sin cambios: no caben todos los alimentos alrededor de los otros objetos.",
+    UI_ChilaSeda_InventoryTetris_FoodSortOverflow = "Sin cambios: coloca primero en la cuadricula los alimentos del area de desbordamiento.",
+    UI_ChilaSeda_InventoryTetris_FoodSortGravity = "Sin cambios: desactiva la gravedad de Inventory Tetris para conservar el orden solicitado.",
+    UI_ChilaSeda_InventoryTetris_FoodSortNoFoods = "No se encontraron alimentos para organizar.",
+    UI_ChilaSeda_InventoryTetris_FoodSortUnavailable = "Sin cambios: la cuadricula actual de Inventory Tetris no esta disponible.",
+    UI_ChilaSeda_InventoryTetris_FoodSortFailed = "Sin cambios: el organizador no pudo terminar de forma segura.",
+    UI_ChilaSeda_InventoryTetris_FoodSortReview = "No se pudo confirmar que la cuadricula se restaurara por completo. Revisa antes de mover objetos.",
+    UI_ChilaSeda_InventoryTetris_FoodSortFoodData = "Sin cambios: no se pudo leer de forma segura la frescura o las calorias.",
+    UI_ChilaSeda_InventoryTetris_FoodSortItemData = "Sin cambios: no se pudo leer el tamano, limite de apilado o categoria del objeto.",
+    UI_ChilaSeda_InventoryTetris_FoodSortGridData = "Sin cambios: la cuadricula contiene una pila ausente, mezclada o inconsistente.",
+    UI_ChilaSeda_InventoryTetris_FoodSortInventoryData = "Sin cambios: hay alimentos que esta cuadricula no registra; revisa el contenedor.",
+}

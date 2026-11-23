@@ -1,4 +1,8 @@
-# ChilaSeda - Acciones Accesibles (Build 42) 1.0.43
+# ChilaSeda - Acciones Accesibles (Build 42) 1.0.44
+
+## Version 1.0.44
+
+- Con Long Term Preservation Extended activo, agrega recetas para convertir el conejo entero de rebusqueda en `Base.Fat` y la chuleta de cerdo `Base.PorkChop` en `Base.Lard`. Los cortes `Base.Pork` y `Base.Beef` conservan las recetas LTP existentes para manteca y sebo. Las trazas confirman la receta, el resultado y cualquier fallback de calculo.
 
 ## Version 1.0.43
 
@@ -189,8 +193,10 @@ puedan revisar y ajustar de forma independiente.
   usos disponibles. Usa el mismo punto de insercion del menu que vanilla,
   despues de Equipar, y mantiene la accion vanilla para consumir y transferir usos.
 - Agrega combinacion de grasas de Long Term Preservation Extended y la opcion
-  para reducir todas las grasas disponibles. Estas dos funciones solo se
-  instalan cuando `LongTermPreservationExtended` esta activo.
+  para reducir todas las grasas disponibles. Tambien agrega recetas para el
+  conejo entero de rebusqueda y `Base.PorkChop`, con salida a grasa animal o
+  manteca. Estas funciones solo se instalan cuando
+  `LongTermPreservationExtended` esta activo.
 - Lava vendas, tiras y trapos sucios de mochilas y contenedores accesibles,
   usando agua ambiental, agua de lluvia y las recetas vanilla correspondientes.
 - Agrega confirmacion antes de borrar objetos seleccionados y permite eliminar

@@ -1,0 +1,5 @@
+ContextMenu_EN = {
+    ContextMenu_ChilaSeda_InventoryTetris_OrganizeFood = "Organize food",
+    ContextMenu_ChilaSeda_InventoryTetris_FoodFreshness = "By freshness",
+    ContextMenu_ChilaSeda_InventoryTetris_FoodCalories = "By calories",
+}

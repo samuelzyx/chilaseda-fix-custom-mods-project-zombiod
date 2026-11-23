@@ -6,10 +6,109 @@ require "ChilaSeda_AccessibleActions_OptionalMods"
 
 -- Long Term Preservation Extended is optional. This add-on stays dormant when it
 -- is not active, without making the Workshop mod a hard dependency.
-if not ChilaSedaAccessibleActions
-		or not ChilaSedaAccessibleActions.isModActive("LongTermPreservationExtended") then
+if not ChilaSedaAccessibleActions or type(ChilaSedaAccessibleActions.isModActive) ~= "function" then
+	print("[ChilaSeda_LTPFatRendering] stage=install result=skipped fallback=accessible-actions-api-unavailable")
 	return
 end
+
+local ltpStateOK, ltpActive = pcall(ChilaSedaAccessibleActions.isModActive,
+	"LongTermPreservationExtended")
+if not ltpStateOK or not ltpActive then
+	local fallback = ltpStateOK and "ltp-inactive" or "mod-state-query-failed"
+	print("[ChilaSeda_LTPFatRendering] stage=install result=skipped fallback=" .. fallback)
+	return
+end
+
+RecipeCodeOnCreate = RecipeCodeOnCreate or {}
+local renderTraceCount = 0
+local function traceReduction(message)
+	if renderTraceCount >= 32 then return end
+	renderTraceCount = renderTraceCount + 1
+	print("[ChilaSeda_LTPFatRendering] " .. message)
+end
+
+local function findRecipeItem(items, fullType)
+	if not items then return nil end
+	local sizeOK, size = pcall(function() return items:size() end)
+	if not sizeOK or type(size) ~= "number" then return nil end
+	for index = 0, size - 1 do
+		local itemOK, item = pcall(function() return items:get(index) end)
+		if itemOK and item then
+			local typeOK, itemType = pcall(function() return item:getFullType() end)
+			local foodOK, isFood = pcall(function() return instanceof(item, "Food") end)
+			if typeOK and itemType == fullType and foodOK and isFood then return item end
+		end
+	end
+	return nil
+end
+
+local function renderFoodReduction(data, recipeName, inputType, outputType,
+	offAge, offAgeMax, factorMin, factorMax)
+	local consumedOK, consumed = pcall(function() return data:getAllConsumedItems() end)
+	local createdOK, created = pcall(function() return data:getAllCreatedItems() end)
+	if not consumedOK or not createdOK or not consumed or not created then
+		traceReduction("recipe=" .. recipeName .. " stage=oncreate result=skipped input=" .. inputType
+			.. " output=" .. outputType .. " fallback=recipe-data-unavailable")
+		return
+	end
+
+	local source = findRecipeItem(consumed, inputType)
+	if not source then
+		traceReduction("recipe=" .. recipeName .. " stage=oncreate result=skipped input=" .. inputType
+			.. " output=" .. outputType .. " fallback=source-not-found")
+		return
+	end
+	local result = findRecipeItem(created, outputType)
+	if not result then
+		traceReduction("recipe=" .. recipeName .. " stage=oncreate result=skipped input=" .. inputType
+			.. " output=" .. outputType .. " fallback=output-not-found")
+		return
+	end
+
+	local factor = (factorMin + factorMax) / 2
+	local factorFallback = "random-api-unavailable"
+	if type(ZombRandFloat) == "function" then
+		local randomOK, randomFactor = pcall(ZombRandFloat, factorMin, factorMax)
+		if randomOK and type(randomFactor) == "number"
+				and randomFactor >= factorMin and randomFactor <= factorMax then
+			factor = randomFactor
+			factorFallback = nil
+		else
+			factorFallback = "random-api-failed"
+		end
+	end
+
+	local writeOK, writeError = pcall(function()
+		result:setOffAge(offAge)
+		result:setOffAgeMax(offAgeMax)
+		result:setCarbohydrates(source:getCarbohydrates() * factor)
+		result:setLipids(source:getLipids() * factor)
+		result:setProteins(source:getProteins() * factor)
+		result:setCalories(source:getCalories() * factor)
+		result:setHungChange(source:getHungChange() * factor)
+	end)
+	if not writeOK then
+		traceReduction("recipe=" .. recipeName .. " stage=oncreate result=partial input=" .. inputType
+			.. " output=" .. outputType .. " fallback=output-write-failed error=" .. tostring(writeError))
+		return
+	end
+
+	traceReduction("recipe=" .. recipeName .. " stage=oncreate result=success input=" .. inputType
+		.. " output=" .. outputType .. " factor=" .. tostring(factor)
+		.. " fallback=" .. tostring(factorFallback or "none"))
+end
+
+function RecipeCodeOnCreate.ChilaSedaReduceDeadRabbitFat(data, character)
+	renderFoodReduction(data, "ChilaSedaReduceDeadRabbitFat", "Base.DeadRabbit", "Base.Fat",
+		5, 10, 0.05, 0.10)
+end
+
+function RecipeCodeOnCreate.ChilaSedaReducePorkChopLard(data, character)
+	renderFoodReduction(data, "ChilaSedaReducePorkChopLard", "Base.PorkChop", "Base.Lard",
+		180, 365, 0.20, 0.30)
+end
+
+traceReduction("stage=install result=ready recipes=Base.ChilaSedaReduceDeadRabbitFat,Base.ChilaSedaReducePorkChopLard")
 
 -- LTP 42.20 references a global `pork` in ReduceMeatLard after it has already
 -- found the input as a local `meat`. Supply that input during the callback.
@@ -40,6 +139,7 @@ end
 
 local RECIPE_BY_INPUT = {
     ["Base.Pork"] = "ReduceMeatLard",
+    ["Base.PorkChop"] = "ChilaSedaReducePorkChopLard",
     ["Base.Smallbirdmeat"] = "ReduceSchmaltz",
     ["Base.ChickenFillet"] = "ReduceSchmaltz",
     ["Base.Chicken"] = "ReduceSchmaltz",
@@ -52,6 +152,7 @@ local RECIPE_BY_INPUT = {
     ["Base.Venison"] = "ReduceTallow",
     ["Base.FrogMeat"] = "ReduceFat",
     ["Base.Rabbitmeat"] = "ReduceFat",
+    ["Base.DeadRabbit"] = "ChilaSedaReduceDeadRabbitFat",
     ["Base.Smallanimalmeat"] = "ReduceFat",
     ["Base.FishFillet"] = "ReduceFishFat",
 }
@@ -59,6 +160,7 @@ local RECIPE_BY_INPUT = {
 local reductionRecipeNames = {
     ReduceMeatLard = true, ReduceSchmaltz = true, ReduceTallow = true,
     ReduceFat = true, ReduceFishFat = true,
+    ChilaSedaReduceDeadRabbitFat = true, ChilaSedaReducePorkChopLard = true,
 }
 
 local function isRottenReductionInput(item)

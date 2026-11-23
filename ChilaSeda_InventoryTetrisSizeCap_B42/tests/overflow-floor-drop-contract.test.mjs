@@ -170,6 +170,6 @@ test("local patch retains its Tetris dependency and Jill load order", () => {
   assert.match(modInfo, /^require=INVENTORY_TETRIS$/m);
   assert.match(modInfo, /^loadModAfter=INVENTORY_TETRIS$/m);
   assert.match(modInfo, /^versionMin=42\.20$/m);
-  assert.match(modInfo, /^modversion=1\.3\.7$/m);
+  assert.match(modInfo, /^modversion=1\.3\.8$/m);
   assert.match(readme, /Version 1\.3\.7/);
 });

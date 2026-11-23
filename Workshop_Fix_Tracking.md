@@ -1,17 +1,17 @@
 # Seguimiento de versiones de Workshop y fixes locales
 
 Este registro sigue los mods de Workshop que sirven de objetivo a los fixes locales. El ID de
-Workshop y `time_updated` identifican la publicaciÃƒÆ’Ã‚Â³n; `modversion` se registra cuando el contenido
-instalado la declara. Una fecha nueva es una seÃƒÆ’Ã‚Â±al para revisar, no prueba de que el fix ya no haga
+Workshop y `time_updated` identifican la publicación; `modversion` se registra cuando el contenido
+instalado la declara. Una fecha nueva es una señal para revisar, no prueba de que el fix ya no haga
 falta.
 
-## LÃƒÆ’Ã‚Â­mite histÃƒÆ’Ã‚Â³rico
+## Límite histórico
 
-Los `mod.info` de los fixes no guardaban la versiÃƒÆ’Ã‚Â³n del mod original en la que se aplicÃƒÆ’Ã‚Â³ cada
-correcciÃƒÆ’Ã‚Â³n. No se puede reconstruir ese dato con certeza desde el workspace. La primera consulta del
-comprobador establece una lÃƒÆ’Ã‚Â­nea base fechada. Desde entonces, las diferencias quedan registradas y
-se comparan con la sesiÃƒÆ’Ã‚Â³n de Jill. No se debe presentar esa primera observaciÃƒÆ’Ã‚Â³n como la versiÃƒÆ’Ã‚Â³n
-histÃƒÆ’Ã‚Â³rica de aplicaciÃƒÆ’Ã‚Â³n.
+Los `mod.info` de los fixes no guardaban la versión del mod original en la que se aplicó cada
+corrección. No se puede reconstruir ese dato con certeza desde el workspace. La primera consulta del
+comprobador establece una línea base fechada. Desde entonces, las diferencias quedan registradas y
+se comparan con la sesión de Jill. No se debe presentar esa primera observación como la versión
+histórica de aplicación.
 
 ## Revisiones actuales
 
@@ -25,10 +25,10 @@ de lectura no se cuenta como una actualizacion del Workshop. Las fechas anterior
 consulta ya estaban publicadas; no hay dato local de cuando llegaron al equipo ni de la version
 fuente exacta con la que se creo historicamente cada fix.
 
-Authentic Z se agregÃƒÂ³ al seguimiento al crear `ChilaSeda_Fix_Authentic_Z_InstantCraft_B42_2335368829`.
-La consulta del 2026-10-30 10:47:37 -06:00 registrÃƒÂ³ `time_updated=2026-09-13 23:01:38 UTC`.
+Authentic Z se agregó al seguimiento al crear `ChilaSeda_Fix_Authentic_Z_InstantCraft_B42_2335368829`.
+La consulta del 2026-10-30 10:47:37 -06:00 registró `time_updated=2026-09-13 23:01:38 UTC`.
 El `mod.info` solo declara `version=42` (rama/build compatible), no `modversion`; el comprobador
-omite esa etiqueta para no confundirla con una versiÃƒÂ³n del contenido.
+omite esa etiqueta para no confundirla con una versión del contenido.
 
 <!-- CURRENT_STATE_START -->
 | Mod original de Workshop | Workshop ID | Mod ID fuente | Fix local | Version del fix | Version fuente aplicada | Workshop actualizado | Version fuente instalada | Estado |
@@ -42,9 +42,9 @@ omite esa etiqueta para no confundirla con una versiÃƒÂ³n del contenido.
 | [Hunter Expansion](https://steamcommunity.com/sharedfiles/filedetails/?id=3786994541) | 3786994541 | HunterExpansion | ChilaSeda_Fix_Hunter_Expansion_Filth_B42_3786994541 | 1.1.1 | Sin registro histórico | 2026-09-01 17:52:57 UTC | 0.6.3 | En seguimiento |
 | [NeatUI - Grid Inventory](https://steamcommunity.com/sharedfiles/filedetails/?id=3818729237) | 3818729237 | NeatUI_Core | ChilaSeda_Fix_NeatUI_Core_Format_B42_3818729237 | 0.1.0 | Sin registro histórico | 2026-10-21 19:51:52 UTC | 0.2.3 | En seguimiento |
 | [Any Wall Posters 3D - Project Viewpoint [B42]](https://steamcommunity.com/sharedfiles/filedetails/?id=3818605173) | 3818605173 | DGVPosters | ChilaSeda_Fix_Any_Wall_Posters_3D_Weight_B42_3818605173 | sin etiqueta | Sin registro histórico | 2026-10-25 14:51:56 UTC | no disponible en disco | En seguimiento |
-| [Reactive Sound Events](https://steamcommunity.com/sharedfiles/filedetails/?id=3656190498) | 3656190498 | ReactiveSE | ChilaSeda_Fix_Reactive_Sound_Events_Viewpoint_B42_3656190498 | 1.1.2 | Sin registro histórico | 2026-10-24 18:30:23 UTC | 1.3.0 | En seguimiento |
+| [Reactive Sound Events](https://steamcommunity.com/sharedfiles/filedetails/?id=3656190498) | 3656190498 | ReactiveSE | ChilaSeda_Fix_Reactive_Sound_Events_Viewpoint_B42_3656190498 | 1.1.3 | Sin registro histórico | 2026-10-24 18:30:23 UTC | 1.3.0 | En seguimiento |
 | [[B42+] Sandbox Options](https://steamcommunity.com/sharedfiles/filedetails/?id=3386906181) | 3386906181 | SandboxSettings | ChilaSeda_Fix_Sandbox_Options_ContextMenu_B42_3386906181 | 1.0.0 | Sin registro histórico | 2026-10-03 13:19:51 UTC | no disponible en disco | En seguimiento |
-| [Undead Wildlife [B42 Stable]](https://steamcommunity.com/sharedfiles/filedetails/?id=3781571720) | 3781571720 | UndeadWildlife | ChilaSeda_AnimalBalance_B42 | 2.3.2 | Sin registro histórico | 2026-08-16 00:03:32 UTC | 1.1.0 | En seguimiento |
+| [Undead Wildlife [B42 Stable]](https://steamcommunity.com/sharedfiles/filedetails/?id=3781571720) | 3781571720 | UndeadWildlife | ChilaSeda_AnimalBalance_B42 | 2.3.4 | Sin registro histórico | 2026-08-16 00:03:32 UTC | 1.1.0 | En seguimiento |
 | [True Weight](https://steamcommunity.com/sharedfiles/filedetails/?id=3768669395) | 3768669395 | TrueWeight | ChilaSeda_Fix_True_Weight_VanillaWeights_B42_3768669395 | 2.1.3 | Sin registro histórico | 2026-08-01 23:04:10 UTC | 1.10 | En seguimiento |
 | [Viewpoint - Interface](https://steamcommunity.com/sharedfiles/filedetails/?id=3812616893) | 3812616893 | ViewpointUI | ChilaSeda_Fix_Viewpoint_Interface_ActionProgress_B42_3812616893 | sin etiqueta | Sin registro histórico | 2026-10-25 15:03:41 UTC | 0.14.0 | En seguimiento |
 | [Viewpoint Foraging](https://steamcommunity.com/sharedfiles/filedetails/?id=3814994364) | 3814994364 | ViewpointForaging | ChilaSeda_Fix_ViewpointForaging_B42_3814994364 | 1.3.15 | Sin registro histórico | 2026-10-14 20:24:31 UTC | 0.3.0 | En seguimiento |
@@ -55,12 +55,12 @@ omite esa etiqueta para no confundirla con una versiÃƒÂ³n del contenido.
 
 ## Historial de cambios detectados
 
-El comprobador agrega aquÃƒÆ’Ã‚Â­ solo cambios posteriores a la primera lÃƒÆ’Ã‚Â­nea base. Cada cambio se revisa
+El comprobador agrega aquí solo cambios posteriores a la primera línea base. Cada cambio se revisa
 contra el contenido instalado y la parte concreta que corrige el fix antes de recomendar conservar,
 adaptar o retirar el parche.
 
 <!-- CHANGE_LOG_START -->
-| Detectado | Mod | Workshop ID | `time_updated` anterior ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ nuevo | VersiÃƒÆ’Ã‚Â³n instalada anterior ÃƒÂ¢Ã¢â‚¬Â Ã¢â‚¬â„¢ nueva | RevisiÃƒÆ’Ã‚Â³n del fix |
+| Detectado | Mod | Workshop ID | `time_updated` anterior → nuevo | Versión instalada anterior → nueva | Revisión del fix |
 |---|---|---:|---|---|---|
 | 2026-10-31T01:40:21.8580859Z | Authentic Z | 2335368829 | 2026-09-13 23:01:38 UTC -> 2026-10-31 01:17:39 UTC | sin dato -> sin dato | Pendiente de revision |
 | 2026-11-16T03:55:01.8833823Z | Wilderness QoL [B42] | 3779759338 | 2026-09-28 21:36:06 UTC -> 2026-11-14 14:58:47 UTC | 0.8.11 -> 0.8.13 | Sigue necesario: `WFI.isIdentified` aun llama `getModData()` sin validar el tipo del objeto |
@@ -79,7 +79,7 @@ actualizacion recibida hoy o durante una sesion anterior porque no habia una lin
   La fuente no declara `modversion`.
 - **Viewpoint - Interface 0.14.0**, actualizado el 25 de octubre: la API instalada aun expone
   `VPProgressBar`, que usa el parche para mostrar el progreso de acciones en cola. No se encontro
-  evidencia de que el Workshop haya aÃƒÂ±adido esa integracion.
+  evidencia de que el Workshop haya añadido esa integracion.
 - **Reactive Sound Events 1.3.0**, actualizado el 24 de octubre: `setAngleFromPoint()` todavia
   calcula la direccion con proyeccion isometrica, sin aplicar el yaw de Viewpoint. El fix local
   adapta ese metodo para la camara; la actualizacion no parece resolver ese caso.
@@ -89,12 +89,7 @@ actualizacion recibida hoy o durante una sesion anterior porque no habia una lin
 - **Viewpoint Foraging 0.3.0**, actualizado el 14 de octubre: siguen presentes `VPF.project()` y
   `VPF.placePin()`, que son los puntos que ajusta el fix para la altura de pines. No se encontro
   evidencia de que la actualizacion elimine la necesidad del parche.
-- **Project Viewpoint**, revisado el 10 de noviembre: Steam muestra una actualizacion del 9 de
-  noviembre, sin descripcion en su entrada de cambios. El JAR instalado conserva Viewpoint 0.1.6.2
-  y no contiene `viewpoint.interact.ForageFinds`; los Lua instalados tampoco exponen
-  `ViewpointForage.found`. El fix de neblina/calibracion integrado sigue dependiendo de esa API;
-  la actualizacion no permite retirar ni adaptar ese flujo todavÃ­a.
-
+- **Project Viewpoint 0.1.7**, revisado el 22 de noviembre: la copia instalada de Workshop 3809306528 declara `versionMin=42.22` y `versionMax=42.22`. `Viewpoint_Forage.lua` conserva `ViewpointForage.found()` y `harvest()`, y `Viewpoint.jar` contiene `viewpoint.interact.ForageFinds`; la integracion local de neblina, calibracion y rebusqueda conserva las APIs que necesita. La nota anterior sobre 0.1.6.2 quedo obsoleta. El crash de Jill del 22 de noviembre a las 15:24:02 viene del parche local: el stack identifica `Core.invalidBindingShiftCtrl` y `StrictModifierKeyBindings.isDown`, sin una llamada de Viewpoint; la version de Workshop no explica el crash y el parche de modificadores sigue siendo necesario.
 Estas revisiones son comprobaciones estaticas de la fuente instalada, no validaciones dentro de Jill.
 
 ## Wilderness QoL 0.8.13, revision del 15 de noviembre
@@ -103,18 +98,18 @@ La version instalada conserva `WFI.isIdentified(item) = item and item:getModData
 
 ## Uso
 
-Ejecutar desde la raÃƒÆ’Ã‚Â­z `mods` con:
+Ejecutar desde la raíz `mods` con:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\Check-WorkshopFixUpdates.ps1
 ```
 
-La tarea de Windows ejecuta el comprobador cada hora mientras la cuenta estÃƒÂ© iniciada y muestra una
-notificaciÃƒÂ³n visible si detecta una publicaciÃƒÂ³n o `modversion` instalada distinta. El detalle se
-conserva en `Workshop_Fix_Checker.log` y en los cambios agregados arriba. Antes/despuÃƒÂ©s de Jill y
-cuando se investigue un crash, comparar tambiÃƒÂ©n las horas registradas en esos archivos. Si no se
-puede consultar Steam o el contenido instalado, se conserva el ÃƒÂºltimo dato vÃƒÂ¡lido y se registra el
-fallo; no se marca una versiÃƒÂ³n como actual sin evidencia.
+La tarea de Windows ejecuta el comprobador cada hora mientras la cuenta esté iniciada y muestra una
+notificación visible si detecta una publicación o `modversion` instalada distinta. El detalle se
+conserva en `Workshop_Fix_Checker.log` y en los cambios agregados arriba. Antes/después de Jill y
+cuando se investigue un crash, comparar también las horas registradas en esos archivos. Si no se
+puede consultar Steam o el contenido instalado, se conserva el último dato válido y se registra el
+fallo; no se marca una versión como actual sin evidencia.
 
 
 ---

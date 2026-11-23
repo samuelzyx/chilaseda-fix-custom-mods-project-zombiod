@@ -259,6 +259,7 @@ mods
     mod = ChilaSeda_RecentMapSymbols_ExtraMapSymbols_B42,
     mod = ChilaSeda_OptionsSearch_B42,
     mod = ChilaSeda_Fix_ExpandedBelt_B42,
+    mod = ChilaSeda_AutoEquipBrokenWeapon_B42,
     mod = ZeroWeightKeys_B42,
 }
 

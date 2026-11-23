@@ -1,0 +1,15 @@
+UI_EN = {
+    UI_ChilaSeda_InventoryTetris_FoodSortSuccessFreshness = "Organized by freshness: %1 food items.",
+    UI_ChilaSeda_InventoryTetris_FoodSortSuccessCalories = "Organized by calories: %1 food items.",
+    UI_ChilaSeda_InventoryTetris_FoodSortNoSpace = "No changes: the foods do not all fit around the other items.",
+    UI_ChilaSeda_InventoryTetris_FoodSortOverflow = "No changes: food in the overflow area must be placed in the grid first.",
+    UI_ChilaSeda_InventoryTetris_FoodSortGravity = "No changes: turn off Inventory Tetris gravity to keep the requested order.",
+    UI_ChilaSeda_InventoryTetris_FoodSortNoFoods = "No food items were found to organize.",
+    UI_ChilaSeda_InventoryTetris_FoodSortUnavailable = "No changes: the current Inventory Tetris grid is unavailable.",
+    UI_ChilaSeda_InventoryTetris_FoodSortFailed = "No changes: the food organizer could not complete safely.",
+    UI_ChilaSeda_InventoryTetris_FoodSortReview = "The organizer could not confirm a full rollback. Check the grid before moving items.",
+    UI_ChilaSeda_InventoryTetris_FoodSortFoodData = "No changes: the game could not read food freshness or calories safely.",
+    UI_ChilaSeda_InventoryTetris_FoodSortItemData = "No changes: item size, stack limit, or category data could not be read.",
+    UI_ChilaSeda_InventoryTetris_FoodSortGridData = "No changes: the grid contains a missing, mixed, or inconsistent stack.",
+    UI_ChilaSeda_InventoryTetris_FoodSortInventoryData = "No changes: some food is not tracked in this grid; check the container.",
+}

@@ -8,6 +8,11 @@ ChilaSeda - Inventory Tetris Size Cap (B42) 1.3.7
 
 ---
 
+## Version 1.3.8
+
+- Adds context-menu food sorting by freshness or calories in the current Inventory Tetris container. It groups by item type, keeps older food at the front of freshness stacks, preserves non-food positions, and aborts without changes if any food cannot be placed safely. Halo Notes report the result or the reason for an abort.
+- Food stack ordering is retained by Inventory Tetris item-stack hooks. Runtime traces are bounded and record menu registration, successful sorting, and fallback reasons.
+
 ## Version 1.3.7
 
 - Forwards overflow-grid drag movement and mouse release outside the widget to the owning Tetris grid, then uses the vanilla floor-drop callback for live overflow items. Stale item IDs are skipped and bounded traces record forwarding, drop calls and fallbacks.

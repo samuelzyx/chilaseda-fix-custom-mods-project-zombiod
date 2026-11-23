@@ -1,0 +1,42 @@
+module Base
+{
+    craftRecipe ChilaSedaReduceDeadRabbitFat
+    {
+        timedAction = MixingBowl,
+        Time = 30,
+        OnCreate = RecipeCodeOnCreate.ChilaSedaReduceDeadRabbitFat,
+        Tags = InHandCraft;Cooking,
+        category = Preservation,
+        xpAward = Cooking:5;Butchering:5,
+        inputs
+        {
+            item 1 tags[base:dullknife;base:sharpknife;base:meatcleaver] mode:keep flags[MayDegradeLight],
+            item 1 [Base.DeadRabbit] flags[ItemCount],
+            item 1 [Base.PanForged;Base.Pan;Base.Saucepan;Base.SaucepanCopper;Base.Pot;Base.PotForged] mode:keep,
+        }
+        outputs
+        {
+            item 1 Base.Fat,
+        }
+    }
+
+    craftRecipe ChilaSedaReducePorkChopLard
+    {
+        timedAction = MixingBowl,
+        Time = 30,
+        OnCreate = RecipeCodeOnCreate.ChilaSedaReducePorkChopLard,
+        Tags = InHandCraft;Cooking,
+        category = Preservation,
+        xpAward = Cooking:5;Butchering:5,
+        inputs
+        {
+            item 1 tags[base:dullknife;base:sharpknife;base:meatcleaver] mode:keep flags[MayDegradeLight],
+            item 1 [Base.PorkChop] flags[ItemCount],
+            item 1 [Base.PanForged;Base.Pan;Base.Saucepan;Base.SaucepanCopper;Base.Pot;Base.PotForged] mode:keep,
+        }
+        outputs
+        {
+            item 1 Base.Lard,
+        }
+    }
+}
