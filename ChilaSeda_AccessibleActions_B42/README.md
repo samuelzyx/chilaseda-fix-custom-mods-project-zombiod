@@ -1,4 +1,16 @@
-# ChilaSeda - Acciones Accesibles (Build 42) 1.0.36
+# ChilaSeda - Acciones Accesibles (Build 42) 1.0.43
+
+## Version 1.0.43
+
+- En el menú de inventario, `Procesar en lote` queda inmediatamente después de `Fabricar` cuando ambas opciones aparecen. Las demás opciones conservan su orden y una traza acotada confirma el ajuste.
+
+## Version 1.0.42
+
+- El menu de Viewpoint protege el escaneo de contenedores y las consultas vanilla de agua de lavado cuando una API no esta disponible. La falta de ropa accesible ya no interrumpe la opcion de lavarse; las trazas acotadas indican APIs omitidas y el resultado del menu.
+
+## Version 1.0.41
+
+- El menu de Viewpoint para fuentes de agua recorre tambien los contenedores visibles del panel de inventario, admite los recipientes que acepta la accion vanilla y ofrece lavar el cuerpo o ropa sucia cuando hay agua suficiente. Un registro limitado deja el origen, tipos de recipientes y conteos de lavado para diagnostico.
 
 <div align="center">
 
@@ -7,6 +19,23 @@
 </div>
 
 ---
+
+## Version 1.0.40
+
+- El menú nativo de Viewpoint puede abrirse sin `updateMainListbox` en el panel de inventario. La actualización opcional del panel ahora comprueba cada método disponible, registra una sola advertencia si falta o falla y continúa leyendo los recipientes directamente del inventario.
+
+## Version 1.0.39
+
+- Las opciones para llenar recipientes se agregan durante `OnFillWorldObjectContextMenu`, antes de que Viewpoint recolecte las acciones del menu nativo oculto. Se conserva la comprobacion posterior al menu como respaldo; la deteccion de opciones ya presentes evita duplicados.
+
+## Version 1.0.38
+
+- El lote de cordeles/hilos y la opcion masiva de grasa de LTP ahora transfieren los ingredientes requeridos y conectan el inicio, final o cancelacion de cada accion con `HandcraftLogic`, igual que el panel vanilla. Si no se crean todas las acciones, se registra el motivo y aparece un aviso en Halo; DAAO tambien informa si no llega a construir acciones. La traza de fabricacion cubre esos lotes.
+- Se agregaron pruebas de contrato para las rutas de lote locales, DAAO y resultados del crafteo normal.
+
+## Version 1.0.37
+
+- Registra inicio, fin y reinicios de acciones de fabricacion que procesan carne para grasa/sebo, junto con la receta y si admite trabajo desde el piso, para diagnosticar la cancelacion de traslados observada en Jill.
 
 ## Version 1.0.36
 

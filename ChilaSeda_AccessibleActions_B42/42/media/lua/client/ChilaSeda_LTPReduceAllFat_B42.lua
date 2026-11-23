@@ -105,7 +105,7 @@ local function queueAll(item, recipe, playerNum)
 
     local quantity = math.max(0, math.floor(tonumber(logic:getPossibleCraftCount(true)) or 0))
     if quantity < 1 then return end
-    ISEntityUI.HandcraftStartMultiple(character, logic, false, quantity, true)
+    ChilaSedaAccessibleConsolidation.queueHandcraftBatch(character, logic, quantity)
 end
 
 local function setCookingPotIcon(option)

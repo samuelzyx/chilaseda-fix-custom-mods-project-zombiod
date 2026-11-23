@@ -1,4 +1,5 @@
 require "ISUI/ISInventoryPaneContextMenu"
+require "ISUI/ISCraftingUI"
 require "ChilaSeda_FoodMenuOrder_B42"
 require "TimedActions/ISConsolidateDrainable"
 require "Entity/TimedActions/ISHandcraftAction"
@@ -243,7 +244,6 @@ local function textureForFullType(fullType)
     return okTexture and texture or nil
 end
 
-local activeRecipeBatch
 local producingRecipeAction
 
 local function safeMethod(object, methodName)
@@ -462,6 +462,96 @@ ISHandcraftAction.performRecipe = function(self, ...)
     return result
 end
 
+-- Keep every local bulk recipe entry point on the same lifecycle as the
+-- vanilla crafting panel: transfer remote inputs first, create actions
+-- without queueing them, attach HandcraftLogic callbacks, then enqueue them.
+-- HandcraftStartMultiple alone only constructs actions; it does not start or
+-- stop the recipe session for callers outside the vanilla widget.
+function M.queueHandcraftBatch(player, logic, quantity, batch)
+    if not player or not logic or type(quantity) ~= "number" or quantity < 1 then
+        return false, "invalid batch arguments"
+    end
+    quantity = math.floor(quantity)
+    if quantity < 1 then return false, "empty batch" end
+
+    local recipe = logic:getRecipe()
+    local recipeData = logic:getRecipeData()
+    local inputs = recipeData:getAllInputItems()
+    local putBackInputs = recipeData:getAllPutBackInputItems()
+    if logic:isUsingRecipeAtHandBenefit() then
+        local atHandItem = logic:getUsingRecipeAtHandItem()
+        if atHandItem then
+            inputs:add(atHandItem)
+            putBackInputs:add(atHandItem)
+        end
+    end
+
+    local returnToContainer = {}
+    if not recipe:isCanBeDoneFromFloor() then
+        for index = 0, inputs:size() - 1 do
+            local item = inputs:get(index)
+            if item:getContainer() ~= player:getInventory() then
+                ISInventoryPaneContextMenu.transferIfNeeded(player, item)
+                if putBackInputs:contains(item) then
+                    returnToContainer[#returnToContainer + 1] = item
+                end
+            end
+        end
+    end
+    logic:updateManualInputAllowedItemTypes()
+
+    local ok, actions = pcall(ISEntityUI.HandcraftStartMultiple,
+        player, logic, false, quantity, false)
+    if not ok or type(actions) ~= "table" or #actions ~= quantity then
+        ISCraftingUI.ReturnItemsToOriginalContainer(player, returnToContainer)
+        local reason = ok and "HandcraftStartMultiple returned an incomplete batch"
+            or tostring(actions)
+        print("[ChilaSeda_AccessibleCrafting] bulk recipe not queued: " .. reason)
+        if HaloTextHelper and HaloTextHelper.addText then
+            pcall(HaloTextHelper.addText, player, "Fabricacion masiva no iniciada",
+                " ", 255, 180, 120)
+        end
+        return false, reason
+    end
+
+    for index = 1, quantity do
+        local action = actions[index]
+        if not action then
+            ISCraftingUI.ReturnItemsToOriginalContainer(player, returnToContainer)
+            local reason = "HandcraftStartMultiple returned a nil action"
+            print("[ChilaSeda_AccessibleCrafting] bulk recipe not queued: " .. reason)
+            if HaloTextHelper and HaloTextHelper.addText then
+                pcall(HaloTextHelper.addText, player, "Fabricacion masiva no iniciada",
+                    " ", 255, 180, 120)
+            end
+            return false, reason
+        end
+    end
+
+    for index, action in ipairs(actions) do
+        local isLastAction = index == #actions
+        if batch then
+            action.chilaSedaRecipeBatch = batch
+            action.label = batch.label or action.label
+        end
+        action.chilaSedaAccessibleBatch = true
+        action:setOnStart(function(target, runningAction)
+            target:startCraftAction(runningAction)
+        end, logic)
+        action:setOnComplete(function(target)
+            target:stopCraftAction()
+            if batch and isLastAction then finishRecipeBatch(batch) end
+        end, logic)
+        action:setOnCancel(function(target)
+            target:stopCraftAction(true)
+        end, logic)
+        ISTimedActionQueue.add(action)
+    end
+
+    ISCraftingUI.ReturnItemsToOriginalContainer(player, returnToContainer)
+    return true, actions
+end
+
 local function threadBatchLabel(recipe)
     local fullType = threadOutputFullType(recipe)
     if not fullType then return "Fabricando" end
@@ -469,28 +559,6 @@ local function threadBatchLabel(recipe)
     if fullType == "Base.Rope" or fullType == "Base.SheetRope" then return "Uniendo cuerdas" end
     if fullType == "Base.Thread" or fullType == "Base.Thread_Sinew" then return "Haciendo hilo" end
     return "Fabricando"
-end
-
-local originalStartMultiple = ISEntityUI.HandcraftStartMultiple
-ISEntityUI.HandcraftStartMultiple = function(player, logic, force, quantity, addToQueue)
-    local actions = originalStartMultiple(player, logic, force, quantity, addToQueue)
-    local batch = activeRecipeBatch
-    if batch and batch.player == player and type(actions) == "table" then
-        local last = actions[#actions]
-        for _, action in ipairs(actions) do
-            action.chilaSedaRecipeBatch = batch
-            action.label = batch.label
-        end
-        if last then
-            local callback = last.onComplete
-            local target = last.onCompleteTarget
-            last:setOnComplete(function(target)
-                if callback then callback(target) end
-                finishRecipeBatch(batch)
-            end, target)
-        end
-    end
-    return actions
 end
 
 local function queueThreadRecipe(option, player, selected, recipe)
@@ -502,11 +570,7 @@ local function queueThreadRecipe(option, player, selected, recipe)
     if quantity < 1 then return end
     local batch = { player = playerObj, outputs = {}, label = threadBatchLabel(recipe) }
     local logic = contextRecipeLogic(playerObj, recipe, selected)
-    local previous = activeRecipeBatch
-    activeRecipeBatch = batch
-    local ok, err = pcall(ISEntityUI.HandcraftStartMultiple, playerObj, logic, false, quantity, true)
-    activeRecipeBatch = previous
-    if not ok then error(err) end
+    M.queueHandcraftBatch(playerObj, logic, quantity, batch)
 end
 
 local vanillaRecipeContext = ISInventoryPaneContextMenu.addNewCraftingDynamicalContextMenu

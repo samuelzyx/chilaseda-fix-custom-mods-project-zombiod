@@ -1,6 +1,7 @@
 require "TimedActions/ISTimedActionQueue"
 require "TimedActions/ISInventoryTransferAction"
 require "TimedActions/ISTransferAction"
+require "Entity/TimedActions/ISHandcraftAction"
 
 local TAG = "[ChilaSeda_AccessibleActionTrace] "
 if ISTimedActionQueue.__ChilaSedaAccessibleActionTrace then return end
@@ -31,8 +32,28 @@ local function containerName(container)
         itemName(bag), coords)
 end
 
+local function recipeForAction(action)
+    return action and (action.recipe or action.currentRecipe)
+        or call(action and action.recipeData, "getRecipe")
+end
+
+local function recipeName(action)
+    local recipe = recipeForAction(action)
+    return recipe and tostring(call(recipe, "getTranslationName")
+        or call(recipe, "getName") or "?") or "?"
+end
+
 local function relevant(action)
     local kind = tostring(action and action.Type or "")
+    if kind:find("Handcraft", 1, true) then
+        if action.chilaSedaAccessibleBatch or action.chilaSedaDismantleContext then
+            return true
+        end
+        local name = string.lower(recipeName(action))
+        return name:find("reduce", 1, true) ~= nil
+            or name:find("grasa", 1, true) ~= nil
+            or name:find("tallow", 1, true) ~= nil
+    end
     return kind:find("Eat", 1, true) or kind:find("Unequip", 1, true)
         or kind:find("Wear", 1, true) or kind:find("Transfer", 1, true)
         or kind:find("Equip", 1, true) or kind:find("Fire", 1, true)
@@ -44,14 +65,34 @@ local function trace(event, action, result)
     if not relevant(action) then return end
     local item = action.item or action.itemToEat or action.itemToEquip
         or action.clothing or action.fuelItem or action.fireStarter
+    local recipe = recipeForAction(action)
     print(TAG .. event .. " type=" .. tostring(action.Type or "?")
         .. " item=" .. itemName(item)
         .. " itemContainer=" .. containerName(item and call(item, "getContainer"))
         .. " source=" .. containerName(action.srcContainer)
         .. " destination=" .. containerName(action.destContainer)
         .. " target=" .. itemName(action.item)
+        .. " recipe=" .. recipeName(action)
+        .. " canDoFromFloor=" .. tostring(call(recipe, "isCanBeDoneFromFloor"))
         .. " result=" .. tostring(result or "n/a"))
 end
+
+local function wrapHandcraftLifecycle(methodName)
+    local actionClass = ISHandcraftAction
+    if not actionClass or type(actionClass[methodName]) ~= "function" then return end
+    local original = actionClass[methodName]
+    actionClass[methodName] = function(self, ...)
+        trace("HANDCRAFT_" .. string.upper(methodName) .. "_BEGIN", self)
+        local result = original(self, ...)
+        trace("HANDCRAFT_" .. string.upper(methodName) .. "_END", self)
+        return result
+    end
+end
+
+wrapHandcraftLifecycle("start")
+wrapHandcraftLifecycle("perform")
+wrapHandcraftLifecycle("stop")
+wrapHandcraftLifecycle("complete")
 
 local queueAdd = ISTimedActionQueue.add
 ISTimedActionQueue.add = function(action, ...)
@@ -92,4 +133,4 @@ end
 
 wrapTransfer(ISInventoryTransferAction, "transferItem", 1, 0)
 wrapTransfer(ISTransferAction, "transferItem", 2, 4)
-print(TAG .. "installed; traces food, clothing, fire/fuel and item transfer outcomes")
+print(TAG .. "installed; traces relevant timed actions and item transfer outcomes")

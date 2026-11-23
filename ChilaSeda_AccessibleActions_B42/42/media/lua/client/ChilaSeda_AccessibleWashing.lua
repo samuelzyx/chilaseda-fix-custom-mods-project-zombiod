@@ -1,6 +1,8 @@
 require "ISUI/ISWorldObjectContextMenu"
 require "ISUI/ISInventoryPaneContextMenu"
 require "TimedActions/ISCleanBandage"
+require "TimedActions/ISWashClothing"
+require "TimedActions/ISWashYourself"
 require "TimedActions/ISInventoryTransferAction"
 
 local function collectItemsFromContainer(container, fullType, limit)
@@ -17,9 +19,27 @@ local function collectItemsFromContainer(container, fullType, limit)
 	return result
 end
 
+local accessibleContainersDiagnosticLogged = false
+
 local function getAccessibleContainers(playerObj)
-	local ok, containers = pcall(ISInventoryPaneContextMenu.getContainers, playerObj)
-	return ok and containers or nil
+	local inventoryMenu = ISInventoryPaneContextMenu
+	local getContainers = inventoryMenu and inventoryMenu.getContainers
+	if type(getContainers) ~= "function" then
+		if not accessibleContainersDiagnosticLogged then
+			accessibleContainersDiagnosticLogged = true
+			print("[ChilaSeda AccessibleWashing] skipped accessible-container scan reason=getContainers unavailable")
+		end
+		return nil
+	end
+	local ok, containers = pcall(function() return getContainers(playerObj) end)
+	if not ok then
+		if not accessibleContainersDiagnosticLogged then
+			accessibleContainersDiagnosticLogged = true
+			print("[ChilaSeda AccessibleWashing] skipped accessible-container scan reason=" .. tostring(containers))
+		end
+		return nil
+	end
+	return containers
 end
 
 local function collectAccessibleItems(playerObj, fullType, limit, includePlayerInventory)
@@ -566,11 +586,12 @@ end
 
 local function safeCall(object, method, ...)
 	if not object then return nil end
-	local fn = object[method]
-	if type(fn) ~= "function" then return nil end
+	local lookupOk, fn = pcall(function() return object[method] end)
+	if not lookupOk then return nil, false, "method lookup failed" end
+	if type(fn) ~= "function" then return nil, false, "method unavailable" end
 	local ok, result = pcall(fn, object, ...)
-	if ok then return result end
-	return nil
+	if ok then return result, true end
+	return nil, false, tostring(result)
 end
 
 local function isFillableWithWater(item)
@@ -583,11 +604,11 @@ local function isFillableWithWater(item)
 		if type(capacity) == "number" and type(amount) == "number" then
 			return capacity > amount
 		end
+		-- Vanilla onTakeWater accepts every item exposing a fluid container.
+		return true
 	end
-	if safeCall(item, "canStoreWater") == true then
-		return safeCall(item, "isWaterSource") ~= true
-	end
-	return false
+	-- Match both vanilla canStoreWater branches, including partly filled sources.
+	return safeCall(item, "canStoreWater") == true
 end
 
 local function collectFillableItems(container, output, seenContainers, seenItems)
@@ -614,9 +635,214 @@ end
 
 local function collectPlayerFillables(playerObj)
 	local result = {}
+	local seenContainers = {}
+	local seenItems = {}
 	local inventory = safeCall(playerObj, "getInventory")
-	collectFillableItems(inventory, result, {}, {})
+	collectFillableItems(inventory, result, seenContainers, seenItems)
+	local accessible = getAccessibleContainers(playerObj)
+	local count = safeCall(accessible, "size")
+	if type(count) == "number" then
+		for index = 0, count - 1 do
+			collectFillableItems(safeCall(accessible, "get", index), result, seenContainers, seenItems)
+		end
+	elseif type(accessible) == "table" then
+		for _, container in ipairs(accessible) do
+			collectFillableItems(container, result, seenContainers, seenItems)
+		end
+	end
 	return result
+end
+
+local MAX_WASHABLE_ITEMS = 128
+local washWaterApiWarnings = {}
+
+local function getWashRequiredWater(module, item, action)
+	local getRequiredWater = module and module.GetRequiredWater
+	if type(getRequiredWater) ~= "function" then
+		if not washWaterApiWarnings[action] then
+			washWaterApiWarnings[action] = true
+			print("[ChilaSeda AccessibleWashing] skipped wash option action=" .. tostring(action)
+				.. " reason=GetRequiredWater unavailable")
+		end
+		return nil
+	end
+	local ok, amount = pcall(function() return getRequiredWater(item) end)
+	if not ok then
+		if not washWaterApiWarnings[action] then
+			washWaterApiWarnings[action] = true
+			print("[ChilaSeda AccessibleWashing] skipped wash option action=" .. tostring(action)
+				.. " reason=GetRequiredWater failed error=" .. tostring(amount))
+		end
+		return nil
+	end
+	if type(amount) == "number" then return amount end
+	return nil
+end
+
+local function collectWashableItems(container, output, seenContainers, seenItems)
+	if not container or seenContainers[container] or #output >= MAX_WASHABLE_ITEMS then return end
+	seenContainers[container] = true
+	local items = safeCall(container, "getItems")
+	local size = safeCall(items, "size")
+	if type(size) ~= "number" then return end
+
+	for index = 0, size - 1 do
+		local item = safeCall(items, "get", index)
+		if item and not seenItems[item] then
+			seenItems[item] = true
+			if instanceof(item, "Clothing") then
+				local requiredWater = getWashRequiredWater(ISWashClothing, item, "clothing")
+				if requiredWater and requiredWater > 4 then
+					output[#output + 1] = item
+				end
+			end
+			local nestedInventory = safeCall(item, "getInventory")
+			if nestedInventory then
+				collectWashableItems(nestedInventory, output, seenContainers, seenItems)
+			end
+		end
+		if #output >= MAX_WASHABLE_ITEMS then return end
+	end
+end
+
+local function collectPlayerWashables(playerObj)
+	local result = {}
+	local seenContainers = {}
+	local seenItems = {}
+	collectWashableItems(safeCall(playerObj, "getInventory"), result, seenContainers, seenItems)
+	local accessible = getAccessibleContainers(playerObj)
+	local count = safeCall(accessible, "size")
+	if type(count) == "number" then
+		for index = 0, count - 1 do
+			collectWashableItems(safeCall(accessible, "get", index), result, seenContainers, seenItems)
+		end
+	elseif type(accessible) == "table" then
+		for _, container in ipairs(accessible) do
+			collectWashableItems(container, result, seenContainers, seenItems)
+		end
+	end
+	return result
+end
+
+local inventoryPaneRefreshWarnings = {}
+local waterMenuDiagnostics = 0
+local MAX_WATER_MENU_DIAGNOSTICS = 32
+
+local function hasMenuCallback(context, callback)
+	if not context or type(callback) ~= "function" then return false end
+	local menus = { context }
+	for _, submenu in pairs(context.instanceMap or {}) do
+		menus[#menus + 1] = submenu
+	end
+	for _, menu in ipairs(menus) do
+		for _, option in ipairs(menu.options or {}) do
+			if option.onSelect == callback then return true end
+		end
+	end
+	return false
+end
+
+local function getWashSubmenu(context)
+	local washLabel = getText("ContextMenu_Wash")
+	for _, option in ipairs(context.options or {}) do
+		if option.name == washLabel and option.subOption then
+			local submenu = context:getSubMenu(option.subOption)
+			if submenu then return submenu, nil end
+		end
+	end
+	local root = context:addOption(washLabel)
+	local submenu = context:getNew(context)
+	context:addSubMenu(root, submenu)
+	return submenu, root
+end
+
+local function addVanillaWashOptions(context, playerObj, waterSource)
+	local waterAvailable = safeCall(waterSource, "getFluidAmount")
+	if type(waterAvailable) ~= "number" or waterAvailable < 1 then return 0, 0, false end
+	local dirtySelfParts = getWashRequiredWater(ISWashYourself, playerObj, "self") or 0
+	local canWashSelf = dirtySelfParts > 0
+	local callbackSelf = ISWorldObjectContextMenu and ISWorldObjectContextMenu.onWashYourself
+	local callbackClothing = ISWorldObjectContextMenu and ISWorldObjectContextMenu.onWashClothing
+	local washable = {}
+	for _, item in ipairs(collectPlayerWashables(playerObj)) do
+		local required = getWashRequiredWater(ISWashClothing, item, "clothing")
+		if required and required > 0
+			and required <= waterAvailable then
+			washable[#washable + 1] = item
+		end
+	end
+	local hasSelfAction = canWashSelf and type(callbackSelf) == "function"
+	local hasClothingAction = #washable > 0 and type(callbackClothing) == "function"
+	local added = false
+	if (hasSelfAction and not hasMenuCallback(context, callbackSelf))
+		or (hasClothingAction and not hasMenuCallback(context, callbackClothing)) then
+		local submenu, root = getWashSubmenu(context)
+		if hasSelfAction and not hasMenuCallback(context, callbackSelf) then
+			submenu:addOption(getText("ContextMenu_Yourself"), playerObj, callbackSelf, waterSource, nil)
+			added = true
+		end
+		if hasClothingAction and not hasMenuCallback(context, callbackClothing) then
+			local inventory = safeCall(playerObj, "getInventory")
+			local soapList = safeCall(inventory, "getSoapList", nil, true)
+			local withinWater = {}
+			local availableWater = waterAvailable
+			for _, item in ipairs(washable) do
+				local required = getWashRequiredWater(ISWashClothing, item, "clothing")
+				if required and required <= availableWater then
+					withinWater[#withinWater + 1] = item
+					availableWater = availableWater - required
+				end
+			end
+			if #withinWater > 1 then
+				submenu:addOption(getText("ContextMenu_WashAllClothing") .. " (" .. #withinWater .. ")",
+					playerObj, callbackClothing, waterSource, soapList, withinWater, nil)
+			end
+			for _, item in ipairs(washable) do
+				local name = safeCall(item, "getName") or tostring(item)
+				submenu:addOption(getText("ContextMenu_WashClothing", tostring(name)), playerObj,
+					callbackClothing, waterSource, soapList, nil, item)
+			end
+			added = true
+		end
+		if root then positionAfterEquipSecondary(context, root) end
+	end
+	return dirtySelfParts, #washable, added, washable
+end
+
+local function logWaterMenu(context, waterSource, fillableItems, washableItems, dirtySelfParts)
+	if waterMenuDiagnostics >= MAX_WATER_MENU_DIAGNOSTICS then return end
+	if context and context.waterMenuDiagnosticLogged then return end
+	if context then context.waterMenuDiagnosticLogged = true end
+	waterMenuDiagnostics = waterMenuDiagnostics + 1
+	local itemNames = {}
+	for index = 1, math.min(#fillableItems, 12) do
+		local fullType = safeCall(fillableItems[index], "getFullType")
+		itemNames[#itemNames + 1] = tostring(fullType or safeCall(fillableItems[index], "getName") or "unknown")
+	end
+	if #fillableItems > #itemNames then itemNames[#itemNames + 1] = "+" .. (#fillableItems - #itemNames) end
+	local clothingNames = {}
+	for index = 1, math.min(#washableItems, 8) do
+		local item = washableItems[index]
+		local fullType = safeCall(item, "getFullType") or safeCall(item, "getName") or "unknown"
+		local ok, required = pcall(ISWashClothing.GetRequiredWater, item)
+		clothingNames[#clothingNames + 1] = tostring(fullType) .. ":" .. tostring(ok and required or "?")
+	end
+	if #washableItems > #clothingNames then clothingNames[#clothingNames + 1] = "+" .. (#washableItems - #clothingNames) end
+	print("[ChilaSeda AccessibleWashing] water-menu source=" .. tostring(safeCall(waterSource, "getObjectName") or "unknown")
+		.. " fluid=" .. tostring(safeCall(waterSource, "getFluidUiName") or "unknown")
+		.. " water=" .. tostring(safeCall(waterSource, "getFluidAmount") or 0)
+		.. " fillable=" .. #fillableItems .. " items=" .. table.concat(itemNames, ",")
+		.. " dirtySelfParts=" .. tostring(dirtySelfParts) .. " washableClothing=" .. #washableItems
+		.. " clothing=" .. table.concat(clothingNames, ","))
+end
+
+local function refreshInventoryPaneMethod(inventoryPane, method)
+	local _, ok, reason = safeCall(inventoryPane, method)
+	if ok then return end
+	if inventoryPaneRefreshWarnings[method] then return end
+	inventoryPaneRefreshWarnings[method] = true
+	print("[ChilaSeda AccessibleWashing] skipped inventory pane refresh method="
+		.. tostring(method) .. " reason=" .. tostring(reason))
 end
 
 local function extendFillContainerSearch(playerNum, context, worldobjects, test)
@@ -639,11 +865,13 @@ local function extendFillContainerSearch(playerNum, context, worldobjects, test)
 	local inventoryUI = getPlayerInventory and getPlayerInventory(playerNum)
 	local inventoryPane = inventoryUI and inventoryUI.inventoryPane
 	if inventoryPane then
-		pcall(function() inventoryPane:refreshContainer() end)
-		pcall(function() inventoryPane:updateMainListbox() end)
+		refreshInventoryPaneMethod(inventoryPane, "refreshContainer")
+		refreshInventoryPaneMethod(inventoryPane, "updateMainListbox")
 	end
 
+	local dirtySelfParts, _, _, washableItems = addVanillaWashOptions(context, playerObj, waterSource)
 	local fillableItems = collectPlayerFillables(playerObj)
+	logWaterMenu(context, waterSource, fillableItems, washableItems or {}, dirtySelfParts)
 	if #fillableItems == 0 then return end
 
 	local represented = {}
@@ -699,6 +927,9 @@ local function extendFillContainerSearch(playerNum, context, worldobjects, test)
 end
 
 Events.OnFillWorldObjectContextMenu.Add(addWaterAndRainOptions)
+-- Add fill actions during the native context-menu event so Viewpoint's hidden
+-- menu harvest sees the same entries as the ordinary right-click menu.
+Events.OnFillWorldObjectContextMenu.Add(extendFillContainerSearch)
 Events.OnFillInventoryObjectContextMenu.Add(addSelectedItemWash)
 Events.OnFillInventoryObjectContextMenu.Add(hideVanillaInventoryWaterOptions)
 

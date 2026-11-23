@@ -112,6 +112,8 @@ local function defaultAnchor(options)
 end
 
 local foodCategoryOrder = { rotten = 1, stale = 2, fresh = 3, burnt = 4 }
+local batchMenuOrderTraceCount = 0
+local MAX_BATCH_MENU_ORDER_TRACE_LINES = 12
 
 local function organizeLocalOptions(context)
 	local options = context.options
@@ -184,6 +186,37 @@ local function organizeLocalOptions(context)
 	end
 end
 
+local function moveBatchProcessingNextToCraft(options)
+	local craftLabel = getText("ContextMenu_ShowCraftRecipesUsed")
+	local batchLabel = getText("ContextMenu_DismantleAllAtOnce")
+	local craftIndex, batchIndex, batchOption
+	for index, option in ipairs(options) do
+		if option and option.name == craftLabel then craftIndex = index end
+		if option and option.name == batchLabel and option.subOption then
+			batchIndex = index
+			batchOption = option
+		end
+	end
+	if not craftIndex or not batchIndex or not batchOption then return end
+
+	local previousIndex = batchIndex
+	local nextIndex = craftIndex + 1
+	if batchIndex ~= nextIndex then
+		table.remove(options, batchIndex)
+		if batchIndex < craftIndex then craftIndex = craftIndex - 1 end
+		nextIndex = craftIndex + 1
+		table.insert(options, nextIndex, batchOption)
+	end
+
+	if batchMenuOrderTraceCount < MAX_BATCH_MENU_ORDER_TRACE_LINES then
+		batchMenuOrderTraceCount = batchMenuOrderTraceCount + 1
+		local state = previousIndex == nextIndex and "already-adjacent" or "moved"
+		print("[ChilaSeda_AccessibleActions][MenuOrder] craft=ContextMenu_ShowCraftRecipesUsed"
+			.. " batch=ContextMenu_DismantleAllAtOnce state=" .. state
+			.. " from=" .. tostring(previousIndex) .. " to=" .. tostring(nextIndex))
+	end
+end
+
 local function polishInventoryMenu(player, context)
 	local options = context and context.options
 	if type(options) ~= "table" then return end
@@ -194,6 +227,7 @@ local function polishInventoryMenu(player, context)
 		assignContextIcon(option, name)
 	end
 	organizeLocalOptions(context)
+	moveBatchProcessingNextToCraft(options)
 	for index, option in ipairs(options) do option.id = index end
 	pcall(function()
 		if context.calcHeight then context:calcHeight() end

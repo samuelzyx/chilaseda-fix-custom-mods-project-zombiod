@@ -69,7 +69,15 @@ local originalHandcraftStartMultiple = ISEntityUI.HandcraftStartMultiple
 ISEntityUI.HandcraftStartMultiple = function(player, logic, force, quantity, addToQueue)
     local actions = originalHandcraftStartMultiple(player, logic, force, quantity, addToQueue)
     local context = activeDismantleContext
-    if context and context.player == player and type(actions) == "table" then
+    if context and context.player == player then
+        context.handcraftStartCalled = true
+        if type(actions) ~= "table" or #actions ~= quantity then
+            context.creationFailure = "HandcraftStartMultiple did not create the requested action count"
+            print("[ChilaSeda_AccessibleActions][DAAO] " .. context.creationFailure
+                .. "; requested=" .. tostring(quantity)
+                .. "; created=" .. tostring(type(actions) == "table" and #actions or 0))
+            return nil
+        end
         for _, action in ipairs(actions) do
             action.chilaSedaDismantleContext = context
         end
@@ -149,15 +157,16 @@ local function invokeDismantleAll(option, target, groupItems, recipe, ...)
     local previousRecipeItems = shared and shared.contextRecipeItems
     local previousQueueContext = shared and shared.dismantleQueueContext
     local firstItem = type(groupItems) == "table" and groupItems[1] or nil
-    activeDismantleContext = {
+    local dismantleContext = {
         player = target,
         outputContainer = firstItem and firstItem:getContainer() or nil,
         outputs = {},
         outputsReturned = false,
     }
+    activeDismantleContext = dismantleContext
     if shared then
         shared.contextRecipeItems = groupItems
-        shared.dismantleQueueContext = activeDismantleContext
+        shared.dismantleQueueContext = dismantleContext
     end
     local ok, a, b, c, d = pcall(option.chilaSedaOriginalOnSelect,
         target, groupItems, recipe, ...)
@@ -167,6 +176,16 @@ local function invokeDismantleAll(option, target, groupItems, recipe, ...)
         shared.dismantleQueueContext = previousQueueContext
     end
     if not ok then error(a) end
+    if not dismantleContext.handcraftStartCalled or dismantleContext.creationFailure then
+        if not dismantleContext.creationFailure then
+            dismantleContext.creationFailure = "Dismantle All At Once returned before creating craft actions"
+            print("[ChilaSeda_AccessibleActions][DAAO] " .. dismantleContext.creationFailure)
+        end
+        if HaloTextHelper and HaloTextHelper.addText then
+            pcall(HaloTextHelper.addText, target,
+                "Fabricacion masiva no iniciada", " ", 255, 180, 120)
+        end
+    end
     return a, b, c, d
 end
 
