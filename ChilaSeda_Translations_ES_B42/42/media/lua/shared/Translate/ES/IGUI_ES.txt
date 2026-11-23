@@ -1,0 +1,4 @@
+IGUI_ES = {
+    ["IGUI_LootTracker_MenuTitle"] = "Rastreador de bot?n",
+    ["IGUI_LootTracker_Shape_Pickup"] = "Camioneta pickup",
+}

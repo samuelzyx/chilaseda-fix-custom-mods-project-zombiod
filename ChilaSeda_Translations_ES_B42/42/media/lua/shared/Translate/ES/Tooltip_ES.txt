@@ -5,4 +5,12 @@ Tooltip_ES = {
     Tooltip_CantCheckThroughDoor_barricaded = "No puedes revisar detras de la puerta porque tiene una barricada.",
     Tooltip_CantCheckThroughWindow_barricaded = "No puedes revisar detras de la ventana porque tiene una barricada.",
     Tooltip_PeekBehindDoor = "Asomarte por la puerta puede hacer ruido segun tu habilidad de sigilo y los indicadores de estado de tu personaje. Agacharte puede ayudar a reducirlo.",
+    Tooltip_item_HarvestSaltLick = "Extrae rocas de sal con un martillo y un cincel o con un pico.",
+    Tooltip_item_Peeler = "Se usa para pelar frutas o verduras.",
+    Tooltip_DoggyAPI_noBatteriesAvailable = "No hay baterías disponibles.",
+    Tooltip_HellraiserCube = "La caja… es una puerta. Una llave.",
+    Tooltip_HellraiserOpenThroat = "Sin lágrimas, por favor. Sería un desperdicio de buen sufrimiento.",
+    Tooltip_HellraiserPinhead = "Tenemos cosas que mostrarte.",
+    Tooltip_UB_NoProperFluidOnGround = "No hay nada que recoger del suelo",
+    Tooltip_UB_NoProperContainerOnGround = "No hay ningún recipiente que llenar en el suelo",
 }

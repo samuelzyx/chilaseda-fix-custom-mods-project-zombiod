@@ -1,0 +1,18 @@
+ItemName_ES = {
+    ["Base.EVWSuppressorMagazine"] = "Notas del taller: silenciadores",
+    ["Base.Common_Sense"] = "Sentido común",
+    ["Base.Common_Sense_Clip"] = "Revista de sentido común",
+    ["ItemName_Base.CVFE_Nagant"] = "Revólver Nagant",
+    ["ItemName_Base.CVFE_Mosin"] = "Fusil Mosin",
+    ["Base.Laser"] = "Láser rojo",
+    ["Base.GreenLaser"] = "Láser verde",
+    ["Base.GreenLaserOn"] = "Láser verde",
+    ["DGVFlags.Flag_SheetHelp"] = "\"AYUDA\" S?bana",
+    ["DGVFlags.Flag_SheetSurvivors"] = "\"SUPERVIVIENTES DENTRO\" S?bana",
+    ["DGVFlags.Flag_SheetKeepOut"] = "\"NO PASAR\" S?bana",
+    ["DGVFlags.Flag_SheetDeadInside"] = "\"MUERTO ADENTRO\" S?bana",
+    ["ItemName_DGVFlags.Flag_SheetHelp"] = "\"AYUDA\" S?bana",
+    ["ItemName_DGVFlags.Flag_SheetSurvivors"] = "\"SUPERVIVIENTES DENTRO\" S?bana",
+    ["ItemName_DGVFlags.Flag_SheetKeepOut"] = "\"NO PASAR\" S?bana",
+    ["ItemName_DGVFlags.Flag_SheetDeadInside"] = "\"MUERTO ADENTRO\" S?bana",
+}

@@ -30,8 +30,8 @@
   "ContextMenu_KnoxPacks_ReturnNever": "El kit se destruye.",
   "ContextMenu_KnoxPacks_SkillBonus": "+%1%% por Sastreria %2",
   "ContextMenu_KnoxPacks_SkillBonusHint": "Si se cose por encima de Sastreria %1, el kit obtiene +%2%% por nivel.",
-  "ContextMenu_KnoxPacks_StatChange": "%1: %2 -> %3",
-  "ContextMenu_KnoxPacks_StatChangePct": "%1: %2%% -> %3%%",
+  "ContextMenu_KnoxPacks_StatChange": "Cambio de %1: %2 -> %3",
+  "ContextMenu_KnoxPacks_StatChangePct": "Cambio de %1: %2%% -> %3%%",
   "ContextMenu_KnoxPacks_WebbingNeedsEmpty": "La mochila Knox Packs debe estar vacia, sin equipar y fuera de tus manos para usar este kit.",
   "ContextMenu_AutoTailoring": "Entrenar Sastreria",
   "ContextMenu_QuickTirePumpAction": "Inflar<br>o desinflar<br>neumaticos",
@@ -229,7 +229,7 @@
   "ContextMenu_WE_Cauterize": "Cauterizar herida",
   "ContextMenu_WE_ApplyTourniquet": "Aplicar torniquete",
   "ContextMenu_WE_RemoveTourniquet": "Retirar torniquete",
-  "ContextMenu_WE_Cheat": "Wound Expansion",
+  "ContextMenu_WE_Cheat": "Expansión de heridas",
   "ContextMenu_WE_CheatWounds": "Alternar herida",
   "ContextMenu_WE_CheatConditions": "Alternar estado",
   "ContextMenu_WE_CheatClearPart": "Limpiar esta parte",
@@ -288,5 +288,6 @@
   "ContextMenu_KnoxPacks_NoQualityKits": "No tienes un kit de mejora de calidad.",
   "ContextMenu_KnoxPacks_QualityChange": "Calidad: %1 -> %2",
   "ContextMenu_KnoxPacks_UpgradeQuality": "Mejorar la calidad",
-  "ContextMenu_KnoxPacks_UpgradeQualityOf": "Mejorar la calidad de"
+  "ContextMenu_KnoxPacks_UpgradeQualityOf": "Mejorar la calidad de",
+  "ContextMenu_XannyArms_QuickTestKit": "Xanny: kit de prueba de ADS y silenciador integrado"
 }

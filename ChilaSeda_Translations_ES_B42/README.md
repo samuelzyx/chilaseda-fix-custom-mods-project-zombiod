@@ -1,4 +1,4 @@
-# ChilaSeda_Translations_ES_B42 - Traducciones al espanol para mods Build 42 1.4.58
+# ChilaSeda_Translations_ES_B42 - Traducciones al espanol para mods Build 42 1.4.95
 
 <div align="center">
 
@@ -7,6 +7,150 @@
 </div>
 
 ---
+
+## Cambios en 1.4.59
+
+- Traduce 143 opciones Sandbox de True Weight, 32 de More Car Features, 13 de HeliEvent, 33 de KnoxPacks y 15 etiquetas IG_UI mas 24 recetas de Xanny Arms, incluidos forzado de puertas y reaparicion de vehiculos.
+
+## Cambios en 1.4.60
+
+- Traduce las 176 descripciones Tooltip de Xanny Arms: calibres, cargadores, capacidad, compatibilidad, cantidad de cartuchos y descripciones de rieles, conservando nombres de armas y modelos; completa sus 13 etiquetas de menu contextual. Completa los catalogos de menu, interfaz, opciones Sandbox y Tooltip de Knox Packs.
+
+## Cambios en 1.4.61
+
+- Completa las 100 opciones Sandbox y los 9 tooltips de Extended Vanilla Weapons, incluidos las fuentes de botin, filtros por epoca y efectos de los silenciadores; añade la etiqueta de almacenamiento al remolque publicitario de More Car Features.
+
+## Cambios en 1.4.62
+
+- Traduce las 81 opciones Sandbox de Wound Expansion, su etiqueta de menu, estados de heridas, nombres de objetos medicos y textos de opciones.
+
+## Cambios en 1.4.63
+
+- Traduce nombres descriptivos de movimientos e instrumentos musicales de Too Many Emotes; conserva los titulos de canciones y coreografias identificables.
+
+## Cambios en 1.4.64
+
+- Completa las opciones y teclas de Authentic Z, y traduce dos descripciones de objetos sin alterar nombres de marcas ni dialogos citados.
+
+## Cambios en 1.4.65
+
+- Completa nombres genericos de mochilas, pelucas, prendas, accesorios, partes del cuerpo y estilos de vello facial de Authentic Z; conserva el nombre propio Spiffo.
+
+## Cambios en 1.4.66
+
+- Traduce las opciones de aparicion, limites, probabilidades, razas y sus ayudas de Animal Remaster; conserva los nombres propios de razas.
+
+## Cambios en 1.4.67
+
+- Traduce pieles, cabezas, restos, huevos y productos de las especies de Animal Remaster; conserva los nombres de razas y marca que son nombres propios.
+
+## Cambios en 1.4.73
+
+- Completa IG_UI y Tooltip de DamnLib: traduce etiquetas de piezas, acciones y descripciones, conservando nombres de vehiculos, marcas e identificadores numericos.
+
+## Cambios en 1.4.74
+
+- Traduce los 74 nombres internos de efectos visuales y rastros de flechas de Fletcher que faltaban en los catalogos ES publicados.
+
+## Cambios en 1.4.75
+
+- Completa las 57 etiquetas y ayudas de las opciones de Real Vehicle VFX.
+
+## Cambios en 1.4.76
+
+- Traduce 46 nombres de comida, verduras y herramientas de Long Term Preservation Extended, incluidos todos los ingredientes pelados.
+
+## Cambios en 1.4.77
+
+- Completa las 16 opciones e instrucciones de Viewpoint Visible Loot.
+
+## Cambios en 1.4.78
+
+- Traduce 24 opciones faltantes de Inventory Tetris y corrige el unico valor de interfaz que seguia identico al ingles.
+
+## Cambios en 1.4.79
+
+- Traduce las 32 recetas de piezas del VW Tipo 2 de 1963 de la rama B42 heredada.
+
+## Cambios en 1.4.80
+
+- Completa 87 recetas de piezas de Jeep Wrangler, campers Airstream, Nissan Skyline y DeLorean.
+
+## Cambios en 1.4.81
+
+- Traduce 23 recetas del VW Tipo 1 y 11 de remolques de carga de la rama B42 heredada.
+
+## Cambios en 1.4.82
+
+- Completa 7 opciones de Inventory Tetris y 10 opciones de extraccion de sal y roca de Long Term Preservation Extended.
+
+## Cambios en 1.4.83
+
+- Traduce las 21 mochilas, variantes con correas y el kit de mejora de calidad de Knox Packs.
+
+## Cambios en 1.4.84
+
+- Completa las 19 opciones y ayudas de Vehicle Military Zones.
+
+## Cambios en 1.4.85
+
+- Traduce el nombre y la descripcion de M-13's Reading Tweaks.
+
+## Cambios en 1.4.86
+
+- Completa las 12 opciones y ayudas del sistema de monitoreo de presion de neumaticos de Lawly.
+
+## Cambios en 1.4.87
+
+- Traduce nueve etiquetas de acciones y objetos de Starlit Library.
+
+## Cambios en 1.4.88
+
+- Completa las etiquetas de configuracion, nombres, tooltips y nombre de idioma de SkateboardMod.
+
+## Cambios en 1.4.89
+
+- Agrega 54 traducciones de recetas, opciones, menus, nombres, tooltips e instrucciones de mods activos.
+
+## Cambios en 1.4.91
+- Actualiza las ayudas de Viewpoint: levantar hallazgos y las acciones de animales usan Ctrl mas la tecla configurada.
+
+## Cambios en 1.4.92
+- Aclara que Ctrl no bloquea los atajos vanilla y documenta F8 como tecla predeterminada para obtener huesos, evitando el panel de salud asignado a H.
+
+## Cambios en 1.4.93
+- Traduce el selector de modificador Ctrl/Alt/Mayús para los atajos de Viewpoint y actualiza sus ayudas y avisos en pantalla.
+
+## Cambios en 1.4.94
+- Restaura H como tecla predeterminada para obtener huesos y aclara que el parche trata Ctrl, Alt y Mayús como parte del atajo.
+
+## Cambios en 1.4.95
+
+- Agrega las etiquetas de Viewpoint para elegir el modificador de los atajos de cadaveres animales, el indicador de desgaste del panel flotante y la seccion de hallazgos con pin de rebusqueda.
+
+## Cambios en 1.4.90
+
+- Traduce 47 textos de Useful Barrels MP, 14 opciones y ayudas de Better Flashlights, mensajes de sábanas DGVFlags y 6 etiquetas/ayudas de Equipment UI y Loot Tracker; conserva los marcadores y el formato.
+
+## Cambios en 1.4.72
+
+- Cubre las 354 etiquetas de Too Many Emotes: traduce seis descripciones genericas y conserva como nombres propios canciones y coreografias identificables.
+
+## Cambios en 1.4.71
+
+- Completa las 940 etiquetas de recetas de DamnLib, incluidos los nombres de piezas para vehiculos; conserva las 30 claves numericas de version.
+
+## Cambios en 1.4.70
+
+- Completa los 535 nombres de objetos de Xanny Arms: localiza municiones, cargadores y accesorios; conserva los nombres propios de 161 armas, marcas y modelos.
+
+## Cambios en 1.4.69
+
+- Traduce los 292 nombres de botanas de Liel's Brazilian Chips y sus variantes en bolsa o tazon; conserva las marcas y completa las opciones de aparicion.
+
+## Cambios en 1.4.68
+
+- Traduce otros 104 nombres descriptivos de Too Many Emotes y conserva los titulos de canciones y nombres identificables de coreografias.
 
 ## Cambios en 1.4.58
 

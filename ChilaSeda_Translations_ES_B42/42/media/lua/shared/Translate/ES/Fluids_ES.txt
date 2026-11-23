@@ -1,0 +1,5 @@
+Fluids_ES = {
+    Fluid_Container_UB_Mov_OrangeBarrel = "Barril naranja",
+    Fluid_Container_UB_Mov_LightGreenBarrel = "Barril verde claro",
+    Fluid_Container_UB_Mov_DarkGreenBarrel = "Barril verde oscuro",
+}

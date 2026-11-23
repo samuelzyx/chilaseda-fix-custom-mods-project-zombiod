@@ -1,3 +1,8 @@
 UI_ES = {
     UI_optionscreen_binding_CheckAround = "Revisar el piso de arriba o el de abajo",
+    UI_LoadPreset_Info = "<H1> <RGB:1,1,1> CÓMO CARGAR UN PREAJUSTE PERSONALIZADO PARA MDB <LINE> <TEXT> <IMAGECENTRE:media/ui/mdbPresetFolder.png> <LINE> <CENTRE> <SIZE:large> <RGB:1,0,0>Sigue estos pasos para cargar tu preajuste personalizado: <LINE><LINE> <CENTRE> <SIZE:medium> <RGB:1,0.5,0>1. <SPACE><RGB:1,1,1> Busca el archivo <SPACE><RGB:0,1,0> \"CONFIG.LUA\" <SPACE><RGB:1,1,1> que quieres usar como preajuste. <LINE><LINE> <CENTRE> <SIZE:medium> <RGB:1,0.5,0>2. <SPACE><RGB:1,1,1> Cambia el nombre del archivo a <SPACE><RGB:0,1,0> MDB_Preset.LUA <LINE><LINE> <CENTRE> <SIZE:medium> <RGB:1,0.5,0>3. <SPACE><RGB:1,1,1> Coloca el archivo en la carpeta: <LINE> <RGB:0,1,0>%UserProfile%\\Zomboid\\Lua <LINE><LINE> <CENTRE> <SIZE:medium> <RGB:1,0.5,0>4. <SPACE><RGB:1,1,1> Pulsa el botón <SPACE><RGB:0,1,0> SÍ <SPACE><RGB:1,1,1> del juego para confirmar y aplicar tu preajuste. <LINE><LINE> <CENTRE> <SIZE:large> <RGB:0,1,1>Disfruta personalizando Minimal Display Bars! <LINE><LINE>",
+    UI_ImportPreset_Info = "<H1> <RGB:1,1,1> VAS A IMPORTAR ESTE PREAJUSTE <LINE> <TEXT> <IMAGECENTRE:media/ui/mdbImport%1.png> <LINE> <CENTRE> <SIZE:large> <RGB:0,1,1>Disfruta personalizando Minimal Display Bars! <LINE><LINE>",
+    ["UI_equipment_options_clean_header"] = "Ocultar encabezado",
+    ["UI_equipment_options_clean_header_tooltip"] = "Oculta el nombre de la interfaz en la barra de t?tulo de la ventana, pero conserva sus botones.",
+    ["UI_equipment_options_neat_tooltip"] = "Oculta los encabezados de las secciones Equipo y Barra de acceso r?pido y desplaza los elementos de la interfaz hacia arriba para aprovechar el espacio vertical.",
 }
