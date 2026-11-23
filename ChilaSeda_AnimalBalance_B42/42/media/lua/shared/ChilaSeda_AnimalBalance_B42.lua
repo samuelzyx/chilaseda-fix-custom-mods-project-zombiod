@@ -234,8 +234,13 @@ local function selectedLootContainer(player, inventory)
         local okPage, page = pcall(getPlayerInventory, playerNum)
         local pane = okPage and page and page.inventoryPane
         local selected = pane and pane.inventory
-        local main = okPage and page and page.inventory
-        if selected and selected ~= inventory and selected ~= main then
+        local main = inventory
+        if not main and type(player.getInventory) == "function" then
+            local okInventory, playerInventory = pcall(player.getInventory, player)
+            if okInventory then main = playerInventory end
+        end
+        if not main and okPage and page then main = page.inventory end
+        if selected and selected ~= main and selected:getType() ~= "floor" then
             return selected, playerNum
         end
     end

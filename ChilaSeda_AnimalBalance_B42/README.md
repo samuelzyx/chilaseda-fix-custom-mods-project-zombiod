@@ -11,7 +11,7 @@
 
 Paquete local para rendimiento, productos y manipulacion de animales. ID:
 `ChilaSeda_AnimalBalance_B42`. Reune Animal Yield, Heavy Animal Pickup y las reparaciones
-locales de Undead Wildlife. Version 2.3.3. No modifica archivos de Workshop.
+locales de Undead Wildlife. Version 2.3.4. No modifica archivos de Workshop.
 
 La opción de carnicería desde contenedor usa el icono vanilla B42 de cuchilla y
 queda tras las opciones nativas de equipar/recetas.
@@ -37,6 +37,9 @@ Con [Undead Wildlife [B42 Stable]](https://steamcommunity.com/sharedfiles/filede
   piso junto al personaje. No usa el inventario principal como destino alternativo. Con Viewpoint
   activo, cada producto muestra en Halo su nombre y destino; DebugLog registra rendimiento, tope y
   destino.
+- La seleccion se compara con el inventario raiz del personaje, no con `page.inventory`: Build 42
+  actualiza `page.inventory` al mismo contenedor seleccionado. Esto mantiene la prioridad de la
+  mochila elegida en despiezado y extraccion de huesos antes del fallback al piso.
 
 ## Manipulacion de animales pesados
 
