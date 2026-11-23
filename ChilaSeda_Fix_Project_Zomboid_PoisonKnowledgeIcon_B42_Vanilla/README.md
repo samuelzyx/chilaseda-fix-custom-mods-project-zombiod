@@ -1,4 +1,4 @@
-# ChilaSeda Fix · conocimiento de veneno (B42 vanilla) 0.2.0
+# ChilaSeda Fix · conocimiento de veneno (B42 vanilla) 0.2.1
 
 <div align="center">
 
@@ -7,6 +7,10 @@
 </div>
 
 ---
+
+## Qué cambia en 0.2.1
+
+- Aumenta el tamaño del icono de veneno en Inventory Tetris y lo limita a la celda para mantenerlo legible sin cubrir el objeto.
 
 
 ## Problema

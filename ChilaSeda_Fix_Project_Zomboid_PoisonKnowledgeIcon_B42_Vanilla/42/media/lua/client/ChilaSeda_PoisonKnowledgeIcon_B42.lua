@@ -199,14 +199,20 @@ if type(originalRenderDetails) == "function"
 
         self._ChilaSedaPoisonKnowledgeIcons = icons
         if self.poisonIcon then
-            local texWH = math.min(self.itemHgt - 2, 32)
-            local auxDXY = self.itemHgt - (self.itemHgt - texWH) / 2 - 13
+            local iconWidth = self.poisonIcon:getWidth()
+            local iconHeight = self.poisonIcon:getHeight()
+            local iconSize = math.max(1, math.min(self.itemHgt - 2,
+                math.max(32, math.floor(self.itemHgt * 0.78))))
+            local scale = iconSize / math.max(iconWidth, iconHeight)
+            local drawWidth = iconWidth * scale
+            local drawHeight = iconHeight * scale
             for i = 1, #icons do
                 local icon = icons[i]
-                self:drawTexture(
+                self:drawTextureScaled(
                     self.poisonIcon,
-                    icon.x + auxDXY,
-                    icon.y + auxDXY - 1,
+                    icon.x + self.itemHgt - drawWidth - 2,
+                    icon.y + self.itemHgt - drawHeight - 2,
+                    drawWidth, drawHeight,
                     1, 1, 1, 1
                 )
             end

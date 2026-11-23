@@ -4,4 +4,4 @@ authors=ChilaSeda
 description=Keeps known poisonous berries and mushrooms labeled in tooltips, inventory icons, and foraging markers.
 loadModAfter=ChilaSeda_AutoCook_B42
 versionMin=42.21
-modversion=0.2.0
+modversion=0.2.1
