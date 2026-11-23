@@ -11,9 +11,17 @@ local AIM_RADIUS = 120
 local MAX_WORLD_DISTANCE = 8
 local SEARCH_RADIUS = 6
 local SCREEN_LIFT = 0.2
-local PROMPT_GAP = 7
+local PROMPT_GAP = 84
 local REFRESH_MS = 32
+local MAX_ACTION_TRACE_LINES = 48
+local actionTraceCount = 0
 local prompt
+
+local function traceAction(message)
+    if actionTraceCount >= MAX_ACTION_TRACE_LINES then return end
+    actionTraceCount = actionTraceCount + 1
+    print(TAG .. "actionTrace=" .. tostring(actionTraceCount) .. " " .. message)
+end
 
 local function safeMethod(object, method, ...)
     if not object then return nil end
@@ -150,6 +158,7 @@ local function targetBody(player)
                                                         body = body,
                                                         player = player,
                                                         canButcher = corpseCanBeButchered(body, player),
+                                                        canGetBones = safeMethod(body, "isAnimalSkeleton") == true,
                                                         screenX = screenX,
                                                         screenY = screenY,
                                                         name = bodyName(body),
@@ -170,31 +179,197 @@ local function targetBody(player)
     return best
 end
 
+local function invokeCorpseAction(actionName, queueType, callback, ...)
+    if type(callback) ~= "function" then
+        traceAction("action=" .. actionName .. " result=skipped reason=callback-unavailable")
+        return false
+    end
+
+    local queue = ISTimedActionQueue
+    local oldAdd = queue and queue.add
+    local queueCount = 0
+    local queueTypes = {}
+    local wrappedAdd
+    if type(oldAdd) == "function" then
+        wrappedAdd = function(action, ...)
+            local actionType = action and action.Type
+            if actionType ~= nil then
+                if #queueTypes < 4 then queueTypes[#queueTypes + 1] = tostring(actionType) end
+                if actionType == queueType then queueCount = queueCount + 1 end
+            end
+            return oldAdd(action, ...)
+        end
+        queue.add = wrappedAdd
+    end
+
+    local utilities = luautils
+    local oldWalkAdj = utilities and utilities.walkAdj
+    local walkCalls, walkResult, walkError = 0, nil, nil
+    local wrappedWalkAdj
+    if type(oldWalkAdj) == "function" then
+        wrappedWalkAdj = function(character, square, ...)
+            walkCalls = walkCalls + 1
+            local ok, result = pcall(oldWalkAdj, character, square, ...)
+            if not ok then
+                walkError = result
+                error(result)
+            end
+            walkResult = result
+            return result
+        end
+        utilities.walkAdj = wrappedWalkAdj
+    end
+
+    local callbackOk, callbackResult = pcall(callback, ...)
+    if queue and queue.add == wrappedAdd then queue.add = oldAdd end
+    if utilities and utilities.walkAdj == wrappedWalkAdj then utilities.walkAdj = oldWalkAdj end
+
+    local queueSummary = #queueTypes > 0 and table.concat(queueTypes, ",") or "none"
+    traceAction("action=" .. actionName
+        .. " result=" .. (callbackOk and "callback-ok" or "callback-error")
+        .. " walkAdjCalls=" .. tostring(walkCalls)
+        .. " walkAdj=" .. tostring(walkResult)
+        .. " walkError=" .. (walkError and tostring(walkError) or "none")
+        .. " queued=" .. tostring(queueCount)
+        .. " queueTypes=" .. queueSummary
+        .. " callbackResult=" .. tostring(callbackResult))
+    if not callbackOk then
+        traceAction("action=" .. actionName .. " error=" .. tostring(callbackResult))
+    end
+    return callbackOk and queueCount > 0
+end
+
 local function performButchering(target)
     local body, player = target and target.body, target and target.player
     if not body or not player or not corpseCanBeButchered(body, player)
             or not AnimalContextMenu or type(AnimalContextMenu.onButcherAnimal) ~= "function" then
-        return
+        traceAction("action=butcher result=skipped reason=target-or-vanilla-callback-unavailable")
+        return false
     end
-    AnimalContextMenu.onButcherAnimal(body, player, butcherKnife(player))
+    return invokeCorpseAction("butcher", "ISButcherAnimal",
+        AnimalContextMenu.onButcherAnimal, body, player, butcherKnife(player))
 end
 
 local function pickUpCorpse(target)
     local body, player = target and target.body, target and target.player
     if not body or not player or not ISWorldObjectContextMenu
             or type(ISWorldObjectContextMenu.onGrabCorpseItem) ~= "function" then
-        return
+        traceAction("action=pickup result=skipped reason=target-or-vanilla-callback-unavailable")
+        return false
     end
-    ISWorldObjectContextMenu.onGrabCorpseItem({}, body, safeMethod(player, "getPlayerNum") or 0)
+    return invokeCorpseAction("pickup", "ISGrabCorpseAction",
+        ISWorldObjectContextMenu.onGrabCorpseItem, {}, body, safeMethod(player, "getPlayerNum") or 0)
+end
+
+local function getAnimalBones(target)
+    local body, player = target and target.body, target and target.player
+    if not body or not player or safeMethod(body, "isAnimalSkeleton") ~= true
+            or not AnimalContextMenu or type(AnimalContextMenu.onGetAnimalBones) ~= "function" then
+        traceAction("action=bones result=skipped reason=target-or-vanilla-callback-unavailable")
+        return false
+    end
+    return invokeCorpseAction("bones", "ISGetAnimalBones",
+        AnimalContextMenu.onGetAnimalBones, body, player)
+end
+
+local function targetForShortcut(player)
+    local current = targetBody(player)
+    if current then
+        traceAction("target=live name=" .. tostring(current.name))
+        return current
+    end
+    local cached = prompt and prompt.target
+    if cached and cached.player == player and isAnimalCorpse(cached.body) then
+        traceAction("target=prompt-cache name=" .. tostring(cached.name))
+        return cached
+    end
+    traceAction("target=none reason=outside-range-or-camera-projection")
+    return nil
+end
+
+local function playerNumber(character)
+    local number = safeMethod(character, "getPlayerNum")
+    return type(number) == "number" and number or nil
+end
+
+local function sameCharacter(left, right)
+    if left == right then return true end
+    local leftNumber, rightNumber = playerNumber(left), playerNumber(right)
+    return leftNumber ~= nil and rightNumber ~= nil and leftNumber == rightNumber
+end
+
+local function bodyObjectId(body)
+    local objectId = safeMethod(body, "getObjectIDAsLong")
+    if objectId == nil or tostring(objectId) == "-1" then return nil end
+    return tostring(objectId)
+end
+
+local function sameBody(left, right)
+    if left == right then return true end
+    local leftId, rightId = bodyObjectId(left), bodyObjectId(right)
+    return leftId ~= nil and rightId ~= nil and leftId == rightId
+end
+
+local function actionAlreadyQueued(player, body, actionType)
+    local queues = ISTimedActionQueue and ISTimedActionQueue.queues
+    if type(queues) ~= "table" then return false end
+    for _, timedQueue in pairs(queues) do
+        local actions = timedQueue and timedQueue.queue
+        local queueCharacter = timedQueue and timedQueue.character
+        if type(actions) == "table"
+                and (queueCharacter == nil or sameCharacter(queueCharacter, player)) then
+            for _, action in ipairs(actions) do
+                local actionCharacter = action and action.character
+                if action and action.Type == actionType and sameBody(action.body, body)
+                        and (actionCharacter == nil or sameCharacter(actionCharacter, player)) then
+                    return true
+                end
+            end
+        end
+    end
+    return false
 end
 
 local function keyName(key)
     if type(key) ~= "number" or key <= 0 then return nil end
+    if type(ChilaSedaViewpointFormatAnimalCorpseActionKey) == "function" then
+        return ChilaSedaViewpointFormatAnimalCorpseActionKey(key)
+    end
+    if type(ChilaSedaViewpointFormatNativeActionKey) == "function" then
+        return ChilaSedaViewpointFormatNativeActionKey(key)
+    end
     if Keyboard and type(Keyboard.getKeyName) == "function" then
         local ok, name = pcall(Keyboard.getKeyName, key)
-        if ok and type(name) == "string" and name ~= "" then return name end
+        if ok and type(name) == "string" and name ~= "" then return "Ctrl+" .. name end
     end
-    return tostring(key)
+    return "Ctrl+" .. tostring(key)
+end
+
+local function controlIsDown()
+    if Keyboard and type(Keyboard.isKeyDown) == "function" then
+        local left, right = Keyboard.KEY_LCONTROL, Keyboard.KEY_RCONTROL
+        if left ~= nil then
+            local ok, down = pcall(Keyboard.isKeyDown, left)
+            if ok and down then return true end
+        end
+        if right ~= nil then
+            local ok, down = pcall(Keyboard.isKeyDown, right)
+            if ok and down then return true end
+        end
+    end
+    if type(isCtrlKeyDown) == "function" then
+        local ok, down = pcall(isCtrlKeyDown)
+        return ok and down == true
+    end
+    return false
+end
+
+local function configuredModifierIsDown()
+    if type(ChilaSedaViewpointAnimalCorpseActionModifierMatches) == "function" then
+        local ok, matches = pcall(ChilaSedaViewpointAnimalCorpseActionModifierMatches)
+        return ok and matches == true
+    end
+    return controlIsDown()
 end
 
 local AnimalCorpsePrompt = ISUIElement:derive("ChilaSedaViewpointAnimalCorpsePrompt")
@@ -227,13 +402,19 @@ function AnimalCorpsePrompt:render()
     local pickupKey = keyName(ChilaSedaViewpointAnimalCorpsePickupKey)
     local butcherKey = target.canButcher
         and keyName(ChilaSedaViewpointAnimalCorpseButcherKey) or nil
-    if not pickupKey and not butcherKey then return end
+    local bonesKey = target.canGetBones
+        and keyName(ChilaSedaViewpointAnimalCorpseBonesKey) or nil
+    if not pickupKey and not butcherKey and not bonesKey then return end
 
     local font = UIFont and (UIFont.Small or UIFont.Medium) or nil
     local rows = {}
     if butcherKey then
         rows[#rows + 1] = text("UI_ChilaSeda_ViewpointAnimalCorpseButcherPrompt",
             "Despiezar: %1", butcherKey)
+    end
+    if bonesKey then
+        rows[#rows + 1] = text("UI_ChilaSeda_ViewpointAnimalSkeletonBonesPrompt",
+            "Obtener huesos: %1", bonesKey)
     end
     local pickupText = safeMethod(target.body, "isAnimalSkeleton") == true
         and text("UI_ChilaSeda_ViewpointAnimalSkeletonPickupPrompt", "Recoger esqueleto: %1", pickupKey)
@@ -283,16 +464,41 @@ local function createPrompt()
     pcall(function() prompt:backMost() end)
 end
 
-local function onKeyPressed(key)
+local function onKeyStartPressed(key)
     local butcherKey = ChilaSedaViewpointAnimalCorpseButcherKey
     local pickupKey = ChilaSedaViewpointAnimalCorpsePickupKey
-    if type(butcherKey) ~= "number" and type(pickupKey) ~= "number" then return end
+    local bonesKey = ChilaSedaViewpointAnimalCorpseBonesKey
+    local matchesActionKey = (type(butcherKey) == "number" and key == butcherKey)
+        or (type(pickupKey) == "number" and key == pickupKey)
+        or (type(bonesKey) == "number" and key == bonesKey)
+    if not matchesActionKey then return end
+    local modifierMatches = configuredModifierIsDown()
+    traceAction("key=matched code=" .. tostring(key)
+        .. " configured=" .. tostring(ChilaSedaViewpointAnimalCorpseActionModifier or "CTRL")
+        .. " modifierDown=" .. tostring(modifierMatches))
+    if not modifierMatches then return end
+    if GameKeyboard and type(GameKeyboard.eatKeyPress) == "function" then
+        pcall(GameKeyboard.eatKeyPress, key)
+    end
     local player = playerForPrompt()
-    if not player then return end
-    local target = targetBody(player)
+    if not player then
+        traceAction("key=matched result=skipped reason=player-unavailable")
+        return
+    end
+    local target = targetForShortcut(player)
     if not target then return end
     if type(butcherKey) == "number" and key == butcherKey then
+        if actionAlreadyQueued(player, target.body, "ISButcherAnimal") then
+            traceAction("action=butcher result=suppressed reason=already-queued")
+            return
+        end
         performButchering(target)
+    elseif type(bonesKey) == "number" and key == bonesKey then
+        if actionAlreadyQueued(player, target.body, "ISGetAnimalBones") then
+            traceAction("action=bones result=suppressed reason=already-queued")
+            return
+        end
+        getAnimalBones(target)
     elseif type(pickupKey) == "number" and key == pickupKey then
         pickUpCorpse(target)
     end
@@ -445,6 +651,62 @@ if ISDropItemAction and type(ISDropItemAction.perform) == "function"
     ISDropItemAction.ChilaSedaButcherDestinationHalo = true
 end
 
+local function installViewpointSkeletonBonesAction()
+    local view = ViewpointInteract
+    if not view or type(view.harvest) ~= "function" or view.chilaSkeletonBonesInstalled then return end
+    local originalHarvest = view.harvest
+    view.harvest = function(player, object, ...)
+        local result = originalHarvest(player, object, ...)
+        if type(result) ~= "table" or safeMethod(object, "isAnimalSkeleton") ~= true
+                or type(result.labels) ~= "table" or type(result.enabled) ~= "table"
+                or not AnimalContextMenu or type(AnimalContextMenu.onGetAnimalBones) ~= "function" then
+            return result
+        end
+
+        local actions = view.actions
+        if type(actions) ~= "table" then return result end
+        for _, action in ipairs(actions) do
+            if action.fn == AnimalContextMenu.onGetAnimalBones
+                    or action.fn == AnimalContextMenu.onGetAnimalBonesFromInv then
+                return result
+            end
+        end
+
+        local bodyName = safeMethod(object, "getDisplayName") or safeMethod(object, "getCustomName") or ""
+        local label = getText("ContextMenu_GetBones", bodyName)
+        local iconPath = safeMethod(object, "getInvIcon")
+        local icon = iconPath and getTexture(iconPath) or nil
+        local entry = { name = label, fn = AnimalContextMenu.onGetAnimalBones,
+            args = { object, player }, n = 2, enabled = true, first = false, menu = true, icon = icon }
+        local oldCount = #(result.labels or {})
+        local index = #actions + 1
+        local primary = getText("ContextMenu_Equip_Primary")
+        local secondary = getText("ContextMenu_Equip_Secondary")
+        local both = getText("ContextMenu_Equip_Two_Hands")
+        for i, action in ipairs(actions) do
+            if action.name == primary or action.name == secondary or action.name == both then index = i + 1 end
+        end
+        table.insert(actions, index, entry)
+        table.insert(result.labels, index, label)
+        table.insert(result.enabled, index, true)
+        if type(result.deliberate) == "table" then table.insert(result.deliberate, index, false) end
+        for _, field in ipairs({ "tips", "icons" }) do
+            local values = result[field]
+            if type(values) == "table" then
+                for i = oldCount, index, -1 do values[i + 1] = values[i] end
+                values[index] = field == "icons" and icon or nil
+            end
+        end
+        return result
+    end
+    view.chilaSkeletonBonesInstalled = true
+end
+
+installViewpointSkeletonBonesAction()
+if Events and Events.OnGameStart and type(Events.OnGameStart.Add) == "function" then
+    Events.OnGameStart.Add(installViewpointSkeletonBonesAction)
+end
+
 if ISButcherAnimal and type(ISButcherAnimal.complete) == "function"
         and not ISButcherAnimal.ChilaSedaSelectedBackpackRoute then
     local originalComplete = ISButcherAnimal.complete
@@ -459,8 +721,8 @@ if ISButcherAnimal and type(ISButcherAnimal.complete) == "function"
     ISButcherAnimal.ChilaSedaSelectedBackpackRoute = true
 end
 
-if Events and Events.OnKeyPressed and type(Events.OnKeyPressed.Add) == "function" then
-    Events.OnKeyPressed.Add(onKeyPressed)
+if Events and Events.OnKeyStartPressed and type(Events.OnKeyStartPressed.Add) == "function" then
+    Events.OnKeyStartPressed.Add(onKeyStartPressed)
 end
 if Events and Events.OnGameStart and type(Events.OnGameStart.Add) == "function" then
     Events.OnGameStart.Add(createPrompt)

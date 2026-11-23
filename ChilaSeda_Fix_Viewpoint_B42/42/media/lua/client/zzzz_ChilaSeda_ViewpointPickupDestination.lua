@@ -29,8 +29,18 @@ end
 local function destinationFor(player, item)
     local main = player and player:getInventory()
     local selected = selectedDestination(player)
-    if selected and canStore(selected, player, item) then return selected end
-    return main
+    if selected and selected ~= main then
+        if canStore(selected, player, item) then return selected end
+        return main, selected
+    end
+    return main, nil
+end
+
+local pickupOverflowSources = setmetatable({}, { __mode = "k" })
+function ChilaSeda_ViewpointPickupOverflowSource(item)
+	local source = pickupOverflowSources[item]
+	pickupOverflowSources[item] = nil
+	return source
 end
 
 local originalGrabNew = ISGrabItemAction.new
@@ -52,7 +62,9 @@ ISGrabItemAction.new = function(self, character, worldItem, time, ...)
     if targetAction and not targetAction.started then
         local queuedItem = action.item and action.item:getItem()
         if queuedItem then
-            targetAction.destContainer = destinationFor(character, queuedItem)
+            local destination, overflowFrom = destinationFor(character, queuedItem)
+            targetAction.destContainer = destination
+            pickupOverflowSources[queuedItem] = overflowFrom
         end
     end
     return action
@@ -63,9 +75,15 @@ ISGrabItemAction.isValid = function(action, ...)
     -- Single-player checks each item immediately before transferring it, so a
     -- full selected bag can fall back to the root inventory without cancelling.
     if not isClient() and not isServer() and action.item and action.item:getItem() then
-        action.destContainer = destinationFor(action.character, action.item:getItem())
+        local item = action.item:getItem()
+        local destination, overflowFrom = destinationFor(action.character, item)
+        action.destContainer = destination
+        pickupOverflowSources[item] = overflowFrom
     elseif not action.started and action.item and action.item:getItem() then
-        action.destContainer = destinationFor(action.character, action.item:getItem())
+        local item = action.item:getItem()
+        local destination, overflowFrom = destinationFor(action.character, item)
+        action.destContainer = destination
+        pickupOverflowSources[item] = overflowFrom
     end
     return originalGrabIsValid(action, ...)
 end

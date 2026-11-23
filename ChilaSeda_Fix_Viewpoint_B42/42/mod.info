@@ -1,11 +1,11 @@
 name=ChilaSeda Fix - Viewpoint Workshop Fixes (B42)
 id=ChilaSeda_Fix_Viewpoint_B42
 authors=ChilaSeda
-description=Local Viewpoint fixes for native and depth-buffer search fog, forage pickup, animal corpse prompts and butchering loot routing, selected-backpack routing and item-named destination Halo notes, correct skill XP and native level-up icons, Spanish Halo notices, search pins, progress, loot, Spanish settings labels, battery charger menus and 3D models, Lua compile-error source tracing, graphics startup, heap pressure, movable-camera windows, and incomplete zombie-skeleton batches.
+description=Local Viewpoint fixes for native and depth-buffer search fog, daylight rain visibility, Ctrl-drawn camera gestures selected through vanilla melee attack choices on click, gesture stroke feedback, native forage pin calibration with independent per-area floor-arrow height, rat-dropping search pins and close-pin Ctrl+G pickup with a safe arrow fallback, configurable-modifier forage and animal corpse actions, scalable corpse loot rows with configurable wear indicators, bounded TextureFix F10 scan replacement, animal corpse prompt target fallback and bounded action diagnostics, butchering loot routing, selected-backpack routing and item-named destination Halo notes, native interaction destination choices for forage loot, butchering, bones, corpse pickup and ground pickup, native fire-action root inventory routing, correct skill XP and native level-up icons, sleep-trait benefit arrows and red downward arrows for other trait changes, Spanish Halo notices, search pins, progress, loot, Spanish settings labels, battery charger menus and 3D models, Lua compile-error source tracing, graphics startup, heap pressure, movable-camera windows, and incomplete zombie-skeleton batches.
 require=ZombieBuddy
-loadModAfter=Viewpoint,ViewpointUI,ProjectViewpointQOL,WallTextureFixForViewpoint,PV-modmapbakefix,NeatUI_ProgressBar,INVENTORY_TETRIS,ChilaSeda_AccessibleActions_B42,ChilaSeda_Translations_ES_B42,MirageWardrobe42,ZombieBuddy
+loadModAfter=Viewpoint,ViewpointUI,ProjectViewpointQOL,WallTextureFixForViewpoint,PV-modmapbakefix,NeatUI_ProgressBar,INVENTORY_TETRIS,ChilaSeda_AccessibleActions_B42,ChilaSeda_Translations_ES_B42,MirageWardrobe42,ZombieBuddy,vpfix,OldPoint
 versionMin=42.21
-modversion=2.0.116
+modversion=2.0.128
 ZBVersionMin=2.3.4
-javaJarFile=media/java/client/ChilaSedaViewpointHalo-2.0.116.jar
+javaJarFile=media/java/client/ChilaSedaViewpointHalo-2.0.122.jar
 javaPkgName=chilaseda.viewpointhalo

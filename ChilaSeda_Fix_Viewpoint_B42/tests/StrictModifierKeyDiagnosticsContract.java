@@ -16,6 +16,12 @@ public final class StrictModifierKeyDiagnosticsContract {
         ByteArrayOutputStream captured = new ByteArrayOutputStream();
         Set<Integer> loggedKeys = new HashSet<>();
         int keyH = org.lwjglx.input.Keyboard.KEY_H;
+        check(StrictModifierKeyBindings.isRawKeyCode(0), "keyboard code zero should be in range");
+        check(StrictModifierKeyBindings.isRawKeyCode(255), "last keyboard code should be in range");
+        check(!StrictModifierKeyBindings.isRawKeyCode(-1), "negative keyboard code should be rejected");
+        check(!StrictModifierKeyBindings.isRawKeyCode(256), "first out-of-range keyboard code should be rejected");
+        check(!StrictModifierKeyBindings.isRawKeyCode(10000), "PZ sentinel 10000 should be rejected");
+        check(!StrictModifierKeyBindings.isRawKeyDown(10000), "out-of-range key query must not reach GameKeyboard");
         try (PrintStream capture = new PrintStream(captured, true, StandardCharsets.UTF_8)) {
             System.setOut(capture);
 

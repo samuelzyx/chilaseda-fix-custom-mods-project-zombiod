@@ -24,11 +24,11 @@ test("Core's injected hook delegates without reading private modifier state", ()
   assert.match(source, /public static boolean shouldSuppress\(Core\.KeyBinding binding\)/);
 });
 
-test("the 2.0.116 Java archive retains the modifier helper and forage bridge", () => {
-  assert.equal(modInfo.match(/^modversion=(.+)$/m)?.[1], "2.0.116");
+test("the 2.0.128 mod selects the 2.0.122 Java archive and exposes the arrow fallback flag", () => {
+  assert.equal(modInfo.match(/^modversion=(.+)$/m)?.[1], "2.0.128");
   assert.equal(
     javaArchiveLine,
-    "media/java/client/ChilaSedaViewpointHalo-2.0.116.jar",
+    "media/java/client/ChilaSedaViewpointHalo-2.0.122.jar",
   );
 
   const archivePath = path.join(modRoot, "42", javaArchiveLine);
@@ -75,6 +75,20 @@ test("the 2.0.116 Java archive retains the modifier helper and forage bridge", (
     });
     assert.match(bridgeSignature, /isNativeTuningAvailable\(\)/);
     assert.match(bridgeSignature, /setNativePinTuning\(double, double\)/);
+
+    const arrowClass = path.join(
+      extractionDir,
+      "chilaseda/viewpointhalo/ForagingArrowCameraProjection.class",
+    );
+    execFileSync(
+      path.join(jdkBin, "jar.exe"),
+      ["xf", archivePath, "chilaseda/viewpointhalo/ForagingArrowCameraProjection.class"],
+      { cwd: extractionDir },
+    );
+    const arrowSignature = execFileSync(path.join(jdkBin, "javap.exe"), ["-p", arrowClass], {
+      encoding: "utf8",
+    });
+    assert.match(arrowSignature, /public static volatile boolean warned;/);
   } finally {
     fs.rmSync(extractionDir, { recursive: true, force: true });
   }
@@ -88,6 +102,9 @@ test("modifier runtime diagnostics include transitions and suppressed-key values
   assert.match(source, /heldModifiers=\[ctrl:/);
   assert.match(source, /bindingModifiers=\[ctrl:/);
   assert.match(source, /!loggedKeys\.add\(key\)/);
+  assert.match(source, /modifier helper fallback=preserve-key-check reason=unsupported-key-code keyCode=/);
+  assert.match(source, /static boolean isRawKeyDown\(int key\)/);
+  assert.match(source, /return isRawKeyCode\(key\) && GameKeyboard\.isKeyDownRaw\(key\);/);
 });
 
 test("modifier diagnostics log once per transition and once per physical key press", () => {

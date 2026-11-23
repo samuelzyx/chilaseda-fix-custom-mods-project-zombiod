@@ -13,7 +13,9 @@ public final class ForagingArrowCameraProjection {
     private static volatile Field xsField;
     private static volatile Field ysField;
     private static volatile Field shownField;
-    private static volatile boolean warned;
+    // ZombieBuddy injects this read into viewpoint.interact.ForageFinds, so the
+    // transformed caller needs public access to the one-time fallback flag.
+    public static volatile boolean warned;
 
     @Patch.OnEnter(skipOn = true)
     public static boolean drawProjectedArrow(
@@ -43,7 +45,8 @@ public final class ForagingArrowCameraProjection {
 
             float arrowX = player.getX() + dx / distance * viewpoint.platform.Tuning.findArrowRadius;
             float arrowZ = player.getY() + dz / distance * viewpoint.platform.Tuning.findArrowRadius;
-            float arrowY = playerHeight + sceneLift(lift, arrowX, arrowZ);
+            float arrowY = playerHeight + sceneLift(lift, arrowX, arrowZ)
+                    + (float) ForageTuningBridge.nativeGroundArrowOffset();
 
             // Convert the arrow-to-pin vector to camera screen axes, then find the
             // horizontal world direction that projects along that same screen ray.

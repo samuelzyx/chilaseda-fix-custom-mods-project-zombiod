@@ -10,6 +10,8 @@ pcall(require, "TimedActions/ISGrabItemAction")
 require "TimedActions/ISInventoryTransferUtil"
 require "TimedActions/ISInventoryTransferAction"
 require "ISUI/ISContextMenu"
+local fireTransfersLoaded, fireTransfers = pcall(require, "ChilaSeda_ViewpointFireTransfers")
+local fireTransfersAvailable = fireTransfersLoaded and type(fireTransfers) == "table"
 
 local function translatedText(key, ...)
 	if type(getText) ~= "function" then return key end
@@ -25,8 +27,9 @@ local function selectedDestination(playerNum)
     local page = getPlayerInventory(playerNum)
     if not page then return nil, nil end
 
-    local main = page.inventory
-    local selected = page.inventoryPane and page.inventoryPane.inventory
+    local player = type(getSpecificPlayer) == "function" and getSpecificPlayer(playerNum) or nil
+    local main = player and player:getInventory() or page.inventory
+    local selected = (page.inventoryPane and page.inventoryPane.inventory) or page.inventory
     if selected and selected ~= main and type(selected.getItems) == "function"
             and selected:getType() ~= "floor" then
         return selected, page
@@ -34,11 +37,45 @@ local function selectedDestination(playerNum)
     return main, page
 end
 
+local function selectedDestinationForIcon(icon, requested)
+	-- ISBaseIcon's native "Put in container" submenu passes its choice here.
+	-- Keep even an explicit root-inventory choice; only direct clicks without
+	-- a target should inherit the currently selected inventory pane container.
+	if requested ~= nil then return requested end
+	if not icon then return nil end
+	local selected = selectedDestination(icon.player)
+	return selected
+end
+
 local function canStoreIn(container, player, item)
     if not container or not player or not item then return false end
     return container:isItemAllowed(item) and container:hasRoomFor(player, item)
         and container:getCapacityWeight() + item:getUnequippedWeight()
             <= container:getEffectiveCapacity(player)
+end
+
+if ISGrabItemAction and type(ISGrabItemAction.new) == "function"
+		and not ISGrabItemAction.ChilaSedaSelectedContainer then
+	local originalGrabNew = ISGrabItemAction.new
+	ISGrabItemAction.new = function(self, player, worldItem, time, ...)
+		local action = originalGrabNew(self, player, worldItem, time, ...)
+		local selected = player and selectedDestination(player:getPlayerNum()) or nil
+		local root = player and player:getInventory()
+		local item = worldItem and worldItem.getItem and worldItem:getItem() or nil
+		if not action or not selected or selected == root or not item
+				or not canStoreIn(selected, player, item) then
+			return action
+		end
+		local queue = ISTimedActionQueue.getTimedActionQueue(player)
+		local last = queue and queue.queue and queue.queue[#queue.queue]
+		if action.ignoreAction and last and last.Type == "ISGrabItemAction" then
+			last.destContainer = selected
+		else
+			action.destContainer = selected
+		end
+		return action
+	end
+	ISGrabItemAction.ChilaSedaSelectedContainer = true
 end
 
 local function itemDisplayName(item)
@@ -208,9 +245,12 @@ local function notifyStoredItem(player, item)
 		local textureOk, texture = pcall(item.getTexture, item)
 		if textureOk then icon = texture end
 	end
-	HaloTextHelper.addText(player,
-		translatedText("UI_ChilaSeda_Viewpoint_ItemStored", name, destinationName(player, container)),
-		icon or " ", 255, 220, 120)
+	local overflowFrom = type(ChilaSeda_ViewpointPickupOverflowSource) == "function"
+		and ChilaSeda_ViewpointPickupOverflowSource(item) or nil
+	local message = overflowFrom and translatedText("UI_ChilaSeda_Viewpoint_ItemStoredFallback",
+		name, destinationName(player, overflowFrom))
+		or translatedText("UI_ChilaSeda_Viewpoint_ItemStored", name, destinationName(player, container))
+	HaloTextHelper.addText(player, message, icon or " ", 255, 220, 120)
 end
 ChilaSeda_ViewpointNotifyStoredItem = notifyStoredItem
 
@@ -228,10 +268,30 @@ local function attachStoredItemNotice(action, player, item)
 end
 
 local originalTransferFactory = ISInventoryTransferUtil.newInventoryTransferAction
+local function installFireActionCallbacks()
+	if not fireTransfersAvailable then return end
+	pcall(require, "Camping/ISCampingMenu")
+	if type(ISCampingMenu) ~= "table" then return end
+	local installed = fireTransfers.install(ISCampingMenu)
+	if installed > 0 then
+		print(TAG .. "fire input callbacks wrapped=" .. tostring(installed))
+	end
+end
+
+installFireActionCallbacks()
+Events.OnGameStart.Add(installFireActionCallbacks)
+Events.OnCreatePlayer.Add(installFireActionCallbacks)
+
 ISInventoryTransferUtil.newInventoryTransferAction = function(player, item, source, destination, time, ...)
     local main = player and player:getInventory()
     local selected = player and selectedDestination(player:getPlayerNum()) or nil
     local sourceInPlayerInventory = source and main and source:getOutermostContainer() == main
+	local fireCallback = fireTransfersAvailable
+		and fireTransfers.callbackFor(player, source, destination, main) or nil
+	if fireCallback then
+		fireTransfers.trace(fireCallback, item, source)
+		return originalTransferFactory(player, item, source, main, time, ...)
+	end
     local pickupToPlayer = player and item and source and not sourceInPlayerInventory
         and (destination == main or destination == selected)
     if not pickupToPlayer then
@@ -302,9 +362,18 @@ end
 local originalGrabPerform = ISGrabItemAction and ISGrabItemAction.perform
 if type(originalGrabPerform) == "function" and not ISGrabItemAction.ChilaSedaDestinationNotice then
 	ISGrabItemAction.perform = function(action, ...)
-		local itemObject = action.item and action.item:getItem() or nil
+		local queuedItems = {}
+		local queued = action.queueList and action.queueList[1]
+		for _, worldItem in ipairs(queued and queued.items or {}) do
+			local item = worldItem and worldItem.getItem and worldItem:getItem() or nil
+			if item then queuedItems[#queuedItems + 1] = item end
+		end
+		if #queuedItems == 0 then
+			local item = action.item and action.item:getItem() or nil
+			if item then queuedItems[1] = item end
+		end
 		local result = originalGrabPerform(action, ...)
-		notifyStoredItem(action.character, itemObject)
+		for _, item in ipairs(queuedItems) do notifyStoredItem(action.character, item) end
 		return result
 	end
 	ISGrabItemAction.ChilaSedaDestinationNotice = true
@@ -393,7 +462,7 @@ if isModActive("ViewpointForaging") and ISForageIcon
         and type(ISForageIcon.doForage) == "function" then
     local originalDoForage = ISForageIcon.doForage
     ISForageIcon.doForage = function(icon, x, y, contextOption, targetContainer)
-        local destination = targetContainer or selectedDestination(icon.player)
+        local destination = selectedDestinationForIcon(icon, targetContainer)
         return originalDoForage(icon, x, y, contextOption, destination)
     end
 end
@@ -402,7 +471,7 @@ if isModActive("ViewpointForaging") and ISWorldItemIcon
         and type(ISWorldItemIcon.doPickup) == "function" then
     local originalDoPickup = ISWorldItemIcon.doPickup
     ISWorldItemIcon.doPickup = function(icon, x, y, contextOption, targetContainer, items)
-        local destination = targetContainer or selectedDestination(icon.player)
+        local destination = selectedDestinationForIcon(icon, targetContainer)
         return originalDoPickup(icon, x, y, contextOption, destination, items)
     end
 end
@@ -479,5 +548,152 @@ end
 installViewpointUI()
 Events.OnGameStart.Add(installViewpointUI)
 Events.OnCreatePlayer.Add(installViewpointUI)
+
+local MAX_DESTINATION_MENU_TRACES, MAX_DESTINATION_CHOICE_TRACES = 12, 24
+local destinationMenuTraceCount, destinationChoiceTraceCount = 0, 0
+
+local function isDestinationChoiceAction(action)
+	local fn = action and action.fn
+	local world = ISWorldObjectContextMenu
+	local animal = AnimalContextMenu
+	local inventory = ISInventoryPaneContextMenu
+	local build = ISInventoryBuildMenu
+	local loot = ViewpointLoot
+	return fn ~= nil and (
+		world and (fn == world.onGrabWItem or fn == world.onGrabHalfWItems
+			or fn == world.onGrabAllWItems or fn == world.onGrabCorpseItem)
+		or animal and (fn == animal.onButcherAnimal or fn == animal.onGetAnimalBones
+			or fn == animal.onButcherAnimalFromInv or fn == animal.onGetAnimalBonesFromInv)
+		or inventory and fn == inventory.grabCorpseItem
+		or build and fn == build.onTakeThing
+		or loot and (fn == loot.take or fn == loot.takeAll)) == true
+end
+
+local function expandDestinationActionList(actions, destinations, destinationLabel)
+	local expanded, added = {}, 0
+	for _, action in ipairs(actions or {}) do
+		if isDestinationChoiceAction(action) and action.enabled and destinations and #destinations > 0 then
+			for _, destination in ipairs(destinations or {}) do
+				local variant = {}
+				for key, value in pairs(action) do variant[key] = value end
+				variant.name = action.name .. " > " .. destinationLabel(action, destination)
+				variant.chilaSedaDestination = destination
+				variant.chilaSedaDestinationSource = action
+				expanded[#expanded + 1] = variant
+				added = added + 1
+			end
+		else
+			expanded[#expanded + 1] = action
+		end
+	end
+	return expanded, added
+end
+
+local function runWithChosenDestination(action, player, getPage, chooseDestination, callback)
+	local destination = action and action.chilaSedaDestination
+	if not destination then return callback() end
+	local page = getPage(player:getPlayerNum())
+	if not page or not page.inventoryPane then return false end
+	if page.inventoryPane.inventory ~= destination then chooseDestination(page, destination) end
+	return callback()
+end
+
+local function interactionDestinations(playerNum)
+	local page = type(getPlayerInventory) == "function" and getPlayerInventory(playerNum) or nil
+	local player = type(getSpecificPlayer) == "function" and getSpecificPlayer(playerNum) or nil
+	local root = player and player:getInventory() or page and page.inventory
+	if not page or not root then return {}, nil end
+	local destinations, seen = {}, {}
+	local function add(container)
+		if not container or seen[container] or type(container.getItems) ~= "function" then return end
+		local ok, kind = pcall(container.getType, container)
+		if ok and kind == "floor" then return end
+		seen[container] = true
+		destinations[#destinations + 1] = container
+	end
+	add(root)
+	for _, backpack in ipairs(page.backpacks or {}) do
+		add(backpack and backpack.inventory)
+	end
+	return destinations, player
+end
+
+local function installViewpointDestinationActions()
+	pcall(require, "ISUI/ISWorldObjectContextMenu")
+	pcall(require, "ISUI/Animal/ISAnimalContextMenu")
+	pcall(require, "ISUI/ISInventoryPaneContextMenu")
+	pcall(require, "ISUI/ISInventoryBuildMenu")
+	pcall(require, "Viewpoint_Interact")
+	local interact = ViewpointInteract
+	if not interact or type(interact.build) ~= "function" or type(interact.finish) ~= "function"
+			or type(interact.run) ~= "function" or interact.ChilaSedaDestinationActionsInstalled then return end
+
+	local originalBuild = interact.build
+	interact.build = function(playerNum, ...)
+		interact.chilaSedaDestinationPlayerNum = playerNum
+		return originalBuild(playerNum, ...)
+	end
+
+	local originalFinish = interact.finish
+	interact.finish = function(actions, title, seen, thing)
+		local result = originalFinish(actions, title, seen, thing)
+		local ordered = interact.actions or {}
+		local destinations, player = interactionDestinations(interact.chilaSedaDestinationPlayerNum or 0)
+		if not player or #destinations == 0 then return result end
+		local expanded, added = expandDestinationActionList(ordered, destinations, function(action, container)
+			return translatedText("ContextMenu_PutInContainer", destinationName(player, container))
+		end)
+		if added == 0 then return result end
+		local sourceIndexes = {}
+		for index, action in ipairs(ordered) do sourceIndexes[action] = index end
+		local labels, enabled, deliberate, tips, icons = {}, {}, {}, {}, {}
+		for index, action in ipairs(expanded) do
+			local source = action.chilaSedaDestinationSource or action
+			local sourceIndex = sourceIndexes[source]
+			labels[index] = action.name
+			enabled[index] = action.enabled
+			deliberate[index] = action.deliberate == true
+			if sourceIndex then
+				tips[index] = result.tips and result.tips[sourceIndex]
+				icons[index] = result.icons and result.icons[sourceIndex]
+			end
+		end
+		interact.actions = expanded
+		result.labels, result.enabled = labels, enabled
+		result.deliberate, result.tips, result.icons = deliberate, tips, icons
+		if destinationMenuTraceCount < MAX_DESTINATION_MENU_TRACES then
+			destinationMenuTraceCount = destinationMenuTraceCount + 1
+			print(TAG .. "destination-menu title=" .. tostring(title) .. " actions=" .. tostring(#ordered)
+				.. " choices=" .. tostring(added) .. " containers=" .. tostring(#destinations))
+		end
+		return result
+	end
+
+	local originalRun = interact.run
+	interact.run = function(player, index, side, ...)
+		local extraArgs, extraArgCount = { ... }, select("#", ...)
+		local action = interact.actions and interact.actions[index]
+		if action and action.chilaSedaDestination then
+			local ok, result = pcall(runWithChosenDestination, action, player, getPlayerInventory,
+				selectDestinationFromMenu,
+				function() return originalRun(player, index, side, unpack(extraArgs, 1, extraArgCount)) end)
+			if not ok then error(result, 0) end
+			if result == false then return end
+			if destinationChoiceTraceCount < MAX_DESTINATION_CHOICE_TRACES then
+				destinationChoiceTraceCount = destinationChoiceTraceCount + 1
+				print(TAG .. "destination-choice action=" .. tostring(action.chilaSedaDestinationSource.name)
+					.. " container=" .. destinationName(player, action.chilaSedaDestination))
+			end
+			return result
+		end
+		return originalRun(player, index, side, unpack(extraArgs, 1, extraArgCount))
+	end
+	interact.ChilaSedaDestinationActionsInstalled = true
+	print(TAG .. "Viewpoint native destination choices installed")
+end
+
+installViewpointDestinationActions()
+Events.OnGameStart.Add(installViewpointDestinationActions)
+Events.OnCreatePlayer.Add(installViewpointDestinationActions)
 
 print(TAG .. "Selected-container transfer routing loaded")

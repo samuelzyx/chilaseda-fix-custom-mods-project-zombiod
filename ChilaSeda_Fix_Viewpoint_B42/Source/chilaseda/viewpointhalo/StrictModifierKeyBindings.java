@@ -20,6 +20,7 @@ public final class StrictModifierKeyBindings {
     private static boolean lastShiftRightDown;
     private static boolean loggedHelperCall;
     private static boolean loggedNullBindingFallback;
+    private static boolean loggedUnsupportedKeyCode;
 
     @Patch.OnEnter(skipOn = true)
     public static boolean rejectBaseBindingWhenExtraModifierIsDown(
@@ -54,8 +55,12 @@ public final class StrictModifierKeyBindings {
                 || (altDown && !altIsKey && !binding.alt())
                 || (shiftDown && !shiftIsKey && !binding.shift());
 
+        if (!isRawKeyCode(key) && !loggedUnsupportedKeyCode) {
+            System.out.println(LOG_TAG + " modifier helper fallback=preserve-key-check reason=unsupported-key-code keyCode=" + key);
+            loggedUnsupportedKeyCode = true;
+        }
         if (rejected || LOGGED_SUPPRESSED_KEYS.contains(key)) {
-            boolean keyDown = GameKeyboard.isKeyDownRaw(key);
+            boolean keyDown = isRawKeyDown(key);
             logSuppressedBinding(key, rejected, keyDown, ctrlDown, altDown, shiftDown,
                     binding.ctrl(), binding.alt(), binding.shift(), LOGGED_SUPPRESSED_KEYS);
         }
@@ -63,8 +68,8 @@ public final class StrictModifierKeyBindings {
     }
 
     public static boolean isDown(int left, int right) {
-        boolean leftDown = GameKeyboard.isKeyDownRaw(left);
-        boolean rightDown = GameKeyboard.isKeyDownRaw(right);
+        boolean leftDown = isRawKeyDown(left);
+        boolean rightDown = isRawKeyDown(right);
         if (left == Keyboard.KEY_LCONTROL && right == Keyboard.KEY_RCONTROL
                 && logModifierTransition("CTRL", leftDown, rightDown,
                         lastCtrlLeftDown, lastCtrlRightDown)) {
@@ -82,6 +87,14 @@ public final class StrictModifierKeyBindings {
             lastShiftRightDown = rightDown;
         }
         return leftDown || rightDown;
+    }
+
+    static boolean isRawKeyCode(int key) {
+        return key >= Keyboard.KEY_NONE && key < Keyboard.KEYBOARD_SIZE;
+    }
+
+    static boolean isRawKeyDown(int key) {
+        return isRawKeyCode(key) && GameKeyboard.isKeyDownRaw(key);
     }
 
     static boolean logModifierTransition(String modifier, boolean leftDown, boolean rightDown,

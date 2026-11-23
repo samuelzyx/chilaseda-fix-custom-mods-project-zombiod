@@ -10,7 +10,9 @@ local CONFIG_FILE = "ViewpointNativeForage_manual_offsets.txt"
 local RADIUS = 64
 local REPLACE_RADIUS = 12
 local MAX_OFFSET = 64
+local MAX_GROUND_ARROW_OFFSET = 64
 local HEIGHT_NUDGE = 5.0
+local GROUND_ARROW_NUDGE = 5.0
 local VISUAL_NUDGE = 0.05
 local MIN_ZOOM = 0.25
 local MAX_ZOOM = 4.00
@@ -25,6 +27,7 @@ local previewAnchor = nil
 local loaded = false
 local window = nil
 local windowPosition = nil
+local tuningUnavailableLogged = false
 
 local function finite(value)
     return type(value) == "number" and value == value
@@ -34,6 +37,11 @@ end
 local function clampOffset(value)
     if not finite(value) then return nil end
     return math.max(-MAX_OFFSET, math.min(MAX_OFFSET, value))
+end
+
+local function clampGroundArrowOffset(value)
+    if not finite(value) then return nil end
+    return math.max(-MAX_GROUND_ARROW_OFFSET, math.min(MAX_GROUND_ARROW_OFFSET, value))
 end
 
 local function clampZoom(value)
@@ -48,16 +56,18 @@ local function commonZoom(pinZoom, circleZoom, iconZoom)
     return (pin + circle + icon) / 3
 end
 
-local function normalizedAnchor(x, y, offset, pinZoom, circleZoom, iconZoom)
+local function normalizedAnchor(x, y, offset, pinZoom, circleZoom, iconZoom, groundArrowOffset)
     local height = clampOffset(offset)
+    local arrowHeight = clampGroundArrowOffset(groundArrowOffset or 0)
     local pin = clampZoom(pinZoom or 1)
     local circle = clampZoom(circleZoom or 1)
     local inner = clampZoom(iconZoom or 1)
-    if not finite(x) or not finite(y) or height == nil or pin == nil
+    if not finite(x) or not finite(y) or height == nil or arrowHeight == nil or pin == nil
             or circle == nil or inner == nil then return nil end
     return {
         x = x, y = y, offset = height,
         pinZoom = pin, circleZoom = circle, iconZoom = inner,
+        groundArrowOffset = arrowHeight,
     }
 end
 
@@ -99,14 +109,16 @@ local function loadConfig()
                 globalVisualZoom = { pin = globalPin, circle = globalCircle, icon = globalIcon }
                 foundGlobalZoom = true
             end
-            local xText, yText, offsetText, pinText, circleText, iconText =
-                line:match("^anchor,([^,]+),([^,]+),([^,]+),?([^,]*),?([^,]*),?([^,]*)$")
+            local xText, yText, offsetText, pinText, circleText, iconText, arrowText =
+                line:match("^anchor,([^,]+),([^,]+),([^,]+),?([^,]*),?([^,]*),?([^,]*),?([^,]*)$")
             local x = xText and tonumber(xText) or nil
             local y = yText and tonumber(yText) or nil
             local offset = offsetText and clampOffset(tonumber(offsetText)) or nil
+            local arrowOffset = arrowText and clampGroundArrowOffset(tonumber(arrowText)) or 0
             if finite(x) and finite(y) and offset ~= nil then
                 local anchor = normalizedAnchor(x, y, offset,
-                    tonumber(pinText) or 1, tonumber(circleText) or 1, tonumber(iconText) or 1)
+                    tonumber(pinText) or 1, tonumber(circleText) or 1, tonumber(iconText) or 1,
+                    arrowOffset)
                 if anchor then anchors[#anchors + 1] = anchor end
             end
         end
@@ -137,16 +149,16 @@ local function saveConfig()
     local ok, err = pcall(function()
         local writer = getFileWriter(CONFIG_FILE, true, false)
         if not writer then error("getFileWriter returned nil") end
-        writer:write("# Viewpoint Foraging manual pin settings v2\n")
+        writer:write("# Viewpoint Foraging manual pin settings v3\n")
         writer:write(string.format("global,%.3f,%.3f,%.3f\n",
             globalVisualZoom.pin, globalVisualZoom.circle, globalVisualZoom.icon))
         if windowPosition and finite(windowPosition.x) and finite(windowPosition.y) then
             writer:write(string.format("window,%.0f,%.0f\n", windowPosition.x, windowPosition.y))
         end
         for _, anchor in ipairs(anchors) do
-            writer:write(string.format("anchor,%.4f,%.4f,%.4f,%.3f,%.3f,%.3f\n",
+            writer:write(string.format("anchor,%.4f,%.4f,%.4f,%.3f,%.3f,%.3f,%.3f\n",
                 anchor.x, anchor.y, anchor.offset, anchor.pinZoom or 1,
-                anchor.circleZoom or 1, anchor.iconZoom or 1))
+                anchor.circleZoom or 1, anchor.iconZoom or 1, anchor.groundArrowOffset or 0))
         end
         writer:close()
     end)
@@ -191,12 +203,14 @@ local function interpolateAnchors(samples)
 		return first.offset, {
 			x = first.x, y = first.y, offset = first.offset,
 			pinZoom = first.pinZoom or 1, circleZoom = first.circleZoom or 1,
-			iconZoom = first.iconZoom or 1, distance = nearest.distance,
+			iconZoom = first.iconZoom or 1,
+			groundArrowOffset = first.groundArrowOffset or 0,
+			distance = nearest.distance,
 			kind = nearest.kind, id = nearest.id, sampleCount = 1,
 		}
 	end
 
-	local totals = { offset = 0, pinZoom = 0, circleZoom = 0, iconZoom = 0 }
+	local totals = { offset = 0, pinZoom = 0, circleZoom = 0, iconZoom = 0, groundArrowOffset = 0 }
 	local weightTotal = 0
 	for _, sample in ipairs(samples) do
 		local anchor = sample.anchor
@@ -206,6 +220,7 @@ local function interpolateAnchors(samples)
 		totals.pinZoom = totals.pinZoom + (anchor.pinZoom or 1) * weight
 		totals.circleZoom = totals.circleZoom + (anchor.circleZoom or 1) * weight
 		totals.iconZoom = totals.iconZoom + (anchor.iconZoom or 1) * weight
+		totals.groundArrowOffset = totals.groundArrowOffset + (anchor.groundArrowOffset or 0) * weight
 	end
 	return totals.offset / weightTotal, {
 		x = first.x, y = first.y,
@@ -213,6 +228,7 @@ local function interpolateAnchors(samples)
 		pinZoom = totals.pinZoom / weightTotal,
 		circleZoom = totals.circleZoom / weightTotal,
 		iconZoom = totals.iconZoom / weightTotal,
+		groundArrowOffset = totals.groundArrowOffset / weightTotal,
 		distance = nearest.distance,
 		kind = #samples > 1 and "interpolated" or nearest.kind,
 		id = nearest.id,
@@ -225,6 +241,11 @@ function Calibration.getOffsetAt(x, y)
 	local samples = getNearbyAnchorSamples(x, y)
 	if #samples == 0 then return 0, nil end
 	return interpolateAnchors(samples)
+end
+
+function Calibration.getGroundArrowOffsetAt(x, y)
+	local _, info = Calibration.getOffsetAt(x, y)
+	return info and info.groundArrowOffset or 0, info
 end
 
 function Calibration.getVisualAt(x, y)
@@ -241,6 +262,7 @@ function Calibration.getRecentAnchor(rank)
 	if not anchor then return nil end
 	return {
 		x = anchor.x, y = anchor.y, offset = anchor.offset,
+		groundArrowOffset = anchor.groundArrowOffset or 0,
         pinZoom = globalVisualZoom.pin,
         circleZoom = globalVisualZoom.circle,
         iconZoom = globalVisualZoom.icon,
@@ -277,10 +299,10 @@ function Calibration.saveWindowPosition(x, y, width, height)
     return ok
 end
 
-function Calibration.setPreview(x, y, offset, pinZoom, circleZoom, iconZoom)
-    local anchor = normalizedAnchor(x, y, offset, pinZoom, circleZoom, iconZoom)
+function Calibration.setPreview(x, y, offset, pinZoom, circleZoom, iconZoom, groundArrowOffset)
+    local anchor = normalizedAnchor(x, y, offset, pinZoom, circleZoom, iconZoom, groundArrowOffset)
     if not anchor then
-        return false, "Altura: -64 a 64; zoom de pin, circulo e icono: 0.25 a 4.00."
+        return false, "Altura de pin/flecha: -64 a 64; zoom de pin, circulo e icono: 0.25 a 4.00."
     end
     previewAnchor = anchor
     return true
@@ -438,10 +460,10 @@ function Calibration.reportMissingPin(originX, originY)
     return true, "Reporte agregado a Lua/" .. REPORT_FILE .. " para la auditoria de Codex."
 end
 
-function Calibration.saveAt(x, y, offset, pinZoom, circleZoom, iconZoom)
-    local anchorValue = normalizedAnchor(x, y, offset, pinZoom, circleZoom, iconZoom)
+function Calibration.saveAt(x, y, offset, pinZoom, circleZoom, iconZoom, groundArrowOffset)
+    local anchorValue = normalizedAnchor(x, y, offset, pinZoom, circleZoom, iconZoom, groundArrowOffset)
     if not anchorValue then
-        return false, "Altura: -64 a 64; zoom de pin, circulo e icono: 0.25 a 4.00."
+        return false, "Altura de pin/flecha: -64 a 64; zoom de pin, circulo e icono: 0.25 a 4.00."
     end
     -- Pin scale is a shared calibration: preserve it on every saved anchor.
     -- Height offsets remain specific to each location.
@@ -470,6 +492,7 @@ function Calibration.saveAt(x, y, offset, pinZoom, circleZoom, iconZoom)
         nearest.x = x
         nearest.y = y
         nearest.offset = anchorValue.offset
+        nearest.groundArrowOffset = anchorValue.groundArrowOffset
         nearest.pinZoom = anchorValue.pinZoom
         nearest.circleZoom = anchorValue.circleZoom
         nearest.iconZoom = anchorValue.iconZoom
@@ -547,6 +570,7 @@ function CalibrationWindow:new(x, y, originX, originY, initialOffset)
         Calibration.getVisualAt(originX, originY)
     panel.currentVisualZoom = commonZoom(panel.currentPinZoom, panel.currentCircleZoom,
         panel.currentIconZoom)
+    panel.currentGroundArrowOffset = Calibration.getGroundArrowOffsetAt(originX, originY)
     panel.statusText = "Ajusta, prueba y guarda esta ubicacion."
     panel.suppressInputChange = false
     panel.backgroundColor = { r = 0.04, g = 0.035, b = 0.025, a = 0.94 }
@@ -599,10 +623,22 @@ function CalibrationWindow:createChildren()
     self.visualZoomEntry.font = UIFont.Medium
     self:addChild(self.visualZoomEntry)
 
+    self.groundArrowEntry = ISTextEntryBox:new(string.format("%.3f", self.currentGroundArrowOffset or 0),
+        228, 202, 120, 30)
+    self.groundArrowEntry:initialise()
+    self.groundArrowEntry.target = self
+    self.groundArrowEntry.onTextChangeFunction = function(target, changedEntry)
+        target:onSettingChanged("groundArrowOffset", changedEntry)
+    end
+    self.groundArrowEntry.font = UIFont.Medium
+    self:addChild(self.groundArrowEntry)
+
     addButton(self, 355, 118, 88, "- 5.0", CalibrationWindow.onLower)
     addButton(self, 452, 118, 88, "+ 5.0", CalibrationWindow.onRaise)
     addButton(self, 355, 160, 88, "- 5 pts", CalibrationWindow.onVisualLower)
     addButton(self, 452, 160, 88, "+ 5 pts", CalibrationWindow.onVisualRaise)
+    addButton(self, 355, 202, 88, "- 5.0", CalibrationWindow.onGroundArrowLower)
+    addButton(self, 452, 202, 88, "+ 5.0", CalibrationWindow.onGroundArrowRaise)
     if not Calibration.nativeIntegrated then
         addButton(self, 355, 274, 88, "Recargar pin", CalibrationWindow.onReloadPin)
         addButton(self, 452, 274, 88, "Registrar fallo", CalibrationWindow.onReportPinFailure)
@@ -640,7 +676,7 @@ function CalibrationWindow:prerender()
     end
     self:drawText("Ajuste manual de pines de rebusque", 46, 14,
         1, 0.78, 0.47, 1, UIFont.Medium)
-    self:drawText("Ajusta altura y escala; los valores se aplican en vivo en esta zona.",
+    self:drawText("Ajusta por separado pin, flecha del piso y escala; se aplica en vivo en esta zona.",
         14, 44, 0.92, 0.90, 0.84, 1, UIFont.Small)
     self:drawText(string.format("Ubicacion: X %.2f   Y %.2f", self.originX, self.originY),
         14, 76, 0.86, 0.88, 0.90, 1, UIFont.Small)
@@ -657,7 +693,10 @@ function CalibrationWindow:prerender()
     self:drawText(anchorText, 14, 98, 0.86, 0.88, 0.90, 1, UIFont.Small)
     self:drawText("Altura extra:", 120, 124, 0.95, 0.95, 0.95, 1, UIFont.Small)
     self:drawText("Zoom conjunto:", 132, 166, 0.95, 0.95, 0.95, 1, UIFont.Small)
+    self:drawText("Altura flecha piso:", 96, 208, 0.95, 0.95, 0.95, 1, UIFont.Small)
     self:drawText("Zoom 0.25-4.00; guardar aplica pin, circulo e icono a todas las anclas.", 14, 310,
+        0.82, 0.84, 0.85, 1, UIFont.Small)
+    self:drawText("Alturas independientes por zona: -64 a 64.", 14, 288,
         0.82, 0.84, 0.85, 1, UIFont.Small)
     self:drawText(self.statusText, 14, 332, 1, 0.78, 0.47, 1, UIFont.Small)
     self:drawText("Registrar fallo guarda un diagnostico Lua para la auditoria.",
@@ -694,14 +733,17 @@ function CalibrationWindow:onRecentAnchorSelected(rank)
 	self.selectedRecentAnchor = anchor
 	if self.useRecentAnchorButton then self.useRecentAnchorButton.enable = true end
 	self.currentOffset = anchor.offset
+	self.currentGroundArrowOffset = anchor.groundArrowOffset or 0
     self.currentPinZoom, self.currentCircleZoom, self.currentIconZoom =
         Calibration.getVisualAt(anchor.x, anchor.y)
     self.currentVisualZoom = commonZoom(self.currentPinZoom, self.currentCircleZoom,
         self.currentIconZoom)
 	self:setEntryValue(anchor.offset)
+	self:setGroundArrowEntryValue(self.currentGroundArrowOffset)
 	self:setVisualEntryValue(self.currentVisualZoom)
 	Calibration.setPreview(self.originX, self.originY, anchor.offset,
-		self.currentVisualZoom, self.currentVisualZoom, self.currentVisualZoom)
+		self.currentVisualZoom, self.currentVisualZoom, self.currentVisualZoom,
+		self.currentGroundArrowOffset)
 	local _, message = self:refreshPinsAfterAdjustment()
 	self.statusText = string.format("Ancla reciente seleccionada: %.1f, %.1f. %s",
 		anchor.x, anchor.y, message or "Ajusta y guarda.")
@@ -725,14 +767,17 @@ function CalibrationWindow:onUseRecentAnchorHere()
 	end
 	self.originX, self.originY = x, y
 	self.currentOffset = anchor.offset
+	self.currentGroundArrowOffset = anchor.groundArrowOffset or 0
     self.currentPinZoom, self.currentCircleZoom, self.currentIconZoom =
         Calibration.getVisualAt(x, y)
     self.currentVisualZoom = commonZoom(self.currentPinZoom, self.currentCircleZoom,
         self.currentIconZoom)
 	self:setEntryValue(anchor.offset)
+	self:setGroundArrowEntryValue(self.currentGroundArrowOffset)
 	self:setVisualEntryValue(self.currentVisualZoom)
 	Calibration.setPreview(x, y, anchor.offset,
-		self.currentVisualZoom, self.currentVisualZoom, self.currentVisualZoom)
+		self.currentVisualZoom, self.currentVisualZoom, self.currentVisualZoom,
+		self.currentGroundArrowOffset)
 	local _, message = self:refreshPinsAfterAdjustment()
 	self.statusText = string.format("Ajuste copiado al punto %.1f, %.1f; %s",
 		x, y, message or "modifica y guarda.")
@@ -741,6 +786,12 @@ end
 function CalibrationWindow:setEntryValue(value)
     self.suppressInputChange = true
     self.offsetEntry:setText(string.format("%.3f", value))
+    self.suppressInputChange = false
+end
+
+function CalibrationWindow:setGroundArrowEntryValue(value)
+    self.suppressInputChange = true
+    self.groundArrowEntry:setText(string.format("%.3f", value))
     self.suppressInputChange = false
 end
 
@@ -755,11 +806,13 @@ end
 function CalibrationWindow:readSettings()
     local offset = parseOffset(self.offsetEntry)
     local zoom = entryNumber(self.visualZoomEntry, MIN_ZOOM, MAX_ZOOM)
-    if offset == nil or zoom == nil then
-        return nil, "Altura: -64 a 64; zoom: 0.25 a 4.00."
+    local groundArrowOffset = parseOffset(self.groundArrowEntry)
+    if offset == nil or groundArrowOffset == nil or zoom == nil then
+        return nil, "Altura de pin/flecha: -64 a 64; zoom: 0.25 a 4.00."
     end
     return { offset = offset, visualZoom = zoom,
-        pinZoom = zoom, circleZoom = zoom, iconZoom = zoom }
+        pinZoom = zoom, circleZoom = zoom, iconZoom = zoom,
+        groundArrowOffset = groundArrowOffset }
 end
 
 function CalibrationWindow:applySettings()
@@ -770,6 +823,7 @@ function CalibrationWindow:applySettings()
     self.currentCircleZoom = settings.circleZoom
     self.currentIconZoom = settings.iconZoom
     self.currentVisualZoom = settings.visualZoom
+    self.currentGroundArrowOffset = settings.groundArrowOffset
     -- Apply updates the runtime-wide scale immediately; Save persists it to Lua.
     globalVisualZoom = {
         pin = settings.pinZoom,
@@ -777,7 +831,8 @@ function CalibrationWindow:applySettings()
         icon = settings.iconZoom,
     }
     Calibration.setPreview(self.originX, self.originY, settings.offset,
-        settings.pinZoom, settings.circleZoom, settings.iconZoom)
+        settings.pinZoom, settings.circleZoom, settings.iconZoom,
+        settings.groundArrowOffset)
     return true, settings
 end
 
@@ -786,14 +841,18 @@ function CalibrationWindow:onSettingChanged(_field, _entry)
     local ok, settings = self:applySettings()
     if ok then
         local _, message = self:refreshPinsAfterAdjustment()
-        self.statusText = string.format("Vista previa: altura %+.3f; zoom conjunto %.2fx; %s",
-            settings.offset, settings.visualZoom, message or "visibilidad pendiente.")
+        self.statusText = string.format("Vista previa: pin %+.3f; flecha %+.3f; zoom %.2fx; %s",
+            settings.offset, settings.groundArrowOffset, settings.visualZoom,
+            message or "visibilidad pendiente.")
     end
 end
 
 function CalibrationWindow:refreshPinsAfterAdjustment()
     if Calibration.nativeTuningAvailable then
-        return true, "Viewpoint nativo aplica altura y escala en tiempo real."
+        if Calibration.nativeGroundArrowOffsetAvailable then
+            return true, "Viewpoint nativo aplica pin, flecha del piso y escala en tiempo real."
+        end
+        return true, "Altura y escala aplicadas; la flecha del piso requiere el JAR actualizado."
     end
     local callOk, ok, message = pcall(Calibration.retryNearbyPins, self.originX, self.originY)
     if not callOk then
@@ -825,8 +884,9 @@ function CalibrationWindow:applyValue()
     local ok, settings = self:applySettings()
     if not ok then return false end
     local _, message = self:refreshPinsAfterAdjustment()
-    self.statusText = string.format("Aplicado: altura %+.3f; zoom conjunto %.2fx; %s",
-        settings.offset, settings.visualZoom, message or "visibilidad pendiente.")
+    self.statusText = string.format("Aplicado: pin %+.3f; flecha %+.3f; zoom %.2fx; %s",
+        settings.offset, settings.groundArrowOffset, settings.visualZoom,
+        message or "visibilidad pendiente.")
     return true
 end
 
@@ -843,6 +903,20 @@ end
 function CalibrationWindow:onRaise()
     local current = parseOffset(self.offsetEntry) or self.currentOffset or 0
     self:setEntryValue(math.min(MAX_OFFSET, current + HEIGHT_NUDGE))
+    self:applyValue()
+end
+
+function CalibrationWindow:onGroundArrowLower()
+    local current = parseOffset(self.groundArrowEntry) or self.currentGroundArrowOffset or 0
+    self:setGroundArrowEntryValue(math.max(-MAX_GROUND_ARROW_OFFSET,
+        current - GROUND_ARROW_NUDGE))
+    self:applyValue()
+end
+
+function CalibrationWindow:onGroundArrowRaise()
+    local current = parseOffset(self.groundArrowEntry) or self.currentGroundArrowOffset or 0
+    self:setGroundArrowEntryValue(math.min(MAX_GROUND_ARROW_OFFSET,
+        current + GROUND_ARROW_NUDGE))
     self:applyValue()
 end
 
@@ -877,18 +951,20 @@ function CalibrationWindow:onSave()
     local settings, readError = self:readSettings()
     if not settings then self.statusText = readError; return end
     local ok, err = Calibration.saveAt(self.originX, self.originY, settings.offset,
-        settings.pinZoom, settings.circleZoom, settings.iconZoom)
+        settings.pinZoom, settings.circleZoom, settings.iconZoom, settings.groundArrowOffset)
     if not ok then
         self.statusText = err
         return
     end
     self.currentOffset = settings.offset
+    self.currentGroundArrowOffset = settings.groundArrowOffset
     self.currentPinZoom, self.currentCircleZoom, self.currentIconZoom =
         settings.pinZoom, settings.circleZoom, settings.iconZoom
     self.currentVisualZoom = settings.visualZoom
-    self.statusText = "Altura de esta zona y zoom global guardados."
+    self.statusText = "Altura de pin y flecha guardadas por zona; zoom global guardado."
 	local _, message = self:refreshPinsAfterAdjustment()
-	self.statusText = "Altura de esta zona y zoom global guardados; " .. (message or "visibilidad pendiente.")
+	self.statusText = "Alturas de pin y flecha guardadas por zona; "
+		.. (message or "visibilidad pendiente.")
 	self.selectedRecentAnchor = Calibration.getRecentAnchor(1)
 	self:refreshRecentAnchorButtons()
 end
@@ -903,6 +979,8 @@ function CalibrationWindow:onDelete()
     local value = Calibration.getOffsetAt(self.originX, self.originY)
     self.currentOffset = value or 0
     self:setEntryValue(self.currentOffset)
+    self.currentGroundArrowOffset = Calibration.getGroundArrowOffsetAt(self.originX, self.originY)
+    self:setGroundArrowEntryValue(self.currentGroundArrowOffset)
     self.currentPinZoom, self.currentCircleZoom, self.currentIconZoom =
         Calibration.getVisualAt(self.originX, self.originY)
     self.currentVisualZoom = commonZoom(self.currentPinZoom, self.currentCircleZoom,
@@ -912,7 +990,8 @@ function CalibrationWindow:onDelete()
     self.visualZoomEntry:setText(string.format("%.2f", self.currentVisualZoom))
     self.suppressInputChange = false
 	Calibration.setPreview(self.originX, self.originY, self.currentOffset,
-		self.currentVisualZoom, self.currentVisualZoom, self.currentVisualZoom)
+		self.currentVisualZoom, self.currentVisualZoom, self.currentVisualZoom,
+		self.currentGroundArrowOffset)
 	local _, message = self:refreshPinsAfterAdjustment()
 	self.statusText = "Ancla mas cercana borrada y configuracion guardada; "
 		.. (message or "visibilidad pendiente.")
@@ -955,10 +1034,22 @@ local function currentPlayerPosition()
 end
 
 local function toggleWindow()
+    if not Calibration.nativeTuningAvailable
+            and type(Calibration.ensureNativeTuning) == "function" then
+        local ok, available = pcall(Calibration.ensureNativeTuning)
+        if not ok then
+            Calibration.nativeTuningStatus = "bridge retry failed: " .. safeText(available)
+        end
+    end
     if not Calibration.nativeTuningAvailable then
-        print(TAG .. "Viewpoint native tuning is unavailable; calibration panel cannot open")
+        if not tuningUnavailableLogged then
+            tuningUnavailableLogged = true
+            print(TAG .. "calibration panel unavailable: "
+                .. safeText(Calibration.nativeTuningStatus or "native tuning fields unavailable"))
+        end
         return
     end
+    tuningUnavailableLogged = false
     if window and window:getIsVisible() then
         window:onClose()
         return
@@ -974,7 +1065,8 @@ local function toggleWindow()
     window:initialise()
     window:instantiate()
     Calibration.setPreview(x, y, currentOffset, window.currentVisualZoom,
-        window.currentVisualZoom, window.currentVisualZoom)
+        window.currentVisualZoom, window.currentVisualZoom,
+        window.currentGroundArrowOffset)
     window:addToUIManager()
     window:setVisible(true)
     window:bringToTop()
@@ -1019,6 +1111,19 @@ local function handleShortcut(source)
     end
 end
 
+local function handleDeleteChordEvent(key, source)
+    local deleteKey = Keyboard and Keyboard.KEY_DELETE
+    if deleteKey == nil or key ~= deleteKey then return end
+    local control = keyDown(Keyboard.KEY_LCONTROL) or keyDown(Keyboard.KEY_RCONTROL)
+    local shift = keyDown(Keyboard.KEY_LSHIFT) or keyDown(Keyboard.KEY_RSHIFT)
+    if control and shift and not shortcutWasDown then
+        shortcutWasDown = true
+        print(TAG .. "Ctrl+Shift+Delete detected via " .. source)
+        local ok, err = pcall(toggleWindow)
+        if not ok then print(TAG .. "panel toggle failed: " .. safeText(err)) end
+    end
+end
+
 if Events and Events.OnGameStart and type(Events.OnGameStart.Add) == "function" then
     Events.OnGameStart.Add(function()
         if not loaded then loadConfig() end
@@ -1036,7 +1141,13 @@ if Events and Events.OnKeyPressed and type(Events.OnKeyPressed.Add) == "function
             if not ok then print(TAG .. "panel toggle failed: " .. safeText(err)) end
         end
         local deleteKey = Keyboard and Keyboard.KEY_DELETE
-        if deleteKey ~= nil and key == deleteKey then handleShortcut("OnKeyPressed") end
+        if deleteKey ~= nil and key == deleteKey then handleDeleteChordEvent(key, "OnKeyPressed") end
+    end)
+end
+
+if Events and Events.OnKeyStartPressed and type(Events.OnKeyStartPressed.Add) == "function" then
+    Events.OnKeyStartPressed.Add(function(key)
+        handleDeleteChordEvent(key, "OnKeyStartPressed")
     end)
 end
 

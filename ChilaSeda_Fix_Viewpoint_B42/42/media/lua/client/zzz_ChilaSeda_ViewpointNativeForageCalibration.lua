@@ -7,7 +7,18 @@ local basePinHeight = nil
 local basePinUp = nil
 local lastPinHeight = nil
 local lastPinUp = nil
+local lastGroundArrowOffset = nil
+local groundArrowOffsetWarned = false
+local groundArrowOffsetTraceCount = 0
+local MAX_GROUND_ARROW_OFFSET_TRACES = 24
 local arrowProjectionStateReported = nil
+
+local function safeText(value)
+    if value == nil then return "UNAVAILABLE" end
+    local ok, result = pcall(tostring, value)
+    if not ok then return "UNAVAILABLE" end
+    return result:gsub("[\r\n\t|;]", "_")
+end
 
 local function setNativeArrowProjectionEnabled(enabled)
     local bridge = ChilaSedaViewpointFogJ
@@ -33,13 +44,55 @@ local function bindTuning()
         local apiAvailable = type(ViewpointForage) == "table"
             and type(ViewpointForage.found) == "function"
         Calibration.nativeIntegrated = apiAvailable
+        local bridge = binding.bridge or ChilaSedaViewpointForageTuningJ
+        Calibration.nativeGroundArrowOffsetAvailable = bridge ~= nil
+            and type(bridge.setNativeGroundArrowOffset) == "function"
         setNativeArrowProjectionEnabled(apiAvailable)
         return binding
+    end
+    local bridge = ChilaSedaViewpointForageTuningJ
+    if bridge then
+        local availableOk, available = pcall(function()
+            return bridge.isNativeTuningAvailable()
+        end)
+        if availableOk and available == true then
+            local heightOk, height = pcall(function()
+                return bridge.nativeFindPinHeightBase()
+            end)
+            local upOk, up = pcall(function()
+                return bridge.nativeFindPinUpBase()
+            end)
+            if heightOk and upOk and type(height) == "number" and type(up) == "number" then
+                binding = { bridge = bridge }
+                basePinHeight = height
+                basePinUp = up
+                Calibration.nativeTuningAvailable = true
+                Calibration.nativeGroundArrowOffsetAvailable =
+                    type(bridge.setNativeGroundArrowOffset) == "function"
+                local apiAvailable = type(ViewpointForage) == "table"
+                    and type(ViewpointForage.found) == "function"
+                Calibration.nativeIntegrated = apiAvailable
+                Calibration.nativeTuningStatus = "ready; source=Java bridge"
+                setNativeArrowProjectionEnabled(apiAvailable)
+                print(TAG .. "connected through local Java tuning bridge; forage API "
+                    .. (apiAvailable and "available" or "unavailable"))
+                return binding
+            end
+        end
+        local detail = "bridge did not expose native tuning fields"
+        local statusOk, bridgeStatus = pcall(function() return bridge.nativeTuningStatus() end)
+        if statusOk and bridgeStatus ~= nil then detail = safeText(bridgeStatus) end
+        Calibration.nativeTuningAvailable = false
+        Calibration.nativeTuningStatus = detail
+        warnOnce("native tuning bridge unavailable: " .. detail)
     end
     if not luajava or type(luajava.bindClass) ~= "function" then
         Calibration.nativeTuningAvailable = false
         Calibration.nativeIntegrated = false
+        Calibration.nativeTuningStatus = Calibration.nativeTuningStatus
+            or "no local Java tuning bridge or luajava.bindClass"
         setNativeArrowProjectionEnabled(false)
+        warnOnce("native tuning controls inactive: " .. safeText(Calibration.nativeTuningStatus))
         return nil
     end
 
@@ -58,7 +111,9 @@ local function bindTuning()
         }
     end)
     if not ok or not result then
-        warnOnce("Viewpoint native tuning is unavailable; calibration controls are inactive")
+        Calibration.nativeTuningAvailable = false
+        Calibration.nativeTuningStatus = "luajava reflection failed: " .. safeText(result)
+        warnOnce("native tuning controls inactive: " .. safeText(Calibration.nativeTuningStatus))
         return nil
     end
 
@@ -66,6 +121,8 @@ local function bindTuning()
     basePinHeight = result.basePinHeight
     basePinUp = result.basePinUp
     Calibration.nativeTuningAvailable = true
+    Calibration.nativeGroundArrowOffsetAvailable = false
+    Calibration.nativeTuningStatus = "ready; source=luajava reflection"
     local apiAvailable = type(ViewpointForage) == "table"
         and type(ViewpointForage.found) == "function"
     Calibration.nativeIntegrated = apiAvailable
@@ -73,6 +130,10 @@ local function bindTuning()
     print(TAG .. "connected to Viewpoint native tuning fields; forage API "
         .. (apiAvailable and "available" or "unavailable"))
     return binding
+end
+
+Calibration.ensureNativeTuning = function()
+    return bindTuning() ~= nil
 end
 
 local function playerPosition()
@@ -92,23 +153,70 @@ local function applyCalibration()
     if not x then return end
 
     local offset = Calibration.getOffsetAt(x, y)
+    local groundArrowOffset, arrowInfo = Calibration.getGroundArrowOffsetAt(x, y)
     local pinZoom, circleZoom, iconZoom = Calibration.getVisualAt(x, y)
     offset = type(offset) == "number" and offset or 0
     pinZoom = type(pinZoom) == "number" and pinZoom or 1
     circleZoom = type(circleZoom) == "number" and circleZoom or 1
     iconZoom = type(iconZoom) == "number" and iconZoom or 1
+    groundArrowOffset = type(groundArrowOffset) == "number" and groundArrowOffset or 0
     local zoom = math.max(0.25, math.min(4.0, (pinZoom + circleZoom + iconZoom) / 3))
     local nextPinHeight = basePinHeight * zoom
     local nextPinUp = basePinUp + offset
 
     local ok, err = pcall(function()
-        if lastPinHeight == nil or math.abs(nextPinHeight - lastPinHeight) > 0.0001 then
-            tuning.pinHeight:setFloat(nil, nextPinHeight)
-            lastPinHeight = nextPinHeight
+        local heightChanged = lastPinHeight == nil
+            or math.abs(nextPinHeight - lastPinHeight) > 0.0001
+        local upChanged = lastPinUp == nil
+            or math.abs(nextPinUp - lastPinUp) > 0.0001
+        if tuning.bridge then
+            if heightChanged or upChanged then
+                local applied = tuning.bridge.setNativePinTuning(nextPinHeight, nextPinUp)
+                if applied ~= true then
+                    error(safeText(tuning.bridge.nativeTuningStatus()))
+                end
+                lastPinHeight = nextPinHeight
+                lastPinUp = nextPinUp
+            end
+        else
+            if heightChanged then
+                tuning.pinHeight:setFloat(nil, nextPinHeight)
+                lastPinHeight = nextPinHeight
+            end
+            if upChanged then
+                tuning.pinUp:setFloat(nil, nextPinUp)
+                lastPinUp = nextPinUp
+            end
         end
-        if lastPinUp == nil or math.abs(nextPinUp - lastPinUp) > 0.0001 then
-            tuning.pinUp:setFloat(nil, nextPinUp)
-            lastPinUp = nextPinUp
+
+        local arrowBridge = tuning.bridge or ChilaSedaViewpointForageTuningJ
+        if arrowBridge and type(arrowBridge.setNativeGroundArrowOffset) == "function" then
+            Calibration.nativeGroundArrowOffsetAvailable = true
+            local arrowChanged = lastGroundArrowOffset == nil
+                or math.abs(groundArrowOffset - lastGroundArrowOffset) > 0.0001
+            if arrowChanged then
+                local applied = arrowBridge.setNativeGroundArrowOffset(groundArrowOffset)
+                if applied == true then
+                    lastGroundArrowOffset = groundArrowOffset
+                    if groundArrowOffsetTraceCount < MAX_GROUND_ARROW_OFFSET_TRACES then
+                        groundArrowOffsetTraceCount = groundArrowOffsetTraceCount + 1
+                        local source = arrowInfo and arrowInfo.kind or "default"
+                        local samples = arrowInfo and arrowInfo.sampleCount or 0
+                        print(TAG .. "ground-arrow-offset=" .. string.format("%+.3f", groundArrowOffset)
+                            .. " source=" .. safeText(source) .. " samples=" .. tostring(samples))
+                    end
+                elseif not groundArrowOffsetWarned then
+                    groundArrowOffsetWarned = true
+                    print(TAG .. "ground-arrow-offset write rejected value="
+                        .. string.format("%+.3f", groundArrowOffset))
+                end
+            end
+        else
+            Calibration.nativeGroundArrowOffsetAvailable = false
+            if not groundArrowOffsetWarned then
+                groundArrowOffsetWarned = true
+                print(TAG .. "ground-arrow-offset unavailable: Java bridge setter missing")
+            end
         end
     end)
     if not ok then warnOnce("could not apply native pin calibration: " .. tostring(err)) end

@@ -1,4 +1,4 @@
-# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.99
+# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.128
 
 <div align="center">
 
@@ -7,6 +7,105 @@
 </div>
 
 ---
+
+## Version 2.0.128
+
+- Adds an independent, per-area height control for Viewpoint's projected floor arrows. It applies live, saves with each area anchor, and stays separate from the forage pin height.
+
+## Version 2.0.127
+
+- Preserves an explicit destination chosen in the vanilla forage-icon submenu, including the main inventory when a different backpack is selected in the inventory pane. Direct forage clicks still inherit the selected pane container.
+- Adds `Put in container` destination choices to native Viewpoint interactions for forage loot, butchering, bones, corpse pickup, and ground pickup. The selected container is applied before the original action callback runs.
+
+## Version 2.0.126
+
+- Colors unclassified downward trait arrows red while preserving trait-specific semantic colors and the existing sleep-trait direction rules. Bounded `generic-trait-arrow` DebugLog entries identify the trait and applied direction color.
+
+## Version 2.0.125
+
+- Adds only `Base.Dung_Rat` world-object icons to Viewpoint's native 3D forage-pin provider. The shortcut could already target the ground item through `worldObjectIcons`, while Viewpoint's pin provider only serialized `activeIcons`; unrelated floor objects remain excluded. Bounded DebugLog traces record bridge installation, appended pin coordinates/state, empty results, or fallback.
+
+## Version 2.0.124
+
+- Makes the fixed Halo notification overlay follow vanilla `Toggle UI`: inventory-destination and trait notices hide with the HUD and return only while still active. Notifications expire during hidden-HUD time; bounded DebugLog traces record HUD state and overlay visibility.
+
+## Version 2.0.123
+
+- Scans registered timed-action queues instead of relying on a single Java-character table key. Repeated Ctrl+D and bone shortcuts now match the queued player and corpse by player number and stable corpse ID; Ctrl+G matches the same active forage pin across registered queues. Bounded lifecycle traces distinguish a forage action that only starts and plays its sound from one that completes or stops.
+- Moves the animal corpse prompt farther above the target so the action rows clear Viewpoint's native tree-search menu.
+
+## Version 2.0.122
+
+- Replaces the confusing `Insomne` trait notice with `Menor necesidad de sueño (menos duración al dormir)` and explains the opposite `MoreSleep` trait. Sleep trait arrows consistently point up in green for beneficial changes and down in red for harmful changes; bounded DebugLog traces report the source direction, displayed direction, effect, color and translation fallback.
+
+- Scales the floating corpse loot panel's rows, icons and text, and includes the scaled rows in the panel's content height so growing loot panels do not clip items. Bounded DebugLog entries record the selected scale and the font, row and tile dimensions before and after scaling.
+- Adds separate animal corpse shortcut modifier and wear indicator selectors. The corpse panel can show its existing colored wear bar or a frame in the same wear color. Renames the native forage settings section to `Hallazgos con pin de rebusqueda`.
+- Connects combat gesture capture to Project Zomboid and ZombieBuddy through an exposed Java bridge and records bounded stroke, classification and attack-selection diagnostics.
+
+## Version 2.0.120
+
+- Prevents repeated Ctrl+butcher or Ctrl+bones input from calling vanilla `walkAdj` again while that same action is queued for the same animal. Since `walkAdj` clears the current timed-action queue, retries could restart the action before completion. Moves the animal prompt upward to keep its action rows clear of the native Viewpoint tree menu.
+
+## Version 2.0.119
+
+- Prevents the modifier-key hook from querying `GameKeyboard.isKeyDownRaw` with Project Zomboid's unsupported key sentinel `10000`. Out-of-range binding codes preserve the original base-key decision and emit one bounded fallback diagnostic.
+
+## Version 2.0.118
+
+- Fixes a Viewpoint crash while drawing 3D forage arrows. ZombieBuddy injects the camera projection hook into `viewpoint.interact.ForageFinds`, so the transformed caller needs public access to the one-time warning flag. Projection failures now reach the existing bounded fallback diagnostic instead of disabling Viewpoint with `IllegalAccessError`.
+
+## Version 2.0.117
+
+- Removes TextureFix (Viewpoint)'s F10 scan callback from Project Zomboid's Java event registry before installing the bounded local replacement. The Lua event table exposes only `Add` and `Remove`, so the earlier 2.0.113 lookup through `event.callbacks` left the Workshop callback active. The local replacement avoids the Kahlua `getSimpleName` failure and logs the number of callbacks removed.
+
+## Version 2.0.116
+
+- Keeps fire-lighting tinder, kindle, and petrol transfers in the character's root inventory while their vanilla actions are queued. The selected-backpack routing no longer sends an ingredient into a nested bag that `ISLightFromLiterature` rejects on the first attempt. Bounded DebugLog traces record the callback, item type, and source container.
+
+## Version 2.0.115
+
+- Uses the animal corpse currently shown in the Viewpoint prompt if a fresh camera projection fails during the shortcut press. Bounded traces record the configured modifier, selected target, vanilla `walkAdj` result, and whether the expected butcher, bones, or corpse pickup action entered the queue.
+
+## Version 2.0.114
+
+- Opens native forage pin height calibration with F6 or Ctrl+F6 through a local Java bridge to Viewpoint's tuning fields. The bridge retries while Viewpoint loads and writes one bounded diagnostic when unavailable.
+- Lets Ctrl+G collect a seen forage pin directly when Jill is already within 1.5 tiles and the vanilla forage action is valid there. Farther pins keep vanilla's `walkAdj` route. Bounded DebugLog traces record whether the forage action entered the queue.
+
+## Version 2.0.113
+
+- Adds a bounded local replacement for TextureFix (Viewpoint)'s broken F10 object scan. Version 2.0.117 fixes removal of the original Workshop callback; the replacement uses `getObjectName()` and sprite names, caps output at 64 objects, and logs failures only once.
+
+## Version 2.0.112
+
+- Records Ctrl/Alt/Shift left/right key transitions and logs each suppressed base-key binding once per physical press, including held modifier values and the binding's required modifiers. These bounded DebugLog entries help diagnose modifier shortcuts without logging every keyboard poll.
+
+## Version 2.0.111
+
+- Repairs Ctrl-drawn combat gesture selection. Vanilla `CombatManager.pressedAttack()` chooses from `WeaponType.getPossibleAttack()` through `WeightedList.getRandom()`; the prototype treated that weighted list as if it had `size()` and `get()`, so it rejected every gesture. The local patch temporarily narrows the vanilla choices to the gesture variant for the next click, then restores the original list.
+- Uses Viewpoint availability for gesture sampling in first and third person. The stroke overlay can draw with a solid-dot fallback if the white texture is unavailable, and the DebugLog records recognition, arming, and vanilla fallback details.
+- Fixes a startup `IllegalAccessError` in the strict modifier-key patch: the injected hook in `zombie.core.Core` calls `StrictModifierKeyBindings.isDown`, so that helper is public in the packaged 2.0.111 Java archive.
+
+## Version 2.0.104
+
+- Detects Ctrl+Shift+Delete directly on key start/press using the event's Delete key, so the shortcut does not depend on the Delete key still appearing held during the callback. The held-key polling remains as a fallback.
+
+## Version 2.0.103
+
+- Fixes Viewpoint native-tooltip pickup of ground logs, branches, and stones. The selected-container resolver compared the selected pane with `page.inventory`, but Build 42 updates both to the selected bag; it therefore mistook that bag for the root inventory. The resolver now compares against the character's actual root inventory. Items go to the selected bag first, overflow falls back per item to the main inventory, and a Halo explains why.
+
+## Version 2.0.102
+
+- Draws trait-change direction with a filled up/down triangle, matching the compact direction marker used by skill level-up notices. Trait notices keep their positive or negative colors.
+
+## Version 2.0.101
+
+- Removes the redundant Jill appearance renderer adapter. MirageWardrobe already cleans detached render snapshots according to its saved options; the extra adapter ignored those options and also altered the live HumanVisual during texture capture.
+
+## Version 2.0.100
+
+- Routes Viewpoint floor and forage pickups to the selected backpack when the native menu initially supplies the main inventory as its destination.
+- Keeps the Viewpoint search-fog option labels and help text in Spanish even when a translation key is not resolved during page creation.
+- Brightens native 3D raindrop tint from the base rain color when ClimateManager reports strong daylight; the adjustment is skipped at night and leaves the native tint values untouched.
 
 ## Version 2.0.99
 
@@ -37,7 +136,7 @@
 
 ## Version 2.0.93
 
-- Adds aimed prompts and configurable keys for butchering and picking up animal corpses in Viewpoint. Butchered items go to the selected backpack; items that do not fit are dropped on the floor.
+- Adds aimed prompts and configurable keys for butchering, picking up animal corpses, and extracting bones from animal skeletons in Viewpoint. Bone extraction calls the vanilla `AnimalContextMenu.onGetAnimalBones` action; butchered items go to the selected backpack, and items that do not fit are dropped on the floor.
 
 ## Version 2.0.92
 
@@ -71,7 +170,7 @@
 
 ## Version 2.0.85
 
-- Routes vanilla ground-item pickups, including stones, branches, and twigs, into the selected backpack when the item is allowed and fits. If it does not fit, vanilla keeps the main inventory as the destination. Caught fish use the same priority after vanilla catch bookkeeping.
+- Routes vanilla `ISGrabItemAction` ground pickups, including stones, branches, and twigs, into the selected backpack when the item is allowed and fits. The destination is set on the timed action before it validates or queues; if it does not fit, the main inventory remains the destination. Caught fish use the same priority after vanilla catch bookkeeping.
 
 ## Version 2.0.84
 
@@ -599,3 +698,33 @@ The selected-container patch no longer exits when the optional `Viewpoint_Loot` 
 ## 2.0.57 - Name the consolidation destination
 
 The consolidation progress label now uses intoItem:getName() first, with the consumed item name as a fallback. This identifies the object being consolidated, including thread and other non-liquid items.
+
+
+## 2.0.105 - Require Ctrl for forage and animal actions
+
+Native Viewpoint forage pickup now requires Ctrl plus its configured key (G by default). Animal butchering, bone extraction, and corpse or skeleton pickup also require Ctrl plus their configured keys. The on-screen prompts and Mod Options help identify the modifier; existing key choices remain configurable.
+
+
+## 2.0.107 - Use Ctrl gestures before the attack click
+
+Hold Ctrl while moving the camera to draw a gesture, then click to attack (the click can happen before releasing Ctrl). The gesture must finish in under one second; its matching vanilla-supported melee variant is consumed by that attack only. A right-to-left stroke requests a swing, a downward stroke an overhead attack, an ascending diagonal an uppercut or swing, and a curved ascending C requests a floor attack when allowed by the held weapon. The trace and label are drawn on screen; without a compatible gesture, vanilla combat remains in control.
+
+
+## 2.0.106 - Add camera gesture melee prototype
+
+Initial prototype, superseded by 2.0.107: the detector required holding right mouse while drawing. No runtime confirmation was recorded for that input scheme.
+
+
+## 2.0.108 - Avoid the vanilla H panel shortcut for animal bones
+
+The first local workaround moved the bone key to F8 because base H shortcuts still fired with Ctrl held. Version 2.0.110 restores H and corrects the shared input dispatch so modifiers form strict chords.
+
+
+## 2.0.109 - Configure modifiers for Viewpoint action shortcuts
+
+Mod Options now lets the player choose Ctrl, Alt, Shift, or combinations of these modifiers for native forage pickup and animal corpse actions. Each action keeps its own configurable base key, and the on-screen prompts show the selected chord. The default remains Ctrl.
+
+
+## 2.0.110 - Treat modifier shortcuts as strict chords
+
+The game now suppresses an unmodified key binding whenever its base key is pressed with Ctrl, Alt, or Shift. The custom chord action runs on key-down and consumes the matching key-up event, so `Ctrl+H` can collect bones without opening the Health panel or Hunter Expansion info. The default bone key is H again.
