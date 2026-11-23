@@ -1,0 +1,8 @@
+name=ChilaSeda Fix - Expanded Belt (B42)
+id=ChilaSeda_Fix_ExpandedBelt_B42
+authors=ChilaSeda
+description=Restores Build 42 belt salvage tags and Forge Buckle recipe research to Expanded Belt; logs a bounded runtime compatibility check.
+require=Expanded_Belt_B42
+loadModAfter=Expanded_Belt_B42
+versionMin=42.22
+modversion=1.0.0

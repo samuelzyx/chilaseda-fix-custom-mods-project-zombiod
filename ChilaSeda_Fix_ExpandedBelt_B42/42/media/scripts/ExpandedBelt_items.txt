@@ -1,0 +1,8 @@
+module ExpandedBelt
+{
+    item ExpandedBelt
+    {
+        Tags = base:hasmetal;base:buckle;base:scrapasbelt,
+        Researchablerecipes = Forge_Buckle,
+    }
+}
