@@ -8,6 +8,7 @@ mods
     mod = UndeadWildlife,
     mod = ZombieBuddy,
     mod = Viewpoint,
+    mod = vpfix,
     mod = ViewpointRightClick,
     mod = PZVoxelStudioViewpoint,
     mod = ViewpointVisibleLoot,
@@ -214,6 +215,7 @@ mods
     mod = WallTextureFixForViewpoint,
     mod = ViewpointTactical,
     mod = Wilderness QoL,
+    mod = Expanded_Belt_B42,
     mod = ChilaSeda_IngameLuaReload_B42,
     mod = ChilaSeda_InventoryTetrisSizeCap_B42,
     mod = ChilaSeda_TIYLReadOpensJournal_B42,
@@ -254,7 +256,9 @@ mods
     mod = ChilaSeda_Recovery_CarBatteryCharger_B42,
     mod = ChilaSeda_Recovery_SpiffoKeys_B42,
     mod = ChilaSeda_MapSymbolSizeSlider_ExtraMapSymbolsFix_B42,
+    mod = ChilaSeda_RecentMapSymbols_ExtraMapSymbols_B42,
     mod = ChilaSeda_OptionsSearch_B42,
+    mod = ChilaSeda_Fix_ExpandedBelt_B42,
     mod = ZeroWeightKeys_B42,
 }
 
