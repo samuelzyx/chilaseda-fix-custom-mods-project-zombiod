@@ -4,4 +4,4 @@ authors=ChilaSeda
 description=Mobility, auto-resume, exhausted-ingredient cleanup, safe meal completion, poisoned-ingredient removal with source names, nutrition tooltips, and return routing for AutoCook containers in B42.
 loadModAfter=AutoCook
 versionMin=42.20
-modversion=2.0.12
+modversion=2.0.13

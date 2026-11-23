@@ -1,4 +1,4 @@
-# ChilaSeda AutoCook Fixes · B42 2.0.12
+# ChilaSeda AutoCook Fixes · B42 2.0.13
 
 <div align="center">
 
@@ -38,3 +38,5 @@ Los archivos de Workshop permanecen intactos. El ID local consolidado es `ChilaS
 - [🏠 Inicio del repositorio](../README.md)
 - [🤝 Cómo contribuir](../CONTRIBUTING.md)
 - [🚀 Releases de mods](../docs/releases/README.md)
+
+Version 2.0.13: corrige el placeholder %1 de los avisos Halo al devolver recipientes, evita avisos repetidos para el mismo objeto y destino, y registra ID/tipo/destino para diagnostico.

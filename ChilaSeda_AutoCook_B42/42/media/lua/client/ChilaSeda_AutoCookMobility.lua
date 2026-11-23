@@ -27,10 +27,36 @@ local function sameItemId(item, id)
 end
 
 local function notifyBaseItemDestination(action, destination)
-    local player = action.character
-    if player and HaloTextHelper and HaloTextHelper.addText then
-        HaloTextHelper.addText(player, getText("UI_ChilaSeda_AutoCook_ReturnedTo", destination))
+    local player = action and action.character
+    if not player or not HaloTextHelper or type(HaloTextHelper.addText) ~= "function" then
+        return
     end
+
+    local item = action and action.item
+    local okId, itemId = pcall(function() return item and item:getID() end)
+    local okType, fullType = pcall(function() return item and item:getFullType() end)
+    local itemKey = okId and itemId ~= nil and tostring(itemId) or tostring(item)
+    local itemType = okType and fullType or "unknown"
+    local returnInfo = action.ChilaSedaAutoCookBaseReturn
+    if type(returnInfo) == "table" then
+        local noticed = returnInfo.ChilaSedaHaloNotices
+        if type(noticed) ~= "table" then
+            noticed = {}
+            returnInfo.ChilaSedaHaloNotices = noticed
+        end
+        local noticeKey = itemKey .. "|" .. tostring(destination)
+        if noticed[noticeKey] then
+            print(TAG .. "return notice duplicate suppressed item=" .. tostring(itemType)
+                .. " id=" .. itemKey .. " destination=" .. tostring(destination))
+            return
+        end
+        noticed[noticeKey] = true
+    end
+
+    print(TAG .. "return notice item=" .. tostring(itemType) .. " id=" .. itemKey
+        .. " destination=" .. tostring(destination))
+    HaloTextHelper.addText(player,
+        getText("UI_ChilaSeda_AutoCook_ReturnedTo", destination))
 end
 
 ISInventoryTransferAction.perform = function(action, ...)
