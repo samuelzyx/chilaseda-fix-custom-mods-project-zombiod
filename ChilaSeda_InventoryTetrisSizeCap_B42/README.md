@@ -1,4 +1,4 @@
-ChilaSeda - Inventory Tetris Size Cap (B42) 1.3.0
+ChilaSeda - Inventory Tetris Size Cap (B42) 1.3.7
 
 <div align="center">
 
@@ -7,6 +7,10 @@ ChilaSeda - Inventory Tetris Size Cap (B42) 1.3.0
 </div>
 
 ---
+
+## Version 1.3.7
+
+- Forwards overflow-grid drag movement and mouse release outside the widget to the owning Tetris grid, then uses the vanilla floor-drop callback for live overflow items. Stale item IDs are skipped and bounded traces record forwarding, drop calls and fallbacks.
 
 
 Limita los objetos que no son contenedores a estas cuadrículas: 1x1, 1x2 o 2x1.
@@ -42,4 +46,8 @@ Version 1.3.2: guards Inventory Tetris keyring container discovery when a Weight
 
 Version 1.3.4: guards Inventory Tetris developer context menus when Viewpoint supplies a missing menu or an object without an options table. This prevents the null-options exception in ContextUtil.getSubMenu without changing regular inventory context menus.
 
+Version 1.3.5: uses only carried inventory containers while the player inventory UI is not ready. It avoids calling Inventory Tetris' unsafe getContainers wrapper during that fallback.
+
 Version 1.3.3: when an over-capacity transfer is rejected, offers a context menu with the main inventory and worn backpacks that have room. Choosing an option switches the active inventory container for follow-up interactions. If no destination is available, the Halo message says the item remains where it is.
+
+Version 1.3.6: processes Inventory Tetris' pending drag cancellation on `OnTickEvenPaused`. Dropping a backpack outside the grid while paused clears its stuck cursor drag and queues the vanilla floor transfer, which completes when the game resumes.

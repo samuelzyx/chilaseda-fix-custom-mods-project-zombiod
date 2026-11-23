@@ -11,7 +11,6 @@ end
 -- assumes the player's inventory page and pane already exist. Weight Monitor
 -- and other update hooks can query carried containers before those UI objects
 -- are created, so keep a safe inventory-only path for that case.
-local baseGetContainers = menu.getContainers
 local warnedFallback = false
 
 local function inventoryPageReady(character)
@@ -52,18 +51,9 @@ local function fallbackContainers(character, selectedItem, ...)
         if okContainer then addTree(container) end
     end
 
-    -- Retain any additional containers the pre-Tetris helper can safely see.
-    local okBase, base = pcall(baseGetContainers, character, selectedItem, ...)
-    if okBase and base and type(base.size) == "function" and type(base.get) == "function" then
-        local okSize, size = pcall(base.size, base)
-        if okSize and type(size) == "number" then
-            for index = 0, size - 1 do
-                local okContainer, container = pcall(base.get, base, index)
-                if okContainer then addTree(container) end
-            end
-        end
-    end
-
+    -- Do not call Inventory Tetris here: its getContainers wrapper accesses
+    -- inventoryPane directly, and a Java/Kahlua null-index exception can escape
+    -- pcall while the inventory UI is not ready.
     if not warnedFallback then
         warnedFallback = true
         print(TAG .. "inventory UI not ready; using carried containers")
