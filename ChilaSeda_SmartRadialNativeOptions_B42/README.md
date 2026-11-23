@@ -3,6 +3,14 @@
 Parche local para Smart Radial Menu. Conserva las opciones nativas de inventario y
 los iconos de Drink Smart.
 
+## Version 1.1.15
+
+- Añade trazas acotadas para Drink Smart desde el radial: registra si la selección invoca la acción, el orden de transferencia, quitar máscara, beber y volver a ponerla, además de validación, finalización o cancelación. No reemplaza el callback nativo de bebida.
+
+## Version 1.1.14
+
+- Mantiene sincronizados el orden que se ve en el radial y la tabla Lua de callbacks al promover Drink Smart al primer lugar. Antes solo se movia la tabla Lua, por lo que una seleccion podia ejecutar el callback de otra opcion.
+
 ## Version 1.1.12
 
 - Las acciones de beber vuelven a ejecutar directamente el callback original de

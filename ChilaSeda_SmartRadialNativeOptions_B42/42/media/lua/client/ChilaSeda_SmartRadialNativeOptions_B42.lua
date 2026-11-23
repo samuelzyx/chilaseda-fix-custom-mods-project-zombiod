@@ -12,6 +12,163 @@ local SCANNED_ITEM_LISTS = {
     "weaponItemsNotInInventory", "ammoItems",
 }
 
+local DRINK_TRACE_MAX = 48
+local drinkTraceLines = 0
+local activeDrinkRadialContext = nil
+
+local function drinkItemType(item)
+    if not item then return "nil" end
+    if item.getFullType then
+        local ok, value = pcall(item.getFullType, item)
+        if ok and value then return tostring(value) end
+    end
+    if item.getType then
+        local ok, value = pcall(item.getType, item)
+        if ok and value then return tostring(value) end
+    end
+    return "unknown"
+end
+
+local function drinkQueue(playerNum)
+    if not ISTimedActionQueue or type(ISTimedActionQueue.getTimedActionQueue) ~= "function"
+        or type(getSpecificPlayer) ~= "function" then return nil end
+    local ok, player = pcall(getSpecificPlayer, playerNum)
+    if not ok or not player then return nil end
+    local queueOk, queue = pcall(ISTimedActionQueue.getTimedActionQueue, player)
+    return queueOk and queue or nil
+end
+
+local function drinkQueueSummary(playerNum)
+    local queue = drinkQueue(playerNum)
+    if not queue then return "unavailable" end
+    local queueOk, actions = pcall(function() return queue.queue end)
+    if not queueOk or type(actions) ~= "table" then return "unavailable" end
+    local names = {}
+    for _, action in ipairs(actions) do
+        local kind = action and tostring(action.Type or "") or ""
+        if kind == "ISInventoryTransferAction" or kind == "ISUnequipAction"
+            or kind == "ISDrinkFluidAction" or kind == "ISWearClothing" then
+            names[#names + 1] = kind
+        end
+    end
+    return #names > 0 and table.concat(names, ">") or "empty"
+end
+
+local function drinkMaskName(playerNum)
+    if type(getSpecificPlayer) ~= "function" then return "unknown" end
+    local playerOk, player = pcall(getSpecificPlayer, playerNum)
+    if not playerOk then return "unknown" end
+    local getter = ISInventoryPaneContextMenu and ISInventoryPaneContextMenu.getEatingMask
+    if not player or type(getter) ~= "function" then return "unknown" end
+    local ok, mask = pcall(getter, player, false)
+    return ok and mask and drinkItemType(mask) or (ok and "none" or "unknown")
+end
+
+local function traceDrink(eventName, playerNum, item, extra)
+    if drinkTraceLines >= DRINK_TRACE_MAX then return end
+    drinkTraceLines = drinkTraceLines + 1
+    print("[" .. MOD_ID .. "] drink-trace event=" .. tostring(eventName)
+        .. " player=" .. tostring(playerNum)
+        .. " item=" .. drinkItemType(item)
+        .. " mask=" .. drinkMaskName(playerNum)
+        .. " queue=" .. drinkQueueSummary(playerNum)
+        .. (extra and (" " .. tostring(extra)) or ""))
+end
+
+local function isDrinkSequenceAction(action)
+    local kind = action and tostring(action.Type or "") or ""
+    return kind == "ISInventoryTransferAction" or kind == "ISUnequipAction"
+        or kind == "ISDrinkFluidAction" or kind == "ISWearClothing"
+end
+
+local function drinkResetCaller()
+    if type(debug) ~= "table" or type(debug.getinfo) ~= "function" then
+        return "unavailable"
+    end
+    local ok, info = pcall(debug.getinfo, 2, "nS")
+    if not ok or type(info) ~= "table" then return "unknown" end
+    local caller = info.name or info.short_src or info.source or "unknown"
+    caller = string.gsub(tostring(caller), "[%s\r\n]+", " ")
+    return string.sub(caller, 1, 100)
+end
+
+local function installDrinkActionDiagnostics()
+    pcall(require, "TimedActions/ISTimedActionQueue")
+    pcall(require, "TimedActions/ISDrinkFluidAction")
+    local queue = ISTimedActionQueue
+    if type(queue) == "table" and not queue.__ChilaSedaSmartRadialDrinkTrace then
+        local originalAdd = queue.add
+        if type(originalAdd) == "function" then
+            queue.add = function(action, ...)
+                local actualAction = action == queue and select(1, ...) or action
+                local result = originalAdd(action, ...)
+                if activeDrinkRadialContext and isDrinkSequenceAction(actualAction) then
+                    actualAction.ChilaSedaSmartRadialDrinkTrace = true
+                    actualAction.ChilaSedaSmartRadialDrinkPlayerNum = activeDrinkRadialContext.playerNum
+                    actualAction.ChilaSedaSmartRadialDrinkItem = activeDrinkRadialContext.item
+                    traceDrink("queue-add", activeDrinkRadialContext.playerNum,
+                        activeDrinkRadialContext.item, "action=" .. tostring(actualAction.Type))
+                end
+                return result
+            end
+        end
+
+        local originalComplete = queue.onCompleted
+        if type(originalComplete) == "function" then
+            queue.onCompleted = function(self, action, ...)
+                if action and action.ChilaSedaSmartRadialDrinkTrace then
+                    traceDrink("queue-complete", action.ChilaSedaSmartRadialDrinkPlayerNum,
+                        action.ChilaSedaSmartRadialDrinkItem, "action=" .. tostring(action.Type))
+                end
+                return originalComplete(self, action, ...)
+            end
+        end
+
+        local originalReset = queue.resetQueue
+        if type(originalReset) == "function" then
+            queue.resetQueue = function(self, ...)
+                local queueOk, actions = pcall(function() return self and self.queue or {} end)
+                if queueOk and type(actions) == "table" then
+                    local caller
+                    for _, action in ipairs(actions) do
+                        if action and action.ChilaSedaSmartRadialDrinkTrace then
+                            caller = caller or drinkResetCaller()
+                            traceDrink("queue-reset-cancel",
+                                action.ChilaSedaSmartRadialDrinkPlayerNum,
+                                action.ChilaSedaSmartRadialDrinkItem,
+                                "action=" .. tostring(action.Type)
+                                    .. " caller=" .. tostring(caller))
+                        end
+                    end
+                end
+                return originalReset(self, ...)
+            end
+        end
+        queue.__ChilaSedaSmartRadialDrinkTrace = true
+    end
+
+    local drinkAction = ISDrinkFluidAction
+    if type(drinkAction) == "table" and not drinkAction.__ChilaSedaSmartRadialDrinkTrace
+        and type(drinkAction.isValid) == "function" then
+        local originalIsValid = drinkAction.isValid
+        drinkAction.isValid = function(action, ...)
+            local ok, valid = pcall(originalIsValid, action, ...)
+            if action and action.ChilaSedaSmartRadialDrinkTrace
+                and not action.ChilaSedaSmartRadialDrinkValidityLogged then
+                action.ChilaSedaSmartRadialDrinkValidityLogged = true
+                traceDrink(ok and (valid and "is-valid" or "is-invalid") or "is-valid-error",
+                    action.ChilaSedaSmartRadialDrinkPlayerNum,
+                    action.ChilaSedaSmartRadialDrinkItem,
+                    "action=ISDrinkFluidAction"
+                        .. (not ok and (" error=" .. tostring(valid)) or ""))
+            end
+            if not ok then error(valid) end
+            return valid
+        end
+        drinkAction.__ChilaSedaSmartRadialDrinkTrace = true
+    end
+end
+
 local function isDrinkSmartOption(option)
     local label = string.lower(tostring(option.name or ""))
     local compactLabel = string.gsub(label, "%s+", "")
@@ -377,6 +534,7 @@ local function install()
         return
     end
     _G[INSTALL_KEY] = true
+    installDrinkActionDiagnostics()
 
     local originalDoDrinkFluidMenu = ISInventoryPaneContextMenu
         and ISInventoryPaneContextMenu.doDrinkFluidMenu
@@ -396,10 +554,33 @@ local function install()
         text = localizeDrinkSmartName(text)
         if type(command) == "function" and not radialOwnedCallbacks[command] then
             local menu = self
+            local sliceItem = item
+            local sliceLabel = text
             local originalCommand = command
             command = function()
-                normalizeScannedItemLists(menu.playerNum)
-                originalCommand(arg1, arg2, arg3, arg4, arg5, arg6)
+                if not drinkSmartSlice then
+                    normalizeScannedItemLists(menu.playerNum)
+                    return originalCommand(arg1, arg2, arg3, arg4, arg5, arg6)
+                end
+
+                local previousContext = activeDrinkRadialContext
+                activeDrinkRadialContext = {
+                    playerNum = menu.playerNum,
+                    item = sliceItem,
+                    label = sliceLabel,
+                }
+                traceDrink("dispatch-start", menu.playerNum, sliceItem,
+                    "slice=" .. tostring(sliceLabel))
+                local ok, result = pcall(function()
+                    normalizeScannedItemLists(menu.playerNum)
+                    return originalCommand(arg1, arg2, arg3, arg4, arg5, arg6)
+                end)
+                traceDrink(ok and "dispatch-end" or "dispatch-error", menu.playerNum,
+                    sliceItem, "slice=" .. tostring(sliceLabel)
+                        .. (not ok and (" error=" .. tostring(result)) or ""))
+                activeDrinkRadialContext = previousContext
+                if not ok then error(result) end
+                return result
             end
             radialOwnedCallbacks[command] = true
         end
@@ -407,12 +588,19 @@ local function install()
             itemCount, extraTooltipText, craftingTooltipForced,
             arg1, arg2, arg3, arg4, arg5, arg6)
         local slices = self and self.slices
-        if drinkSmartSlice and type(slices) == "table" and #slices > 1 then
+        if drinkSmartSlice and type(slices) == "table" and #slices > 1
+            and type(self.setSliceText) == "function"
+            and type(self.setSliceTexture) == "function" then
             table.insert(slices, 1, table.remove(slices, #slices))
+            -- Keep the Java radial's visible index in sync with Lua's callback table.
+            for index, slice in ipairs(slices) do
+                self:setSliceText(index, slice.text)
+                self:setSliceTexture(index, slice.texture)
+            end
         end
         return result
     end
-    print("[" .. MOD_ID .. "] Drink Smart is first and localized; native actions preserved (1.1.13)")
+    print("[" .. MOD_ID .. "] Drink Smart is first and localized; radial callbacks stay aligned (1.1.14)")
 end
 
 Events.OnGameBoot.Add(install)
