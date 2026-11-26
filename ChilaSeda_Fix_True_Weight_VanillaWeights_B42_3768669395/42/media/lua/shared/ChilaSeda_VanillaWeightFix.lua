@@ -243,6 +243,28 @@ local TARGET_WEIGHTS = {
 }
 
 local FULL_TYPE_TARGETS = {
+    -- Authentic Z upgrade duffels from the documented 1.00 kg targets.
+    ["AuthenticZClothing.Bag_DuffelBag_Festive_Tier_1"] = 1.00,
+    ["AuthenticZClothing.Bag_DuffelBag_Festive_Tier_2"] = 1.00,
+    ["AuthenticZClothing.Bag_DuffelBag_Festive_Tier_3"] = 1.00,
+    ["AuthenticZClothing.Bag_DuffelBagGrey_Tier_1"] = 1.00,
+    ["AuthenticZClothing.Bag_DuffelBagGrey_Tier_2"] = 1.00,
+    ["AuthenticZClothing.Bag_DuffelBagGrey_Tier_3"] = 1.00,
+    ["AuthenticZClothing.Bag_MedicalBag_Tier_1"] = 1.00,
+    ["AuthenticZClothing.Bag_MedicalBag_Tier_2"] = 1.00,
+    ["AuthenticZClothing.Bag_MedicalBag_Tier_3"] = 1.00,
+    ["AuthenticZClothing.Bag_Military_Tier_1"] = 1.00,
+    ["AuthenticZClothing.Bag_Military_Tier_2"] = 1.00,
+    ["AuthenticZClothing.Bag_Military_Tier_3"] = 1.00,
+    ["AuthenticZClothing.Bag_Police_Tier_1"] = 1.00,
+    ["AuthenticZClothing.Bag_Police_Tier_2"] = 1.00,
+    ["AuthenticZClothing.Bag_Police_Tier_3"] = 1.00,
+    ["AuthenticZClothing.Bag_Sheriff_Tier_1"] = 1.00,
+    ["AuthenticZClothing.Bag_Sheriff_Tier_2"] = 1.00,
+    ["AuthenticZClothing.Bag_Sheriff_Tier_3"] = 1.00,
+    ["AuthenticZClothing.Bag_SWAT_Tier_1"] = 1.00,
+    ["AuthenticZClothing.Bag_SWAT_Tier_2"] = 1.00,
+    ["AuthenticZClothing.Bag_SWAT_Tier_3"] = 1.00,
     ["AMRBirds321.PeafowlTrainFeather"] = 0.0022,
     ["ThisIsYourLife.PreservedJournal"] = 0.25,
     ["HomemadeThings.HomemadeHacksaw"] = 0.75,
@@ -631,26 +653,31 @@ local function rebalanceVanillaItems()
 end
 
 local function rebalanceContainer(container, visited)
-    if not container or visited[container] then return 0 end
+    if not container or visited[container] then return 0, 0 end
     visited[container] = true
     local items = container:getItems()
-    if not items then return 0 end
-    local changed = 0
+    if not items then return 0, 0 end
+    local changed, scanned = 0, 0
     for i = 0, items:size() - 1 do
         local item = items:get(i)
+        scanned = scanned + 1
         if applyItemWeight(item) then changed = changed + 1 end
         if item and item.getInventory then
             local ok, nested = pcall(function() return item:getInventory() end)
-            if ok and nested then changed = changed + rebalanceContainer(nested, visited) end
+            if ok and nested then
+                local nestedChanged, nestedScanned = rebalanceContainer(nested, visited)
+                changed = changed + nestedChanged
+                scanned = scanned + nestedScanned
+            end
         end
     end
-    return changed
+    return changed, scanned
 end
 
 local function rebalanceAccessiblePlayer(player, playerNum)
-    if not player then return end
+    if not player then return 0, 0 end
     local visited = {}
-    local changed = rebalanceContainer(player:getInventory(), visited)
+    local changed, scanned = rebalanceContainer(player:getInventory(), visited)
     local paneMenu = rawget(_G, "ISInventoryPaneContextMenu")
 
     -- Match Weight Monitor's container discovery. Refreshing both pages
@@ -677,7 +704,9 @@ local function rebalanceAccessiblePlayer(player, playerNum)
         local ok, containers = pcall(function() return paneMenu.getContainers(player) end)
         if ok and containers then
             for i = 0, containers:size() - 1 do
-                changed = changed + rebalanceContainer(containers:get(i), visited)
+                local containerChanged, containerScanned = rebalanceContainer(containers:get(i), visited)
+                changed = changed + containerChanged
+                scanned = scanned + containerScanned
             end
         end
     end
@@ -685,9 +714,16 @@ local function rebalanceAccessiblePlayer(player, playerNum)
         print("[ChilaSeda_VanillaWeightFix] sleep rebalance updated " .. tostring(changed)
             .. " existing item instance(s) in inventory, bags, and open containers")
     end
+    return changed, scanned
 end
 
 local sleepRebalanced = {}
+local loadRebalanced = {}
+local loadRetryTicks = {}
+local loadRetryCount = {}
+local loadWaitLogged = {}
+local LOAD_RETRY_INTERVAL = 30
+local LOAD_RETRY_LIMIT = 20
 
 local function playerIndexFor(player)
     if player and type(player.getPlayerNum) == "function" then
@@ -700,6 +736,44 @@ end
 local function onPlayerUpdate(player)
     if not player then return end
     local playerIndex = playerIndexFor(player)
+    if not loadRebalanced[playerIndex] then
+        local remaining = loadRetryTicks[playerIndex] or 0
+        if remaining > 0 then
+            loadRetryTicks[playerIndex] = remaining - 1
+        else
+            loadRetryTicks[playerIndex] = LOAD_RETRY_INTERVAL
+            loadRetryCount[playerIndex] = (loadRetryCount[playerIndex] or 0) + 1
+            local ok, changed, scanned = pcall(rebalanceAccessiblePlayer, player, playerIndex)
+            if ok and (scanned or 0) > 0 then
+                loadRebalanced[playerIndex] = true
+                print("[ChilaSeda_VanillaWeightFix] event=load_rebalance result=complete items="
+                    .. tostring(changed or 0) .. " accessible_items=" .. tostring(scanned)
+                    .. " attempts=" .. tostring(loadRetryCount[playerIndex])
+                    .. " health-independent=true")
+            elseif ok then
+                if not loadWaitLogged[playerIndex] then
+                    loadWaitLogged[playerIndex] = true
+                    print("[ChilaSeda_VanillaWeightFix] event=load_rebalance result=waiting accessible_items=0")
+                end
+                if loadRetryCount[playerIndex] >= LOAD_RETRY_LIMIT then
+                    loadRebalanced[playerIndex] = true
+                    print("[ChilaSeda_VanillaWeightFix] event=load_rebalance result=fallback reason=no-accessible-items retry=limit")
+                end
+            else
+                local reason = tostring(changed or "unknown"):gsub("[\r\n]+", " ")
+                if #reason > 180 then reason = string.sub(reason, 1, 180) end
+                if loadRetryCount[playerIndex] >= LOAD_RETRY_LIMIT then
+                    loadRebalanced[playerIndex] = true
+                    print("[ChilaSeda_VanillaWeightFix] event=load_rebalance result=fallback reason="
+                        .. reason .. " retry=limit attempts=" .. tostring(loadRetryCount[playerIndex]))
+                else
+                    print("[ChilaSeda_VanillaWeightFix] event=load_rebalance result=retry reason="
+                        .. reason .. " retry_ticks=" .. tostring(LOAD_RETRY_INTERVAL)
+                        .. " attempt=" .. tostring(loadRetryCount[playerIndex]))
+                end
+            end
+        end
+    end
     if not sleepRebalanced[playerIndex] then return end
     if type(player.isAsleep) ~= "function" then return end
 

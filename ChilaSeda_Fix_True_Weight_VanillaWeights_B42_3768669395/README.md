@@ -1,4 +1,11 @@
-# ChilaSeda Fix · pesos vanilla y overrides (B42) 2.1.3
+# ChilaSeda Fix · pesos vanilla y overrides (B42) 2.1.5
+
+## Version 2.1.5
+
+- Waits for restored items in the character inventory or accessible loot containers (including nearby ground bags) before rebalancing saved instances, retrying at bounded intervals instead of consuming the one-time pass against empty inventories.
+- Retries a failed pass at bounded intervals and logs whether it completed, is waiting, or reached its fallback limit.
+- Keeps the existing full-health, once-per-sleep rebalance for items acquired later.
+- Adds explicit 1.00 kg targets for the 21 Authentic Z upgrade duffels listed in the weight manual.
 
 ## Contenido del paquete
 
@@ -6,7 +13,7 @@ Incluye VanillaWeightFix y los overrides de peso para Any Wall Flags y Posters. 
 
 ## Reajuste de instancias
 
-El reajuste de objetos accesibles corre una sola vez por episodio de sueno y solo si la salud esta completa (100). Si no esta al maximo, se omite hasta el siguiente sueno. No hay sondeo periodico mientras el personaje juega.
+Al cargar al personaje, el parche reajusta una vez los objetos accesibles que ya estaban guardados, sin depender de la salud. Para objetos recogidos despues, el reajuste sigue corriendo una sola vez por episodio de sueno y solo si la salud esta completa (100). No hay sondeo periodico mientras el personaje juega.
 
 ## Metas de peso documentadas
 

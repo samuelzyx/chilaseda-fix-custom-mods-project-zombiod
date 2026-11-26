@@ -1,7 +1,7 @@
 name=ChilaSeda - Weight Fixes (B42)
 id=ChilaSeda_Fix_True_Weight_VanillaWeights_B42_3768669395
 authors=ChilaSeda
-description=Rebalances vanilla and selected Workshop item weights. Accessible instance corrections run once per sleep episode only at full player health.
+description=Rebalances vanilla and selected Workshop item weights. Corrects accessible saved instances after player load and later once per full-health sleep episode.
 loadModAfter=TrueWeight,ThisIsYourLife,ExtendedVanillaWeapons,AnimalRemasterApproved,DGVFlags,DGVPosters
 versionMin=42.21
-modversion=2.1.3
+modversion=2.1.5
