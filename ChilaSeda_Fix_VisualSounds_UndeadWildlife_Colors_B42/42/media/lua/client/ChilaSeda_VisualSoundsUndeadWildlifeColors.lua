@@ -30,7 +30,6 @@ local function installRenderSafeViewAngle()
     local provider = SDI.viewAngle
     if type(provider) ~= "function" or provider == originalViewAngle or provider == renderSafeViewAngle then return end
     SDI.viewAngle = renderSafeViewAngle
-    print(TAG .. "VisualSoundsKAViewpoint angle replaced with Viewpoint frame yaw; no thread-guarded Lua addon calls")
 end
 
 Events.OnGameBoot.Add(installRenderSafeViewAngle)
@@ -528,5 +527,3 @@ local function scanNearbyCreatures()
 end
 
 Events.OnTick.Add(scanNearbyCreatures)
-
-print(TAG .. "SDI hooks loaded; nearby zombies, animals, and Living World NPCs receive proximity cues without WorldSound; human zombies use red, NPC allies green, and other NPCs yellow")

@@ -1,4 +1,4 @@
-# ChilaSeda Fix - VisualSounds and Living World Proximity Colors (B42) 0.8.9
+# ChilaSeda Fix - VisualSounds and Living World Proximity Colors (B42) 0.8.10
 <div align="center">
 
 [🏠 Repo](../README.md) · [🤝 Contribuir](../CONTRIBUTING.md) · [🚀 Releases](../docs/releases/README.md)
@@ -7,6 +7,9 @@
 
 ---
 
+## Version 0.8.10
+
+- Removes success-only startup messages for the confirmed Viewpoint angle bridge and proximity hooks. Unavailable API and fallback warnings remain.
 
 ## Version 0.8.9
 
