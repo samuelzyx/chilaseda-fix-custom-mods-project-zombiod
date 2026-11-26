@@ -107,5 +107,10 @@
   "IGUI_Map_Symbol_Bed": "Cama",
   "IGUI_Map_Symbol_Baseball": "Béisbol",
   "IGUI_Map_Symbol_Armor": "Armadura",
-  "IGUI_Map_Symbol_Anvil": "Yunque"
+  "IGUI_Map_Symbol_Anvil": "Yunque",
+  "IGUI_ChilaSeda_MapSearchZoomResetHint": "Restablecer al 100%%",
+  "IGUI_ChilaSeda_MapSearchGrid": "Cuad.",
+  "IGUI_ChilaSeda_MapSearchList": "Lista",
+  "IGUI_ChilaSeda_MapSearchShowGrid": "Cambiar a cuadricula",
+  "IGUI_ChilaSeda_MapSearchShowList": "Cambiar a lista"
 }

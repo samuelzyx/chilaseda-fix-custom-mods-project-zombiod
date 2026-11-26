@@ -14,5 +14,10 @@
   "IGUI_ChilaSeda_MapSearchZoomHint": "Increase symbol size",
   "IGUI_ChilaSeda_MapSearchZoomOutHint": "Reduce symbol size",
   "IGUI_ChilaSeda_SearchMapSymbolsNoResults": "No matching symbols",
-  "IGUI_ChilaSeda_SearchMapSymbolsLimit": "More results are hidden; lower zoom or refine your search"
+  "IGUI_ChilaSeda_SearchMapSymbolsLimit": "More results are hidden; lower zoom or refine your search",
+  "IGUI_ChilaSeda_MapSearchZoomResetHint": "Reset symbol size to 100%%",
+  "IGUI_ChilaSeda_MapSearchGrid": "Grid",
+  "IGUI_ChilaSeda_MapSearchList": "List",
+  "IGUI_ChilaSeda_MapSearchShowGrid": "Switch to grid view",
+  "IGUI_ChilaSeda_MapSearchShowList": "Switch to list view"
 }

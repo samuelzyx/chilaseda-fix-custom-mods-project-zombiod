@@ -25,6 +25,8 @@ Este porte integra las definiciones y recursos de símbolos. No carga el antiguo
 
 ## Historial de cambios
 
+- **0.3.7:** escapa el signo de porcentaje literal del tooltip de reinicio del zoom para que el formateador de PZ no genere una excepcion.
+- **0.3.6:** agrega vista de cuadricula en Buscar con nombres al pasar el cursor; el zoom compartido reacomoda iconos en todas las pestanas de simbolos, mantiene los controles visibles y limita el desplazamiento al panel.
 - **0.3.5:** filtra resultados desde el evento de cambio de texto y procesa el texto confirmado durante la pausa, igual que el campo del menu vanilla de construccion.
 - **0.3.3:** evita leer el control de busqueda antes de instanciar su objeto UI nativo, que podia interrumpir la apertura del mapa.
 - **0.3.2:** agrega sugerencias por categoria, nombres visibles en los resultados, zoom ajustable de iconos y busqueda semantica para el catalogo completo.

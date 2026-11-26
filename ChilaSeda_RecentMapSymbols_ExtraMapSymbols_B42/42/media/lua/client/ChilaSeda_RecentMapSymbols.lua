@@ -7,12 +7,16 @@ local MOD_DATA_KEY = "ChilaSeda_RecentMapSymbols"
 local MAX_RECENT_SYMBOLS = 20
 local MAX_SEARCH_RESULTS = 8
 local SEARCH_ZOOM_LEVELS = { 1.0, 1.5, 2.0 }
+local SYMBOL_UI_ZOOM_LEVELS = SEARCH_ZOOM_LEVELS
 local RECENT_RETRY_INTERVAL_FRAMES = 60
 local MAX_RECENT_RETRIES = 20
 local RECENT_TAB_LABEL = "IGUI_ChilaSeda_RecentMapSymbols"
 local SEARCH_TAB_LABEL = "IGUI_ChilaSeda_SearchMapSymbols"
 local UI_BORDER_SPACING = 10
 local persistentRecentByPlayer = {}
+local applySymbolButtonLayout
+local updateSymbolZoomControls
+local refreshSearchTab
 
 local function symbolDefinition(symbolId)
     if type(symbolId) ~= "string" then return nil end
@@ -275,6 +279,8 @@ local function refreshRecentTab(symbolsUI)
         view.joypadIndex = math.max(1, math.ceil(#view.joypadButtons / 2))
     end
 
+    if applySymbolButtonLayout then applySymbolButtonLayout(symbolsUI) end
+
     local retryCount = view.chilaSedaRecentRetryCount or 0
     view.chilaSedaRecentNeedsRefresh = (#recentSymbols == 0 or unresolvedDefinitions > 0)
         and retryCount < MAX_RECENT_RETRIES
@@ -525,6 +531,18 @@ local function humanizeSymbolId(symbolId)
     return value
 end
 
+local function symbolDisplayName(symbolId)
+    local baseId = tostring(symbolId or ""):gsub("//alt=.*$", "")
+    local extraName = baseId:match("^extra:(.+)$")
+    local extraInfo = extraName and EXTRA_SYMBOL_INFO[extraName] or nil
+    if extraInfo then return extraInfo[1] end
+
+    local translationKey = "IGUI_Map_Symbol_" .. baseId
+    local translatedName = getText(translationKey)
+    if translatedName and translatedName ~= translationKey then return translatedName end
+    return humanizeSymbolId(baseId)
+end
+
 local function symbolSearchMatches(symbolId, searchText)
     local query = searchTokens(searchText)
     if #query == 0 then return false end
@@ -610,7 +628,7 @@ local function removeSearchButtons(symbolsUI)
     end
 end
 
-local function refreshSearchTab(symbolsUI)
+refreshSearchTab = function(symbolsUI)
     local view = symbolsUI and symbolsUI.searchSymbolsView
     if not view then return end
     removeSearchButtons(symbolsUI)
@@ -630,6 +648,10 @@ local function refreshSearchTab(symbolsUI)
     end
     if normalizedQuery == "" then
         view.searchMessage = nil
+        if type(view.setScrollHeight) == "function" then
+            pcall(view.setScrollHeight, view, view.height)
+            if type(view.setYScroll) == "function" then pcall(view.setYScroll, view, 0) end
+        end
         return
     end
 
@@ -645,19 +667,25 @@ local function refreshSearchTab(symbolsUI)
     end
 
     local searchHeight = getTextManager():getFontHeight(UIFont.Small) + 6
-    local zoom = SEARCH_ZOOM_LEVELS[view.searchZoomIndex or 1] or 1.0
+    local zoom = SEARCH_ZOOM_LEVELS[symbolsUI.symbolZoomIndex or 1] or 1.0
     local iconSize = math.floor(38 * zoom)
-    local gap = UI_BORDER_SPACING
+    local isGrid = view.searchLayout == "grid"
+    local gap = isGrid and 6 or UI_BORDER_SPACING
     local x = UI_BORDER_SPACING + 1
     local suggestionsHeight = view.lastSearchText == "" and (view.suggestionRows or 0) or 0
     local y = UI_BORDER_SPACING + searchHeight + getTextManager():getFontHeight(UIFont.Small)
         + gap * 2 + suggestionsHeight + 1
+    local resultsStartY = y
     local columns = 1
-    local cardWidth = math.floor((view.width - UI_BORDER_SPACING * 3 - 2) / columns)
-    local availableHeight = math.max(0, view:getHeight() - y - UI_BORDER_SPACING)
-    local cardHeight = math.max(1, math.min(math.max(46, iconSize + 8), availableHeight))
-    local fitRows = math.max(1, math.floor((availableHeight + gap) / (cardHeight + gap)))
-    local displayLimit = math.min(MAX_SEARCH_RESULTS, fitRows * columns)
+    local cardWidth = math.floor((view.width - UI_BORDER_SPACING * 2 - 2))
+    local cardHeight = math.max(46, iconSize + 8)
+    if isGrid then
+        cardWidth = math.max(32, math.floor(42 * zoom))
+        cardHeight = cardWidth
+        local availableWidth = math.max(1, view.width - UI_BORDER_SPACING * 2 - 2)
+        columns = math.max(1, math.floor((availableWidth + gap) / (cardWidth + gap)))
+    end
+    local displayLimit = MAX_SEARCH_RESULTS
     local column = 0
     local row = {}
     local matches = {}
@@ -690,30 +718,37 @@ local function refreshSearchTab(symbolsUI)
             button.symbolTexture = getTexture(texturePath)
             button.symbolName = displayName
             button.image = nil
+            button.tooltip = displayName
             local originalButtonRender = button.render
             button.render = function(self)
                 originalButtonRender(self)
                 if self.symbolTexture then
                     local iconSize = math.max(1, math.min(self.height - 8, math.floor(38 * zoom)))
-                    self:drawTextureScaledAspect(self.symbolTexture, 4,
+                    local iconX = isGrid and math.floor((self.width - iconSize) / 2) or 4
+                    self:drawTextureScaledAspect(self.symbolTexture, iconX,
                         math.floor((self.height - iconSize) / 2), iconSize, iconSize, 1,
                         self.textureColor.r, self.textureColor.g, self.textureColor.b)
                 end
-                local labelX = math.min(self.height + 5, math.floor(38 * zoom) + 9)
-                local maxTextWidth = self.width - labelX - 5
-                local label = self.symbolName or ""
-                local textManager = getTextManager()
-                while #label > 3 and textManager:MeasureStringX(UIFont.Small, label) > maxTextWidth do
-                    label = label:sub(1, #label - 4) .. "..."
+                if not isGrid then
+                    local labelX = math.min(self.height + 5, math.floor(38 * zoom) + 9)
+                    local maxTextWidth = self.width - labelX - 5
+                    local label = self.symbolName or ""
+                    local textManager = getTextManager()
+                    while #label > 3 and textManager:MeasureStringX(UIFont.Small, label) > maxTextWidth do
+                        label = label:sub(1, #label - 4) .. "..."
+                    end
+                    self:drawText(label, labelX,
+                        math.floor((self.height - textManager:getFontHeight(UIFont.Small)) / 2),
+                        1, 1, 1, 1, UIFont.Small)
                 end
-                self:drawText(label, labelX, math.floor((self.height - textManager:getFontHeight(UIFont.Small)) / 2),
-                    1, 1, 1, 1, UIFont.Small)
             end
             button.tex = symbolId
             button.symbol = true
             button.tab = "SearchSymbols"
             button.enable = symbolsUI:canWrite()
-            if not button.enable then button.tooltip = getText("Tooltip_Map_CantWrite") end
+            if not button.enable then
+                button.tooltip = displayName .. "\n" .. getText("Tooltip_Map_CantWrite")
+            end
 
             view:addChild(button)
             symbolsUI.buttonList[#symbolsUI.buttonList + 1] = button
@@ -747,6 +782,184 @@ local function refreshSearchTab(symbolsUI)
         view.joypadIndexY = math.max(1, math.floor(rowCount / 2))
         view.joypadButtons = view.joypadButtonsY[view.joypadIndexY]
         view.joypadIndex = math.max(1, math.ceil(#view.joypadButtons / 2))
+    end
+    if type(view.setScrollHeight) == "function" then
+        local rows = math.ceil(shown / columns)
+        local contentBottom = resultsStartY + rows * (cardHeight + gap) + UI_BORDER_SPACING
+        pcall(view.setScrollHeight, view, math.max(view.height, contentBottom))
+        if type(view.setYScroll) == "function" then pcall(view.setYScroll, view, 0) end
+    else
+        print("[ChilaSedaMapSymbolsUI] event=search-layout fallback=no-scroll-height")
+    end
+    print("[ChilaSedaMapSymbolsUI] event=search-layout mode=" .. tostring(view.searchLayout or "list")
+        .. " zoom=" .. tostring(zoom) .. " shown=" .. tostring(shown)
+        .. " columns=" .. tostring(columns) .. " result=ready")
+end
+
+local function updateSymbolButtonTooltips(symbolsUI)
+    for _, button in ipairs(symbolsUI and symbolsUI.buttonList or {}) do
+        if button.symbol then
+            local name = button.symbolName or symbolDisplayName(button.tex)
+            button.symbolName = name
+            if button.enable == false then
+                button.tooltip = name .. "\n" .. getText("Tooltip_Map_CantWrite")
+            else
+                button.tooltip = name
+            end
+        end
+    end
+end
+
+local function setSymbolZoom(symbolsUI, index)
+    if not symbolsUI then return end
+    symbolsUI.symbolZoomIndex = math.max(1, math.min(#SYMBOL_UI_ZOOM_LEVELS, index or 1))
+    local percent = math.floor(SYMBOL_UI_ZOOM_LEVELS[symbolsUI.symbolZoomIndex] * 100)
+    for _, label in ipairs(symbolsUI.symbolZoomLabels or {}) do
+        if label and type(label.setTitle) == "function" then
+            pcall(label.setTitle, label, tostring(percent) .. "%")
+        end
+    end
+    if applySymbolButtonLayout then applySymbolButtonLayout(symbolsUI) end
+    if refreshSearchTab then refreshSearchTab(symbolsUI) end
+    print("[ChilaSedaMapSymbolsUI] event=zoom result=applied percent=" .. tostring(percent))
+end
+
+local function pinControlsAtTop(view, controls)
+    view.chilaPinnedControls = view.chilaPinnedControls or {}
+    for _, control in ipairs(controls or {}) do
+        if control then
+            control.chilaPinnedY = control.chilaPinnedY or control.y
+            view.chilaPinnedControls[#view.chilaPinnedControls + 1] = control
+        end
+    end
+    if view.chilaPinnedPrerender then return end
+
+    local originalPrerender = view.prerender
+    view.prerender = function(self, ...)
+        if originalPrerender then originalPrerender(self, ...) end
+        local scroll = 0
+        if type(self.getYScroll) == "function" then
+            local ok, value = pcall(self.getYScroll, self)
+            if ok and type(value) == "number" then scroll = value end
+        end
+        for _, control in ipairs(self.chilaPinnedControls or {}) do
+            if control and type(control.setY) == "function" then
+                pcall(control.setY, control, control.chilaPinnedY - scroll)
+            end
+        end
+    end
+    view.chilaPinnedPrerender = true
+end
+
+local function addSymbolZoomToolbar(symbolsUI, view)
+    if view.symbolZoomControls then return view.symbolZoomControls end
+    local height = getTextManager():getFontHeight(UIFont.Small) + 6
+    local minusWidth, labelWidth, plusWidth, gap = 22, 38, 22, 4
+    local totalWidth = minusWidth + labelWidth + plusWidth + gap * 2
+    local x = math.max(UI_BORDER_SPACING + 1, view.width - UI_BORDER_SPACING - totalWidth)
+    local y = UI_BORDER_SPACING + 1
+    local minus = ISButton:new(x, y, minusWidth, height, "-", view, function()
+        setSymbolZoom(symbolsUI, (symbolsUI.symbolZoomIndex or 1) - 1)
+    end)
+    minus:initialise()
+    minus:instantiate()
+    minus.tooltip = getText("IGUI_ChilaSeda_MapSearchZoomOutHint")
+    view:addChild(minus)
+
+    local label = ISButton:new(x + minusWidth + gap, y, labelWidth, height, "100%", view, function()
+        setSymbolZoom(symbolsUI, 1)
+    end)
+    label:initialise()
+    label:instantiate()
+    label.tooltip = getText("IGUI_ChilaSeda_MapSearchZoomResetHint")
+    view:addChild(label)
+
+    local plus = ISButton:new(x + minusWidth + gap + labelWidth + gap, y,
+        plusWidth, height, "+", view, function()
+            setSymbolZoom(symbolsUI, (symbolsUI.symbolZoomIndex or 1) + 1)
+        end)
+    plus:initialise()
+    plus:instantiate()
+    plus.tooltip = getText("IGUI_ChilaSeda_MapSearchZoomHint")
+    view:addChild(plus)
+
+    view.symbolZoomControls = { minus = minus, label = label, plus = plus }
+    pinControlsAtTop(view, { minus, label, plus })
+    symbolsUI.symbolZoomLabels = symbolsUI.symbolZoomLabels or {}
+    symbolsUI.symbolZoomLabels[#symbolsUI.symbolZoomLabels + 1] = label
+    return view.symbolZoomControls
+end
+
+applySymbolButtonLayout = function(symbolsUI)
+    if not symbolsUI or not symbolsUI.panel then return end
+    local buttonsByView = {}
+    for _, button in ipairs(symbolsUI.buttonList or {}) do
+        local view = button.parent
+        if button.symbol and button.tab ~= "SearchSymbols" and view and view.ID then
+            buttonsByView[view] = buttonsByView[view] or {}
+            buttonsByView[view][#buttonsByView[view] + 1] = button
+        end
+    end
+
+    for view, buttons in pairs(buttonsByView) do
+        local ok, errorMessage = pcall(function()
+            local controls = addSymbolZoomToolbar(symbolsUI, view)
+            local baseSize = getTextManager():getFontHeight(UIFont.Small) + 6
+            local zoom = SYMBOL_UI_ZOOM_LEVELS[symbolsUI.symbolZoomIndex or 1] or 1.0
+            local cellSize = math.max(baseSize, math.floor(baseSize * zoom))
+            local gap = UI_BORDER_SPACING
+            local left = UI_BORDER_SPACING + 1
+            local availableWidth = math.max(1, view.width - UI_BORDER_SPACING * 2 - 2)
+            local columns = math.max(1, math.min(8, math.floor((availableWidth + gap) / (cellSize + gap))))
+            local y = UI_BORDER_SPACING + baseSize + gap + 1
+            local x = left
+            local column = 0
+            local row = {}
+            local rows = {}
+            for _, button in ipairs(buttons) do
+                button:setX(x)
+                button:setY(y)
+                button:setWidth(cellSize)
+                button:setHeight(cellSize)
+                button.forcedWidthImage = math.max(1, cellSize - 2)
+                button.forcedHeightImage = math.max(1, cellSize - 2)
+                button.symbolName = button.symbolName or symbolDisplayName(button.tex)
+                if button.enable == false then
+                    button.tooltip = button.symbolName .. "\n" .. getText("Tooltip_Map_CantWrite")
+                else
+                    button.tooltip = button.symbolName
+                end
+                row[#row + 1] = button
+                column = column + 1
+                if column == columns then
+                    rows[#rows + 1] = row
+                    row = {}
+                    column = 0
+                    x = left
+                    y = y + cellSize + gap
+                else
+                    x = x + cellSize + gap
+                end
+            end
+            if #row > 0 then rows[#rows + 1] = row end
+
+            view:clearJoypadButtonsList()
+            view:insertNewListOfButtons({ controls.minus, controls.label, controls.plus })
+            for _, buttonRow in ipairs(rows) do view:insertNewListOfButtons(buttonRow) end
+            local contentBottom = y + (column > 0 and cellSize or 0) + UI_BORDER_SPACING
+            if type(view.setScrollHeight) ~= "function" then
+                error("scroll height is unavailable")
+            end
+            view:setScrollHeight(math.max(view.height, contentBottom))
+            if type(view.setYScroll) == "function" then view:setYScroll(0) end
+            print("[ChilaSedaMapSymbolsUI] event=layout tab=" .. tostring(view.ID)
+                .. " zoom=" .. tostring(zoom) .. " buttons=" .. tostring(#buttons)
+                .. " columns=" .. tostring(columns) .. " result=ready")
+        end)
+        if not ok then
+            print("[ChilaSedaMapSymbolsUI] event=layout tab=" .. tostring(view.ID)
+                .. " result=fallback reason=" .. tostring(errorMessage))
+        end
     end
 end
 
@@ -865,11 +1078,13 @@ local function addSearchTab(symbolsUI)
     end
     view:initialise()
 
-    local zoomButtonWidth = 28
+    local zoomButtonWidth = 22
     local zoomLabelWidth = 38
     local zoomOutWidth = 22
+    local viewModeButtonWidth = 54
     local zoomY = UI_BORDER_SPACING + 1
-    local zoomX = view.width - UI_BORDER_SPACING - zoomOutWidth - zoomLabelWidth - zoomButtonWidth - 8
+    local zoomX = view.width - UI_BORDER_SPACING - zoomOutWidth - zoomLabelWidth
+        - zoomButtonWidth - viewModeButtonWidth - 18
     local searchX = UI_BORDER_SPACING + 1
     local clearSearchWidth = 24
     local searchEntryWidth = math.max(1, zoomX - 8 - clearSearchWidth - 4 - searchX)
@@ -909,37 +1124,56 @@ local function addSearchTab(symbolsUI)
     clearSearchButton:instantiate()
     view:addChild(clearSearchButton)
     view.searchEntryClearButton = clearSearchButton
-    view.searchZoomIndex = 1
+    symbolsUI.symbolZoomIndex = symbolsUI.symbolZoomIndex or 1
     local zoomLabel
     zoomLabel = ISButton:new(zoomX + zoomOutWidth + 4, zoomY, zoomLabelWidth, buttonHeight, "100%", view,
         function()
-            view.searchZoomIndex = 1
-            zoomLabel:setTitle("100%")
-            refreshSearchTab(symbolsUI)
+            setSymbolZoom(symbolsUI, 1)
         end)
     zoomLabel:initialise()
     zoomLabel:instantiate()
+    zoomLabel.tooltip = getText("IGUI_ChilaSeda_MapSearchZoomResetHint")
     view:addChild(zoomLabel)
-    local function updateZoomLabel()
-            local percent = math.floor(SEARCH_ZOOM_LEVELS[view.searchZoomIndex] * 100)
-            zoomLabel:setTitle(tostring(percent) .. "%")
-            refreshSearchTab(symbolsUI)
-    end
+    symbolsUI.symbolZoomLabels = symbolsUI.symbolZoomLabels or {}
+    symbolsUI.symbolZoomLabels[#symbolsUI.symbolZoomLabels + 1] = zoomLabel
     local zoomOutButton = ISButton:new(zoomX, zoomY, zoomOutWidth, buttonHeight, "-", view, function()
-        view.searchZoomIndex = math.max(1, (view.searchZoomIndex or 1) - 1)
-        updateZoomLabel()
+        setSymbolZoom(symbolsUI, (symbolsUI.symbolZoomIndex or 1) - 1)
     end)
     zoomOutButton:initialise()
     zoomOutButton:instantiate()
+    zoomOutButton.tooltip = getText("IGUI_ChilaSeda_MapSearchZoomOutHint")
     view:addChild(zoomOutButton)
     local zoomButton = ISButton:new(zoomX + zoomOutWidth + 4 + zoomLabelWidth + 4, zoomY,
         zoomButtonWidth, buttonHeight, "+", view, function()
-            view.searchZoomIndex = math.min(#SEARCH_ZOOM_LEVELS, (view.searchZoomIndex or 1) + 1)
-            updateZoomLabel()
+            setSymbolZoom(symbolsUI, (symbolsUI.symbolZoomIndex or 1) + 1)
         end)
     zoomButton:initialise()
     zoomButton:instantiate()
+    zoomButton.tooltip = getText("IGUI_ChilaSeda_MapSearchZoomHint")
     view:addChild(zoomButton)
+    view.searchLayout = "list"
+    local modeX = zoomX + zoomOutWidth + 4 + zoomLabelWidth + 4 + zoomButtonWidth + 4
+    local searchLayoutButton
+    searchLayoutButton = ISButton:new(modeX, zoomY, viewModeButtonWidth, buttonHeight,
+        getText("IGUI_ChilaSeda_MapSearchGrid"), view, function()
+            view.searchLayout = view.searchLayout == "grid" and "list" or "grid"
+            if view.searchLayout == "grid" then
+                searchLayoutButton:setTitle(getText("IGUI_ChilaSeda_MapSearchList"))
+                searchLayoutButton.tooltip = getText("IGUI_ChilaSeda_MapSearchShowList")
+            else
+                searchLayoutButton:setTitle(getText("IGUI_ChilaSeda_MapSearchGrid"))
+                searchLayoutButton.tooltip = getText("IGUI_ChilaSeda_MapSearchShowGrid")
+            end
+            refreshSearchTab(symbolsUI)
+        end)
+    searchLayoutButton:initialise()
+    searchLayoutButton:instantiate()
+    searchLayoutButton.tooltip = getText("IGUI_ChilaSeda_MapSearchShowGrid")
+    view:addChild(searchLayoutButton)
+    view.searchLayoutButton = searchLayoutButton
+    pinControlsAtTop(view, { searchEntry, clearSearchButton, zoomOutButton,
+        zoomLabel, zoomButton, searchLayoutButton })
+    print("[ChilaSedaMapSymbolsUI] event=search-view result=ready mode=list")
     local originalRender = view.render
     view.render = function(self)
         originalRender(self)
@@ -972,6 +1206,17 @@ ISWorldMapSymbols.createChildren = function(symbolsUI, ...)
     originalCreateChildren(symbolsUI, ...)
     addRecentTab(symbolsUI)
     addSearchTab(symbolsUI)
+    applySymbolButtonLayout(symbolsUI)
+    updateSymbolButtonTooltips(symbolsUI)
+end
+
+local originalCheckInventory = ISWorldMapSymbols.checkInventory
+if type(originalCheckInventory) == "function" then
+    ISWorldMapSymbols.checkInventory = function(symbolsUI, ...)
+        local results = { originalCheckInventory(symbolsUI, ...) }
+        updateSymbolButtonTooltips(symbolsUI)
+        return unpack(results)
+    end
 end
 
 -- Vanilla restores the previous camera when reopening the map. For the normal

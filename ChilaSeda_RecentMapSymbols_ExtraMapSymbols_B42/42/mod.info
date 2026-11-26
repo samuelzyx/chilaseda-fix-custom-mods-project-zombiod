@@ -1,7 +1,7 @@
 name=ChilaSeda Recent Map Symbols + Extra Map Symbols (B42)
 id=ChilaSeda_RecentMapSymbols_ExtraMapSymbols_B42
 authors=ChilaSeda
-description=Adds persistent recent symbols and Spanish symbol search with descriptive names, suggestions, larger selectable results, and text filtering while paused; recenters the normal map view on the player.
+description=Adds recent and searchable map symbols with list/grid views, hover names, shared icon zoom across symbol tabs, and bounded scrolling; recenters the normal map view on the player.
 loadModAfter=MapSymbolSizeSlider,ExtraSymbols
 versionMin=42.20
-modversion=0.3.5
+modversion=0.3.7

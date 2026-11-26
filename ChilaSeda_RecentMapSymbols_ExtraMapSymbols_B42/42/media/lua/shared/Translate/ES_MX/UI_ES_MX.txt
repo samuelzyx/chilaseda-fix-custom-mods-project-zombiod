@@ -4,4 +4,9 @@ UI_ES_MX = {
     IGUI_ChilaSeda_SearchMapSymbolsHint = "Buscar por nombre, ID o categoría",
     IGUI_ChilaSeda_SearchMapSymbolsNoResults = "No hay símbolos coincidentes",
     IGUI_ChilaSeda_SearchMapSymbolsLimit = "Hay mas resultados; baja el zoom o concreta la busqueda",
+    IGUI_ChilaSeda_MapSearchZoomResetHint = "Restablecer al 100%%",
+    IGUI_ChilaSeda_MapSearchGrid = "Cuad.",
+    IGUI_ChilaSeda_MapSearchList = "Lista",
+    IGUI_ChilaSeda_MapSearchShowGrid = "Cambiar a cuadricula",
+    IGUI_ChilaSeda_MapSearchShowList = "Cambiar a lista",
 }
