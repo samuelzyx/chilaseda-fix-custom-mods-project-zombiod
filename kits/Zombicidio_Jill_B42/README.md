@@ -146,6 +146,17 @@ Después de crear y guardar el mundo:
 3. Déjalos juntos en la carpeta del guardado; **no** los pongas dentro de `mods`.
 4. Inicia de nuevo y comprueba que el mundo cargue.
 
+### Equipment UI en el perfil Jill (2026-11-26)
+
+El `mods.txt` activo y la plantilla de Jill no activan `EQUIPMENT_UI` ni `EQUIPMENT_UI_B42`. Se quito el ID `EQUIPMENT_UI` del perfil porque Inventory Tetris Workshop 3775513231 declara `incompatible=EQUIPMENT_UI`. El Workshop 3682936016 sigue instalado; no se cambio ninguna suscripcion.
+
+Para revertir, cierra Project Zomboid y restaura estas copias:
+
+- `backups/2026-11-26_13-16-52-0600/Saves/Sandbox/Jill_Valantine_25_11_2026_4PM/mods.txt` a `%USERPROFILE%\Zomboid\Saves\Sandbox\Jill_Valantine_25_11_2026_4PM\mods.txt`. SHA-256 original: `F63941F87050D21536FF09AC0A34AA5D908D89172D30A68A9DA347033AD816AB`.
+- `backups/2026-11-26_13-16-52-0600/kits/Zombicidio_Jill_B42/mods.txt` a `%USERPROFILE%\Zomboid\mods\kits\Zombicidio_Jill_B42\mods.txt`. SHA-256 original: `4A96ABDE46F68F34EBF63550F235A41A1171DFA8209DCD65C3A4DCA665ABCF7B`.
+
+Despues de restaurar, verifica que cada archivo tenga `VERSION = 1,` al inicio, UTF-8 sin BOM y el SHA-256 indicado.
+
 ---
 
 ## 🔄 Cambios y comunidad

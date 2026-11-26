@@ -67,6 +67,8 @@ Referencias: [University of Maine Cooperative Extension](https://extension.umain
 
 ### Mochilas de mejora de Authentic Z
 
+VanillaWeightFix 2.1.4 incluye las 21 metas de 1.00 kg de la tabla como objetivos explicitos. La comprobacion runtime posterior a esta version sigue pendiente.
+
 Las 21 entradas `AuthenticZClothing.Bag_*_Tier_*` estan declaradas en los scripts de recetas de mejora de mochilas de Workshop 2335368829, con `Weight=1` y capacidad de 19. Se conserva el peso base de 1.00 kg como realista para un bolso tipo duffel de esa capacidad: productos comparables pesan 0.99 kg para un duffel de viaje de 31 L ([Swiss Military](https://www.swissmilitaryindia.com/products/java-duffle-bag-with-spacious-main-compartment-31l-db34)), 0.9 kg para un duffel militar de lona ([Army and Outdoors](https://www.armyandoutdoors.com.au/products/british-olive-drab-duffel-bag)) y alrededor de 1 kg para una bolsa de asalto medico vacia ([MED-TAC](https://tactical-medicine.com/en-gb/products/tacmed-r-aid-medic-assault-bag)). Weight Monitor 1.7.4 las marca `BASE_OK` solo si la definicion cargada sigue en 1.00 kg; es revision de la definicion, no lectura de una instancia de Jill.
 
 | Nombre / grupo | ID tecnico | Base (kg) | Meta (kg) | Observado (kg) | Estado |
