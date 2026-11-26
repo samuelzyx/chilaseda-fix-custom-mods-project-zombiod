@@ -1,0 +1,8 @@
+name=ChilaSeda Living World Fieldcraft (B42)
+id=ChilaSeda_LivingWorld_Fieldcraft_B42
+authors=ChilaSeda
+description=Loads the Living World fishing job and sends its NPCs toward existing shelter behavior before and during Anomalous Storm red rain. Includes bounded diagnostics for job loading, fishing results, storm transitions, and shelter routing.
+require=LivingWorld,ChilaSeda_AnomalousStorm_B42
+loadModAfter=LivingWorld,ChilaSeda_AnomalousStorm_B42
+versionMin=42.22
+modversion=0.1.0
