@@ -1,6 +1,7 @@
 name=ChilaSeda - Reemplazo rapido de armas rotas (B42)
 id=ChilaSeda_AutoEquipBrokenWeapon_B42
 authors=ChilaSeda
-description=Detecta armas melee rotas, busca reemplazos en el inventario y mochilas, y permite equiparlos con atajos configurables.
+description=Detecta armas melee rotas, busca reemplazos en el inventario y mochilas, y permite equiparlos con atajos configurables. Las acciones de reemplazo se reanudan tras interrupciones y el arma rota se conserva hasta completar el equipamiento. Integra Viewpoint Halo protegido cuando esta activo.
+loadModAfter=ChilaSeda_Fix_Viewpoint_B42
 versionMin=42.22
-modversion=1.0.0
+modversion=1.0.3

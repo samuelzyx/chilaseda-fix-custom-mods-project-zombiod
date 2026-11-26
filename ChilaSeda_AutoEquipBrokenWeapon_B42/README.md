@@ -1,4 +1,15 @@
-# ChilaSeda - Reemplazo rapido de armas rotas (Build 42) 1.0.0
+# ChilaSeda - Reemplazo rapido de armas rotas (Build 42) 1.0.3
+
+## Cambios en 1.0.3
+
+- Ctrl+A y Ctrl+S ignoran correr y reanudan el equipamiento si otra accion vacia su cola.
+- El mod conserva el arma rota hasta confirmar que el reemplazo llego a una mano; evita duplicar atajos mientras el reemplazo esta pendiente.
+- Si la accion no puede continuar, conserva el contexto del arma rota para permitir reintentar el atajo.
+
+## Cambios en 1.0.2
+
+- El aviso de arma rota usa la cola protegida de Viewpoint Fix cuando esta activo; sin esa integracion, conserva el aviso Halo nativo.
+- Registra la ruta protegida y su fallback para poder confirmar el resultado en DebugLog.
 
 Cuando un arma melee o cuchillo se rompe al golpear, aparece un aviso Halo con dos atajos:
 
@@ -9,7 +20,9 @@ La busqueda recorre el inventario principal, las mochilas contenidas y las mochi
 
 En las opciones de mods se pueden cambiar las teclas que acompanan a Ctrl. El modificador Ctrl se conserva. Las teclas usadas por el mod se consumen durante el atajo para que no ejecuten su accion base.
 
-Las trazas `[ChilaSeda_AutoEquipBrokenWeapon]` informan la carga, las teclas cargadas, la deteccion de rotura, el resultado del recorrido de inventario, el reemplazo y los fallbacks de APIs/eventos.
+La opcion **Eliminar el arma melee rota al cambiar** esta activada por defecto. Desactivala para conservar el arma rota en el inventario. El borrado ocurre cuando el reemplazo queda equipado; si la accion se interrumpe, el arma rota permanece hasta completar el cambio.
+
+Las trazas `[ChilaSeda_AutoEquipBrokenWeapon]` informan la carga, las teclas cargadas, la deteccion de rotura, el resultado del recorrido de inventario, el reemplazo y los fallbacks de APIs/eventos. Para validar reanudaciones, revisar `equip-resume event=queue-reset/retry/complete`; la traza tiene un limite de 24 lineas y puede desactivarse con `TRACE_EQUIP_RESUME`.
 
 ## Compatibilidad y dependencias
 

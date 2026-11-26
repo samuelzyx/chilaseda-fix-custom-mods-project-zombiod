@@ -1,28 +1,46 @@
+require "TimedActions/ISTimedActionQueue"
+
 local TAG = "[ChilaSeda_AutoEquipBrokenWeapon] "
 local MOD_ID = "ChilaSeda_AutoEquipBrokenWeapon_B42"
 local PAGE_NAME = "Reemplazo rapido de armas"
 local SAME_KEY_ID = "sameWeaponKey"
 local OTHER_KEY_ID = "otherClassKey"
+local DELETE_BROKEN_OPTION_ID = "deleteBrokenWeapon"
 local DEFAULT_SAME_KEY = Keyboard and Keyboard.KEY_A or 30
 local DEFAULT_OTHER_KEY = Keyboard and Keyboard.KEY_S or 31
 local MAX_TRACE_LINES = 80
+local MAX_EQUIP_RESUME_TRACE_LINES = 24
+local TRACE_EQUIP_RESUME = true
 
 local traceCount = 0
+local equipResumeTraceCount = 0
 local missingApiLogged = {}
 local sameKey = DEFAULT_SAME_KEY
 local otherKey = DEFAULT_OTHER_KEY
 local sameKeyOption
 local otherKeyOption
+local deleteBrokenWeaponOption
+local deleteBrokenWeapon = true
 local optionPage
 local lastSettingsDiagnostic
 local pendingBreakChecks = setmetatable({}, { __mode = "k" })
 local lastBrokenWeapon = setmetatable({}, { __mode = "k" })
 local reportedBreaks = setmetatable({}, { __mode = "k" })
+local pendingEquipRequests = setmetatable({}, { __mode = "k" })
+local activeEquipRequest
+local originalQueueAdd = ISTimedActionQueue and ISTimedActionQueue.add
+local originalQueueReset = ISTimedActionQueue and ISTimedActionQueue.resetQueue
 
 local function trace(message)
 	if traceCount >= MAX_TRACE_LINES then return end
 	traceCount = traceCount + 1
 	print(TAG .. tostring(message):gsub("[\r\n]", " "))
+end
+
+local function traceEquipResume(message)
+	if not TRACE_EQUIP_RESUME or equipResumeTraceCount >= MAX_EQUIP_RESUME_TRACE_LINES then return end
+	equipResumeTraceCount = equipResumeTraceCount + 1
+	trace("equip-resume " .. tostring(message))
 end
 
 local function safeMethod(target, name, ...)
@@ -32,6 +50,61 @@ local function safeMethod(target, name, ...)
 	local ok, result = pcall(method, target, ...)
 	if ok then return result end
 	return nil
+end
+
+local function sameItem(first, second)
+	if first == second then return first ~= nil end
+	local firstId = safeMethod(first, "getID")
+	local secondId = safeMethod(second, "getID")
+	return firstId ~= nil and secondId ~= nil and firstId == secondId
+end
+
+local function installEquipResumeHooks()
+	if not ISTimedActionQueue or type(originalQueueAdd) ~= "function"
+			or type(originalQueueReset) ~= "function" then
+		trace("fallback api=ISTimedActionQueue.add/resetQueue reason=Ctrl+A replacements will not auto-resume")
+		return false
+	end
+
+	ISTimedActionQueue.add = function(action, ...)
+		local request = activeEquipRequest
+		local tagged = request and action and action.character == request.player
+		if tagged then
+			action.chilaSedaBrokenWeaponEquipRequest = request
+			action.stopOnWalk = false
+			action.stopOnRun = false
+			action.stopOnAim = false
+		end
+		local results = { originalQueueAdd(action, ...) }
+		if tagged then
+			request.actionsQueued = (request.actionsQueued or 0) + 1
+			request.hasBeenQueued = true
+		end
+		return unpack(results)
+	end
+
+	ISTimedActionQueue.resetQueue = function(queue, ...)
+		local request = queue and pendingEquipRequests[queue.character]
+		local interrupted = false
+		if request and type(queue.queue) == "table" then
+			for _, action in ipairs(queue.queue) do
+				if action.chilaSedaBrokenWeaponEquipRequest == request then
+					interrupted = true
+					break
+				end
+			end
+		end
+		local results = { originalQueueReset(queue, ...) }
+		if interrupted and request then
+			request.pendingResume = true
+			request.resumeDelay = 1
+			traceEquipResume("event=queue-reset item="
+				.. tostring(safeMethod(request.item, "getFullType"))
+				.. " result=pending")
+		end
+		return unpack(results)
+	end
+	return true
 end
 
 local function logMissingApi(name, detail)
@@ -241,18 +314,41 @@ local function keyName(key)
 	return tostring(key)
 end
 
-local function showHalo(player, message, color)
-	if not player or not HaloTextHelper or type(HaloTextHelper.addText) ~= "function" then
+local function showHalo(player, message, color, protected)
+	if not player then return false end
+	local chosen = color or { 255, 220, 120 }
+	if protected then
+		local viewpointHalo = ChilaSeda_ViewpointHaloNotifications
+		if type(viewpointHalo) == "table" and type(viewpointHalo.showProtected) == "function" then
+			local r, g, b = tonumber(chosen[1]), tonumber(chosen[2]), tonumber(chosen[3])
+			if r and g and b then
+				if r > 1 or g > 1 or b > 1 then r, g, b = r / 255, g / 255, b / 255 end
+				local ok, queued = pcall(viewpointHalo.showProtected, message,
+					{ r = r, g = g, b = b }, nil, nil, "AutoEquipBrokenWeapon")
+				if ok and queued == true then
+					trace("halo-notice source=broken-weapon route=protected result=queued")
+					return true
+				end
+				trace("fallback protected-halo route=HaloTextHelper.addText reason="
+					.. tostring(ok and "viewpoint-rejected" or queued))
+			else
+				trace("fallback protected-halo route=HaloTextHelper.addText reason=color-unavailable")
+			end
+		else
+			trace("fallback protected-halo route=HaloTextHelper.addText reason=viewpoint-api-unavailable")
+		end
+	end
+	if not HaloTextHelper or type(HaloTextHelper.addText) ~= "function" then
 		logMissingApi("HaloTextHelper.addText", "notice not shown")
 		return false
 	end
-	local chosen = color or { 255, 220, 120 }
 	local ok, err = pcall(HaloTextHelper.addText, player, message, " ",
 		chosen[1], chosen[2], chosen[3])
 	if not ok then
 		trace("fallback halo-notice=failed reason=" .. tostring(err))
 		return false
 	end
+	trace("halo-notice source=AutoEquipBrokenWeapon route=HaloTextHelper.addText priority=transient result=queued")
 	return true
 end
 
@@ -269,29 +365,39 @@ local function reportBroken(player, item)
 		weaponClass = weaponClass(item),
 		itemId = scalarName(safeMethod(item, "getID")),
 		label = weaponLabel(item),
+		item = item,
 	}
 	lastBrokenWeapon[player] = record
 	local text = "Arma rota: Ctrl+" .. keyName(sameKey)
 		.. " misma arma | Ctrl+" .. keyName(otherKey) .. " otra clase"
-	showHalo(player, text)
+	showHalo(player, text, nil, true)
 	trace("break-detected weapon=" .. tostring(record.fullType)
 		.. " class=" .. tostring(record.weaponClass) .. " condition="
 		.. tostring(safeMethod(item, "getCondition")) .. " result=prompted")
 	return true
 end
 
-local function queueEquip(player, item)
+local function queueEquip(player, item, request)
 	local playerId = playerNumber(player)
 	local bothHands = safeMethod(item, "isTwoHandWeapon") == true
 		or safeMethod(item, "isRequiresEquippedBothHands") == true
+	request.item = item
+	request.bothHands = bothHands
+	request.actionsQueued = 0
+	request.pendingResume = false
 	local contextMenu = ISInventoryPaneContextMenu
 	if contextMenu and type(contextMenu.equipWeapon) == "function" then
+		local previousRequest = activeEquipRequest
+		activeEquipRequest = request
 		local ok, err = pcall(contextMenu.equipWeapon, item, true, bothHands, playerId)
-		if ok then
-			trace("equip-queued item=" .. tostring(fullType(item)) .. " path=vanilla-context-menu")
+		activeEquipRequest = previousRequest
+		if request.actionsQueued > 0 then
+			request.hasBeenQueued = true
+			trace("equip-queued item=" .. tostring(fullType(item))
+				.. " path=vanilla-context-menu actions=" .. tostring(request.actionsQueued))
 			return true
 		end
-		trace("fallback equip-context-menu=failed reason=" .. tostring(err))
+		if not ok then trace("fallback equip-context-menu=failed reason=" .. tostring(err)) end
 	end
 
 	local queue = ISTimedActionQueue
@@ -303,25 +409,36 @@ local function queueEquip(player, item)
 	end
 	local inventory = safeMethod(player, "getInventory")
 	local from = safeMethod(item, "getContainer")
+	local previousRequest = activeEquipRequest
+	activeEquipRequest = request
 	if from and inventory and from ~= inventory and ISInventoryTransferUtil
 			and type(ISInventoryTransferUtil.newInventoryTransferAction) == "function" then
 		local ok, transfer = pcall(ISInventoryTransferUtil.newInventoryTransferAction,
 			player, item, from, inventory)
-		if ok and transfer then pcall(queue.add, transfer)
+		if ok and transfer then
+			local queuedTransfer, transferError = pcall(queue.add, transfer)
+			if not queuedTransfer then trace("fallback transfer-action=failed reason=" .. tostring(transferError)) end
 		else trace("fallback transfer-action=failed") end
 	end
 	local ok, action = pcall(actionType.new, actionType, player, item, 50, true, bothHands)
 	if not ok or not action then
+		activeEquipRequest = previousRequest
 		trace("fallback equip-action=failed reason=" .. tostring(action))
-		return false
+		return request.actionsQueued > 0
 	end
 	local queued, err = pcall(queue.add, action)
+	activeEquipRequest = previousRequest
 	if not queued then
 		trace("fallback equip-queue=failed reason=" .. tostring(err))
-		return false
+		return request.actionsQueued > 0
 	end
-	trace("equip-queued item=" .. tostring(fullType(item)) .. " path=direct-action")
-	return true
+	if request.actionsQueued > 0 then
+		request.hasBeenQueued = true
+		trace("equip-queued item=" .. tostring(fullType(item))
+			.. " path=direct-action actions=" .. tostring(request.actionsQueued))
+		return true
+	end
+	return false
 end
 
 local function consumeKey(key)
@@ -356,8 +473,10 @@ end
 local function applyOptions()
 	local same = safeMethod(sameKeyOption, "getValue")
 	local other = safeMethod(otherKeyOption, "getValue")
+	local deleteBroken = safeMethod(deleteBrokenWeaponOption, "getValue")
 	if type(same) == "number" and same > 0 then sameKey = same end
 	if type(other) == "number" and other > 0 then otherKey = other end
+	if type(deleteBroken) == "boolean" then deleteBrokenWeapon = deleteBroken end
 	if sameKey == otherKey then
 		otherKey = DEFAULT_OTHER_KEY ~= sameKey and DEFAULT_OTHER_KEY or DEFAULT_SAME_KEY
 		if otherKeyOption and type(otherKeyOption.setValue) == "function" then
@@ -367,16 +486,122 @@ local function applyOptions()
 	end
 	local diagnostic = "settings result=ready sameKey=" .. tostring(sameKey)
 		.. " otherKey=" .. tostring(otherKey) .. " modifier=CTRL"
+		.. " deleteBroken=" .. tostring(deleteBrokenWeapon)
 	if diagnostic ~= lastSettingsDiagnostic then
 		lastSettingsDiagnostic = diagnostic
 		trace(diagnostic)
 	end
 end
 
+local function removeBrokenWeapon(player, broken)
+	if not deleteBrokenWeapon then
+		trace("broken-weapon result=retained reason=option-disabled")
+		return false
+	end
+	local item = broken and broken.item
+	if not item then
+		trace("fallback broken-weapon-delete=skipped reason=item-reference-unavailable")
+		return false
+	end
+	local container = safeMethod(item, "getContainer")
+	if not container then
+		local inventory = safeMethod(player, "getInventory")
+		if safeMethod(inventory, "contains", item) == true then container = inventory end
+	end
+	if not container then
+		trace("broken-weapon result=already-removed weapon=" .. tostring(broken.fullType))
+		return true
+	end
+	local presentBefore = safeMethod(container, "contains", item)
+	if presentBefore == false then
+		trace("broken-weapon result=already-removed weapon=" .. tostring(broken.fullType))
+		return true
+	end
+	local ok, err = pcall(function() container:Remove(item) end)
+	if not ok then
+		trace("fallback broken-weapon-delete=failed reason=" .. tostring(err))
+		return false
+	end
+	local stillPresent = safeMethod(container, "contains", item)
+	if stillPresent == true then
+		trace("fallback broken-weapon-delete=not-removed weapon=" .. tostring(broken.fullType))
+		return false
+	end
+	trace("broken-weapon result=removed weapon=" .. tostring(broken.fullType)
+		.. " verified=" .. tostring(stillPresent == false))
+	return true
+end
+
+local function replacementIsEquipped(player, request)
+	local primary = safeMethod(player, "getPrimaryHandItem")
+	local secondary = safeMethod(player, "getSecondaryHandItem")
+	if request.bothHands then
+		return sameItem(primary, request.item) and sameItem(secondary, request.item)
+	end
+	return sameItem(primary, request.item) or sameItem(secondary, request.item)
+end
+
+local function finishEquipRequest(player, request)
+	if pendingEquipRequests[player] ~= request then return end
+	pendingEquipRequests[player] = nil
+	if lastBrokenWeapon[player] == request.broken then
+		removeBrokenWeapon(player, request.broken)
+		lastBrokenWeapon[player] = nil
+	end
+	traceEquipResume("event=complete item=" .. tostring(fullType(request.item))
+		.. " attempts=" .. tostring(request.attempts or 0))
+end
+
+local function resumePendingReplacement()
+	for player, request in pairs(pendingEquipRequests) do
+		if safeMethod(player, "isDead") == true then
+			pendingEquipRequests[player] = nil
+			traceEquipResume("event=stopped reason=player-dead")
+		else
+			local isAttacking = safeMethod(player, "isAttacking") == true
+			local queue
+			if ISTimedActionQueue and type(ISTimedActionQueue.getTimedActionQueue) == "function" then
+				local ok, value = pcall(ISTimedActionQueue.getTimedActionQueue, player)
+				if ok then queue = value end
+			end
+			if not isAttacking and queue and type(queue.queue) == "table"
+					and #queue.queue == 0 then
+				if request.resumeDelay and request.resumeDelay > 0 then
+					request.resumeDelay = request.resumeDelay - 1
+				elseif replacementIsEquipped(player, request) then
+					finishEquipRequest(player, request)
+				elseif request.hasBeenQueued then
+					local item = request.item
+					if not safeMethod(item, "getContainer") then
+						item = findReplacement(player, request.broken, request.mode)
+					end
+					if not item then
+						pendingEquipRequests[player] = nil
+						traceEquipResume("event=stopped reason=replacement-unavailable; broken-weapon-context-retained")
+					elseif (request.attempts or 0) >= 8 then
+						pendingEquipRequests[player] = nil
+						traceEquipResume("event=stopped reason=retry-limit; broken-weapon-context-retained")
+					else
+						request.attempts = (request.attempts or 0) + 1
+						request.item = item
+						traceEquipResume("event=retry item=" .. tostring(fullType(item))
+							.. " attempt=" .. tostring(request.attempts))
+						if not queueEquip(player, item, request) then
+							pendingEquipRequests[player] = nil
+							traceEquipResume("event=stopped reason=queue-failed; broken-weapon-context-retained")
+						end
+					end
+				end
+			end
+		end
+	end
+end
+
 local function installOptions()
 	if optionPage then return true end
+	if type(require) == "function" then pcall(require, "PZAPI/ModOptions") end
 	if not (PZAPI and PZAPI.ModOptions and type(PZAPI.ModOptions.create) == "function") then
-		logMissingApi("PZAPI.ModOptions", "using defaults A/S")
+		logMissingApi("PZAPI.ModOptions", "using defaults A/S and deleteBroken=true")
 		return false
 	end
 	local ok, page = pcall(PZAPI.ModOptions.create, PZAPI.ModOptions, MOD_ID, PAGE_NAME)
@@ -404,6 +629,19 @@ local function installOptions()
 	else
 		logMissingApi("PZAPI.ModOptions.addKeyBind", "using defaults A/S")
 	end
+	if type(page.addTickBox) == "function" then
+		local added, option = pcall(page.addTickBox, page, DELETE_BROKEN_OPTION_ID,
+			"Eliminar el arma melee rota al cambiar", true,
+			"Activada por defecto. Desactiva esta opcion para conservar el arma rota en tu inventario.")
+		if added then
+			deleteBrokenWeaponOption = option
+		else
+			trace("fallback options-tickbox=failed id=" .. DELETE_BROKEN_OPTION_ID
+				.. " result=delete-enabled reason=" .. tostring(option))
+		end
+	else
+		logMissingApi("PZAPI.ModOptions.addTickBox", "delete broken weapon remains enabled by default")
+	end
 	page.apply = applyOptions
 	applyOptions()
 	trace("settings-page result=installed id=" .. MOD_ID)
@@ -422,6 +660,11 @@ local function onKeyStartPressed(key)
 		return false
 	end
 	local consumed = consumeKey(key)
+	local activeRequest = pendingEquipRequests[player]
+	if activeRequest then
+		traceEquipResume("event=hotkey-ignored result=replacement-already-pending")
+		return true
+	end
 	local broken = lastBrokenWeapon[player]
 	trace("hotkey action=" .. mode .. " key=" .. tostring(key)
 		.. " modifier=CTRL consumed=" .. tostring(consumed))
@@ -438,10 +681,14 @@ local function onKeyStartPressed(key)
 		trace("replacement mode=" .. mode .. " result=no-candidate")
 		return true
 	end
-	if queueEquip(player, item) then
+	local request = { player = player, broken = broken, item = item, mode = mode, attempts = 0 }
+	pendingEquipRequests[player] = request
+	if queueEquip(player, item, request) then
 		showHalo(player, "Equipando: " .. weaponLabel(item), { 150, 255, 170 })
-		lastBrokenWeapon[player] = nil
+		traceEquipResume("event=queued item=" .. tostring(fullType(item))
+			.. " result=wait-for-equipped-hand")
 	else
+		pendingEquipRequests[player] = nil
 		showHalo(player, "No se pudo encolar el reemplazo; revisa el inventario", { 255, 130, 110 })
 	end
 	return true
@@ -486,11 +733,13 @@ end
 registerEvent(Events and Events.OnWeaponHitXp, onWeaponHit, "OnWeaponHitXp")
 registerEvent(Events and Events.OnWeaponHitTree, onWeaponHit, "OnWeaponHitTree")
 registerEvent(Events and Events.OnPlayerUpdate, onPlayerUpdate, "OnPlayerUpdate")
+installEquipResumeHooks()
+registerEvent(Events and Events.OnTick, resumePendingReplacement, "OnTick")
 registerEvent(Events and Events.OnKeyStartPressed, onKeyStartPressed, "OnKeyStartPressed")
 registerEvent(Events and Events.OnGameBoot, installOptions, "OnGameBoot")
 registerEvent(Events and Events.OnGameStart, function() installOptions(); applyOptions() end, "OnGameStart")
 installOptions()
-trace("load result=ready version=1.0.0")
+	trace("load result=ready version=1.0.1")
 
 -- Public diagnostic seam also lets the contract suite exercise the real callbacks.
 ChilaSedaAutoEquipBrokenWeapon = {
@@ -499,5 +748,8 @@ ChilaSedaAutoEquipBrokenWeapon = {
 	onWeaponHit = onWeaponHit,
 	onPlayerUpdate = onPlayerUpdate,
 	onKeyStartPressed = onKeyStartPressed,
+	resumePendingReplacement = resumePendingReplacement,
+	pendingEquipRequests = pendingEquipRequests,
 	applyOptions = applyOptions,
+	removeBrokenWeapon = removeBrokenWeapon,
 }
