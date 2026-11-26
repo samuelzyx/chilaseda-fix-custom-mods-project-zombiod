@@ -46,3 +46,9 @@ Pulsa `Ctrl+Shift+F11`: limpia el clima anterior y comienza de nuevo con STAGE_S
 Para probar la presentacion, inicia el ciclo y cambia entre isometrica y Viewpoint con True Weathers activo: la misma mascara roja debe permanecer y cambiar de intensidad con las fases, sin alterar los ajustes del shader.
 
 Para revisar la ralentizacion al nivel acordado, en el mundo descartable comprueba que `AnomalousStormZombieSlowPercent` este en 10. La partida Jill registrada en `DebugLog` tiene ese valor en 70, que conserva el 70 % de velocidad normal (solo 30 % de reduccion). El atajo de prueba no altera los valores Sandbox guardados.
+
+## Diagnostico del HUD grande durante tormentas
+
+La version local 0.4.25 agrega `zzzz_ChilaSeda_AnomalousStorm_HudTrace.lua`, una traza de solo lectura para comparar cambios de escala del HUD con la camara durante una emision. Registra cada segundo si cambian la resolucion, `Core.scale`, tamano de fuente, opcion de zoom, zoom/viewport de camara, modo de Viewpoint y dimensiones/alfa de la mascara roja. Emite una muestra periodica cada 15 segundos (hasta 120 por ciclo) y limita a 80 los eventos de cambio. La version 0.4.26 detecta antes si Kahlua carece de `luajava.bindClass`, registra un solo fallback y continua con las metricas Lua disponibles, sin lanzar una excepcion por cada clase.
+
+Busca `[Anomalous Storm HUD Trace] event=loaded`, `event=cycle-start`, `event=sample`, `event=metrics-change`, `event=fallback` y `event=cycle-end` en `DebugLog.txt`. Esta instrumentacion no modifica la escala, la camara ni el overlay y no confirma por si sola la causa; sirve para capturar el siguiente ciclo de tormenta.
