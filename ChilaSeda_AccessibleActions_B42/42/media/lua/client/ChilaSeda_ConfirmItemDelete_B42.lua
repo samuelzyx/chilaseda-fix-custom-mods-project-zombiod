@@ -9,6 +9,29 @@ local TAG = "[ChilaSeda_AccessibleActions_B42] "
 local activeDialog
 local notificationQueue = {}
 local nextNotificationAt = 0
+local TRACE_FOOD_DELETE = true
+local MAX_FOOD_DELETE_TRACE_LINES = 32
+local foodDeleteTraceCount = 0
+
+local function traceFoodDelete(event, category, entries, removed, reason)
+    if not TRACE_FOOD_DELETE or foodDeleteTraceCount >= MAX_FOOD_DELETE_TRACE_LINES then return end
+    foodDeleteTraceCount = foodDeleteTraceCount + 1
+    local types, seen = {}, {}
+    for _, entry in ipairs(entries or {}) do
+        local ok, fullType = pcall(function() return entry.item:getFullType() end)
+        if ok and fullType and not seen[fullType] then
+            seen[fullType] = true
+            types[#types + 1] = tostring(fullType)
+        end
+    end
+    table.sort(types)
+    print(TAG .. "food-delete event=" .. tostring(event)
+        .. " category=" .. tostring(category or "-")
+        .. " selected=" .. tostring(#(entries or {}))
+        .. " removed=" .. tostring(removed or 0)
+        .. " reason=" .. tostring(reason or "-")
+        .. " types=" .. table.concat(types, ","))
+end
 
 local function getSelectedItems(items)
     local result, seen = {}, {}
@@ -109,23 +132,6 @@ local function getFoodState(item, container)
     return "stale"
 end
 
-local function getContainerFoodEntries(container, state)
-    local result = {}
-    if not container or container:getType() == "floor" or isInsidePreparedFoodContainer(container) then
-        return result
-    end
-
-    local itemList = container:getItems()
-    if not itemList then return result end
-    for i = 0, itemList:size() - 1 do
-        local item = itemList:get(i)
-        if item and item:getContainer() == container and getFoodState(item, container) == state then
-            result[#result + 1] = { item = item, container = container }
-        end
-    end
-    return result
-end
-
 local function getSingleSelectedContainer(entries)
     if #entries == 0 then return nil end
     local container = entries[1].container
@@ -160,19 +166,28 @@ end
 
 local function removeSelected(target, button)
     activeDialog = nil
-    if not button or button.internal ~= "YES" then return end
+    if not button or button.internal ~= "YES" then
+        traceFoodDelete("cancelled", target.category and target.category.key, target.entries, 0, "confirmation-cancelled")
+        return
+    end
 
     local playerIndex = target.playerIndex
     local player = getSpecificPlayer(playerIndex)
-    if not player then return end
+    if not player then
+        traceFoodDelete("skipped", target.category and target.category.key, target.entries, 0, "player-unavailable")
+        return
+    end
 
     local removed = 0
+    local skipped = 0
     local removedByType = {}
     for _, entry in ipairs(target.entries) do
         local item, container = entry.item, entry.container
         local matchesCategory = not target.category
-            or (getFoodState(item, container) == target.category.key
-                and item:getFullType() == target.fullType)
+        if target.category then
+            matchesCategory = item ~= nil and getFoodState(item, container) == target.category.key
+        end
+        local removedEntry = false
         if matchesCategory and item and container and item:getContainer() == container then
             if entry.worldObject then
                 local worldObject = entry.worldObject
@@ -213,12 +228,13 @@ local function removeSelected(target, button)
                     local fullType = item:getFullType()
                     removedByType[fullType] = (removedByType[fullType] or 0) + 1
                 end
+                removedEntry = true
             end
         end
+        if not removedEntry then skipped = skipped + 1 end
     end
-    print(TAG .. "confirmed removal"
-        .. (target.category and (" category=" .. target.category.key) or "")
-        .. " count=" .. tostring(removed))
+    traceFoodDelete("result", target.category and target.category.key, target.entries, removed,
+        skipped > 0 and ("skipped=" .. tostring(skipped)) or "all-selected-removed")
     if target.category then
         local fullTypes = {}
         for fullType in pairs(removedByType) do fullTypes[#fullTypes + 1] = fullType end
@@ -259,7 +275,7 @@ Events.OnTick.Add(function()
     nextNotificationAt = now + 2200
 end)
 
-local function askToDelete(playerIndex, entries, category, fullType)
+local function askToDelete(playerIndex, entries, category)
     if activeDialog or #entries == 0 then return end
     local core = getCore()
     if not core then return end
@@ -276,7 +292,7 @@ local function askToDelete(playerIndex, entries, category, fullType)
             or getText("UI_ChilaSeda_DeleteItem_ConfirmMany", #entries)
     end
     local width, height = 460, 150
-    local target = { playerIndex = playerIndex, entries = entries, category = category, fullType = fullType }
+    local target = { playerIndex = playerIndex, entries = entries, category = category }
     activeDialog = ISModalDialog:new((core:getScreenWidth() - width) / 2,
         (core:getScreenHeight() - height) / 2, width, height, text, true,
         target, removeSelected, playerIndex)
@@ -291,8 +307,8 @@ local function onDeleteOption(playerIndex, entries)
     askToDelete(playerIndex, entries)
 end
 
-local function onFoodDeleteOption(playerIndex, category, entries, fullType)
-    askToDelete(playerIndex, entries, category, fullType)
+local function onFoodDeleteOption(playerIndex, category, entries)
+    askToDelete(playerIndex, entries, category)
 end
 
 local function addDeleteOption(playerIndex, context, items)
@@ -321,56 +337,45 @@ end
 local function addFoodCleanupOptions(playerIndex, context, items)
     local selectedEntries = getSelectedItems(items)
     local container = getSingleSelectedContainer(selectedEntries)
-    if not container then return end
+    if not container then
+        traceFoodDelete("menu-skipped", nil, selectedEntries, 0, "mixed-containers-or-empty-selection")
+        return
+    end
 
-    local selectedTypes = {}
-    local selectedTypeNames = {}
+    local selectedByState = {}
+    local foodEntryCount = 0
     for _, entry in ipairs(selectedEntries) do
-        local state = getFoodState(entry.item, container)
+        local state = getFoodState(entry.item, entry.container)
         if state then
-            local fullType = entry.item:getFullType()
-            if not selectedTypes[fullType] then
-                selectedTypes[fullType] = {}
-                selectedTypeNames[#selectedTypeNames + 1] = fullType
-            end
-            selectedTypes[fullType][state] = true
+            selectedByState[state] = selectedByState[state] or {}
+            selectedByState[state][#selectedByState[state] + 1] = entry
+            foodEntryCount = foodEntryCount + 1
         end
     end
-    if #selectedTypeNames == 0 then return end
+    if foodEntryCount == 0 then
+        traceFoodDelete("menu-skipped", nil, selectedEntries, 0, "selection-has-no-food-state")
+        return
+    end
 
-    -- For a floor panel, process only selected objects. For a regular inventory
-    -- container, preserve the existing behavior of purging that selected type.
-    table.sort(selectedTypeNames)
     for _, category in ipairs(foodCleanupCategories) do
-        for _, fullType in ipairs(selectedTypeNames) do
-            local states = selectedTypes[fullType]
-            if states[category.key] then
-                local entries = {}
-                local candidates = container:getType() == "floor"
-                    and selectedEntries or getContainerFoodEntries(container, category.key)
-                for _, entry in ipairs(candidates) do
-                    if getFoodState(entry.item, container) == category.key
-                        and entry.item:getFullType() == fullType then
-                        entries[#entries + 1] = entry
-                    end
-                end
-                if #entries > 0 then
-                    local scriptItem = getScriptManager():FindItem(fullType)
-                    local itemName = scriptItem and scriptItem:getDisplayName() or fullType
-                    local option = context:addOption(
-                        getText(category.optionKey, #entries, itemName),
-                        playerIndex,
-                        onFoodDeleteOption,
-                        category,
-                        entries,
-                        fullType
-                    )
-                    option.chilaSedaDeleteFoodCategory = category.key
-                    setOptionIcon(option, category.icon)
-                    if not option.iconTexture then setVanillaItemIcon(option, { fullType }) end
-                    ChilaSedaFoodMenuOrder.move(context, option)
-                end
+        local entries = selectedByState[category.key]
+        if entries and #entries > 0 then
+            local option = context:addOption(
+                getText(category.optionKey, #entries),
+                playerIndex,
+                onFoodDeleteOption,
+                category,
+                entries
+            )
+            option.chilaSedaDeleteFoodCategory = category.key
+            setOptionIcon(option, category.icon)
+            if not option.iconTexture then
+                local fullTypes = {}
+                for _, entry in ipairs(entries) do fullTypes[#fullTypes + 1] = entry.item:getFullType() end
+                setVanillaItemIcon(option, fullTypes)
             end
+            ChilaSedaFoodMenuOrder.move(context, option)
+            traceFoodDelete("menu", category.key, entries, 0, "selected-items-only")
         end
     end
 end
@@ -398,35 +403,33 @@ local function addFloorContextOptions(playerIndex, context, worldobjects, test)
     end
     ChilaSedaFoodMenuOrder.move(context, option)
 
-    local selectedByType = {}
+    local selectedByState = {}
     for _, entry in ipairs(entries) do
         local state = getFoodState(entry.item, entry.container)
         if state then
-            local fullType = entry.item:getFullType()
-            selectedByType[fullType] = selectedByType[fullType] or {}
-            selectedByType[fullType][state] = selectedByType[fullType][state] or {}
-            table.insert(selectedByType[fullType][state], entry)
+            selectedByState[state] = selectedByState[state] or {}
+            selectedByState[state][#selectedByState[state] + 1] = entry
         end
     end
     for _, category in ipairs(foodCleanupCategories) do
-        for fullType, states in pairs(selectedByType) do
-            local foodEntries = states[category.key]
-            if foodEntries and #foodEntries > 0 then
-                local scriptItem = getScriptManager():FindItem(fullType)
-                local itemName = scriptItem and scriptItem:getDisplayName() or fullType
-                local foodOption = context:addOption(
-                    getText(category.optionKey, #foodEntries, itemName),
-                    playerIndex,
-                    onFoodDeleteOption,
-                    category,
-                    foodEntries,
-                    fullType
-                )
-                foodOption.chilaSedaDeleteFoodCategory = category.key
-                setOptionIcon(foodOption, category.icon)
-                if not foodOption.iconTexture then setVanillaItemIcon(foodOption, { fullType }) end
-                ChilaSedaFoodMenuOrder.move(context, foodOption)
+        local foodEntries = selectedByState[category.key]
+        if foodEntries and #foodEntries > 0 then
+            local foodOption = context:addOption(
+                getText(category.optionKey, #foodEntries),
+                playerIndex,
+                onFoodDeleteOption,
+                category,
+                foodEntries
+            )
+            foodOption.chilaSedaDeleteFoodCategory = category.key
+            setOptionIcon(foodOption, category.icon)
+            if not foodOption.iconTexture then
+                local fullTypes = {}
+                for _, entry in ipairs(foodEntries) do fullTypes[#fullTypes + 1] = entry.item:getFullType() end
+                setVanillaItemIcon(foodOption, fullTypes)
             end
+            ChilaSedaFoodMenuOrder.move(context, foodOption)
+            traceFoodDelete("floor-menu", category.key, foodEntries, 0, "selected-items-only")
         end
     end
 end

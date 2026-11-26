@@ -1,7 +1,7 @@
 name=ChilaSeda - Acciones Accesibles (B42)
 id=ChilaSeda_AccessibleActions_B42
 authors=ChilaSeda
-description=Reune fabricacion accesible, destinos priorizados para resultados de recetas, llaves, consolidacion y lavado; Viewpoint muestra recipientes rellenables y acciones vanilla de lavado desde fuentes de agua sin interrumpir el menu; protege menus contextuales, reanuda tareas personales y agrega reduccion local de conejo entero y chuleta de cerdo con LTP.
+description=Reune fabricacion accesible, destinos priorizados para recetas, llaves, consolidacion y lavado; agrupa por frescura el borrado confirmado de alimentos seleccionados; protege menus y filtros; agrega reduccion LTP; registra lectura, Caps Lock y el flujo de vestir prendas/mochilas hasta transferencias al piso con limite por sesion.
 versionMin=42.20
-modversion=1.0.44
+modversion=1.0.52
 loadModAfter=ConsolidatedAllFixB42,ChilaSeda_Fix_Water_Pipes_ModData_B42_3546314080,LongTermPreservationExtended,DismantleAllAtOnce,Viewpoint,ProjectViewpointQOL,ViewpointUI,INVENTORY_TETRIS,ChilaSeda_AutoCook_B42

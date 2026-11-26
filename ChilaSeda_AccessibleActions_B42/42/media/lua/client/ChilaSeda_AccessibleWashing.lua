@@ -836,6 +836,41 @@ local function logWaterMenu(context, waterSource, fillableItems, washableItems, 
 		.. " clothing=" .. table.concat(clothingNames, ","))
 end
 
+local waterMenuOptionDiagnostics = 0
+local MAX_WATER_MENU_OPTION_DIAGNOSTICS = 32
+local function waterMenuField(object, name)
+	local ok, value = pcall(function() return object and object[name] end)
+	return ok and value or nil
+end
+
+local function optionSummary(options, depth, output)
+	if type(options) ~= "table" or depth > 3 or #output >= 32 then return end
+	for _, option in ipairs(options) do
+		if #output >= 32 then break end
+		local label = waterMenuField(option, "name") or waterMenuField(option, "text") or "unnamed"
+		output[#output + 1] = string.rep("/", depth) .. tostring(label)
+		local child = waterMenuField(option, "subOption") or waterMenuField(option, "submenu")
+		optionSummary(waterMenuField(child, "options"), depth + 1, output)
+	end
+end
+
+local function logWaterMenuOptions(context, waterSource, stage)
+	if waterMenuOptionDiagnostics >= MAX_WATER_MENU_OPTION_DIAGNOSTICS then return end
+	local loggedStages = waterMenuField(context, "waterMenuOptionsDiagnosticStages")
+	if type(loggedStages) ~= "table" then
+		loggedStages = {}
+		if context then context.waterMenuOptionsDiagnosticStages = loggedStages end
+	end
+	if loggedStages[stage] then return end
+	loggedStages[stage] = true
+	waterMenuOptionDiagnostics = waterMenuOptionDiagnostics + 1
+	local options = {}
+	optionSummary(waterMenuField(context, "options"), 0, options)
+	print("[ChilaSeda AccessibleWashing] water-menu-options stage=" .. tostring(stage)
+		.. " source=" .. tostring(safeCall(waterSource, "getObjectName") or "unknown")
+		.. " entries=" .. (#options > 0 and table.concat(options, " | ") or "none"))
+end
+
 local function refreshInventoryPaneMethod(inventoryPane, method)
 	local _, ok, reason = safeCall(inventoryPane, method)
 	if ok then return end
@@ -872,7 +907,10 @@ local function extendFillContainerSearch(playerNum, context, worldobjects, test)
 	local dirtySelfParts, _, _, washableItems = addVanillaWashOptions(context, playerObj, waterSource)
 	local fillableItems = collectPlayerFillables(playerObj)
 	logWaterMenu(context, waterSource, fillableItems, washableItems or {}, dirtySelfParts)
-	if #fillableItems == 0 then return end
+	if #fillableItems == 0 then
+		logWaterMenuOptions(context, waterSource, "no-fillable-items")
+		return
+	end
 
 	local represented = {}
 	if context.options then
@@ -924,6 +962,7 @@ local function extendFillContainerSearch(playerNum, context, worldobjects, test)
 		option.iconTexture = getItemIcon(fullType)
 	end
 	positionAfterEquipSecondary(context, root)
+	logWaterMenuOptions(context, waterSource, "filled-options-added")
 end
 
 Events.OnFillWorldObjectContextMenu.Add(addWaterAndRainOptions)

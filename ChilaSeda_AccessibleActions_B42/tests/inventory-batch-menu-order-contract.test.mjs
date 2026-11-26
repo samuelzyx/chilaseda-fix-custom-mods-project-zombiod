@@ -15,8 +15,8 @@ const modInfo = fs.readFileSync(path.join(modRoot, "42/mod.info"), "utf8");
 const readme = fs.readFileSync(path.join(modRoot, "README.md"), "utf8");
 
 test("batch dismantling follows Fabricar and preserves the remaining menu order", () => {
-  assert.match(modInfo, /^modversion=1\.0\.44$/m);
-  assert.match(readme, /^# ChilaSeda - Acciones Accesibles \(Build 42\) 1\.0\.44$/m);
+  assert.match(modInfo, /^modversion=1\.0\.52$/m);
+  assert.match(readme, /^# ChilaSeda - Acciones Accesibles \(Build 42\) 1\.0\.52$/m);
   assert.match(lua, /ContextMenu_ShowCraftRecipesUsed/);
   assert.match(lua, /ContextMenu_DismantleAllAtOnce/);
   assert.match(lua, /MAX_BATCH_MENU_ORDER_TRACE_LINES = 12/);

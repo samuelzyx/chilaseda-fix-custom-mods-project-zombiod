@@ -1,4 +1,34 @@
-# ChilaSeda - Acciones Accesibles (Build 42) 1.0.44
+# ChilaSeda - Acciones Accesibles (Build 42) 1.0.52
+
+## Version 1.0.52
+
+- Adds a bounded trace from right-click Wear through `ISWearClothing`, worn-slot changes, queued transfers, and any resulting floor drop. Caller capture prefers the verified public `LuaManager.getLuaStackTraceStrings` API and falls back to the available Lua stack APIs.
+
+## Version 1.0.51
+
+- Groups selected food across different item types by freshness. The confirmation deletes only the selected items, rechecks their current freshness and container, and reports the bounded menu and removal results.
+
+## Version 1.0.50
+
+- Logs each queued clothing inventory transfer with its source, destination, and compact Lua caller frames. The diagnostic can be disabled and emits at most 32 callsite records per session; it prefers `getLuaStackTrace()` and falls back to `debug.traceback()`.
+
+## Version 1.0.49
+
+- Checks that a bait parameter is a Java item and exposes `getFullType` before calling it. Skips callback/function parameters without throwing or recording caught exceptions in Error Magnifier.
+
+## Version 1.0.47
+
+- Adds bounded menu and action lifecycle traces for Viewpoint water filling, including source, selected container, queue, and transfer result.
+- Logs the fill choices available from native Viewpoint interactions to compare them with the right-click menu.
+
+## Version 1.0.46
+
+- Oculta sebo, grasa animal y sal del menu de cebo de trampas; registra los tipos filtrados.
+
+## Version 1.0.45
+
+- Amplia las trazas para seguir la seleccion "Inspect" de literatura desde el menu contextual hasta la transferencia y el ciclo de `ISReadABook`, incluyendo tipo, contenedor, cola, inicio, finalizacion o cancelacion.
+- Tras Caps Lock registra durante 3 segundos el estado de FreeCam de Viewpoint, ventanas UI que aparecen/se ocultan/cierran y cambios o cancelaciones de la cola de acciones. El sondeo queda acotado a esa ventana y limita los eventos registrados.
 
 ## Version 1.0.44
 

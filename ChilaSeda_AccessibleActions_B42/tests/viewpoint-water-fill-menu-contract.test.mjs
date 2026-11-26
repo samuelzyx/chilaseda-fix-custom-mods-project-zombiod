@@ -72,6 +72,8 @@ test("water-source Viewpoint menu offers vanilla self and clothing wash callback
   assert.match(extension, /ContextMenu_WashClothing/);
   assert.match(extension, /ContextMenu_WashAllClothing/);
   assert.match(washing, /water-menu source=/);
+  assert.match(washing, /water-menu-options stage=/);
+  assert.match(washing, /MAX_WATER_MENU_OPTION_DIAGNOSTICS = 32/);
   assert.match(washing, /waterMenuDiagnosticLogged/);
   assert.match(washing, /fillable=.*items=/);
   assert.match(washing, /dirtySelfParts=.*washableClothing=/);
