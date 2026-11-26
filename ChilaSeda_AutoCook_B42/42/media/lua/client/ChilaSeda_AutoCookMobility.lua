@@ -13,6 +13,8 @@ if AutoCook.ChilaSedaMobilityInstalled then
 end
 
 local TAG = "[ChilaSeda_AutoCookMobility] "
+local RETURN_NOTICE_GREEN = { r = 0.35, g = 1, b = 0.48 }
+local RETURN_NOTICE_ICON = "media/ui/survival_guide_spiffo/category_food_and_water.png"
 local originalContinue = AutoCook.continue
 local originalStopAutoCook = AutoCook.stopAutoCook
 local originalQueueAddItem = AutoCook.queueAddItem
@@ -24,6 +26,33 @@ local function sameItemId(item, id)
     if not item or id == nil then return false end
     local ok, itemId = pcall(item.getID, item)
     return ok and itemId == id
+end
+
+local function returnNoticeIcon(item)
+    if item and type(item.getTex) == "function" then
+        local ok, texture = pcall(item.getTex, item)
+        if ok and texture then return texture end
+    end
+    return RETURN_NOTICE_ICON
+end
+
+local function showReturnNotice(player, text, icon)
+    local overlay = ChilaSeda_ViewpointHaloNotifications
+    if type(overlay) == "table" and type(overlay.showProtected) == "function" then
+        local ok, shown = pcall(overlay.showProtected, text, RETURN_NOTICE_GREEN, icon,
+            nil, "AutoCookReturnedContainer")
+        if ok and shown then return "protected-overlay" end
+        print(TAG .. "return notice overlay fallback error=" .. tostring(shown))
+    end
+    if HaloTextHelper and type(HaloTextHelper.addGoodText) == "function" then
+        HaloTextHelper.addGoodText(player, text)
+        return "protected-halo-fallback"
+    end
+    if HaloTextHelper and type(HaloTextHelper.addText) == "function" then
+        HaloTextHelper.addText(player, text)
+        return "halo-fallback"
+    end
+    return "unavailable"
 end
 
 local function notifyBaseItemDestination(action, destination)
@@ -53,10 +82,10 @@ local function notifyBaseItemDestination(action, destination)
         noticed[noticeKey] = true
     end
 
+    local message = getText("UI_ChilaSeda_AutoCook_ReturnedTo", destination)
+    local mode = showReturnNotice(player, message, returnNoticeIcon(item))
     print(TAG .. "return notice item=" .. tostring(itemType) .. " id=" .. itemKey
-        .. " destination=" .. tostring(destination))
-    HaloTextHelper.addText(player,
-        getText("UI_ChilaSeda_AutoCook_ReturnedTo", destination))
+        .. " destination=" .. tostring(destination) .. " mode=" .. mode)
 end
 
 ISInventoryTransferAction.perform = function(action, ...)

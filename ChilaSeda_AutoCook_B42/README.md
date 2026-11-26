@@ -1,4 +1,4 @@
-# ChilaSeda AutoCook Fixes · B42 2.0.13
+# ChilaSeda AutoCook Fixes · B42 2.0.14
 
 <div align="center">
 
@@ -38,5 +38,7 @@ Los archivos de Workshop permanecen intactos. El ID local consolidado es `ChilaS
 - [🏠 Inicio del repositorio](../README.md)
 - [🤝 Cómo contribuir](../CONTRIBUTING.md)
 - [🚀 Releases de mods](../docs/releases/README.md)
+
+Version 2.0.14: muestra el retorno de recipientes como aviso Halo protegido con icono y color verde; los mensajes transitorios de experiencia y voz zombi no lo reemplazan. Mantiene el destino en el texto y registra el modo de entrega.
 
 Version 2.0.13: corrige el placeholder %1 de los avisos Halo al devolver recipientes, evita avisos repetidos para el mismo objeto y destino, y registra ID/tipo/destino para diagnostico.

@@ -107,6 +107,11 @@ test("completion notices report item identity and suppress the same item and des
   assert.match(mobilityLua, /return notice duplicate suppressed item=/);
   assert.match(mobilityLua, /return notice item=/);
   assert.match(mobilityLua, /getText\("UI_ChilaSeda_AutoCook_ReturnedTo", destination\)/);
+  assert.match(mobilityLua, /showProtected, text, RETURN_NOTICE_GREEN, icon/);
+  assert.match(mobilityLua, /AutoCookReturnedContainer/);
+  assert.match(mobilityLua, /media\/ui\/survival_guide_spiffo\/category_food_and_water\.png/);
+  assert.match(mobilityLua, /item\.getTex/);
+  assert.match(mobilityLua, /mode=" \.\. mode/);
 });
 
 test("AutoCook mobility Lua compiles with the Project Zomboid Kahlua compiler", () => {
@@ -145,10 +150,11 @@ test("AutoCook mobility Lua compiles with the Project Zomboid Kahlua compiler", 
   }
 });
 
-test("mod metadata and README identify AutoCook 2.0.13", () => {
+test("mod metadata and README identify AutoCook 2.0.14", () => {
   const modInfo = fs.readFileSync(path.join(modRoot, "42/mod.info"), "utf8");
   const readme = fs.readFileSync(path.join(modRoot, "README.md"), "utf8");
-  assert.match(modInfo, /^modversion=2\.0\.13$/m);
-  assert.match(readme.split(/\r?\n/, 1)[0], /2\.0\.13/);
-  assert.match(readme, /Version 2\.0\.13:/);
+  assert.match(modInfo, /^modversion=2\.0\.14$/m);
+  assert.match(modInfo, /loadModAfter=AutoCook,ChilaSeda_Fix_Viewpoint_B42/);
+  assert.match(readme.split(/\r?\n/, 1)[0], /2\.0\.14/);
+  assert.match(readme, /Version 2\.0\.14:/);
 });

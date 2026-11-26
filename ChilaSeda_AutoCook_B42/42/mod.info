@@ -1,7 +1,7 @@
 name=ChilaSeda - AutoCook Fixes (B42)
 id=ChilaSeda_AutoCook_B42
 authors=ChilaSeda
-description=Mobility, auto-resume, exhausted-ingredient cleanup, safe meal completion, poisoned-ingredient removal with source names, nutrition tooltips, and return routing for AutoCook containers in B42.
-loadModAfter=AutoCook
+description=Mobility, auto-resume, exhausted-ingredient cleanup, safe meal completion, poisoned-ingredient removal with source names, nutrition tooltips, and persistent icon Halo notices when AutoCook returns containers in B42.
+loadModAfter=AutoCook,ChilaSeda_Fix_Viewpoint_B42
 versionMin=42.20
-modversion=2.0.13
+modversion=2.0.14
