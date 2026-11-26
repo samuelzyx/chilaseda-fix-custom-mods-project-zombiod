@@ -1,8 +1,14 @@
 local TAG = "[ChilaSeda_InventoryTetrisFoodOrganizer] "
+local ORGANIZER_ENABLED = true
 local MAX_TRACE_LINES = 64
 local traceLines = 0
+local TRACE_SORT_LAYOUT = true
+local MAX_SORT_TRACE_LINES = 96
+local sortTraceLines = 0
+local sortTraceLimitLogged = false
 local api = {}
 local apiWarningLogged = false
+local foodApiDiagnosticLogged = false
 local menuHookInstalled = false
 local stackHooksInstalled = false
 local Organizer = {}
@@ -11,6 +17,21 @@ local function trace(message)
     if traceLines >= MAX_TRACE_LINES then return end
     traceLines = traceLines + 1
     print(TAG .. tostring(message))
+end
+
+local function traceSort(event, fields)
+    if not TRACE_SORT_LAYOUT then return end
+    if sortTraceLines >= MAX_SORT_TRACE_LINES then
+        if not sortTraceLimitLogged then
+            sortTraceLimitLogged = true
+            print(TAG .. "sort_trace event=limit limit=" .. tostring(MAX_SORT_TRACE_LINES))
+        end
+        return
+    end
+    sortTraceLines = sortTraceLines + 1
+    local message = TAG .. "sort_trace event=" .. tostring(event) .. " " .. tostring(fields or "")
+    if #message > 1000 then message = message:sub(1, 997) .. "..." end
+    print(message)
 end
 
 local function safeMethod(object, methodName, ...)
@@ -40,11 +61,45 @@ local function isFiniteNumber(value)
 end
 
 local function getFoodHandle(item)
+    if not item then return nil, false, true end
+
+    local isVanillaFood, okVanillaFood = safeFunction(instanceof, item, "Food")
+    if okVanillaFood and isVanillaFood == true then
+        return item, true, true
+    end
+
+    local isDirectFood, okDirectFood = safeMethod(item, "isFood")
+    if okDirectFood and type(isDirectFood) == "boolean" then
+        if not isDirectFood then return nil, false, true end
+        return item, true, true
+    end
+
+    -- Build 42's InventoryItem hierarchy uses instanceof(item, "Food") as the
+    -- canonical type check. If that check succeeded and ruled this item out,
+    -- do not probe an unrelated mod-provided getFood() object and abort the
+    -- entire sort because that object lacks Food's API.
+    if okVanillaFood and type(isVanillaFood) == "boolean" then
+        return nil, false, true
+    end
+
     local food, ok = safeMethod(item, "getFood")
-    if not ok then return nil, nil, false end
-    if not food then return nil, false, true end
+    if not ok or not food then return nil, false, true end
     local isFood, okFood = safeMethod(food, "isFood")
     if not okFood or type(isFood) ~= "boolean" then
+        if not foodApiDiagnosticLogged then
+            foodApiDiagnosticLogged = true
+            local fullType = safeMethod(item, "getFullType")
+            local itemClass, okItemClass = safeMethod(item, "getClass")
+            local itemClassName = okItemClass and safeMethod(itemClass, "getName") or nil
+            local foodClass, okFoodClass = safeMethod(food, "getClass")
+            local foodClassName = okFoodClass and safeMethod(foodClass, "getName") or nil
+            trace("food classification failed fullType=" .. tostring(fullType)
+                .. " itemClass=" .. tostring(itemClassName)
+                .. " instanceof=" .. tostring(isVanillaFood)
+                .. " directIsFood=" .. tostring(isDirectFood)
+                .. " foodClass=" .. tostring(foodClassName)
+                .. " foodIsFood=" .. tostring(isFood))
+        end
         return nil, nil, false
     end
     if not isFood then return nil, false, true end
@@ -101,6 +156,54 @@ local function readFoodInfo(item, mode)
         info.calories = calories
     end
     return info, true
+end
+
+local function traceGridLayout(phase, gridIndex, plan, stacks, mode)
+    if not TRACE_SORT_LAYOUT then return end
+    local stackEntries = {}
+    local stackLimit = 12
+    for stackIndex, stack in ipairs(stacks or {}) do
+        if stackIndex > stackLimit then
+            stackEntries[#stackEntries + 1] = "...+" .. tostring(#stacks - stackLimit)
+            break
+        end
+        local members = {}
+        local items, okItems = safeFunction(api.ItemStack and api.ItemStack.getAllItems,
+            stack, plan.grid.inventory)
+        if okItems and type(items) == "table" then
+            local memberLimit = 8
+            for itemIndex, item in ipairs(items) do
+                if itemIndex > memberLimit then
+                    members[#members + 1] = "...+" .. tostring(#items - memberLimit)
+                    break
+                end
+                local itemId, okId = safeMethod(item, "getID")
+                local fullType, okType = safeMethod(item, "getFullType")
+                local member = tostring(okId and itemId or "?") .. ":"
+                    .. tostring(okType and fullType or "?")
+                local info, okInfo = readFoodInfo(item, mode)
+                if mode == "calories" then
+                    member = member .. ":cal=" .. tostring(okInfo and info and info.calories or "?")
+                elseif mode == "freshness" then
+                    member = member .. ":freshRank=" .. tostring(okInfo and info and info.rank or "?")
+                end
+                members[#members + 1] = member
+            end
+        else
+            members[1] = "items=unavailable"
+        end
+        stackEntries[#stackEntries + 1] = tostring(stack.itemType or "?")
+            .. "@" .. tostring(stack.x or "?") .. "," .. tostring(stack.y or "?")
+            .. ",rot=" .. tostring(stack.isRotated)
+            .. ",count=" .. tostring(stack.count or "?")
+            .. "{" .. table.concat(members, ",") .. "}"
+    end
+    traceSort("layout", "phase=" .. tostring(phase)
+        .. " mode=" .. tostring(mode)
+        .. " grid=" .. tostring(gridIndex)
+        .. " size=" .. tostring(plan.grid.width) .. "x" .. tostring(plan.grid.height)
+        .. " stacks=" .. tostring(#(stacks or {}))
+        .. " layout=" .. table.concat(stackEntries, ";"))
 end
 
 local function getInventoryItems(inventory)
@@ -210,6 +313,8 @@ local function makeFoodGroups(records, mode)
         local key = record.fullType
         if mode == "freshness" then
             key = tostring(record.rank) .. "|" .. record.fullType
+        elseif mode == "calories" then
+            key = tostring(record.calories) .. "|" .. record.fullType
         end
         local group = byKey[key]
         if not group then
@@ -543,6 +648,28 @@ local function buildPlans(inventory, containerGrid, mode)
     return plans, nil, totalFood, totalGroups
 end
 
+local localizationFallbacks = {
+    ContextMenu_Equip_Primary = "Equipar en mano primaria",
+    ContextMenu_Equip_Secondary = "Equipar en mano secundaria",
+    ContextMenu_ChilaSeda_InventoryTetris_OrganizeFood = "Organizar alimentos",
+    ContextMenu_ChilaSeda_InventoryTetris_FoodFreshness = "Por frescura",
+    ContextMenu_ChilaSeda_InventoryTetris_FoodCalories = "Por calorias",
+    UI_ChilaSeda_InventoryTetris_FoodSortSuccessFreshness = "Organizados por frescura: %1 alimentos.",
+    UI_ChilaSeda_InventoryTetris_FoodSortSuccessCalories = "Organizados por calorias: %1 alimentos.",
+    UI_ChilaSeda_InventoryTetris_FoodSortNoSpace = "Sin cambios: no caben todos los alimentos junto a los otros objetos.",
+    UI_ChilaSeda_InventoryTetris_FoodSortOverflow = "Sin cambios: coloca primero en la cuadricula los alimentos del area de desbordamiento.",
+    UI_ChilaSeda_InventoryTetris_FoodSortGravity = "Sin cambios: desactiva la gravedad de Inventory Tetris para conservar el orden solicitado.",
+    UI_ChilaSeda_InventoryTetris_FoodSortNoFoods = "No se encontraron alimentos para organizar.",
+    UI_ChilaSeda_InventoryTetris_FoodSortUnavailable = "Sin cambios: la cuadricula actual de Inventory Tetris no esta disponible.",
+    UI_ChilaSeda_InventoryTetris_FoodSortFailed = "Sin cambios: el organizador no pudo terminar de forma segura.",
+    UI_ChilaSeda_InventoryTetris_FoodSortReview = "No se pudo confirmar la restauracion completa de la cuadricula. Revisala antes de mover objetos.",
+    UI_ChilaSeda_InventoryTetris_FoodSortFoodData = "Sin cambios: no se pudo leer de forma segura la frescura o las calorias.",
+    UI_ChilaSeda_InventoryTetris_FoodSortItemData = "Sin cambios: no se pudo leer el tamano, limite de apilado o categoria del objeto.",
+    UI_ChilaSeda_InventoryTetris_FoodSortGridData = "Sin cambios: la cuadricula contiene una pila ausente, mezclada o inconsistente.",
+    UI_ChilaSeda_InventoryTetris_FoodSortInventoryData = "Sin cambios: hay alimentos que esta cuadricula no registra; revisa el contenedor.",
+}
+local localizationFallbackLogged = {}
+
 local function localize(key, count)
     if type(getText) == "function" then
         local ok, value
@@ -551,10 +678,18 @@ local function localize(key, count)
         else
             ok, value = pcall(getText, key)
         end
-        if ok and type(value) == "string" then return value end
+        if ok and type(value) == "string" and value ~= "" and value ~= key then return value end
     end
-    if count ~= nil then return key .. " " .. tostring(count) end
-    return key
+    local fallback = localizationFallbacks[key]
+    if type(fallback) == "string" then
+        if count ~= nil then fallback = string.gsub(fallback, "%%1", tostring(count)) end
+        if not localizationFallbackLogged[key] then
+            localizationFallbackLogged[key] = true
+            trace("localization fallback key=" .. tostring(key))
+        end
+        return fallback
+    end
+    return count ~= nil and ("Texto no disponible (" .. tostring(count) .. ")") or "Texto no disponible"
 end
 
 local function showHalo(playerNum, key, count, isSuccess)
@@ -624,29 +759,50 @@ end
 local function organize(mode, playerNum, inventory)
     local containerGrid = findContainerGrid(inventory, playerNum)
     if not containerGrid then
+        traceSort("result", "mode=" .. tostring(mode) .. " result=abort reason=grid-unavailable")
         trace("sort fallback=container-grid-unavailable mode=" .. tostring(mode))
         showHalo(playerNum, failureKeys["grid-unavailable"], nil, false)
         return
     end
+    traceSort("begin", "mode=" .. tostring(mode)
+        .. " grids=" .. tostring(type(containerGrid.grids) == "table" and #containerGrid.grids or 0))
 
     local okRun, plans, reason, itemCount, groupCount = pcall(buildPlans, inventory, containerGrid, mode)
     if not okRun then
+        traceSort("plan_end", "mode=" .. tostring(mode) .. " result=error error=" .. tostring(plans))
         trace("sort fallback=plan-error mode=" .. tostring(mode) .. " error=" .. tostring(plans))
         showHalo(playerNum, "UI_ChilaSeda_InventoryTetris_FoodSortFailed", nil, false)
         return
     end
     if not plans then
+        traceSort("plan_end", "mode=" .. tostring(mode) .. " result=abort reason=" .. tostring(reason))
         trace("sort abort=unchanged mode=" .. tostring(mode) .. " reason=" .. tostring(reason))
         showHalo(playerNum, failureKeys[reason] or "UI_ChilaSeda_InventoryTetris_FoodSortFailed", nil, false)
         return
     end
 
+    traceSort("plan_end", "mode=" .. tostring(mode) .. " result=ready items=" .. tostring(itemCount)
+        .. " groups=" .. tostring(groupCount) .. " grids=" .. tostring(#plans))
+    for gridIndex, plan in ipairs(plans) do
+        traceGridLayout("before", gridIndex, plan, plan.oldStacks, mode)
+        traceGridLayout("planned", gridIndex, plan, plan.stacks, mode)
+    end
+    traceSort("commit_begin", "mode=" .. tostring(mode) .. " grids=" .. tostring(#plans))
     local committed, commitReason = commitPlans(plans)
+    traceSort("commit_end", "mode=" .. tostring(mode)
+        .. " result=" .. tostring(committed and "success" or "abort")
+        .. " reason=" .. tostring(commitReason or "none"))
+    for gridIndex, plan in ipairs(plans) do
+        traceGridLayout(committed and "after" or "after_abort", gridIndex, plan,
+            plan.grid.persistentData and plan.grid.persistentData.stacks or nil, mode)
+    end
     if not committed then
         trace("sort abort mode=" .. tostring(mode) .. " reason=" .. tostring(commitReason))
         showHalo(playerNum, failureKeys[commitReason] or "UI_ChilaSeda_InventoryTetris_FoodSortFailed", nil, false)
         return
     end
+    traceSort("result", "mode=" .. tostring(mode) .. " result=success"
+        .. " items=" .. tostring(itemCount) .. " groups=" .. tostring(groupCount))
     trace("sort success mode=" .. tostring(mode) .. " items=" .. tostring(itemCount)
         .. " groups=" .. tostring(groupCount) .. " grids=" .. tostring(#plans))
     local key = mode == "freshness"
@@ -896,6 +1052,13 @@ local function loadApi()
 end
 
 local function install()
+    if not ORGANIZER_ENABLED then
+        if not menuHookInstalled then
+            menuHookInstalled = true
+            trace("disabled feature=freshness-and-calories reason=Jill isolation test")
+        end
+        return false
+    end
     local apiReady = loadApi()
     if apiReady then
         installStackHooks()
@@ -915,8 +1078,12 @@ local function install()
     return menuHookInstalled
 end
 
-install()
-if Events then
-    if Events.OnGameBoot then Events.OnGameBoot.Add(install) end
-    if Events.OnGameStart then Events.OnGameStart.Add(install) end
+if ORGANIZER_ENABLED then
+    install()
+    if Events then
+        if Events.OnGameBoot then Events.OnGameBoot.Add(install) end
+        if Events.OnGameStart then Events.OnGameStart.Add(install) end
+    end
+else
+    trace("disabled feature=freshness-and-calories reason=Jill isolation test")
 end

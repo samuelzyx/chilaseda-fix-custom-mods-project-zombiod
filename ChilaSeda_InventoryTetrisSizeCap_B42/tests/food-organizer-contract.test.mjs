@@ -10,14 +10,24 @@ const luaPath = path.join(
   modRoot,
   "42/media/lua/client/ChilaSeda_InventoryTetrisFoodOrganizer.lua",
 );
+const lua = fs.readFileSync(luaPath, "utf8");
 const modInfo = fs.readFileSync(path.join(modRoot, "42/mod.info"), "utf8");
 const readme = fs.readFileSync(path.join(modRoot, "README.md"), "utf8");
+const translationsRoot = path.resolve(
+  modRoot,
+  "../ChilaSeda_Translations_ES_B42/42",
+);
+const translationModInfo = fs.readFileSync(path.join(translationsRoot, "mod.info"), "utf8");
+const translationReadme = fs.readFileSync(
+  path.resolve(modRoot, "../ChilaSeda_Translations_ES_B42/README.md"),
+  "utf8",
+);
 const englishMenu = fs.readFileSync(
   path.join(modRoot, "42/media/lua/shared/Translate/EN/ContextMenu_EN.txt"),
   "utf8",
 );
 const spanishMenu = fs.readFileSync(
-  path.join(modRoot, "42/media/lua/shared/Translate/ES/ContextMenu_ES.txt"),
+  path.join(translationsRoot, "media/lua/shared/Translate/ES/ContextMenu_ES.txt"),
   "utf8",
 );
 const englishUI = fs.readFileSync(
@@ -25,7 +35,7 @@ const englishUI = fs.readFileSync(
   "utf8",
 );
 const spanishUI = fs.readFileSync(
-  path.join(modRoot, "42/media/lua/shared/Translate/ES/UI_ES.txt"),
+  path.join(translationsRoot, "media/lua/shared/Translate/ES/UI_ES.txt"),
   "utf8",
 );
 
@@ -57,6 +67,7 @@ Events = {
     OnGameBoot = event(),
     OnGameStart = event(),
 }
+local forceMissingTranslations = false
 local translated = {
     ContextMenu_Equip_Primary = "Equip Primary",
     ContextMenu_Equip_Secondary = "Equip Secondary",
@@ -74,7 +85,7 @@ local translated = {
     UI_ChilaSeda_InventoryTetris_FoodSortReview = "Review the grid.",
 }
 function getText(key, count)
-    local value = translated[key] or key
+    local value = forceMissingTranslations and key or (translated[key] or key)
     if count then value = string.gsub(value, "%%1", tostring(count)) end
     return value
 end
@@ -185,20 +196,20 @@ local modules = {
 }
 function require(name) return modules[name] or true end
 SandboxVars = { InventoryTetris = { EnableGravity = false } }
+instanceof = function(item, className)
+    return className == "Food" and item ~= nil and item.vanillaFood == true
+end
 local function makeFood(id, fullType, age, freshness, calories)
-    local food = {
-        isFood = function() return true end,
-        isBurnt = function() return freshness == 4 and fullType == "Base.BurntMeat" end,
-        isRotten = function() return freshness == 1 end,
-        isFresh = function() return freshness == 3 end,
-        canAge = function() return freshness ~= 4 end,
-        getAge = function() return age end,
-        getCalories = function() return calories end,
-    }
-    local item = { id = id, fullType = fullType, food = food }
+    local item = { id = id, fullType = fullType, vanillaFood = true }
     function item:getID() return self.id end
     function item:getFullType() return self.fullType end
-    function item:getFood() return self.food end
+    function item:isFood() return true end
+    function item:isBurnt() return freshness == 4 and fullType == "Base.BurntMeat" end
+    function item:isRotten() return freshness == 1 end
+    function item:isFresh() return freshness == 3 end
+    function item:canAge() return freshness ~= 4 end
+    function item:getAge() return age end
+    function item:getCalories() return calories end
     function item:getContainer() return self.container end
     return item
 end
@@ -206,7 +217,6 @@ local function makeNonFood(id, fullType)
     local item = { id = id, fullType = fullType }
     function item:getID() return self.id end
     function item:getFullType() return self.fullType end
-    function item:getFood() return nil end
     function item:getContainer() return self.container end
     return item
 end
@@ -299,14 +309,16 @@ assert(notes[#notes] == "Organized by freshness: 5 food items.", "success Halo N
 
 local meatOld = makeFood(21, "Base.Meat", 9, 3, 300)
 local meatNew = makeFood(22, "Base.Meat", 3, 3, 300)
-local apple = makeFood(23, "Base.Apple", 1, 3, 50)
+local meatLowerCalories = makeFood(23, "Base.Meat", 2, 3, 120)
+local apple = makeFood(24, "Base.Apple", 1, 3, 50)
 local meatStack = stackWith({ meatNew, meatOld }, 2, 0)
-local appleStack = stackAt(apple, 3, 0)
+local lowerCaloriesStack = stackAt(meatLowerCalories, 3, 0)
+local appleStack = stackAt(apple, 0, 1)
 local calorieInventory, calorieGrid = makeContainer(
-    { meatOld, meatNew, apple },
+    { meatOld, meatNew, meatLowerCalories, apple },
     4,
     2,
-    { meatStack, appleStack }
+    { meatStack, lowerCaloriesStack, appleStack }
 )
 local calorieContext = makeContext(true)
 Events.OnFillInventoryObjectContextMenu.callback(0, calorieContext, { apple })
@@ -314,7 +326,32 @@ choose(calorieContext, 2)
 assert(calorieGrid.persistentData.stacks[1].itemType == "Base.Meat", "highest-calorie food group is first")
 assert(ItemStack.getFrontItem(calorieGrid.persistentData.stacks[1], calorieInventory):getID() == 21,
     "older item breaks an equal-calorie tie")
-assert(notes[#notes] == "Organized by calories: 3 food items.", "calorie success Halo Note is shown")
+assert(calorieGrid.persistentData.stacks[2].itemType == "Base.Meat"
+    and ItemStack.getFrontItem(calorieGrid.persistentData.stacks[2], calorieInventory):getID() == 23,
+    "same-type meat with a different calorie value gets a separate, lower stack")
+assert(calorieGrid.persistentData.stacks[1] ~= calorieGrid.persistentData.stacks[2],
+    "different calorie values do not remain in the same stack")
+assert(ItemStack.getFrontItem(calorieGrid.persistentData.stacks[3], calorieInventory):getID() == 24,
+    "lower-calorie food groups follow higher-calorie groups")
+assert(notes[#notes] == "Organized by calories: 4 food items.", "calorie success Halo Note is shown")
+local function findSortTrace(prefix)
+    for index = 1, #logs do
+        local line = logs[index]
+        if string.sub(line, 1, #prefix) == prefix then return line end
+    end
+end
+local calorieTraceBase = "[ChilaSeda_InventoryTetrisFoodOrganizer] sort_trace event="
+assert(findSortTrace(calorieTraceBase .. "begin mode=calories"), "calorie sort start is traced")
+assert(findSortTrace(calorieTraceBase .. "plan_end mode=calories result=ready"), "calorie plan is traced")
+assert(findSortTrace(calorieTraceBase .. "commit_begin mode=calories"), "calorie commit start is traced")
+local plannedLayout = findSortTrace(calorieTraceBase .. "layout phase=planned mode=calories grid=1")
+local beforeLayout = findSortTrace(calorieTraceBase .. "layout phase=before mode=calories grid=1")
+assert(plannedLayout and string.sub(plannedLayout, -#"Base.Apple@2,0,rot=false,count=1{24:Base.Apple:cal=50}")
+    == "Base.Apple@2,0,rot=false,count=1{24:Base.Apple:cal=50}",
+    "planned calorie layout traces item IDs, calorie values, and positions")
+assert(beforeLayout and string.sub(beforeLayout, -#"Base.Apple@0,1,rot=false,count=1{24:Base.Apple:cal=50}")
+    == "Base.Apple@0,1,rot=false,count=1{24:Base.Apple:cal=50}",
+    "original calorie layout is traced before the commit")
 
 local splitRotten = makeFood(31, "Base.Apple", 20, 1, 50)
 local splitFresh = makeFood(32, "Base.Apple", 2, 3, 50)
@@ -355,9 +392,53 @@ choose(overflowContext, 1)
 assert(overflowItemGrid.persistentData.stacks == overflowArray
     and overflowItemGrid.persistentData.stacks[1] == inGridStack, "overflow abort leaves stacks unchanged")
 assert(notes[#notes] == "No changes: overflow food.", "overflow failure Halo Note is shown")
+
+forceMissingTranslations = true
+local fallbackFood = makeFood(51, "Base.Potato", 4, 3, 120)
+local unknownModItem = makeNonFood(52, "Example.ModFoodContainer")
+function unknownModItem:getFood() return { foodProxy = true } end
+local fallbackFoodStack = stackAt(fallbackFood, 0, 0)
+local unknownStack = stackAt(unknownModItem, 1, 0)
+local fallbackInventory, fallbackGrid = makeContainer(
+    { fallbackFood, unknownModItem },
+    2,
+    1,
+    { fallbackFoodStack, unknownStack }
+)
+local fallbackContext = makeContext(true)
+Events.OnFillInventoryObjectContextMenu.callback(0, fallbackContext, { fallbackFood })
+assert(fallbackContext.options[3].text == "Organizar alimentos", "missing root label uses readable fallback")
+assert(fallbackContext.options[3].submenu.options[1].text == "Por frescura", "missing submenu label uses readable fallback")
+choose(fallbackContext, 1)
+assert(fallbackGrid.persistentData.stacks[1].x == fallbackFoodStack.x
+    and fallbackGrid.persistentData.stacks[1].y == fallbackFoodStack.y,
+    "vanilla instanceof false keeps an unrecognized mod item fixed without aborting: " .. table.concat(logs, " | "))
+assert(fallbackGrid.persistentData.stacks[2].x == unknownStack.x
+    and fallbackGrid.persistentData.stacks[2].y == unknownStack.y,
+    "unrecognized mod item keeps its original grid position: " .. table.concat(logs, " | "))
+assert(notes[#notes] == "Organizados por frescura: 1 alimentos.",
+    "missing UI translation uses readable fallback instead of exposing its key")
+for _ = 1, 80 do choose(calorieContext, 2) end
+local sortTracePrefix = "[ChilaSeda_InventoryTetrisFoodOrganizer] sort_trace event="
+local sortTraceLimitPrefix = sortTracePrefix .. "limit "
+local sortTraceCount = 0
+local sortTraceLimitCount = 0
+for index = 1, #logs do
+    local line = logs[index]
+    if string.sub(line, 1, #sortTracePrefix) == sortTracePrefix
+        and string.sub(line, 1, #sortTraceLimitPrefix) ~= sortTraceLimitPrefix then
+        sortTraceCount = sortTraceCount + 1
+    end
+    if string.sub(line, 1, #sortTraceLimitPrefix) == sortTraceLimitPrefix then
+        sortTraceLimitCount = sortTraceLimitCount + 1
+    end
+end
+assert(sortTraceCount == 96, "sort layout diagnostics are capped at 96 records per session; got " .. tostring(sortTraceCount))
+assert(sortTraceLimitCount == 1, "sort layout trace limit is reported once; got " .. tostring(sortTraceLimitCount))
 `;
     const fixturePath = path.join(tempDir, "food-organizer-contract.lua");
-    const luaFixture = fs.readFileSync(luaPath, "utf8");
+    assert.match(lua, /local ORGANIZER_ENABLED = true/);
+    const luaFixture = lua;
     fs.writeFileSync(fixturePath, fixture + luaFixture + "\n" + scenario, "utf8");
     const result = execFileSync(
       path.join(jdkBin, "java.exe"),
@@ -370,17 +451,84 @@ assert(notes[#notes] == "No changes: overflow food.", "overflow failure Halo Not
   }
 });
 
+test("food organizer can be explicitly disabled without installing hooks", () => {
+  assert.match(lua, /local ORGANIZER_ENABLED = true/);
+  const disabledLua = lua.replace(
+    "local ORGANIZER_ENABLED = true",
+    "local ORGANIZER_ENABLED = false",
+  );
+  assert.notEqual(disabledLua, lua, "disabled fallback fixture should override the default");
+  const gameJar = process.env.PZ_PROJECT_ZOMBOID_JAR
+    ?? path.join("J:/SteamLibrary/steamapps/common/ProjectZomboid", "projectzomboid.jar");
+  const jdkBin = path.resolve(modRoot, "../.tools/jdk-25.0.5/bin");
+  const helper = path.join(modRoot, "tests/OverflowFloorDropKahluaContract.java");
+  assert.ok(fs.existsSync(gameJar), `Project Zomboid Java archive not found: ${gameJar}`);
+  assert.ok(fs.existsSync(helper), "Kahlua contract helper was not found");
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "tetris-food-sort-disabled-"));
+  try {
+    execFileSync(path.join(jdkBin, "javac.exe"), ["-classpath", gameJar, "-d", tempDir, helper]);
+    const fixture = String.raw`
+local logs = {}
+function print(message) logs[#logs + 1] = tostring(message) end
+local function event()
+    local result = {}
+    function result.Add(callback) result.callback = callback end
+    return result
+end
+Events = {
+    OnFillInventoryObjectContextMenu = event(),
+    OnGameBoot = event(),
+    OnGameStart = event(),
+}
+`;
+    const scenario = String.raw`
+assert(Events.OnFillInventoryObjectContextMenu.callback == nil,
+    "disabled organizer must not install its context-menu hook")
+assert(Events.OnGameBoot.callback == nil and Events.OnGameStart.callback == nil,
+    "disabled organizer must not install deferred hooks")
+local disabledTrace = false
+for _, line in ipairs(logs) do
+    if string.find(line, "disabled feature=freshness-and-calories", 1, true) then disabledTrace = true end
+end
+assert(disabledTrace, "disabled organizer state must be traceable")
+`;
+    const contractPath = path.join(tempDir, "food-organizer-disabled.lua");
+    fs.writeFileSync(contractPath, fixture + disabledLua + "\n" + scenario, "utf8");
+    const result = execFileSync(
+      path.join(jdkBin, "java.exe"),
+      ["-classpath", `${gameJar};${tempDir}`, "OverflowFloorDropKahluaContract", contractPath],
+      { cwd: path.dirname(gameJar), encoding: "utf8" },
+    );
+    assert.match(result, /Inventory Tetris overflow Kahlua contract passed/);
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
 test("organizer metadata and translations stay with the active local addon", () => {
   assert.match(modInfo, /^id=ChilaSeda_InventoryTetrisSizeCap_B42$/m);
   assert.match(modInfo, /^require=INVENTORY_TETRIS$/m);
-  assert.match(modInfo, /^loadModAfter=INVENTORY_TETRIS$/m);
+  assert.match(modInfo, /^loadModAfter=INVENTORY_TETRIS,EQUIPMENT_UI,EQUIPMENT_UI_B42$/m);
   assert.match(modInfo, /^versionMin=42\.20$/m);
-  assert.match(modInfo, /^modversion=1\.3\.8$/m);
-  assert.match(readme, /Version 1\.3\.8/);
+  assert.match(modInfo, /^modversion=1\.4\.9$/m);
+  assert.match(readme, /Version 1\.4\.7/);
+  assert.match(translationModInfo, /^id=ChilaSeda_Translations_ES_B42$/m);
+  assert.match(translationModInfo, /^modversion=1\.5\.3$/m);
+  assert.match(translationModInfo, /^loadModAfter=.*ChilaSeda_InventoryTetrisSizeCap_B42/m);
+  assert.match(translationReadme, /1\.5\.0/);
   assert.match(englishMenu, /ContextMenu_ChilaSeda_InventoryTetris_FoodFreshness/);
   assert.match(englishMenu, /ContextMenu_ChilaSeda_InventoryTetris_FoodCalories/);
-  assert.match(spanishMenu, /ContextMenu_ChilaSeda_InventoryTetris_FoodFreshness/);
-  assert.match(spanishMenu, /ContextMenu_ChilaSeda_InventoryTetris_FoodCalories/);
+  assert.match(spanishMenu, /ContextMenu_ChilaSeda_InventoryTetris_OrganizeFood = "Organizar alimentos"/);
+  assert.match(spanishMenu, /ContextMenu_ChilaSeda_InventoryTetris_FoodFreshness = "Por frescura"/);
+  assert.match(spanishMenu, /ContextMenu_ChilaSeda_InventoryTetris_FoodCalories = "Por calorías"/);
+  for (const key of [
+    "ContextMenu_ChilaSeda_InventoryTetris_OrganizeFood",
+    "ContextMenu_ChilaSeda_InventoryTetris_FoodFreshness",
+    "ContextMenu_ChilaSeda_InventoryTetris_FoodCalories",
+  ]) {
+    const keyLines = spanishMenu.match(new RegExp(`^\\s*${key}\\s*=`, "gm")) ?? [];
+    assert.equal(keyLines.length, 1, `${key} should occur exactly once in the winning catalog`);
+  }
   assert.match(englishUI, /FoodSortSuccessFreshness/);
   assert.match(englishUI, /FoodSortNoSpace/);
   assert.match(spanishUI, /FoodSortSuccessCalories/);

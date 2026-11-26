@@ -397,7 +397,11 @@ local function installBackpackCapacityValidation()
         for _, destination in ipairs(destinations) do
             menu:addOption(containerName(player, destination), page, selectDestination, destination)
         end
-        menu:addOption("Cancelar movimiento", nil, nil)
+        menu:addOption("Cancelar movimiento", menu, function(contextMenu)
+            if contextMenu and type(contextMenu.hideAndChildren) == "function" then
+                contextMenu:hideAndChildren()
+            end
+        end)
         return true
     end
 

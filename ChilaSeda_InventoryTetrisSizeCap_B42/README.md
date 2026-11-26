@@ -1,4 +1,4 @@
-ChilaSeda - Inventory Tetris Size Cap (B42) 1.3.7
+ChilaSeda - Inventory Tetris Size Cap (B42) 1.4.9
 
 <div align="center">
 
@@ -7,6 +7,52 @@ ChilaSeda - Inventory Tetris Size Cap (B42) 1.3.7
 </div>
 
 ---
+
+## Version 1.4.9
+
+- Protects an item confirmed in the player's worn-clothing list from Inventory Tetris `GridAutoDropSystem` recovery when no grid fit is available. It returns the original system's resolved result without queuing a floor transfer. If both character and worn-list APIs are unavailable, it preserves the original fallback. The bounded trace logs `auto-drop-protected`; set `TRACE_AUTO_DROP = false` after Jill confirms the fix.
+
+## Version 1.4.8
+
+- Adds a bounded diagnostic wrapper around Inventory Tetris `GridAutoDropSystem._handleDropItem`. It logs the unpositioned-item decision, selected fallback route, item type/ID, source container, equipped state and result with a 64-line cap. It loads after Inventory Tetris and either Equipment UI variant.
+
+## Version 1.4.7
+
+- Restores freshness and calorie sorting by default for Jill. The context-menu options and ItemStack ordering/merge/copy hooks are active again; transactional sorting, no-space fallback and bounded sort traces remain covered by the contract.
+
+## Version 1.4.6
+
+- Temporarily disables the freshness/calorie food organizer for Jill's inventory isolation test. The context-menu action and all ItemStack ordering, merge-guard, and copy hooks stay uninstalled; stack sizing, backpack capacity checks, Equipment UI guards, paused drops, and overflow handling remain active.
+
+## Version 1.4.5
+
+- Adds bounded, activatable food-sort diagnostics with before, planned, commit-result, and after grid layouts. Calorie traces include item IDs, full types, calorie values, and stack positions. Set `TRACE_SORT_LAYOUT = false` in `ChilaSeda_InventoryTetrisFoodOrganizer.lua` to disable them after validation; the trace stops after 96 records per session.
+
+## Version 1.4.4
+
+- Captures the item and source slot when Equipment UI schedules its deferred release. If that slot changes before the callback runs, the stale callback is discarded instead of dropping the replacement item. Normal Tetris capacity validation and intentional floor drops remain in the original handlers.
+
+## Version 1.4.3
+
+- Groups food by calorie value and item type before building stacks, so different calorie values are visibly separated instead of only being reordered inside one stack.
+
+## Version 1.4.2
+
+- Makes `Cancelar movimiento` close the overflow destination menu while leaving the item in its source container.
+
+## Version 1.4.1
+
+- Keeps non-food mod items fixed when Build 42 confirms they are not `Food`, even if they expose an unrelated `getFood()` object. Sorting no longer aborts because that object has no food API. If classification still reaches an unknown API path, the log records the item and returned class once.
+- Uses readable Spanish fallback text when a context-menu or Halo localization key is missing, instead of displaying raw `UI_...` or `ContextMenu_...` keys.
+
+## Version 1.4.0
+
+- Remembers which Inventory Tetris container grids were collapsed and restores that state when the UI is rebuilt or the save is loaded. The state is stored with the player, item container, or world object that owns the grid.
+- Records the source container when a handheld light is equipped and queues a normal inventory transfer back to that source when it is unequipped. If the source cannot be found or reached, the light stays safe in its current container and the result is traced.
+
+## Version 1.3.9
+
+- Detects vanilla foods through their `Food` type and direct item methods, so freshness and calorie sorting works in mixed containers without `reason=food-api` aborts.
 
 ## Version 1.3.8
 
