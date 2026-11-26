@@ -109,8 +109,30 @@ end
 
 local function onKeyPressed(key)
 	if not Keyboard or key ~= Keyboard.KEY_F10 then return end
+	local isKeyDown = Keyboard.isKeyDown
+	local controlLeft, controlRight = Keyboard.KEY_LCONTROL, Keyboard.KEY_RCONTROL
+	local altLeft, altRight = Keyboard.KEY_LMENU, Keyboard.KEY_RMENU
+	if type(isKeyDown) ~= "function" or (not controlLeft and not controlRight)
+			or (not altLeft and not altRight) then
+		warnOnce("modifier-api", "scan skipped: Ctrl+Alt+F10 modifier API unavailable; plain F10 remains reserved for screenshots")
+		return
+	end
+	local function down(code)
+		if not code then return false end
+		local ok, pressed = pcall(isKeyDown, code)
+		return ok and pressed == true
+	end
+	local controlDown = down(controlLeft) or down(controlRight)
+	local altDown = down(altLeft) or down(altRight)
+	if not controlDown or not altDown then return end
+	print(TAG .. "event=scan-start binding=Ctrl+Alt+F10")
 	local ok, reason = pcall(scan)
-	if not ok then warnOnce("scan", "scan failed: " .. tostring(reason)) end
+	if ok then
+		print(TAG .. "event=scan-end result=ok")
+	else
+		print(TAG .. "event=scan-end result=error reason=" .. tostring(reason))
+		warnOnce("scan", "scan failed: " .. tostring(reason))
+	end
 end
 
 local keyEvent = Events and Events.OnKeyPressed
@@ -123,8 +145,8 @@ if keyEvent then
 	end
 	local addOk, addReason = pcall(function() keyEvent.Add(onKeyPressed) end)
 	if addOk then
-		print(TAG .. "local scanner installed removedWorkshop=" .. tostring(removed or 0)
-			.. " maxObjects=" .. MAX_OBJECT_LINES)
+		print(TAG .. "event=registered binding=Ctrl+Alt+F10 plainF10=screenshot removedWorkshop="
+			.. tostring(removed or 0) .. " maxObjects=" .. MAX_OBJECT_LINES)
 	else
 		warnOnce("register", "could not register local scanner: " .. tostring(addReason))
 	end

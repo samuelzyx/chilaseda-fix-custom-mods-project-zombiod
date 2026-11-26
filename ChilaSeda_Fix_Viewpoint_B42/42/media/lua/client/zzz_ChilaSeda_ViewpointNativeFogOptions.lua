@@ -15,6 +15,7 @@ local ANIMAL_BONES_KEY_OPTION_ID = "animalCorpseBonesKey"
 local ANIMAL_CORPSE_MODIFIER_OPTION_ID = "animalCorpseActionModifier"
 local CORPSE_PANEL_SCALE_OPTION_ID = "corpseLootPanelScale"
 local CORPSE_WEAR_STYLE_OPTION_ID = "corpseWearStyle"
+local HALO_XP_OPTION_ID = "haloXPEnabled"
 local DEFAULT_STRENGTH = 0.9
 local DEFAULT_FEATHER = 3
 local DEFAULT_CORPSE_PANEL_SCALE = 1.5
@@ -34,6 +35,7 @@ local animalBonesKeyOption
 local animalCorpseModifierOption
 local corpsePanelScaleOption
 local corpseWearStyleOption
+local haloXpOption
 local lastCorpseOptionsDiagnostic
 
 ChilaSedaViewpointNativeFogStrength = DEFAULT_STRENGTH
@@ -42,14 +44,15 @@ ChilaSedaViewpointNativeFogStyle = 0
 ChilaSedaViewpointNativeFogFeather = DEFAULT_FEATHER
 ChilaSedaViewpointShaderPackFogEnabled = true
 ChilaSedaViewpointNativeForagePickupKey = Keyboard and Keyboard.KEY_G or 34
-ChilaSedaViewpointNativeActionModifier = "CTRL"
+ChilaSedaViewpointNativeActionModifier = "ALT"
 ChilaSedaViewpointNativeForageCalibrationKey = Keyboard and Keyboard.KEY_F6 or 64
 ChilaSedaViewpointAnimalCorpseButcherKey = Keyboard and Keyboard.KEY_B or 48
 ChilaSedaViewpointAnimalCorpsePickupKey = Keyboard and Keyboard.KEY_G or 34
 ChilaSedaViewpointAnimalCorpseBonesKey = Keyboard and Keyboard.KEY_H or 35
-ChilaSedaViewpointAnimalCorpseActionModifier = "CTRL"
+ChilaSedaViewpointAnimalCorpseActionModifier = "ALT"
 ChilaSedaViewpointCorpsePanelScale = DEFAULT_CORPSE_PANEL_SCALE
 ChilaSedaViewpointCorpseWearStyle = DEFAULT_CORPSE_WEAR_STYLE
+ChilaSedaViewpointHaloXPEnabled = true
 
 local function optionValue(option, fallback)
     if not option or type(option.getValue) ~= "function" then return fallback end
@@ -96,7 +99,7 @@ local function keyIsDown(primaryName, secondaryName, primaryCode, secondaryCode)
 end
 
 local function modifierMatches(selectedValue)
-    local selected = normalizedModifier(selectedValue) or "CTRL"
+    local selected = normalizedModifier(selectedValue) or "ALT"
     local ctrl = keyIsDown("KEY_LCONTROL", "KEY_RCONTROL", 29, 157)
     local alt = keyIsDown("KEY_LMENU", "KEY_RMENU", 56, 184)
     local shift = keyIsDown("KEY_LSHIFT", "KEY_RSHIFT", 42, 54)
@@ -122,7 +125,7 @@ local function formatActionKey(key, selectedValue)
         if ok and type(value) == "string" and value ~= "" then keyName = value end
     end
     keyName = keyName or tostring(key)
-    local selected = normalizedModifier(selectedValue) or "CTRL"
+    local selected = normalizedModifier(selectedValue) or "ALT"
     local display = string.gsub(selected, "CTRL", "Ctrl")
     display = string.gsub(display, "ALT", "Alt")
     display = string.gsub(display, "SHIFT", "Mayús")
@@ -144,6 +147,11 @@ local function currentStrength()
 end
 
 local function applyOptions()
+    local haloXpEnabled = optionValue(haloXpOption, ChilaSedaViewpointHaloXPEnabled)
+    if type(haloXpEnabled) == "boolean" then
+        ChilaSedaViewpointHaloXPEnabled = haloXpEnabled
+    end
+
     local enabled = optionValue(enabledOption, ChilaSedaViewpointNativeFogEnabled)
     if type(enabled) == "boolean" then ChilaSedaViewpointNativeFogEnabled = enabled end
 
@@ -215,8 +223,8 @@ local function applyOptions()
     local diagnostic = string.format("scale=%.2f wear=%s nativeModifier=%s animalModifier=%s",
         tonumber(ChilaSedaViewpointCorpsePanelScale) or DEFAULT_CORPSE_PANEL_SCALE,
         tostring(ChilaSedaViewpointCorpseWearStyle or DEFAULT_CORPSE_WEAR_STYLE),
-        tostring(ChilaSedaViewpointNativeActionModifier or "CTRL"),
-        tostring(ChilaSedaViewpointAnimalCorpseActionModifier or "CTRL"))
+        tostring(ChilaSedaViewpointNativeActionModifier or "ALT"),
+        tostring(ChilaSedaViewpointAnimalCorpseActionModifier or "ALT"))
     if diagnostic ~= lastCorpseOptionsDiagnostic then
         print(TAG .. "corpseOptions " .. diagnostic)
         lastCorpseOptionsDiagnostic = diagnostic
@@ -310,7 +318,7 @@ local function installOptions()
                     { "UI_ChilaSeda_ViewpointFix_ModifierAll", "Ctrl + Alt + Mayús" },
                 }
                 for index, choice in ipairs(choices) do
-                    pcall(option.addItem, option, translated(choice[1], choice[2]), index == 1)
+                    pcall(option.addItem, option, translated(choice[1], choice[2]), index == 2)
                 end
             end
         end
@@ -358,7 +366,7 @@ local function installOptions()
                 }
                 for index, choice in ipairs(choices) do
                     pcall(modifierOption.addItem, modifierOption,
-                        translated(choice[1], choice[2]), index == 1)
+                        translated(choice[1], choice[2]), index == 2)
                 end
             end
         end
@@ -415,6 +423,18 @@ local function installOptions()
             translated("UI_ChilaSeda_ViewpointFix_CorpsePanelScaleTooltip",
                 "Aumenta el panel flotante del cadaver, incluidos sus iconos y texto."))
         if scaleAdded then corpsePanelScaleOption = scaleOption end
+    end
+    if type(page.addSeparator) == "function" then pcall(page.addSeparator, page) end
+    if type(page.addTitle) == "function" then
+        pcall(page.addTitle, page,
+            translated("UI_ChilaSeda_ViewpointFix_HaloNotesTitle", "Halo Notes"))
+    end
+    if type(page.addTickBox) == "function" then
+        local added, option = pcall(page.addTickBox, page, HALO_XP_OPTION_ID,
+            translated("UI_ChilaSeda_ViewpointFix_HaloXPEnabled", "Mensajes de experiencia"), true,
+            translated("UI_ChilaSeda_ViewpointFix_HaloXPEnabledTooltip",
+                "Muestra u oculta los mensajes de experiencia en Halo Notes."))
+        if added then haloXpOption = option end
     end
     page.apply = applyOptions
     applyOptions()

@@ -101,7 +101,11 @@ public final class CombatGesturesBridge {
             } catch (IllegalArgumentException unknown) {
                 continue;
             }
-            if (floorExecution || available.contains(attack)) return attack;
+            // The vanilla lists often contain only DEFAULT. This bridge replaces
+            // that list for one click, so use the requested vanilla animation.
+            if (floorExecution || available.contains(attack) || !"execute".equals(gestureKind)) {
+                return attack;
+            }
         }
         return null;
     }
@@ -114,7 +118,7 @@ public final class CombatGesturesBridge {
         }
         if ("overhead".equals(kind)) return new String[] { "OVERHEAD", "DEFAULT" };
         if ("backhand".equals(kind)) return new String[] { "UPPERCUT", "DEFAULT" };
-        return new String[] { "MELEE_SWING", "DEFAULT" };
+        return new String[] { "MELEE_SWING" };
     }
 
     private static List<AttackType> values(WeightedList<AttackType> weightedList) throws Exception {

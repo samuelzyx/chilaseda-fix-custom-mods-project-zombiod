@@ -1,9 +1,11 @@
 require "ISUI/ISUIElement"
 
 local TAG = "[ChilaSeda_ViewpointCombatGestures] "
+local TRACE_ENABLED = true
+local MAX_TRACE_LINES = 128
+local traceLines = 0
 local MIN_DISTANCE = 48
-local MAX_STROKE_MS = 900
-local PENDING_MS = 450
+local PENDING_MS = 1000
 local DISPLAY_MS = 900
 local MAX_POINTS = 32
 local overlay
@@ -19,7 +21,16 @@ local initialized = false
 local warnedMissing = false
 local warnedBridgeFailure = false
 local lastPreviewKind
+local lastRecognizedGesture
+local installAttackOverride
+local prearmGesture
 local display = { points = {}, label = nil, expires = 0 }
+
+local function trace(message)
+    if not TRACE_ENABLED or traceLines >= MAX_TRACE_LINES then return end
+    traceLines = traceLines + 1
+    print(TAG .. tostring(message))
+end
 
 local function controlIsDown()
     if Keyboard and type(Keyboard.isKeyDown) == "function" then
@@ -125,8 +136,7 @@ local function pushMouseDelta(dx, dy)
 end
 
 local function classifyStroke(value)
-    if not value or #value.points < 3 or value.length < MIN_DISTANCE
-            or nowMs() - value.startedAt > MAX_STROKE_MS then
+    if not value or #value.points < 3 or value.length < MIN_DISTANCE then
         return nil
     end
     local first, last = value.points[1], value.points[#value.points]
@@ -158,35 +168,41 @@ local function sampleCameraGesture()
     if controlIsDown() then
         if not stroke then
             stroke = makeStroke()
-            print(TAG .. "capture started source=org.lwjglx.input.Mouse.getDX/getDY")
+            lastRecognizedGesture = nil
+            trace("capture started source=org.lwjglx.input.Mouse.getDX/getDY")
         end
         local okX, dx = pcall(bridge.mouseDeltaX)
         local okY, dy = pcall(bridge.mouseDeltaY)
         if okX and okY and type(dx) == "number" and type(dy) == "number" then
             pushMouseDelta(dx, dy)
+            if #stroke.points > 1 then
+                showGesture(stroke.points, nil, nowMs() + DISPLAY_MS)
+            end
             local kind, label = classifyStroke(stroke)
             if kind then
                 pending = { kind = kind, label = label, expires = nowMs() + PENDING_MS,
                     points = copyPoints(stroke.points) }
+                lastRecognizedGesture = pending
                 showGesture(stroke.points, label, nowMs() + DISPLAY_MS)
+                if prearmGesture then prearmGesture(pending) end
                 if lastPreviewKind ~= kind then
-                    print(TAG .. "preview " .. label .. " points=" .. #stroke.points
+                    trace("preview " .. label .. " points=" .. #stroke.points
                         .. " length=" .. string.format("%.1f", stroke.length))
                     lastPreviewKind = kind
                 end
             else
-                pending = nil
                 lastPreviewKind = nil
             end
         elseif not warnedBridgeFailure then
             warnedBridgeFailure = true
-            print(TAG .. "mouse delta read failed; capture values unavailable")
+            trace("mouse delta read failed; capture values unavailable")
         end
     elseif stroke then
         local finished = stroke
         local kind, label = classifyStroke(finished)
-        print(TAG .. "capture ended points=" .. #finished.points
+        trace("capture ended points=" .. #finished.points
             .. " length=" .. string.format("%.1f", finished.length)
+            .. " durationMs=" .. tostring(nowMs() - finished.startedAt)
             .. " turn=" .. string.format("%.2f", finished.turn)
             .. " dx=" .. string.format("%.1f", finished.dx)
             .. " dy=" .. string.format("%.1f", finished.dy)
@@ -194,13 +210,21 @@ local function sampleCameraGesture()
         if kind then
             pending = { kind = kind, label = label, expires = nowMs() + PENDING_MS,
                 points = copyPoints(finished.points) }
+            lastRecognizedGesture = pending
             showGesture(finished.points, label, nowMs() + DISPLAY_MS)
-            print(TAG .. "recognized " .. label .. "; waiting for left-click")
+            trace("recognized " .. label .. "; waiting for left-click")
+            if prearmGesture then prearmGesture(pending) end
+        elseif lastRecognizedGesture and nowMs() <= lastRecognizedGesture.expires then
+            pending = lastRecognizedGesture
+            showGesture(pending.points, pending.label, nowMs() + DISPLAY_MS)
+            trace("kept last recognized " .. pending.label .. " after noisy camera tail")
         else
             pending = nil
+            showGesture(finished.points, nil, nowMs() + DISPLAY_MS)
         end
         stroke = nil
         lastPreviewKind = nil
+        lastRecognizedGesture = nil
     end
     if pending and nowMs() > pending.expires then pending = nil end
 end
@@ -213,14 +237,14 @@ local function restoreAttackOverride(reason)
         ok, result = pcall(bridge.restoreAttackOverride, reason)
     end
     if ok and result == "restored" then
-        print(TAG .. "restored vanilla attack choices (" .. reason .. ")")
+        trace("restored vanilla attack choices (" .. reason .. ")")
     else
-        print(TAG .. "could not restore vanilla attack choices; result=" .. tostring(result))
+        trace("could not restore vanilla attack choices; result=" .. tostring(result))
     end
     activeAttackOverride = nil
 end
 
-local function installAttackOverride(gesture, player)
+installAttackOverride = function(gesture, player)
     local bridge = ChilaSedaViewpointCombatGesturesJ
     if not bridge or not player or type(bridge.armAttack) ~= "function" then
         return false, "combat gesture bridge unavailable"
@@ -238,8 +262,25 @@ local function installAttackOverride(gesture, player)
         expires = nowMs() + PENDING_MS + 700,
         points = copyPoints(gesture.points),
     }
-    print(TAG .. "armed " .. gesture.label .. " as " .. name)
+    trace("armed " .. gesture.label .. " as " .. name)
     return true
+end
+
+prearmGesture = function(gesture)
+    if not gesture then return false end
+    if activeAttackOverride and armed and armed.kind == gesture.kind then
+        armed.expires = nowMs() + PENDING_MS + 700
+        return true
+    end
+    local player = type(getSpecificPlayer) == "function" and getSpecificPlayer(0) or nil
+    local ok, reason = installAttackOverride(gesture, player)
+    if ok then
+        trace("attack choice ready before click kind=" .. tostring(gesture.kind)
+            .. " attack=" .. tostring(armed and armed.attackName))
+        return true
+    end
+    trace("pre-arm failed kind=" .. tostring(gesture.kind) .. " reason=" .. tostring(reason))
+    return false
 end
 
 local function leftMouseDown()
@@ -257,12 +298,20 @@ local function armGestureOnClick()
     local gesture = pending
     pending = nil
     stroke = nil
+    if activeAttackOverride and armed and armed.kind == gesture.kind then
+        armed.expires = nowMs() + PENDING_MS + 700
+        showGesture(gesture.points, gesture.label, nowMs() + DISPLAY_MS)
+        trace("left-click accepted pre-armed gesture=" .. gesture.label
+            .. " attack=" .. tostring(armed.attackName))
+        return
+    end
     local ok, reason = installAttackOverride(gesture, player)
     if ok then
         showGesture(gesture.points, gesture.label, nowMs() + DISPLAY_MS)
+        trace("fallback=arm-on-click reason=pre-arm-unavailable")
     else
         showGesture(gesture.points, gesture.label .. " - VANILLA", nowMs() + DISPLAY_MS)
-        print(TAG .. "gesture stayed vanilla: " .. tostring(reason))
+        trace("gesture stayed vanilla: " .. tostring(reason))
     end
 end
 
@@ -287,8 +336,8 @@ function CombatGestureOverlay:onRightMouseDown() return false end
 function CombatGestureOverlay:onRightMouseUp() return false end
 
 function CombatGestureOverlay:render()
-    if nowMs() > display.expires or not display.label then return end
     local points = display.points or {}
+    if nowMs() > display.expires or (#points < 2 and not display.label) then return end
     for i = 2, #points do
         local before, after = points[i - 1], points[i]
         if whiteTexture then
@@ -305,10 +354,12 @@ function CombatGestureOverlay:render()
             end
         end
     end
-    local core = type(getCore) == "function" and getCore() or nil
-    local width = core and core:getScreenWidth() or 1280
-    self:drawTextCentre(display.label, width * 0.5, 30, 1, 0.62, 0.16, 0.96,
-        UIFont and UIFont.Small or nil)
+    if display.label then
+        local core = type(getCore) == "function" and getCore() or nil
+        local width = core and core:getScreenWidth() or 1280
+        self:drawTextCentre(display.label, width * 0.5, 30, 1, 0.62, 0.16, 0.96,
+            UIFont and UIFont.Small or nil)
+    end
 end
 
 local function createOverlay()
@@ -316,7 +367,8 @@ local function createOverlay()
     overlay = CombatGestureOverlay:new()
     overlay:initialise()
     overlay:addToUIManager()
-    pcall(function() overlay:backMost() end)
+    pcall(function() overlay:setAlwaysOnTop(true) end)
+    pcall(function() overlay:bringToTop() end)
 end
 
 local function missingApis()
@@ -353,14 +405,14 @@ local function init()
     if #missing == 0 then
         if not initialized then
             initialized = true
-            print(TAG .. "ready; mouse capture and vanilla attack bridge connected")
+            trace("ready; mouse capture and vanilla attack bridge connected")
         end
         warnedMissing = false
     elseif initAttempts >= 4 and getSpecificPlayer
             and type(getSpecificPlayer) == "function" and getSpecificPlayer(0)
             and not warnedMissing then
         warnedMissing = true
-        print(TAG .. "gesture APIs unavailable: " .. table.concat(missing, ", ")
+        trace("gesture APIs unavailable: " .. table.concat(missing, ", ")
             .. "; vanilla combat remains active")
     end
 end
@@ -388,17 +440,17 @@ local function onTick()
             if not ok then actualName = "unknown" end
             if actualName == armed.attackName then
                 showGesture(armed.points, armed.label, nowMs() + DISPLAY_MS)
-                print(TAG .. "attack started with gesture " .. armed.label
+                trace("attack started with gesture " .. armed.label
                     .. " (" .. armed.attackName .. ")")
             else
                 showGesture(armed.points, armed.label .. " - VANILLA", nowMs() + DISPLAY_MS)
-                print(TAG .. "attack used " .. tostring(actualName) .. "; expected "
+                trace("attack used " .. tostring(actualName) .. "; expected "
                     .. armed.attackName .. "; vanilla choice kept")
             end
             armed = nil
         elseif pending then
             showGesture(pending.points, pending.label .. " - VANILLA", nowMs() + DISPLAY_MS)
-            print(TAG .. "attack started before gesture was armed; vanilla attack kept")
+            trace("attack started before gesture was armed; vanilla attack kept")
             pending = nil
         end
     end
@@ -407,7 +459,7 @@ local function onTick()
     if armed and nowMs() > armed.expires then
         restoreAttackOverride("click did not start an attack")
         showGesture(armed.points, armed.label .. " - VANILLA", nowMs() + DISPLAY_MS)
-        print(TAG .. "gesture click did not start an attack; vanilla choices restored")
+        trace("gesture click did not start an attack; vanilla choices restored")
         armed = nil
     end
     if (type(isGamePaused) == "function" and isGamePaused()) and activeAttackOverride then

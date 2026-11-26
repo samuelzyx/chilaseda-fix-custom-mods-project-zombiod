@@ -24,11 +24,11 @@ test("Core's injected hook delegates without reading private modifier state", ()
   assert.match(source, /public static boolean shouldSuppress\(Core\.KeyBinding binding\)/);
 });
 
-test("the 2.0.128 mod selects the 2.0.122 Java archive and exposes the arrow fallback flag", () => {
-  assert.equal(modInfo.match(/^modversion=(.+)$/m)?.[1], "2.0.128");
+test("the current mod selects its Java archive and exposes the arrow fallback flag", () => {
+  assert.equal(modInfo.match(/^modversion=(.+)$/m)?.[1], "2.0.151");
   assert.equal(
     javaArchiveLine,
-    "media/java/client/ChilaSedaViewpointHalo-2.0.122.jar",
+    "media/java/client/ChilaSedaViewpointHalo-2.0.151.jar",
   );
 
   const archivePath = path.join(modRoot, "42", javaArchiveLine);

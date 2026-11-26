@@ -10,12 +10,36 @@ import zombie.characters.IsoPlayer;
 /** Re-aims Viewpoint's 3D foraging arrow at the pin as projected by the active camera. */
 @Patch(className = "viewpoint.interact.ForageFinds", methodName = "arrow", warmUp = true)
 public final class ForagingArrowCameraProjection {
+    private static final int MAX_PROJECTION_TRACES = 32;
     private static volatile Field xsField;
     private static volatile Field ysField;
     private static volatile Field shownField;
     // ZombieBuddy injects this read into viewpoint.interact.ForageFinds, so the
     // transformed caller needs public access to the one-time fallback flag.
     public static volatile boolean warned;
+    private static volatile int projectionTraceCount;
+    private static volatile boolean fallbackTraceReported;
+    private static volatile int lastTracedPinIndex = Integer.MIN_VALUE;
+    private static volatile float lastTracedGroundOffset = Float.NaN;
+
+    public static synchronized void traceProjection(
+            int index, float groundOffset, float playerHeight, float sceneLift, float arrowY, float pinHeight) {
+        if (projectionTraceCount >= MAX_PROJECTION_TRACES) return;
+        if (index == lastTracedPinIndex && Float.compare(groundOffset, lastTracedGroundOffset) == 0) return;
+        projectionTraceCount++;
+        lastTracedPinIndex = index;
+        lastTracedGroundOffset = groundOffset;
+        System.out.println("[ChilaSeda Viewpoint foraging arrow] event=projected pinIndex=" + index
+                + " arrowOffset=" + groundOffset + " playerHeight=" + playerHeight
+                + " sceneLift=" + sceneLift + " arrowY=" + arrowY + " pinHeight=" + pinHeight);
+    }
+
+    public static synchronized void traceFallback(String reason) {
+        if (fallbackTraceReported || projectionTraceCount >= MAX_PROJECTION_TRACES) return;
+        fallbackTraceReported = true;
+        projectionTraceCount++;
+        System.out.println("[ChilaSeda Viewpoint foraging arrow] event=fallback reason=" + reason);
+    }
 
     @Patch.OnEnter(skipOn = true)
     public static boolean drawProjectedArrow(
@@ -27,12 +51,16 @@ public final class ForagingArrowCameraProjection {
             @Patch.Argument(5) float pinHeight) {
         // This projection belongs only to Viewpoint's integrated forage API.
         // Keep the original arrow path when that API is absent.
-        if (!SearchFogBridge.nativeForageEnabled()) return false;
+        if (!SearchFogBridge.nativeForageEnabled()) {
+            traceFallback("integrated-forage-disabled");
+            return false;
+        }
         try {
             int[] xs = (int[]) field("xs").get(null);
             int[] ys = (int[]) field("ys").get(null);
             boolean[] shown = (boolean[]) field("shown").get(null);
             if (index < 0 || index >= xs.length || index >= ys.length || index >= shown.length) {
+                traceFallback("pin-index-out-of-range:" + index);
                 return false;
             }
 
@@ -41,12 +69,16 @@ public final class ForagingArrowCameraProjection {
             float dx = pinX - player.getX();
             float dz = pinZ - player.getY();
             float distance = (float) Math.hypot(dx, dz);
-            if (distance < 1.0e-5f) return false;
+            if (distance < 1.0e-5f) {
+                traceFallback("pin-at-player-position");
+                return false;
+            }
 
             float arrowX = player.getX() + dx / distance * viewpoint.platform.Tuning.findArrowRadius;
             float arrowZ = player.getY() + dz / distance * viewpoint.platform.Tuning.findArrowRadius;
-            float arrowY = playerHeight + sceneLift(lift, arrowX, arrowZ)
-                    + (float) ForageTuningBridge.nativeGroundArrowOffset();
+            float localSceneLift = sceneLift(lift, arrowX, arrowZ);
+            float groundArrowOffset = (float) ForageTuningBridge.nativeGroundArrowOffset();
+            float arrowY = playerHeight + localSceneLift + groundArrowOffset;
 
             // Convert the arrow-to-pin vector to camera screen axes, then find the
             // horizontal world direction that projects along that same screen ray.
@@ -81,11 +113,17 @@ public final class ForagingArrowCameraProjection {
             float screenX = targetX * rightX + targetZ * rightZ;
             float screenY = targetX * upX + targetY * upY + targetZ * upZ;
             float determinant = rightX * upZ - rightZ * upX;
-            if (Math.abs(determinant) < 1.0e-4f) return false;
+            if (Math.abs(determinant) < 1.0e-4f) {
+                traceFallback("camera-projection-singular");
+                return false;
+            }
 
             float worldX = (screenX * upZ - rightZ * screenY) / determinant;
             float worldZ = (rightX * screenY - upX * screenX) / determinant;
-            if (Math.abs(worldX) + Math.abs(worldZ) < 1.0e-5f) return false;
+            if (Math.abs(worldX) + Math.abs(worldZ) < 1.0e-5f) {
+                traceFallback("zero-projection-vector");
+                return false;
+            }
             float angle = (float) Math.atan2(worldZ, worldX);
 
             frame.scene.groundDraws.arrow(
@@ -97,8 +135,10 @@ public final class ForagingArrowCameraProjection {
                     pinHeight,
                     frame.camY - pinZ,
                     shown[index]);
+            traceProjection(index, groundArrowOffset, playerHeight, localSceneLift, arrowY, pinHeight);
             return true;
         } catch (Throwable error) {
+            traceFallback("exception:" + error.getClass().getName());
             if (!warned) {
                 warned = true;
                 System.err.println("[ChilaSeda Viewpoint foraging arrow] Projection fallback: " + error);
@@ -107,7 +147,9 @@ public final class ForagingArrowCameraProjection {
         }
     }
 
-    private static Field field(String name) throws ReflectiveOperationException {
+    // ZombieBuddy injects this helper call into viewpoint.interact.ForageFinds,
+    // so the transformed caller must be able to invoke it across packages.
+    public static Field field(String name) throws ReflectiveOperationException {
         Field value;
         if ("xs".equals(name)) value = xsField;
         else if ("ys".equals(name)) value = ysField;
@@ -123,7 +165,7 @@ public final class ForagingArrowCameraProjection {
         return value;
     }
 
-    private static float sceneLift(FarRelief.Lift lift, double x, double y) throws ReflectiveOperationException {
+    public static float sceneLift(FarRelief.Lift lift, double x, double y) throws ReflectiveOperationException {
         if (lift == null) return 0.0f;
         Object result = lift.getClass().getMethod("scene", double.class, double.class).invoke(lift, x, y);
         return ((Number) result).floatValue();

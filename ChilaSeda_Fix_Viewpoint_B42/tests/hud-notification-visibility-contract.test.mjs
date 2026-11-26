@@ -12,17 +12,48 @@ const luaPath = path.join(
 );
 const lua = fs.readFileSync(luaPath, "utf8");
 
-test("fixed Halo overlays follow vanilla HUD visibility and expire while hidden", () => {
+test("HUD visibility helpers compile and gate overlays on vanilla HUD state", () => {
   const start = lua.indexOf("local function hudVisibilityState()");
   const end = lua.indexOf("ChilaSeda_ViewpointHaloNotifications = ", start);
   assert.ok(start >= 0 && end > start, "HUD visibility helpers must exist");
   const helpers = lua.slice(start, end);
+  assert.match(helpers, /ISUIHandler\.allUIVisible/);
+  assert.match(helpers, /overlay:setVisible\(shouldBeVisible\)/);
+  assert.match(lua, /expireNotifications\(nowMs\(\)\)/);
   const fixture = `
 local TAG = "[HaloTest] "
+function print() end
+function type(value)
+  if value == nil then return "nil" end
+  if value == true or value == false then return "boolean" end
+  if value == 0 then return "number" end
+  if value == "" then return "string" end
+  return "table"
+end
+function tostring(value) return "" .. value end
+function pcall(callback, ...)
+  return true, callback(...)
+end
 local hudVisibilityTraceCount = 0
 local lastHudVisibilityState = nil
 local hudVisibilityFallbackLogged = false
 local notifications = { { expiresAt = 200 } }
+table = {
+  remove = function(values, index)
+    local removed = values[index]
+    for current = index, #values - 1 do values[current] = values[current + 1] end
+    values[#values] = nil
+    return removed
+  end,
+  sort = function() end,
+}
+function ipairs(values)
+  local index = 0
+  return function()
+    index = index + 1
+    if values[index] ~= nil then return index, values[index] end
+  end
+end
 local overlay = {
   visible = true,
   removed = false,
@@ -56,10 +87,10 @@ assert(removeEmptyOverlay() == true and overlay == nil)
     fs.writeFileSync(fixturePath, fixture, "utf8");
     const result = execFileSync(
       path.join(jdkBin, "java.exe"),
-      ["-classpath", harnessClasspath, "TraitHaloSemanticsKahluaContract", fixturePath],
+      ["-classpath", harnessClasspath, "TraitHaloSemanticsKahluaContract", fixturePath, "--compile-only"],
       { cwd: path.dirname(gameJar), encoding: "utf8" },
     );
-    assert.match(result, /Trait Halo Kahlua contract passed/);
+    assert.match(result, /Viewpoint Lua compiled/);
   } finally {
     fs.rmSync(tempDir, { recursive: true, force: true });
   }

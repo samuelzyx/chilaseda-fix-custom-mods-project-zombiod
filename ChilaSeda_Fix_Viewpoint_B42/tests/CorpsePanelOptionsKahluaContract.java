@@ -18,7 +18,12 @@ public final class CorpsePanelOptionsKahluaContract {
                 KEY_LMENU = 56, KEY_RMENU = 184,
                 KEY_LSHIFT = 42, KEY_RSHIFT = 54,
                 isKeyDown = function(key) return heldKeys[key] == true end,
-                getKeyName = function(key) return key == 48 and "B" or tostring(key) end,
+                getKeyName = function(key)
+                    if key == 48 then return "B" end
+                    if key == 34 then return "G" end
+                    if key == 32 then return "D" end
+                    return tostring(key)
+                end,
             }
             UIFont = { Small = "small", Medium = "medium" }
             local conditionColors = {}
@@ -116,6 +121,8 @@ public final class CorpsePanelOptionsKahluaContract {
             assert(page.id == "ChilaSeda_Fix_Viewpoint_B42", "settings page id should be stable")
             assert(registered["nativeActionModifier"] ~= nil, "native forage modifier must remain available")
             assert(registered["animalCorpseActionModifier"] ~= nil, "animal corpse modifier selector must be registered")
+            assert(registered["nativeActionModifier"].value == 2, "Alt should be the default forage modifier")
+            assert(registered["animalCorpseActionModifier"].value == 2, "Alt should be the default animal modifier")
             assert(#registered["animalCorpseActionModifier"].items == 7, "animal selector should offer all modifiers")
             assert(registered["corpseWearStyle"] ~= nil, "wear indicator selector must be registered")
             assert(#registered["corpseWearStyle"].items == 2, "wear selector should offer bar and frame")
@@ -126,6 +133,16 @@ public final class CorpsePanelOptionsKahluaContract {
             end
             assert(hasForageTitle, "native forage section title should describe pinned finds")
             assert(hasCorpseTitle, "animal corpse settings section should be visible")
+
+            page.apply()
+            assert(ChilaSedaViewpointNativeActionModifier == "ALT", "Alt should apply as the forage default")
+            assert(ChilaSedaViewpointAnimalCorpseActionModifier == "ALT", "Alt should apply as the animal default")
+            assert(ChilaSedaViewpointFormatNativeActionKey(34) == "Alt+G", "forage prompt should show Alt+G by default")
+            assert(ChilaSedaViewpointFormatAnimalCorpseActionKey(32) == "Alt+D", "animal prompt should show Alt+D by default")
+            heldKeys[56] = true
+            assert(ChilaSedaViewpointNativeActionModifierMatches(), "forage actions should accept Alt by default")
+            assert(ChilaSedaViewpointAnimalCorpseActionModifierMatches(), "animal actions should accept Alt by default")
+            heldKeys[56] = nil
 
             registered["animalCorpseActionModifier"].value = "Mayús"
             registered["corpseWearStyle"].value = 2

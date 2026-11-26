@@ -23,7 +23,7 @@ function zombieBuddyJarPath() {
   return "J:/SteamLibrary/steamapps/workshop/content/108600/3619862853/mods/ZombieBuddy/libs/ZombieBuddy.jar";
 }
 
-test("camera gestures classify bolado, vertical, reves, execution and reject short/slow strokes", () => {
+test("camera gestures classify deliberate strokes, reject short strokes and accept slow input", () => {
   const jdkBin = path.resolve(modRoot, "../.tools/jdk-25.0.5/bin");
   const gameJar = gameJarPath();
   assert.ok(fs.existsSync(gameJar), `Project Zomboid Java archive not found: ${gameJar}`);
@@ -69,9 +69,9 @@ test("Java gesture bridge selects one vanilla attack and restores its original l
 });
 
 test("selected Viewpoint archive contains the exposed combat gesture bridge", () => {
-  assert.match(modInfo, /^modversion=2\.0\.128$/m);
+  assert.match(modInfo, /^modversion=2\.0\.151$/m);
   const jarLine = modInfo.match(/^javaJarFile=(.+)$/m)?.[1];
-  assert.equal(jarLine, "media/java/client/ChilaSedaViewpointHalo-2.0.122.jar");
+  assert.equal(jarLine, "media/java/client/ChilaSedaViewpointHalo-2.0.151.jar");
   const archive = path.join(modRoot, "42", jarLine);
   assert.ok(fs.existsSync(archive), `selected Java archive not found: ${archive}`);
 
@@ -80,8 +80,11 @@ test("selected Viewpoint archive contains the exposed combat gesture bridge", ()
   assert.ok(listing.split(/\r?\n/).includes("chilaseda/viewpointhalo/CombatGesturesBridge.class"));
 });
 
-test("gesture activation uses Ctrl, samples a sub-second stroke, and arms on left click", () => {
-  assert.match(gestureLua, /local MAX_STROKE_MS = 900/);
+test("gesture activation draws while Ctrl is held, accepts slow strokes, and arms on left click", () => {
+  assert.doesNotMatch(gestureLua, /MAX_STROKE_MS/);
+  assert.match(gestureLua, /local PENDING_MS = 1000/);
+  assert.match(gestureLua, /showGesture\(stroke\.points, nil, nowMs\(\) \+ DISPLAY_MS\)/);
+  assert.match(gestureLua, /#points < 2 and not display\.label/);
   assert.match(gestureLua, /local function controlIsDown\(\)[\s\S]*?Keyboard\.KEY_LCONTROL[\s\S]*?Keyboard\.KEY_RCONTROL/);
   assert.match(gestureLua, /Events\.OnMouseDown\.Add\(onMouseDown\)/);
   assert.match(gestureLua, /local function leftMouseDown\(\)[\s\S]*?bridge\.leftMouseDown/);
@@ -99,12 +102,35 @@ test("gesture attack override restores vanilla choices and writes runtime diagno
     "ready; mouse capture and vanilla attack bridge connected",
     "capture started source=org.lwjglx.input.Mouse.getDX/getDY",
     "capture ended points=",
+    "durationMs=",
     "recognized ",
     "armed ",
+    "attack choice ready before click kind=",
+    "left-click accepted pre-armed gesture=",
+    "fallback=arm-on-click reason=pre-arm-unavailable",
     "attack started with gesture ",
     "gesture stayed vanilla: ",
     "vanilla choices restored",
   ]) {
     assert.ok(gestureLua.includes(marker), `missing DebugLog marker: ${marker}`);
   }
+  assert.match(gestureLua, /local MAX_TRACE_LINES = 128/);
+  assert.match(gestureLua, /local TRACE_ENABLED = true/);
+  assert.match(gestureLua, /if not TRACE_ENABLED or traceLines >= MAX_TRACE_LINES then return end/);
+});
+
+test("gesture overlay stays above the game and a noisy camera tail keeps the recognized stroke", () => {
+  assert.match(gestureLua, /overlay:setAlwaysOnTop\(true\)/);
+  assert.match(gestureLua, /overlay:bringToTop\(\)/);
+  assert.doesNotMatch(gestureLua, /overlay:backMost\(\)/);
+  assert.match(gestureLua, /kept last recognized .* after noisy camera tail/);
+  assert.match(fs.readFileSync(path.join(modRoot, "tests/CombatGesturesKahluaContract.java"), "utf8"),
+    /overlay must render above the world and other UI/);
+});
+
+test("gesture mapping picks attack types distinct from the vanilla DEFAULT", () => {
+  const contract = fs.readFileSync(path.join(modRoot, "tests/CombatGesturesBridgeContract.java"), "utf8");
+  assert.match(contract, /swing != AttackType\.MELEE_SWING/);
+  assert.match(contract, /overhead != AttackType\.OVERHEAD/);
+  assert.match(contract, /backhand != AttackType\.UPPERCUT/);
 });

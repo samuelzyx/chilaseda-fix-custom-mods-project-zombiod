@@ -7,8 +7,11 @@ if not viewpointLoaded or type(ViewpointLoot) ~= "table" then
 end
 
 local TAG = "[ChilaSeda_ViewpointHaloNotifications] "
-local MAX_NOTIFICATIONS = 3
+local MAX_TRANSIENT_NOTIFICATIONS = 3
 local DISPLAY_MS = 6000
+local PROTECTED_DISPLAY_MS = 15000
+local REPEAT_GROUP_WINDOW_MS = 750
+local MAX_NOTICE_TRACE_LINES = 32
 local LEVEL_UP_GREEN = { r = 0.35, g = 1, b = 0.48 }
 local TRAIT_HARMFUL_RED = { r = 1, g = 0.38, b = 0.34 }
 local XP_ICON_DEFAULT = "media/ui/SkillPanel/SkillUnit_fill.png"
@@ -52,13 +55,153 @@ local overlay
 local hudVisibilityTraceCount = 0
 local lastHudVisibilityState = nil
 local hudVisibilityFallbackLogged = false
+local notificationSequence = 0
+local noticeTraceCount = 0
+local groupedNoticeTraceCount = 0
+local wrapText
 
 local function nowMs()
 	if type(getTimestampMs) == "function" then return getTimestampMs() end
 	return math.floor(os.clock() * 1000)
 end
 
-local function wrapText(text, maxChars)
+if ChilaSedaViewpointHaloXPEnabled == nil then ChilaSedaViewpointHaloXPEnabled = true end
+
+local function notificationLifetime(priority, requestedDurationMs)
+    local duration = tonumber(requestedDurationMs) or DISPLAY_MS
+    if priority == "protected" and duration < PROTECTED_DISPLAY_MS then
+        duration = PROTECTED_DISPLAY_MS
+    end
+    return math.max(0, duration)
+end
+
+local function sortNotifications()
+    table.sort(notifications, function(left, right)
+        local leftProtected = left.priority == "protected"
+        local rightProtected = right.priority == "protected"
+        if leftProtected ~= rightProtected then return leftProtected end
+        if left.createdAt ~= right.createdAt then return left.createdAt < right.createdAt end
+        return left.sequence < right.sequence
+    end)
+end
+
+local function transientNotificationCount()
+    local count = 0
+    for _, entry in ipairs(notifications) do
+        if entry.priority ~= "protected" then count = count + 1 end
+    end
+    return count
+end
+
+local function notificationGroupKey(entry)
+    local color = entry.color or {}
+    local arrowColor = entry.arrowColor or {}
+    local iconColor = entry.iconColor or {}
+    local parts = {
+        tostring(entry.priority or "transient"),
+        tostring(entry.baseText or entry.text or ""),
+        tostring(color.r or ""),
+        tostring(color.g or ""),
+        tostring(color.b or ""),
+        tostring(entry.arrow),
+        tostring(arrowColor.r or ""),
+        tostring(arrowColor.g or ""),
+        tostring(arrowColor.b or ""),
+        tostring(iconColor.r or ""),
+        tostring(iconColor.g or ""),
+        tostring(iconColor.b or ""),
+    }
+    for _, icon in ipairs(entry.icons or {}) do
+        parts[#parts + 1] = tostring(icon)
+    end
+    return table.concat(parts, "\31")
+end
+
+local function groupRepeatedNotification(entry)
+    if type(entry) ~= "table" or type(entry.createdAt) ~= "number" then return nil end
+    local groupKey = notificationGroupKey(entry)
+    for index = #notifications, 1, -1 do
+        local current = notifications[index]
+        local lastRepeatedAt = current and (current.lastRepeatedAt or current.createdAt)
+        if current and current.groupKey == groupKey
+                and type(lastRepeatedAt) == "number"
+                and entry.createdAt >= lastRepeatedAt
+                and entry.createdAt - lastRepeatedAt <= REPEAT_GROUP_WINDOW_MS then
+            current.baseText = current.baseText or current.text or ""
+            current.repeatCount = (tonumber(current.repeatCount) or 1) + 1
+            current.lastRepeatedAt = entry.createdAt
+            current.text = current.baseText .. " (x" .. tostring(current.repeatCount) .. ")"
+            current.lines = type(wrapText) == "function" and wrapText(current.text, 68) or { current.text }
+            current.createdAt = entry.createdAt
+            current.sequence = entry.sequence or current.sequence
+            current.durationMs = entry.durationMs or current.durationMs
+            current.expiresAt = entry.expiresAt or current.expiresAt
+            sortNotifications()
+            return current
+        end
+    end
+    return nil
+end
+
+local function enqueueNotification(entry)
+    if type(entry) ~= "table" then return false, nil end
+    entry.baseText = entry.baseText or entry.text or ""
+    entry.repeatCount = tonumber(entry.repeatCount) or 1
+    entry.lastRepeatedAt = entry.lastRepeatedAt or entry.createdAt
+    entry.groupKey = entry.groupKey or notificationGroupKey(entry)
+    local grouped = groupRepeatedNotification(entry)
+    if grouped then return true, nil, grouped end
+    notifications[#notifications + 1] = entry
+    local evicted
+    while transientNotificationCount() > MAX_TRANSIENT_NOTIFICATIONS do
+        local oldestIndex
+        local oldestSequence
+        for index, candidate in ipairs(notifications) do
+            if candidate.priority ~= "protected"
+                    and (oldestSequence == nil or candidate.sequence < oldestSequence) then
+                oldestIndex = index
+                oldestSequence = candidate.sequence
+            end
+        end
+        if not oldestIndex then break end
+        evicted = table.remove(notifications, oldestIndex)
+    end
+    sortNotifications()
+    return true, evicted, nil
+end
+
+local function expireNotifications(current)
+    for index = #notifications, 1, -1 do
+        local entry = notifications[index]
+        if type(entry.expiresAt) == "number" and entry.expiresAt <= current then
+            table.remove(notifications, index)
+        end
+    end
+    sortNotifications()
+end
+
+local function traceNotice(event, entry)
+    if event == "grouped" then
+        if groupedNoticeTraceCount >= 12 then return end
+        groupedNoticeTraceCount = groupedNoticeTraceCount + 1
+    else
+        if noticeTraceCount >= MAX_NOTICE_TRACE_LINES then return end
+        noticeTraceCount = noticeTraceCount + 1
+    end
+    local source = tostring(entry.source or "unspecified"):gsub("[\r\n]", " ")
+    local color = entry.color or {}
+    local function component(value)
+        if type(value) ~= "number" then return "na" end
+        return string.format("%.3f", value)
+    end
+    local text = tostring(entry.text or ""):gsub("%s+", " "):sub(1, 96)
+    print(TAG .. "notice event=" .. event .. " priority=" .. tostring(entry.priority)
+        .. " source=" .. source .. " durationMs=" .. tostring(entry.durationMs)
+        .. " rgb=" .. component(color.r) .. "," .. component(color.g) .. "," .. component(color.b)
+        .. " text=" .. text .. " active=" .. tostring(#notifications))
+end
+
+wrapText = function(text, maxChars)
 	local lines = {}
 	local line = ""
 	for word in tostring(text):gmatch("%S+") do
@@ -231,15 +374,22 @@ local function sleepTraitKind(text)
 	return nil
 end
 
-local function sleepTraitDisplay(kind)
-	local key = kind == "lessSleep"
+local function sleepTraitDisplay(kind, pointsUp)
+	local needsLessSleep = kind == "lessSleep"
+	if type(pointsUp) == "boolean" then
+		if kind == "lessSleep" then
+			needsLessSleep = pointsUp
+		elseif kind == "moreSleep" then
+			needsLessSleep = not pointsUp
+		end
+	end
+	local key = needsLessSleep
 		and "UI_ChilaSeda_ViewpointHalo_LessSleep"
 		or "UI_ChilaSeda_ViewpointHalo_MoreSleep"
-	local fallback = kind == "lessSleep"
-		and "Needs less sleep (shorter sleep duration)"
-		or "Needs more sleep (longer sleep duration)"
+	local fallback = needsLessSleep and "Needs less sleep" or "Needs more sleep"
 	local translated = translatedText(key)
-	return translated or fallback, translated and "translation" or "fallback"
+	return translated or fallback, translated and "translation" or "fallback",
+		needsLessSleep and "less" or "more"
 end
 
 local function sleepTraitDelta(kind, pointsUp)
@@ -297,7 +447,8 @@ local function traitIconForMessage(text)
 	return nil
 end
 
-local function addNotification(text, color, arrow, arrowColor, icon, traitStyle, iconColor)
+local function addNotification(text, color, arrow, arrowColor, icon, traitStyle, iconColor,
+        priority, source, durationMs)
 	if type(text) ~= "string" or text == "" then return false end
 	if traitStyle and not icon then icon = traitIconForMessage(text) end
 	local icons = {}
@@ -313,7 +464,11 @@ local function addNotification(text, color, arrow, arrowColor, icon, traitStyle,
 	end)
 	text = text:gsub("^%s*(.-)%s*$", "%1")
 	if text == "" then return false end
-	notifications[#notifications + 1] = {
+	local createdAt = nowMs()
+	notificationSequence = notificationSequence + 1
+	local noticePriority = priority == "protected" and "protected" or "transient"
+	local displayMs = notificationLifetime(noticePriority, durationMs)
+	local entry = {
 		text = text,
 		lines = wrapText(text, 68),
 		icons = icons,
@@ -321,9 +476,17 @@ local function addNotification(text, color, arrow, arrowColor, icon, traitStyle,
 		arrow = arrow,
 		arrowColor = arrowColor,
 		iconColor = iconColor,
-		expiresAt = nowMs() + DISPLAY_MS,
+		priority = noticePriority,
+		source = source or "unspecified",
+		createdAt = createdAt,
+		sequence = notificationSequence,
+		durationMs = displayMs,
+		expiresAt = createdAt + displayMs,
 	}
-	while #notifications > MAX_NOTIFICATIONS do table.remove(notifications, 1) end
+	local queued, evicted, grouped = enqueueNotification(entry)
+	if not queued then return false end
+	traceNotice(grouped and "grouped" or "queued", grouped or entry)
+	if evicted then traceNotice("evicted", evicted) end
 	return true
 end
 
@@ -367,12 +530,6 @@ local function syncOverlayVisibility()
 		end
 	end
 	return shouldBeVisible
-end
-
-local function expireNotifications(current)
-	while #notifications > 0 and notifications[1].expiresAt <= current do
-		table.remove(notifications, 1)
-	end
 end
 
 local function removeEmptyOverlay()
@@ -465,8 +622,17 @@ end
 
 if Events and Events.OnTick then Events.OnTick.Add(keepOverlayBehindUI) end
 if Events and Events.OnTickEvenPaused then Events.OnTickEvenPaused.Add(keepOverlayBehindUI) end
-function ChilaSeda_ViewpointHaloNotifications.showFixed(text, color, icon)
-	if not addNotification(text, color, nil, nil, icon) then return false end
+function ChilaSeda_ViewpointHaloNotifications.showFixed(text, color, icon, durationMs, source)
+	if source == "RuneExp" and ChilaSedaViewpointHaloXPEnabled == false then return false end
+	if not addNotification(text, color, nil, nil, icon, nil, nil,
+			"transient", source or "fixed", durationMs) then return false end
+	createOverlay()
+	return true
+end
+
+function ChilaSeda_ViewpointHaloNotifications.showProtected(text, color, icon, durationMs, source)
+	if not addNotification(text, color, nil, nil, icon, nil, nil,
+			"protected", source or "external", durationMs) then return false end
 	createOverlay()
 	return true
 end
@@ -478,7 +644,8 @@ local function onSkillLevelUp(player, perk, level, gainedLevel)
 	if not ok or type(perkName) ~= "string" or perkName == "" then return end
 	-- Keep the native level-up indicator and the +1 text; no extra skill icon.
 	if addNotification(getText("UI_ChilaSeda_ViewpointHalo_LevelUp", perkName),
-			LEVEL_UP_GREEN, nil, nil, "media/ui/ArrowUp.png", nil, LEVEL_UP_GREEN) then
+			LEVEL_UP_GREEN, nil, nil, "media/ui/ArrowUp.png", nil, LEVEL_UP_GREEN,
+			"protected", "LevelPerk") then
 		createOverlay()
 	end
 end
@@ -501,7 +668,7 @@ local function installRuneExpHaloHook()
 				local sign = xp > 0 and "+" or ""
 				ChilaSeda_ViewpointHaloNotifications.showFixed(
 					 getText("UI_ChilaSeda_ViewpointHalo_XP", sign .. string.format("%.2f", xp), name),
-					{ r = 1, g = 0.78, b = 0.32 }, perkIconFor(perk))
+					{ r = 1, g = 0.78, b = 0.32 }, perkIconFor(perk), nil, "RuneExp")
 			end
 		end
 		return original(self, perk, amount, ...)
@@ -538,10 +705,24 @@ local function installHaloTextHelperHook()
 	local function wrapMethod(name, colorSelector, arrowSelector, arrowColorSelector, iconSelector)
 		local original = javaHelper[name]
 		if original == nil then return end
+		local function isZombieCharacter(character)
+			if character == nil then return false end
+			if type(instanceof) == "function" then
+				local ok, result = pcall(instanceof, character, "IsoZombie")
+				if ok and result == true then return true end
+			end
+			local ok, method = pcall(function() return character.isZombie end)
+			if ok and type(method) == "function" then
+				local success, result = pcall(method, character)
+				if success and result == true then return true end
+			end
+			return false
+		end
 		proxy[name] = function(...)
 			local args = { ... }
 			local player, message = args[1], args[2]
-			if isLocalPlayer(player) and type(message) == "string" then
+			local zombieCharacter = isZombieCharacter(player)
+			if (isLocalPlayer(player) or zombieCharacter) and type(message) == "string" then
 				local normalizedMessage = message:lower():gsub("%s+", " ")
 				if normalizedMessage:find("zombies nearby", 1, true)
 						and normalizedMessage:find("slowing down", 1, true) then
@@ -561,8 +742,8 @@ local function installHaloTextHelperHook()
 				if arrowSelector then arrow = arrowSelector(args) end
 				if arrowColorSelector then arrowColor = arrowColorSelector(args, color) end
 				local sleepKind = sleepTraitKind(message)
-				local labelSource
-				if sleepKind then message, labelSource = sleepTraitDisplay(sleepKind) end
+				local labelSource, sleepNeed
+				if sleepKind then message, labelSource, sleepNeed = sleepTraitDisplay(sleepKind, arrow) end
 				local semanticColor
 				if sleepKind and arrow ~= nil then
 					local inputArrow = arrow
@@ -577,6 +758,7 @@ local function installHaloTextHelperHook()
 						print(TAG .. "sleep-trait kind=" .. sleepKind
 							.. " input=" .. inputDirection .. " display=" .. displayDirection
 							.. " effect=" .. tostring(effect) .. " color=" .. colorName
+							.. " outcome=sleep-need-" .. tostring(sleepNeed)
 							.. " label-source=" .. tostring(labelSource))
 					end
 				else
@@ -602,7 +784,11 @@ local function installHaloTextHelperHook()
 						end
 					end
 				end
-				addNotification(message, color, arrow, arrowColor, icon, traitStyle)
+				local priority = zombieCharacter and "transient" or "protected"
+				local source = zombieCharacter and "HaloTextHelper.zombie." .. tostring(name)
+					or "HaloTextHelper." .. tostring(name)
+				addNotification(message, color, arrow, arrowColor, icon, traitStyle,
+					nil, priority, source)
 				createOverlay()
 				return
 			end

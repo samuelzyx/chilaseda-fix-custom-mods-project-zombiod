@@ -17,7 +17,12 @@ const projection = fs.readFileSync(
 );
 
 test("floor arrow height is an independent saved and live calibration", () => {
-  assert.match(projection, /playerHeight \+ sceneLift\(lift, arrowX, arrowZ\)[\s\S]*?nativeGroundArrowOffset\(\)/);
+  assert.match(projection, /float localSceneLift = sceneLift\(lift, arrowX, arrowZ\)[\s\S]*?nativeGroundArrowOffset\(\)[\s\S]*?float arrowY = playerHeight \+ localSceneLift \+ groundArrowOffset/);
+  assert.match(projection, /event=projected pinIndex=[\s\S]*?arrowOffset=[\s\S]*?arrowY=/);
+  assert.match(projection, /event=fallback reason=/);
+  assert.match(projection, /integrated-forage-disabled/);
+  assert.match(projection, /camera-projection-singular/);
+  assert.match(projection, /MAX_PROJECTION_TRACES = 32/);
   assert.match(panel, /groundArrowEntry = ISTextEntryBox:new/);
   assert.match(panel, /CalibrationWindow:onGroundArrowLower/);
   assert.match(panel, /CalibrationWindow:onGroundArrowRaise/);

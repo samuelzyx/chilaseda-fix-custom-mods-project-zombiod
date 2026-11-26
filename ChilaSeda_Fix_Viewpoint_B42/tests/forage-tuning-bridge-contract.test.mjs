@@ -60,6 +60,60 @@ test("Viewpoint Java bridge reads and updates the installed native pin tuning sa
   }
 });
 
+test("Viewpoint injected ForageFinds can call the projection field helper across packages", () => {
+  const jars = configuredJars();
+  const archivePath = path.join(
+    modRoot,
+    "42/media/java/client/ChilaSedaViewpointHalo-2.0.151.jar",
+  );
+  const harness = path.join(modRoot, "tests/ForagingArrowFieldAccessContract.java");
+  const projectionSource = path.join(
+    modRoot,
+    "Source/chilaseda/viewpointhalo/ForagingArrowCameraProjection.java",
+  );
+  const searchFogStub = path.join(modRoot, "tests/ForagingArrowSearchFogStub.java");
+  const tuningStub = path.join(modRoot, "tests/ForagingArrowTuningStub.java");
+  assert.ok(fs.existsSync(archivePath), `selected Java archive not found: ${archivePath}`);
+  assert.match(projection, /public static Field field\(String name\)/);
+
+  const jdkBin = path.resolve(modRoot, "../.tools/jdk-25.0.5/bin");
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "viewpoint-forage-field-access-"));
+  try {
+    const classpath = `${jars.game};${jars.viewpoint};${jars.buddy}`;
+    execFileSync(
+      path.join(jdkBin, "javac.exe"),
+      ["-classpath", classpath, "-d", tempDir, projectionSource, searchFogStub, tuningStub, harness],
+    );
+    const archiveClasses = path.join(tempDir, "selected-archive-classes");
+    fs.mkdirSync(archiveClasses);
+    execFileSync(
+      path.join(jdkBin, "jar.exe"),
+      ["xf", archivePath, "chilaseda/viewpointhalo/ForagingArrowCameraProjection.class"],
+      { cwd: archiveClasses },
+    );
+    assert.ok(fs.existsSync(path.join(archiveClasses,
+      "chilaseda/viewpointhalo/ForagingArrowCameraProjection.class")),
+    "the selected archive must contain the projection class under test");
+    const javap = execFileSync(
+      path.join(jdkBin, "javap.exe"),
+      ["-public", "-classpath", archiveClasses,
+        "chilaseda.viewpointhalo.ForagingArrowCameraProjection"],
+      { encoding: "utf8" },
+    );
+    assert.match(javap, /public static java\.lang\.reflect\.Field field\(java\.lang\.String\)/);
+    assert.match(javap, /public static synchronized void traceProjection\(/);
+    assert.match(javap, /public static float sceneLift\(/);
+    const result = execFileSync(
+      path.join(jdkBin, "java.exe"),
+      ["-classpath", `${classpath};${tempDir}`, "viewpoint.interact.ForagingArrowFieldAccessContract"],
+      { cwd: path.dirname(jars.game), encoding: "utf8" },
+    );
+    assert.match(result, /cross-package field helper access passed/);
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
 test("native calibration adapter uses the bridge and reports one bounded failure", () => {
   assert.match(bridge, /@Exposer\.LuaClass\(name = "ChilaSedaViewpointForageTuningJ"\)/);
   assert.match(bridge, /getDeclaredField\("findPinHeight"\)/);
@@ -77,7 +131,7 @@ test("native calibration adapter uses the bridge and reports one bounded failure
   assert.match(panel, /calibration panel unavailable:/);
   assert.match(panel, /groundArrowEntry = ISTextEntryBox:new/);
   assert.match(panel, /Calibration\.saveAt\([\s\S]*?settings\.groundArrowOffset/);
-  assert.match(modInfo, /javaJarFile=media\/java\/client\/ChilaSedaViewpointHalo-2\.0\.122\.jar/);
+  assert.match(modInfo, /javaJarFile=media\/java\/client\/ChilaSedaViewpointHalo-2\.0\.151\.jar/);
 });
 
 test("Kahlua adapter connects, writes each changed calibration once, and retries when unavailable", () => {

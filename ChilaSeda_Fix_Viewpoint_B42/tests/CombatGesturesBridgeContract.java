@@ -14,8 +14,9 @@ public final class CombatGesturesBridgeContract {
         AttackType swing = CombatGesturesBridge.chooseAttack("swing", weapon);
         AttackType overhead = CombatGesturesBridge.chooseAttack("overhead", weapon);
         AttackType backhand = CombatGesturesBridge.chooseAttack("backhand", weapon);
-        if (swing == null || overhead == null || backhand == null) {
-            throw new AssertionError("gesture candidates must resolve to vanilla attacks");
+        if (swing != AttackType.MELEE_SWING || overhead != AttackType.OVERHEAD
+                || backhand != AttackType.UPPERCUT) {
+            throw new AssertionError("gestures must select distinct vanilla attack animations");
         }
 
         String armed = CombatGesturesBridge.armAttack(weapon, "swing");

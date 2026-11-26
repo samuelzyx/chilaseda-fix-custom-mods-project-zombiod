@@ -19,14 +19,18 @@ test("local F10 replacement avoids the Kahlua getSimpleName failure and is bound
   assert.match(scan, /ChilaSedaViewpointTextureFixScanJ/);
   assert.match(scan, /getObjectName/);
   assert.match(scan, /MAX_OBJECT_LINES = 64/);
-  assert.match(scan, /local scanner installed removedWorkshop=/);
+  assert.match(scan, /binding=Ctrl\+Alt\+F10 plainF10=screenshot removedWorkshop=/);
+  assert.match(scan, /event=scan-start/);
+  assert.match(scan, /event=scan-end result=ok/);
+  assert.match(scan, /Keyboard\.KEY_LCONTROL/);
+  assert.match(scan, /Keyboard\.KEY_LMENU/);
   assert.match(scan, /warnOnce\("scan"/);
   assert.doesNotMatch(scan, /event\.callbacks/);
   assert.match(bridge, /LuaEventManager\.getEvents/);
   assert.match(bridge, /event\.callbacks\.remove\(index\)/);
   assert.doesNotMatch(scan, /getClass\s*\(|getSimpleName/);
-  assert.match(modInfo, /modversion=2\.0\.128/);
-  assert.match(modInfo, /javaJarFile=media\/java\/client\/ChilaSedaViewpointHalo-2\.0\.122\.jar/);
+  assert.match(modInfo, /modversion=2\.0\.151/);
+  assert.match(modInfo, /javaJarFile=media\/java\/client\/ChilaSedaViewpointHalo-2\.0\.151\.jar/);
   assert.match(modInfo, /loadModAfter=.*ZombieBuddy,vpfix/);
 });
 
@@ -78,7 +82,15 @@ ChilaSedaViewpointTextureFixScanJ = {
         return removed
     end,
 }
-Keyboard = { KEY_F10 = 121 }
+local downKeys = {}
+Keyboard = {
+    KEY_F10 = 68,
+    KEY_LCONTROL = 29,
+    KEY_RCONTROL = 157,
+    KEY_LMENU = 56,
+    KEY_RMENU = 184,
+    isKeyDown = function(key) return downKeys[key] == true end,
+}
 isServer = function() return false end
 local function makeObject(index)
     local spriteName = index == 70 and "floors_bathroom_01_0" or ("bathroom_01_" .. tostring(index))
@@ -112,24 +124,37 @@ assert(callbacks:get(0) == unrelated, "unrelated key callback should keep its or
 assert(keyEvent.callbacks == nil, "PZ event tables expose Add/Remove, not their Java callback list")
 local removalLogged = false
 for _, line in ipairs(logs) do
-    if string.find(line, "local scanner installed removedWorkshop=1", 1, true) then removalLogged = true end
+    if string.find(line, "binding=Ctrl+Alt+F10 plainF10=screenshot removedWorkshop=1", 1, true) then removalLogged = true end
 end
 assert(removalLogged, "replacement should log successful removal through the Java event bridge")
+callbacks:get(1)(Keyboard.KEY_F10)
+local plainF10StartedScan = false
+for _, line in ipairs(logs) do
+    if string.find(line, "event=scan-start", 1, true) then plainF10StartedScan = true end
+end
+assert(not plainF10StartedScan, "plain F10 must remain available for Project Zomboid screenshots")
+downKeys[Keyboard.KEY_LCONTROL] = true
+downKeys[Keyboard.KEY_LMENU] = true
 callbacks:get(1)(Keyboard.KEY_F10)
 local objectLines = 0
 local sawInstall = false
 local sawTruncation = false
 local sawEnd = false
+local sawScanStart = false
+local sawScanResult = false
 for _, line in ipairs(logs) do
     if string.find(line, " object=IsoObject", 1, true) then objectLines = objectLines + 1 end
-    if string.find(line, "local scanner installed removedWorkshop=1", 1, true) then sawInstall = true end
+    if string.find(line, "binding=Ctrl+Alt+F10 plainF10=screenshot removedWorkshop=1", 1, true) then sawInstall = true end
     if string.find(line, "truncated=5 object(s)", 1, true) then sawTruncation = true end
     if string.find(line, "end objects=69 printed=64", 1, true) then sawEnd = true end
+    if string.find(line, "event=scan-start binding=Ctrl+Alt+F10", 1, true) then sawScanStart = true end
+    if string.find(line, "event=scan-end result=ok", 1, true) then sawScanResult = true end
 end
 assert(objectLines == 64, "scanner output should stop at the configured cap")
 assert(sawInstall, "installation and Workshop callback removal should be logged")
 assert(sawTruncation and sawEnd, "scan summary should report skipped floor objects and capped rows")
-assert(#logs <= 68, "F10 scan output should stay bounded")
+assert(sawScanStart and sawScanResult, "the chord-triggered scan should log execution and outcome")
+assert(#logs <= 70, "chord-triggered scan output should stay bounded")
 `;
     const contractPath = path.join(tempDir, "texturefix-scan-contract.lua");
     fs.writeFileSync(contractPath, `${prelude}\n${scan}\n${assertions}`, "utf8");

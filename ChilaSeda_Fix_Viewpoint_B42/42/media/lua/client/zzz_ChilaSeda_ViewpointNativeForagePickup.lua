@@ -5,10 +5,11 @@ local TAG = "[ChilaSeda_ViewpointNativeForagePickup] "
 local AIM_RADIUS = 110
 local MAX_REACH = 12
 local PIN_LIFT = 0.35
+local CLOSE_PIN_PROXIMITY_REACH = 1.5
 local PICKUP_PROMPT_GAP = 8
 local PROMPT_REFRESH_MS = 16
-local DIRECT_PICKUP_REACH = 1.5
-local MAX_PICKUP_TRACE_LINES = 32
+local MAX_PICKUP_TRACE_LINES = 128
+local MAX_PICKUP_INPUT_TRACE_LINES = 64
 local MAX_PICKUP_LIFECYCLE_TRACE_LINES = 16
 local RAT_DROPPINGS_FULL_TYPE = "Base.Dung_Rat"
 local UNKNOWN_PIN_TEXTURE = "media/textures/Foraging/pinIconUnknown.png"
@@ -16,6 +17,9 @@ local POISON_PIN_TEXTURE = "media/ui/SkullPoison.png"
 local MAX_NATIVE_WORLD_PIN_TRACE_LINES = 12
 local warned = false
 local pickupTraceCount = 0
+local pickupInputTraceCount = 0
+local pickupModifierRejectTraceCount = 0
+local lastPickupModifierRejectTraceAt = nil
 local pickupLifecycleTraceCount = 0
 local nativeWorldPinTraceCount = 0
 local tracedNativeWorldPinIds = {}
@@ -38,6 +42,22 @@ local function tracePickupLifecycle(message)
     if pickupLifecycleTraceCount >= MAX_PICKUP_LIFECYCLE_TRACE_LINES then return end
     pickupLifecycleTraceCount = pickupLifecycleTraceCount + 1
     print(TAG .. "lifecycle=" .. tostring(pickupLifecycleTraceCount) .. " " .. message)
+end
+
+local function tracePickupInput(message, modifierRejected)
+    if pickupInputTraceCount >= MAX_PICKUP_INPUT_TRACE_LINES then return end
+    if modifierRejected then
+        if pickupModifierRejectTraceCount >= 16 then return end
+        local now = type(getTimestampMs) == "function" and getTimestampMs() or nil
+        if type(now) == "number" and type(lastPickupModifierRejectTraceAt) == "number"
+                and now >= lastPickupModifierRejectTraceAt and now - lastPickupModifierRejectTraceAt < 2000 then
+            return
+        end
+        pickupModifierRejectTraceCount = pickupModifierRejectTraceCount + 1
+        if type(now) == "number" then lastPickupModifierRejectTraceAt = now end
+    end
+    pickupInputTraceCount = pickupInputTraceCount + 1
+    print(TAG .. "input=" .. tostring(pickupInputTraceCount) .. " " .. message)
 end
 
 local function nativeViewpointActive()
@@ -174,53 +194,66 @@ local function wrapRatDroppingsWorldPins()
     return true
 end
 
-local function targetPin(icon, bridge, centerX, centerY, width, height)
-    if not icon or icon.isBeingRemoved or type(icon.onMouseDoubleClick) ~= "function"
-            or not iconIsSeen(icon) or iconAlpha(icon) <= 0 then
-        return nil
+local function rejectTargetPin(diagnostics, reason)
+    if diagnostics then diagnostics.rejected[reason] = (diagnostics.rejected[reason] or 0) + 1 end
+    return nil
+end
+
+local function targetPin(icon, bridge, centerX, centerY, width, height, diagnostics)
+    if not icon or icon.isBeingRemoved or type(icon.onMouseDoubleClick) ~= "function" then
+        return rejectTargetPin(diagnostics, "icon-unavailable")
     end
+    if not iconIsSeen(icon) then return rejectTargetPin(diagnostics, "not-seen") end
+    if iconAlpha(icon) <= 0 then return rejectTargetPin(diagnostics, "transparent") end
     local distance = icon.distanceToPlayer
-    if type(distance) ~= "number" or distance > MAX_REACH then return nil end
+    if type(distance) ~= "number" then return rejectTargetPin(diagnostics, "distance-unavailable") end
+    if distance > MAX_REACH then return rejectTargetPin(diagnostics, "out-of-reach") end
 
     local x, y, z = icon.xCoord, icon.yCoord, icon.zCoord or 0
-    if type(x) ~= "number" or type(y) ~= "number" or type(z) ~= "number" then return nil end
+    if type(x) ~= "number" or type(y) ~= "number" or type(z) ~= "number" then
+        return rejectTargetPin(diagnostics, "coordinates-unavailable")
+    end
     -- ISForageIcon stores the tile corner; Viewpoint Foraging projects its centre.
     if icon.iconClass == "forageIcon" and x == math.floor(x) and y == math.floor(y) then
         x, y = x + 0.5, y + 0.5
     end
     local ok, inFront = pcall(bridge.projectNativeForagePin, x, y, z, PIN_LIFT)
     if not ok or inFront ~= true then
-        if distance <= DIRECT_PICKUP_REACH then
+        if distance <= CLOSE_PIN_PROXIMITY_REACH then
+            if diagnostics then diagnostics.closeFallback = diagnostics.closeFallback + 1 end
             return AIM_RADIUS * AIM_RADIUS + distance * distance, centerX, centerY, true
         end
-        return nil
+        return rejectTargetPin(diagnostics, "camera-projection-rejected")
     end
 
     local okScreen, screenX, screenY = pcall(function()
         return bridge.nativeForagePinScreenX(), bridge.nativeForagePinScreenY()
     end)
     if not okScreen then
-        if distance <= DIRECT_PICKUP_REACH then
+        if distance <= CLOSE_PIN_PROXIMITY_REACH then
+            if diagnostics then diagnostics.closeFallback = diagnostics.closeFallback + 1 end
             return AIM_RADIUS * AIM_RADIUS + distance * distance, centerX, centerY, true
         end
-        return nil
+        return rejectTargetPin(diagnostics, "screen-projection-error")
     end
     if type(screenX) ~= "number" or type(screenY) ~= "number"
             or screenX < 0 or screenX > width or screenY < 0 or screenY > height then
-        if distance <= DIRECT_PICKUP_REACH then
+        if distance <= CLOSE_PIN_PROXIMITY_REACH then
+            if diagnostics then diagnostics.closeFallback = diagnostics.closeFallback + 1 end
             return AIM_RADIUS * AIM_RADIUS + distance * distance, centerX, centerY, true
         end
-        return nil
+        return rejectTargetPin(diagnostics, "projected-outside-screen")
     end
     local dx, dy = screenX - centerX, screenY - centerY
     local distanceSquared = dx * dx + dy * dy
     if distanceSquared <= AIM_RADIUS * AIM_RADIUS then
         return distanceSquared, screenX, screenY, false
     end
-    if distance <= DIRECT_PICKUP_REACH then
+    if distance <= CLOSE_PIN_PROXIMITY_REACH then
+        if diagnostics then diagnostics.closeFallback = diagnostics.closeFallback + 1 end
         return AIM_RADIUS * AIM_RADIUS + distance * distance, centerX, centerY, true
     end
-    return nil
+    return rejectTargetPin(diagnostics, "outside-aim-radius")
 end
 
 local function eachNativeIcon(manager, callback)
@@ -276,25 +309,30 @@ local function foundItemName(icon)
 end
 
 local function aimedForagePin(manager)
+    local diagnostics = { iconCount = 0, eligible = 0, closeFallback = 0, rejected = {} }
     local bridge = ChilaSedaViewpointFogJ
     if not bridge or type(bridge.prepareNativeForagePins) ~= "function"
             or type(bridge.projectNativeForagePin) ~= "function" then
         warnOnce("native 3D pin projection is unavailable")
-        return nil
+        return nil, "reason=pin-bridge-unavailable"
     end
     local ok, prepared = pcall(bridge.prepareNativeForagePins, 0)
-    if not ok or prepared ~= true then return nil end
+    if not ok or prepared ~= true then return nil, "reason=pin-preparation-failed" end
 
     local okSize, width, height = pcall(function()
         return bridge.nativeForagePinScreenWidth(), bridge.nativeForagePinScreenHeight()
     end)
-    if not okSize then return nil end
-    if type(width) ~= "number" or type(height) ~= "number" or width <= 0 or height <= 0 then return nil end
+    if not okSize then return nil, "reason=screen-size-error" end
+    if type(width) ~= "number" or type(height) ~= "number" or width <= 0 or height <= 0 then
+        return nil, "reason=screen-size-unavailable"
+    end
     local centerX, centerY = width / 2, height / 2
     local best, bestDistance
     eachNativeIcon(manager, function(icon)
+        diagnostics.iconCount = diagnostics.iconCount + 1
         local distance, screenX, screenY, closeFallback =
-            targetPin(icon, bridge, centerX, centerY, width, height)
+            targetPin(icon, bridge, centerX, centerY, width, height, diagnostics)
+        if distance then diagnostics.eligible = diagnostics.eligible + 1 end
         if distance and (not bestDistance or distance < bestDistance) then
             best = {
                 icon = icon, screenX = screenX, screenY = screenY,
@@ -304,21 +342,26 @@ local function aimedForagePin(manager)
         end
     end)
     if best then best.itemName = foundItemName(best.icon) end
-    return best
-end
-
-local function nativeTargetContainer(icon)
-    local page
-    if type(getPlayerInventory) == "function" then
-        local ok, value = pcall(getPlayerInventory, icon.player)
-        if ok then page = value end
+    local reason = best and "selected" or "no-pin-passed-target-filters"
+    local rejected = diagnostics.rejected
+    local summary = "reason=" .. reason
+        .. " icons=" .. tostring(diagnostics.iconCount)
+        .. " eligible=" .. tostring(diagnostics.eligible)
+        .. " closeFallback=" .. tostring(diagnostics.closeFallback)
+        .. " rejectedNotSeen=" .. tostring(rejected["not-seen"] or 0)
+        .. " rejectedTransparent=" .. tostring(rejected.transparent or 0)
+        .. " rejectedOutOfReach=" .. tostring(rejected["out-of-reach"] or 0)
+        .. " rejectedProjection=" .. tostring(rejected["camera-projection-rejected"] or 0)
+        .. " rejectedScreenError=" .. tostring(rejected["screen-projection-error"] or 0)
+        .. " rejectedScreen=" .. tostring(rejected["projected-outside-screen"] or 0)
+        .. " rejectedAim=" .. tostring(rejected["outside-aim-radius"] or 0)
+    if best then
+        summary = summary .. " icon=" .. tostring(best.icon.iconID)
+            .. " distance=" .. tostring(best.icon.distanceToPlayer)
+            .. " screenX=" .. tostring(best.screenX) .. " screenY=" .. tostring(best.screenY)
+            .. " targeting=" .. (best.closeFallback and "proximity" or "crosshair")
     end
-    local container = page and page.inventory or nil
-    if not container and icon.character and type(icon.character.getInventory) == "function" then
-        local ok, value = pcall(icon.character.getInventory, icon.character)
-        if ok then container = value end
-    end
-    return container
+    return best, summary
 end
 
 local function playerNumber(character)
@@ -366,79 +409,40 @@ local function tagForagePickupAction(action, icon, mode)
         action.ChilaSedaViewpointPickupMode = mode
         if action.ChilaSedaViewpointLifecycleTraced then return end
         action.ChilaSedaViewpointLifecycleTraced = true
-        for _, methodName in ipairs({ "start", "complete", "perform", "stop" }) do
+        for _, methodName in ipairs({ "isValid", "start", "complete", "perform", "stop" }) do
             local eventName = methodName
             local original = action[eventName]
             if type(original) == "function" then
                 action[eventName] = function(self, ...)
                     local actionMode = self.ChilaSedaViewpointPickupMode or "unknown"
                     local pinId = self.ChilaSedaViewpointPinId or self.iconID
-                    tracePickupLifecycle("event=" .. eventName .. " mode=" .. tostring(actionMode)
-                        .. " icon=" .. tostring(pinId))
-                    local result = original(self, ...)
+                    local results = { original(self, ...) }
+                    if eventName == "isValid" then
+                        local validity = tostring(results[1])
+                        if self.ChilaSedaViewpointValidity ~= validity then
+                            self.ChilaSedaViewpointValidity = validity
+                            local running = "unknown"
+                            if self.character and type(self.character.isRunning) == "function" then
+                                local ok, value = pcall(self.character.isRunning, self.character)
+                                if ok then running = tostring(value) end
+                            end
+                            tracePickupLifecycle("event=isValid result=" .. tostring(results[1])
+                                .. " mode=" .. tostring(actionMode) .. " running=" .. running
+                                .. " icon=" .. tostring(pinId))
+                        end
+                    else
+                        tracePickupLifecycle("event=" .. eventName .. " mode=" .. tostring(actionMode)
+                            .. " icon=" .. tostring(pinId))
+                    end
                     if eventName == "complete" then
-                        tracePickupLifecycle("event=complete-result result=" .. tostring(result)
+                        tracePickupLifecycle("event=complete-result result=" .. tostring(results[1])
                             .. " mode=" .. tostring(actionMode) .. " icon=" .. tostring(pinId))
                     end
-                    return result
+                    return unpack(results)
                 end
             end
         end
     end
-end
-
-local function directCloseForagePickup(icon)
-    if icon.iconClass ~= "forageIcon" or type(icon.distanceToPlayer) ~= "number"
-            or icon.distanceToPlayer > DIRECT_PICKUP_REACH or not icon.square
-            or not icon.itemList or type(icon.itemList.size) ~= "function"
-            or type(icon.itemList.get) ~= "function"
-            or not ISForageAction or type(ISForageAction.new) ~= "function"
-            or not ISTimedActionQueue or type(ISTimedActionQueue.add) ~= "function" then
-        return false, "outside-direct-range-or-missing-forage-data"
-    end
-
-    local container = nativeTargetContainer(icon)
-    if not container or type(container.isItemAllowed) ~= "function" then
-        return false, "target-container-unavailable"
-    end
-    local allowedOk, allowed = pcall(container.isItemAllowed, container, icon.itemObj)
-    if not allowedOk or allowed ~= true then return false, "target-container-rejected-item" end
-
-    local itemDataList = {}
-    local sizeOk, size = pcall(icon.itemList.size, icon.itemList)
-    if not sizeOk or type(size) ~= "number" then return false, "item-list-unavailable" end
-    for index = 0, size - 1 do
-        local itemOk, item = pcall(icon.itemList.get, icon.itemList, index)
-        if not itemOk or not item or type(item.getFullType) ~= "function" then
-            return false, "item-data-unavailable"
-        end
-        local typeOk, fullType = pcall(item.getFullType, item)
-        if not typeOk or type(fullType) ~= "string" then return false, "item-type-unavailable" end
-        local data = { type = fullType }
-        if type(instanceof) == "function" then
-            local foodOk, isFood = pcall(instanceof, item, "Food")
-            if foodOk and isFood then
-                local poisonOk, poisonPower = pcall(item.getPoisonPower, item)
-                local detectionOk, detection = pcall(item.getPoisonDetectionLevel, item)
-                if poisonOk then data.poisonPower = poisonPower end
-                if detectionOk then data.poisonDetectionLevel = detection end
-            end
-        end
-        itemDataList[#itemDataList + 1] = data
-    end
-    if #itemDataList == 0 then return false, "empty-item-list" end
-
-    local createOk, action = pcall(ISForageAction.new, ISForageAction,
-        icon.character, icon.iconID, itemDataList, container, icon.itemType)
-    if not createOk or not action or type(action.isValid) ~= "function" then
-        return false, "vanilla-action-unavailable"
-    end
-    local validOk, valid = pcall(action.isValid, action)
-    if not validOk or valid ~= true then return false, "vanilla-action-not-valid-at-current-square" end
-    tagForagePickupAction(action, icon, "direct-close")
-    local queueOk, queueError = pcall(ISTimedActionQueue.add, action)
-    if not queueOk then return false, "queue-failed:" .. tostring(queueError) end
-    return true, "queued"
 end
 
 local function queueNativePickup(target)
@@ -448,14 +452,6 @@ local function queueNativePickup(target)
         tracePickup("result=suppressed reason=already-queued icon=" .. tostring(icon.iconID))
         return true
     end
-    local direct, directReason = directCloseForagePickup(icon)
-    if direct then
-        tracePickup("result=queued mode=direct-close distance=" .. tostring(icon.distanceToPlayer)
-            .. " targeting=" .. (target.closeFallback and "proximity" or "crosshair")
-            .. " icon=" .. tostring(icon.iconID))
-        return true
-    end
-
     local x, y = 0, 0
     if type(icon.getX) == "function" then
         local ok, value = pcall(icon.getX, icon)
@@ -474,7 +470,7 @@ local function queueNativePickup(target)
     y = target.screenY - height
     if type(icon.setX) == "function" then pcall(icon.setX, icon, x) end
     if type(icon.setY) == "function" then pcall(icon.setY, icon, y) end
-    -- Keep vanilla's walkAdj route outside direct reach; record whether it queued ISForageAction.
+    -- All distances use vanilla doForage so walkAdj validates reach and preserves queue behavior.
     local queue = ISTimedActionQueue
     local oldAdd = queue and queue.add
     local forageQueued = false
@@ -487,8 +483,22 @@ local function queueNativePickup(target)
             return oldAdd(action, ...)
         end
     end
+    local utilities = luautils
+    local oldWalkAdj = utilities and utilities.walkAdj
+    local walkAdjCalls, walkAdjResult = 0, nil
+    local wrappedWalkAdj
+    if type(oldWalkAdj) == "function" then
+        wrappedWalkAdj = function(character, square, ...)
+            walkAdjCalls = walkAdjCalls + 1
+            local results = { oldWalkAdj(character, square, ...) }
+            walkAdjResult = results[1]
+            return unpack(results)
+        end
+        utilities.walkAdj = wrappedWalkAdj
+    end
     local ok, err = pcall(icon.onMouseDoubleClick, icon, x, y)
     if queue and type(oldAdd) == "function" then queue.add = oldAdd end
+    if utilities and utilities.walkAdj == wrappedWalkAdj then utilities.walkAdj = oldWalkAdj end
     if type(icon.setX) == "function" then pcall(icon.setX, icon, oldX) end
     if type(icon.setY) == "function" then pcall(icon.setY, icon, oldY) end
     if not ok then
@@ -498,32 +508,43 @@ local function queueNativePickup(target)
     else
         tracePickup("result=" .. (forageQueued and "queued" or "not-queued")
             .. " mode=vanilla distance=" .. tostring(icon.distanceToPlayer)
-            .. " directFallback=" .. tostring(directReason) .. " icon=" .. tostring(icon.iconID))
+            .. " targeting=" .. (target.closeFallback and "proximity" or "crosshair")
+            .. " walkAdjCalls=" .. tostring(walkAdjCalls)
+            .. " walkAdj=" .. tostring(walkAdjResult) .. " icon=" .. tostring(icon.iconID))
     end
     return ok and forageQueued
 end
 
 local function aimedFindForPickup()
-    if not nativeViewpointActive() or not nativeForageAvailable() then return end
-    if type(isGamePaused) == "function" and isGamePaused() then return end
+    if not nativeViewpointActive() then return nil, "reason=viewpoint-inactive" end
+    if not nativeForageAvailable() then return nil, "reason=forage-api-unavailable" end
+    if type(isGamePaused) == "function" and isGamePaused() then return nil, "reason=game-paused" end
 
     local player = type(getSpecificPlayer) == "function" and getSpecificPlayer(0) or nil
-    if not player then return end
+    if not player then return nil, "reason=player-unavailable" end
     local manager = getManager(player)
-    if not manager or manager.isSearchMode ~= true then return end
+    if not manager then return nil, "reason=search-manager-unavailable" end
+    if manager.isSearchMode ~= true then return nil, "reason=search-mode-inactive" end
 
     local okVehicle, vehicle = pcall(player.getVehicle, player)
-    if okVehicle and vehicle ~= nil then return end
+    if not okVehicle then return nil, "reason=vehicle-state-error" end
+    if vehicle ~= nil then return nil, "reason=player-in-vehicle" end
 
     return aimedForagePin(manager)
 end
 
 local function pickupAimedFind()
-    local selected = aimedFindForPickup()
+    local selected, diagnostic = aimedFindForPickup()
     if not selected then
-        tracePickup("result=no-target mode=aimed")
+        tracePickup("result=no-target mode=aimed " .. tostring(diagnostic or "reason=unknown"))
         return
     end
+    tracePickup("target=selected item=" .. tostring(selected.itemName or "unknown")
+        .. " icon=" .. tostring(selected.icon and selected.icon.iconID)
+        .. " distance=" .. tostring(selected.icon and selected.icon.distanceToPlayer)
+        .. " screenX=" .. tostring(selected.screenX) .. " screenY=" .. tostring(selected.screenY)
+        .. " targeting=" .. (selected.closeFallback and "proximity" or "crosshair")
+        .. " " .. tostring(diagnostic or "reason=selected"))
     queueNativePickup(selected)
 end
 
@@ -538,24 +559,20 @@ local function pickupKeyName()
         local ok, value = pcall(Keyboard.getKeyName, key)
         if ok and type(value) == "string" and value ~= "" then name = value end
     end
-    return "Ctrl+" .. (name or tostring(key))
+    return "Alt+" .. (name or tostring(key))
 end
 
-local function controlIsDown()
+local function defaultModifierIsDown()
     if Keyboard and type(Keyboard.isKeyDown) == "function" then
-        local left, right = Keyboard.KEY_LCONTROL, Keyboard.KEY_RCONTROL
-        if left ~= nil then
+        local left, right = Keyboard.KEY_LMENU or 56, Keyboard.KEY_RMENU or 184
+        if left then
             local ok, down = pcall(Keyboard.isKeyDown, left)
             if ok and down then return true end
         end
-        if right ~= nil then
+        if right then
             local ok, down = pcall(Keyboard.isKeyDown, right)
             if ok and down then return true end
         end
-    end
-    if type(isCtrlKeyDown) == "function" then
-        local ok, down = pcall(isCtrlKeyDown)
-        return ok and down == true
     end
     return false
 end
@@ -565,7 +582,7 @@ local function configuredModifierIsDown()
         local ok, matches = pcall(ChilaSedaViewpointNativeActionModifierMatches)
         return ok and matches == true
     end
-    return controlIsDown()
+    return defaultModifierIsDown()
 end
 
 local function consumeVanillaKeyRelease(key)
@@ -663,11 +680,22 @@ end
 
 local function onKeyStartPressed(key)
     local pickupKey = ChilaSedaViewpointNativeForagePickupKey
-    if type(pickupKey) == "number" and pickupKey > 0 and key == pickupKey
-            and configuredModifierIsDown() then
-        consumeVanillaKeyRelease(key)
-        pickupAimedFind()
+    if type(pickupKey) ~= "number" or pickupKey <= 0 or key ~= pickupKey then return end
+    local modifierMatches = configuredModifierIsDown()
+    local keyLabel = pickupKeyName()
+    if not modifierMatches then
+        tracePickupInput("result=modifier-rejected keyCode=" .. tostring(key)
+            .. " key=" .. tostring(keyLabel or key)
+            .. " configured=" .. tostring(ChilaSedaViewpointNativeActionModifier or "ALT")
+            .. " modifierDown=false", true)
+        return
     end
+    tracePickupInput("result=accepted keyCode=" .. tostring(key)
+        .. " key=" .. tostring(keyLabel or key)
+        .. " configured=" .. tostring(ChilaSedaViewpointNativeActionModifier or "ALT")
+        .. " modifierDown=true")
+    consumeVanillaKeyRelease(key)
+    pickupAimedFind()
 end
 
 if Events and Events.OnKeyStartPressed and type(Events.OnKeyStartPressed.Add) == "function" then

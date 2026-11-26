@@ -1,4 +1,4 @@
-# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.128
+# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.151
 
 <div align="center">
 
@@ -7,6 +7,104 @@
 </div>
 
 ---
+
+## Version 2.0.151
+
+- Adds a translated Viewpoint entry to Options > Mods for the native integrated inventory setting. It controls and saves Viewpoint's existing UI toggle; bounded traces record page registration, apply results and missing-bridge fallback.
+- Translates the native inventory settings labels, descriptions and choice values in Viewpoint's own settings window.
+
+## Version 2.0.150
+
+- Groups identical Halo notices received within 750 ms and adds an `xN` count, extending the notice to the latest occurrence. Different text, priority, or display colors stay separate.
+
+## Version 2.0.147
+
+- Prepares the selected vanilla melee attack as soon as a camera gesture is recognized, before the following left-click reaches the vanilla attack handler. Keeps a bounded trace for pre-arm, click acceptance, attack start and vanilla fallback.
+- Applies the extra-modifier rejection rule to every key chord and covers Ctrl, Alt, Shift, combined modifiers and modifier keys themselves with a table-driven Java contract.
+
+## Version 2.0.149
+
+- Exposes `traceProjection` and `sceneLift` for calls injected into Viewpoint's `ForageFinds`, preventing `IllegalAccessError` during arrow rendering.
+
+## Version 2.0.148
+
+- Exposes the bounded foraging-arrow fallback trace to Viewpoint's injected renderer. This prevents an `IllegalAccessError` from crashing scene construction while rebusqueda pins are rendered.
+
+## Version 2.0.146
+
+- Extends the bounded Halo diagnostic with the message source, normalized RGB color and a short text sample. This distinguishes vanilla good/bad/neutral calls and caller-supplied colors without changing the displayed color.
+
+## Version 2.0.145
+
+- Keeps the native `Enter Vehicle` choice first in Viewpoint's vehicle menu even when the cursor resolves to a mechanics part. Uses the available seat directly, or the installed `Get In The Damn Car!` safe approach plan when the player needs to move to the vehicle. Adds bounded routing diagnostics.
+
+## Version 2.0.144
+
+- Adds bounded render-path diagnostics for native forage arrows, recording the accepted floor offset and final projected arrow height so panel writes can be distinguished from values used by Viewpoint's draw call.
+- Adds a Mod Options switch for XP Halo Notes; turning it off suppresses Rune Exp messages while protected level, trait, and weapon notices remain available.
+- Rephrases the positive sleep-trait Halo as "Descansas bien durmiendo menos".
+- Routes zombie speech Halo notes through the fixed overlay using each notice's original color.
+
+## Version 2.0.143
+
+- Fixes a `NoSuchMethodError`/`IllegalAccessError` fallback in Viewpoint's forage arrow advice by exposing the reflective field helper to the injected `viewpoint.interact.ForageFinds` caller. Adds a cross-package Java contract for the selected archive.
+
+## Version 2.0.142
+
+- Hooks Project Zomboid 42.22.2's `ISInventoryTransferAction.perform` for butcher overflow dropped to the floor. The previous `ISDropItemAction` hook targeted a class that is not present in this build, so its destination Halo notice never installed.
+
+## Version 2.0.141
+
+- Fixes another `IllegalAccessError` in the Viewpoint handover viewport trace by exposing every field, nested sample type and entry point that the injected renderer touches. The contract now compiles from Viewpoint's `viewpoint.render` package to catch cross-package access regressions.
+
+## Version 2.0.140
+
+- Draws camera gesture feedback above the scene and keeps the last recognized strike when camera motion adds a noisy tail.
+- Maps BOLADO, VERTICAL and REVES to distinct vanilla melee attack types instead of silently falling back to DEFAULT.
+
+## Version 2.0.139
+
+- Fixes an `IllegalAccessError` in the graphics settings trace by exposing members accessed from Viewpoint's injected `Graphics.changed` advice. The settings apply trace can no longer crash startup while loading a save.
+
+## Version 2.0.138
+
+- Reserves plain F10 for Project Zomboid screenshots. The replacement TextureFix diagnostic scan now runs only on Ctrl+Alt+F10 and logs its start and outcome.
+
+## Version 2.0.137
+
+- Adds bounded DebugLog traces for daylight rain tint adjustment, skipped conditions, and safe fallback. The trace records daylight, rain intensity, number of drops changed, boost and resulting tint; it does not alter the tint outside the existing daylight rain condition.
+
+## Version 2.0.136
+
+- Keeps weapon suggestions, level-ups and trait changes in the protected Halo queue for at least 15 seconds, above transient XP notices. XP cannot evict these notices or change their expiration times; excess XP notices are capped separately.
+- Adds bounded `notice event=queued/evicted` traces with source, priority and display duration.
+
+## Version 2.0.135
+
+- Sets Alt as the default modifier for forage and animal corpse shortcuts, matching the tested chord that avoids the reported Ctrl interaction conflict. Existing ModOptions selections remain user-controlled.
+- Routes close forage pins through vanilla `ISForageIcon:doForage` and `luautils.walkAdj`, removing the custom action path that skipped adjacency validation and could start then stop without completing. DebugLog now records the adjacency result and the first/failed `ISForageAction:isValid` result.
+
+## Version 2.0.133
+
+- Keeps camera gesture strokes visible while Ctrl is held, even before classification, and leaves an unrecognized trace briefly on screen for feedback.
+- Accepts deliberately slower strokes without a one-second cutoff, gives the follow-up attack click one second, and logs capture duration with the classification result.
+
+## Version 2.0.132
+
+- Adds a bounded butchering trace that records whether the weapon restore hook loads, the primary and secondary items with IDs and containers, queue additions, and isValid/start/perform/complete/stop results for butcher and equip actions. It records actual hand state after each stage so a queued restoration is not mistaken for a completed one.
+
+## Version 2.0.131
+
+- Adds a read-only, bounded trace around Viewpoint's camera handover compositor. It records the OpenGL viewport, scissor box, draw framebuffer, blend state, and screen/offscreen dimensions before and after composition. It samples at most once every 5 seconds, for at most 120 samples, and does not change rendering state.
+
+## Version 2.0.130
+
+- Restores the weapon that was in the primary hand after vanilla queues an animal butchering action. The restore is queued only when `ISButcherAnimal` was actually added, and the log records the item and safe fallback.
+- Adds bounded `graphics.apply` entry/exit traces with settings-window visibility, elapsed time, return state, and Java failure type. A missing Viewpoint state is logged as unavailable.
+
+## Version 2.0.129
+
+- Adds bounded DebugLog traces for accepted and modifier-rejected Ctrl+D/Ctrl+G input, animal-corpse search and projection distances, forage-pin rejection reasons, action queue results, and forage action lifecycle. This build is diagnostic; it does not claim to correct the intermittent close-action failure.
 
 ## Version 2.0.128
 
@@ -36,7 +134,7 @@
 
 ## Version 2.0.122
 
-- Replaces the confusing `Insomne` trait notice with `Menor necesidad de sueño (menos duración al dormir)` and explains the opposite `MoreSleep` trait. Sleep trait arrows consistently point up in green for beneficial changes and down in red for harmful changes; bounded DebugLog traces report the source direction, displayed direction, effect, color and translation fallback.
+- Shows `Necesitas dormir menos` or `Necesitas dormir más` according to the resulting Insomne/Dormilón change in Spanish and English. Sleep trait arrows consistently point up in green for beneficial changes and down in red for harmful changes; bounded DebugLog traces report the input direction, resulting sleep need, effect, color and translation source.
 
 - Scales the floating corpse loot panel's rows, icons and text, and includes the scaled rows in the panel's content height so growing loot panels do not clip items. Bounded DebugLog entries record the selected scale and the font, row and tile dimensions before and after scaling.
 - Adds separate animal corpse shortcut modifier and wear indicator selectors. The corpse panel can show its existing colored wear bar or a frame in the same wear color. Renames the native forage settings section to `Hallazgos con pin de rebusqueda`.
@@ -707,7 +805,7 @@ Native Viewpoint forage pickup now requires Ctrl plus its configured key (G by d
 
 ## 2.0.107 - Use Ctrl gestures before the attack click
 
-Hold Ctrl while moving the camera to draw a gesture, then click to attack (the click can happen before releasing Ctrl). The gesture must finish in under one second; its matching vanilla-supported melee variant is consumed by that attack only. A right-to-left stroke requests a swing, a downward stroke an overhead attack, an ascending diagonal an uppercut or swing, and a curved ascending C requests a floor attack when allowed by the held weapon. The trace and label are drawn on screen; without a compatible gesture, vanilla combat remains in control.
+Hold Ctrl while moving the camera to draw a gesture, then click to attack (the click can happen before releasing Ctrl). The stroke is drawn live and can be made at a deliberate pace; the matching vanilla-supported melee variant is consumed by that attack only. A right-to-left stroke requests a swing, a downward stroke an overhead attack, an ascending diagonal an uppercut or swing, and a curved ascending C requests a floor attack when allowed by the held weapon. Without a compatible gesture, vanilla combat remains in control.
 
 
 ## 2.0.106 - Add camera gesture melee prototype

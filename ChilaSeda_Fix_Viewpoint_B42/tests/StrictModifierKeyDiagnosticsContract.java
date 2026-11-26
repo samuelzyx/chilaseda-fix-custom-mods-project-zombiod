@@ -12,6 +12,26 @@ public final class StrictModifierKeyDiagnosticsContract {
     }
 
     public static void main(String[] args) {
+        boolean[][] chords = {
+            // held Ctrl/Alt/Shift, binding Ctrl/Alt/Shift, key-is Ctrl/Alt/Shift, expected
+            { true, true, true, false, false, false, false, false, false, true }, // Ctrl+Shift+Delete
+            { true, true, false, false, false, false, false, false, false, true }, // Ctrl+Shift+H
+            { false, true, false, false, false, false, false, false, false, true }, // Alt+H
+            { false, false, true, false, false, false, false, false, false, true }, // Shift+H
+            { true, false, false, true, false, false, false, false, false, false }, // declared Ctrl+H
+            { true, true, false, true, false, false, false, false, false, true }, // extra Ctrl+Shift on Ctrl+H
+            { true, false, true, true, false, true, false, false, false, false }, // declared Ctrl+Shift+H
+            { false, false, false, false, false, false, false, false, false, false }, // plain H
+            { true, false, false, false, false, false, true, false, false, false }, // Ctrl key itself
+            { false, true, true, false, true, false, false, false, false, true }, // extra Shift on Alt+H
+        };
+        for (int i = 0; i < chords.length; i++) {
+            boolean[] c = chords[i];
+            check(StrictModifierKeyBindings.shouldSuppressModifiers(
+                    c[0], c[1], c[2], c[3], c[4], c[5], c[6], c[7], c[8]) == c[9],
+                    "unexpected modifier chord result at case " + i);
+        }
+
         PrintStream originalOut = System.out;
         ByteArrayOutputStream captured = new ByteArrayOutputStream();
         Set<Integer> loggedKeys = new HashSet<>();

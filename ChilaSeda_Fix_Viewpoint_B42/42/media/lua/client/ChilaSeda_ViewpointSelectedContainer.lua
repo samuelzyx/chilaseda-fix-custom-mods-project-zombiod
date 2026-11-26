@@ -182,7 +182,7 @@ local function showAlternateDestinationMenu(player, page, selected, items)
 		menu:addOption(destinationName(player, container), page,
 			selectDestinationFromMenu, container)
 	end
-	menu:addOption(translatedText("UI_ChilaSeda_Viewpoint_CancelLeaveInPlace"), nil, nil)
+    menu:addOption(translatedText("UI_ChilaSeda_Viewpoint_CancelLeaveInPlace"), nil, nil)
 	return true
 end
 

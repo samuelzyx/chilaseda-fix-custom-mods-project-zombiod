@@ -1,4 +1,7 @@
 {
-  "UI_ChilaSeda_ViewpointHalo_LessSleep": "Reduced sleep need (shorter sleep duration)",
-  "UI_ChilaSeda_ViewpointHalo_MoreSleep": "Increased sleep need (longer sleep duration)"
+  "UI_ChilaSeda_ViewpointHalo_LessSleep": "You rest well while sleeping less",
+  "UI_ChilaSeda_ViewpointHalo_MoreSleep": "Needs more sleep",
+  "UI_ChilaSeda_ViewpointFix_HaloNotesTitle": "Halo Notes",
+  "UI_ChilaSeda_ViewpointFix_HaloXPEnabled": "Experience messages",
+  "UI_ChilaSeda_ViewpointFix_HaloXPEnabledTooltip": "Show or hide experience messages in Halo Notes."
 }

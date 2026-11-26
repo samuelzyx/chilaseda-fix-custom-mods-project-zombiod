@@ -12,25 +12,34 @@ const pickupPath = path.join(
 );
 const pickup = fs.readFileSync(pickupPath, "utf8");
 const modInfo = fs.readFileSync(path.join(modRoot, "42/mod.info"), "utf8");
+const vanillaForageIcon = fs.readFileSync(
+  "J:/SteamLibrary/steamapps/common/ProjectZomboid/media/lua/client/Foraging/ISForageIcon.lua",
+  "utf8",
+);
 const gameJar = process.env.PZ_PROJECT_ZOMBOID_JAR
   ?? "J:/SteamLibrary/steamapps/common/ProjectZomboid/projectzomboid.jar";
 const jdkBin = path.resolve(modRoot, "../.tools/jdk-25.0.5/bin");
 
-test("Ctrl+G queues an already reachable pin directly and preserves vanilla walkAdj elsewhere", () => {
-  assert.match(pickup, /local DIRECT_PICKUP_REACH = 1\.5/);
-  assert.match(pickup, /directCloseForagePickup\(icon\)/);
-  assert.match(pickup, /action\.isValid, action/);
-  assert.match(pickup, /mode=direct-close/);
+test("Alt+G uses vanilla walkAdj for close and farther forage pins", () => {
+  assert.doesNotMatch(pickup, /directCloseForagePickup/);
+  assert.match(pickup, /local oldWalkAdj = utilities and utilities\.walkAdj/);
+  assert.match(pickup, /walkAdjCalls=/);
+  assert.match(pickup, /event=isValid result=/);
   assert.match(pickup, /forageActionAlreadyQueued\(icon\)/);
   assert.match(pickup, /for _, timedQueue in pairs\(queues\) do/);
   assert.match(pickup, /MAX_PICKUP_LIFECYCLE_TRACE_LINES = 16/);
   assert.match(pickup, /event=complete-result/);
+  assert.match(vanillaForageIcon, /function ISForageIcon:doForage[\s\S]*?luautils\.walkAdj\(self\.character, targetSquare\)[\s\S]*?ISTimedActionQueue\.add\(ISForageAction:new/);
   assert.match(pickup, /reason=already-queued/);
   assert.match(pickup, /target\.closeFallback and "proximity" or "crosshair"/);
   assert.match(pickup, /mode=vanilla/);
-  assert.match(pickup, /MAX_PICKUP_TRACE_LINES = 32/);
-  assert.match(modInfo, /modversion=2\.0\.128/);
-  assert.match(modInfo, /javaJarFile=media\/java\/client\/ChilaSedaViewpointHalo-2\.0\.122\.jar/);
+  assert.match(pickup, /MAX_PICKUP_TRACE_LINES = 128/);
+  assert.match(pickup, /MAX_PICKUP_INPUT_TRACE_LINES = 64/);
+  assert.match(pickup, /result=modifier-rejected keyCode=/);
+  assert.match(pickup, /rejectedProjection=/);
+  assert.match(pickup, /rejectedScreenError=/);
+  assert.match(modInfo, /modversion=2\.0\.151/);
+  assert.match(modInfo, /javaJarFile=media\/java\/client\/ChilaSedaViewpointHalo-2\.0\.151\.jar/);
 
   assert.ok(fs.existsSync(gameJar), `PZ archive not found: ${gameJar}`);
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "viewpoint-forage-close-"));
@@ -61,7 +70,7 @@ function ISUIElement:initialise() end
 function ISUIElement:addToUIManager() end
 function ISUIElement:removeFromUIManager() end
 function ISUIElement:backMost() end
-local calls = { doubleClick = 0, queued = {}, actionData = nil }
+local calls = { doubleClick = 0, walkAdj = 0, queued = {}, actionData = nil }
 local liveQueue = { queue = {} }
 local item = {
     getFullType = function() return "Base.Twig" end,
@@ -87,7 +96,8 @@ isGamePaused = function() return false end
 isCtrlKeyDown = function() return true end
 getTexture = function(name) return name end
 ChilaSedaViewpointNativeForagePickupKey = 71
-ChilaSedaViewpointNativeActionModifierMatches = function() return true end
+local modifierMatches = true
+ChilaSedaViewpointNativeActionModifierMatches = function() return modifierMatches end
 GameKeyboard = { eatKeyPress = function() end }
 ViewpointForage = { found = function()
     return { "vanilla-forage-pin", 10, 20, 0, "vanilla-texture", false, false, true, false }
@@ -106,10 +116,25 @@ local icon = {
     setX = function(self, value) self.x = value end,
     setY = function(self, value) self.y = value end,
 }
-icon.onMouseDoubleClick = function()
+luautils = { walkAdj = function(actionCharacter, square)
+    calls.walkAdj = calls.walkAdj + 1
+    assert(actionCharacter == character and square == icon.square,
+        "vanilla walkAdj should receive the selected character and forage square")
+    if icon.distanceToPlayer > 1.6 then
+        ISTimedActionQueue.add({ Type = "ISWalkToTimedAction", character = character })
+    end
+    return icon.walkAdjResult ~= false
+end }
+icon.onMouseDoubleClick = function(self)
     calls.doubleClick = calls.doubleClick + 1
-    ISTimedActionQueue.add({ Type = "ISForageAction", mode = "vanilla", iconID = 42,
-        character = character })
+    if not container:isItemAllowed(self.itemObj) then return end
+    if luautils.walkAdj(self.character, self.square) then
+        local data = { { type = self.itemObj:getFullType(), poisonPower = 0,
+            poisonDetectionLevel = 0 } }
+        calls.actionData = data
+        ISTimedActionQueue.add(ISForageAction:new(self.character, self.iconID, data,
+            container, self.itemType))
+    end
 end
 local ratIcon = {
     iconID = "rat-world-pin", itemType = "Base.Dung_Rat", itemTexture = {},
@@ -189,33 +214,42 @@ for index = 1, #nativePins, 9 do
         "unpointed rat droppings outside the visible floor and reach must stay hidden")
 end
 local keyHandler = Events.OnKeyStartPressed.callbacks[1]
-assert(type(keyHandler) == "function", "Ctrl+G key handler should register")
+assert(type(keyHandler) == "function", "Alt+G key handler should register")
 keyHandler(71)
-assert(calls.doubleClick == 0, "close pin should bypass vanilla walkAdj callback")
-assert(#calls.queued == 1 and calls.queued[1].mode == nil,
-    "close pin should enqueue ISForageAction directly")
+local sawAcceptedInput = false
+for _, line in ipairs(logs) do
+    if string.find(line, "result=accepted keyCode=71", 1, true) then sawAcceptedInput = true end
+end
+assert(sawAcceptedInput, "accepted Alt+G input should be recorded before pin selection")
+assert(calls.doubleClick == 1 and calls.walkAdj == 1,
+    "close pin should use the vanilla callback and walkAdj check")
+assert(#calls.queued == 1 and calls.queued[1].Type == "ISForageAction",
+    "close pin should queue the forage action through vanilla walkAdj")
 assert(calls.actionData[1].type == "Base.Twig", "vanilla item data should be preserved")
 assert(calls.actionData[1].poisonPower == 0 and calls.actionData[1].poisonDetectionLevel == 0,
     "food poison metadata should be preserved")
-assert(string.find(logs[#logs], "result=queued mode=direct-close", 1, true),
-    "direct pickup should be visible in bounded trace")
-local firstDirectAction = liveQueue.queue[1]
-firstDirectAction.start(firstDirectAction)
-assert(firstDirectAction.complete(firstDirectAction) == true,
+assert(string.find(logs[#logs], "result=queued mode=vanilla", 1, true)
+        and string.find(logs[#logs], "walkAdjCalls=1 walkAdj=true", 1, true),
+    "close pickup should log the vanilla adjacency result")
+local firstCloseAction = liveQueue.queue[1]
+firstCloseAction.isValid(firstCloseAction)
+firstCloseAction.start(firstCloseAction)
+assert(firstCloseAction.complete(firstCloseAction) == true,
     "the instrumented vanilla completion method should preserve its return value")
-local sawDirectStart, sawDirectCompletion = false, false
+local sawValid, sawCloseStart, sawCloseCompletion = false, false, false
 for _, line in ipairs(logs) do
-    if string.find(line, "event=start mode=direct-close", 1, true) then sawDirectStart = true end
-    if string.find(line, "event=complete-result result=true mode=direct-close", 1, true) then
-        sawDirectCompletion = true
+    if string.find(line, "event=isValid result=true mode=vanilla", 1, true) then sawValid = true end
+    if string.find(line, "event=start mode=vanilla", 1, true) then sawCloseStart = true end
+    if string.find(line, "event=complete-result result=true mode=vanilla", 1, true) then
+        sawCloseCompletion = true
     end
 end
-assert(sawDirectStart and sawDirectCompletion,
-    "the bounded lifecycle trace should distinguish start from successful completion")
+assert(sawValid and sawCloseStart and sawCloseCompletion,
+    "the bounded trace should distinguish validity, start, and successful completion")
 keyHandler(71)
-assert(calls.doubleClick == 0 and #calls.queued == 1,
-    "repeating Ctrl+G must not enqueue the same close pin while its forage action is active")
-assert(liveQueue.queue[1] == firstDirectAction,
+assert(calls.doubleClick == 1 and #calls.queued == 1,
+    "repeating Alt+G must not enqueue the same close pin while its forage action is active")
+assert(liveQueue.queue[1] == firstCloseAction,
     "the active close forage action must remain in the timed-action queue")
 assert(string.find(logs[#logs], "result=suppressed reason=already-queued", 1, true),
     "a repeated close-pin shortcut should report the active-action guard")
@@ -223,30 +257,73 @@ assert(string.find(logs[#logs], "result=suppressed reason=already-queued", 1, tr
 icon.distanceToPlayer = 4
 liveQueue.queue = {}
 keyHandler(71)
-assert(calls.doubleClick == 1, "far pin should retain the vanilla walkAdj callback")
-assert(#calls.queued == 2 and calls.queued[2].mode == "vanilla",
-    "vanilla route should still queue ISForageAction")
+assert(calls.doubleClick == 2 and calls.walkAdj == 2,
+    "far pin should use the vanilla walkAdj callback")
+assert(#calls.queued == 3 and calls.queued[3].Type == "ISForageAction"
+        and calls.queued[2].Type == "ISWalkToTimedAction",
+    "far pin should queue its vanilla walk action before ISForageAction")
 assert(string.find(logs[#logs], "result=queued mode=vanilla", 1, true),
     "vanilla pickup outcome should be visible in bounded trace")
-local firstVanillaAction = liveQueue.queue[1]
+local firstVanillaAction = liveQueue.queue[2]
 keyHandler(71)
-assert(calls.doubleClick == 1 and #calls.queued == 2,
-    "repeating Ctrl+G must not enqueue the same far pin while its forage action is active")
-assert(liveQueue.queue[1] == firstVanillaAction,
+assert(calls.doubleClick == 2 and #calls.queued == 3,
+    "repeating Alt+G must not enqueue the same far pin while its forage action is active")
+assert(liveQueue.queue[2] == firstVanillaAction,
     "the active vanilla forage action must remain in the timed-action queue")
 
 icon.distanceToPlayer = 1
 liveQueue.queue = {}
 bridge.projectNativeForagePin = function() return false end
 keyHandler(71)
-assert(calls.doubleClick == 1, "very close pin under Jill should not require a forward projection")
-assert(#calls.queued == 3 and calls.queued[3].mode == nil,
-    "close pin outside the view should still queue the valid forage action")
+assert(calls.doubleClick == 3 and calls.walkAdj == 3,
+    "very close pin under Jill should not require a forward projection")
+assert(#calls.queued == 4 and calls.queued[4].Type == "ISForageAction",
+    "close pin outside the view should still pass through vanilla walkAdj")
 assert(string.find(logs[#logs], "targeting=proximity", 1, true),
     "close fallback should log proximity target selection")
 
+icon.walkAdjResult = false
+liveQueue.queue = {}
+local queueBeforeBlockedPath = #calls.queued
+keyHandler(71)
+assert(calls.doubleClick == 4 and calls.walkAdj == 4,
+    "a close pin that vanilla cannot reach should still be checked by walkAdj")
+assert(#calls.queued == queueBeforeBlockedPath,
+    "an unreachable pin must not queue ISForageAction")
+assert(string.find(logs[#logs], "result=not-queued mode=vanilla", 1, true)
+        and string.find(logs[#logs], "walkAdj=false", 1, true),
+    "an unreachable pin should record vanilla's failed adjacency result")
+icon.walkAdjResult = nil
+
+icon.distanceToPlayer = 4
+liveQueue.queue = {}
+bridge.projectNativeForagePin = function() return false end
+keyHandler(71)
+assert(string.find(logs[#logs], "result=no-target mode=aimed reason=no-pin-passed-target-filters", 1, true),
+    "a pin rejected by projection should report a no-target result")
+assert(string.find(logs[#logs], "rejectedProjection=1", 1, true),
+    "the no-target summary should include projection rejection counts")
+icon.distanceToPlayer = 1
+
 for index = 1, 40 do keyHandler(71) end
-assert(#logs <= 52, "attempt and lifecycle diagnostics must stay bounded")
+local queuedBeforeRejectedModifier = #calls.queued
+modifierMatches = false
+keyHandler(71)
+assert(#calls.queued == queuedBeforeRejectedModifier,
+    "a mismatched modifier must not dispatch a forage action")
+local sawModifierReject = false
+for _, line in ipairs(logs) do
+    if string.find(line, "result=modifier-rejected keyCode=71", 1, true) then
+        sawModifierReject = true
+    end
+end
+assert(sawModifierReject, "a rejected Alt+G chord should be recorded")
+modifierMatches = true
+manager.isSearchMode = false
+keyHandler(71)
+assert(string.find(logs[#logs], "result=no-target mode=aimed reason=search-mode-inactive", 1, true),
+    "a valid shortcut outside search mode should report why it had no target")
+assert(#logs <= 230, "input, attempt, world-pin and lifecycle diagnostics must stay bounded")
 `;
     const luaPath = path.join(tempDir, "native-forage-close-contract.lua");
     fs.writeFileSync(luaPath, `${prelude}\n${pickup}\n${assertions}`, "utf8");

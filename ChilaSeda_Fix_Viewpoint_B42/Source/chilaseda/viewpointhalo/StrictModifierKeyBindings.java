@@ -51,9 +51,8 @@ public final class StrictModifierKeyBindings {
         boolean altIsKey = key == Keyboard.KEY_LMENU || key == Keyboard.KEY_RMENU;
         boolean shiftIsKey = key == Keyboard.KEY_LSHIFT || key == Keyboard.KEY_RSHIFT;
 
-        boolean rejected = (ctrlDown && !ctrlIsKey && !binding.ctrl())
-                || (altDown && !altIsKey && !binding.alt())
-                || (shiftDown && !shiftIsKey && !binding.shift());
+        boolean rejected = shouldSuppressModifiers(ctrlDown, altDown, shiftDown,
+                binding.ctrl(), binding.alt(), binding.shift(), ctrlIsKey, altIsKey, shiftIsKey);
 
         if (!isRawKeyCode(key) && !loggedUnsupportedKeyCode) {
             System.out.println(LOG_TAG + " modifier helper fallback=preserve-key-check reason=unsupported-key-code keyCode=" + key);
@@ -65,6 +64,14 @@ public final class StrictModifierKeyBindings {
                     binding.ctrl(), binding.alt(), binding.shift(), LOGGED_SUPPRESSED_KEYS);
         }
         return rejected;
+    }
+
+    static boolean shouldSuppressModifiers(boolean ctrlDown, boolean altDown, boolean shiftDown,
+            boolean bindingCtrl, boolean bindingAlt, boolean bindingShift,
+            boolean ctrlIsKey, boolean altIsKey, boolean shiftIsKey) {
+        return (ctrlDown && !ctrlIsKey && !bindingCtrl)
+                || (altDown && !altIsKey && !bindingAlt)
+                || (shiftDown && !shiftIsKey && !bindingShift);
     }
 
     public static boolean isDown(int left, int right) {
