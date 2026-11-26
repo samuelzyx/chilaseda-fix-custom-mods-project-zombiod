@@ -357,5 +357,20 @@
   "Tooltip_item_damnJDMManual": "Manual con esquemas de fabricación para vehículos producidos en Japón.",
   "Tooltip_weapon_SkateboardDeck": "Tabla",
   "Tooltip_weapon_SkateboardTrucks": "Ejes",
-  "Tooltip_weapon_SkateboardWheels": "Ruedas"
+  "Tooltip_weapon_SkateboardWheels": "Ruedas",
+  "Tooltip_AutoTailoring_Bandana": "Cose bandanas de tela hasta agotar los materiales.",
+  "Tooltip_AutoTailoring_Sacks": "Cose un saco de arpillera, lo desarma para obtener trozos de arpillera y repite. Solo se consumen hilo o cordel; la hoja pierde filo poco a poco.",
+  "Tooltip_AutoTailoring_Knitting": "Teje el patr?n conocido que m?s XP otorga hasta agotar los ovillos.",
+  "Tooltip_AutoTailoring_Belt": "Cose un cintur?n, lo corta para recuperar la hebilla y un retal de cuero, y repite. Cada ciclo consume un retal de cuero y un hilo grueso.",
+  "Tooltip_AutoTailoring_Needs": "Requisitos:",
+  "Tooltip_AutoTailoring_TakeApart": "Desarmar:",
+  "Tooltip_AutoTailoring_Known": "receta conocida",
+  "Tooltip_AutoTailoring_Surface": "superficie de fabricaci?n cercana",
+  "Tooltip_AutoTailoring_SharpKnife": "cuchillo afilado",
+  "Tooltip_AutoTailoring_HeavyThread": "hilo grueso",
+  "Tooltip_AutoTailoring_CannotStart": "No se puede empezar: falta un requisito marcado en rojo.",
+  "Tooltip_AutoTailoring_MissingKnowledge": "Falta aprender la receta",
+  "Tooltip_HellraiserButterball": "\"Mmmhhrrkkhh… slrrp-slrrrp-slrrrp…\"",
+  "Tooltip_HellraiserChatterer": "\"k’tktktktktktktktktk-kkkrrrkktktktktktk…tktktktktk-tkkrrrk-ktktktktkktktkrrkktktk…\"",
+  "Tooltip_SNT_SpikeBarricade": "Estante de pinchos de dos casillas. Bloquea a los zombis y hiere a todos los que lo tocan. Haz clic derecho para repararlo. La durabilidad y el daño se configuran en Sandbox."
 }

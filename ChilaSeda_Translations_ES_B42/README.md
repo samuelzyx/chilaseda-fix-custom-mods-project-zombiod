@@ -1,4 +1,4 @@
-# ChilaSeda_Translations_ES_B42 - Traducciones al espanol para mods Build 42 1.4.95
+# ChilaSeda_Translations_ES_B42 - Traducciones al espanol para mods Build 42 1.5.3
 
 <div align="center">
 
@@ -7,6 +7,40 @@
 </div>
 
 ---
+
+## Cambios en 1.5.3
+
+- Agrega el texto del boton de Options Search que abre las opciones restantes de la categoria encontrada.
+
+## Cambios en 1.5.2
+
+- Traduce la pagina nativa de inventario de Viewpoint 0.1.7, incluidos todos sus ajustes, descripciones, opciones de orden y los colores de las nueve categorias de objetos.
+- Agrega las etiquetas en espanol de la nueva opcion de inventario integrado en la pagina Viewpoint de Opciones > Mods.
+- Traduce como `Filtros` el encabezado fijo de busqueda de la ventana de Opciones.
+
+## Cambios en 1.5.1
+
+- Escapa los porcentajes literales de las opciones Sandbox de Undead Survivor y Gyde Trait Magazines.
+- Agrega UndeadSuvivor al orden de carga para que sus traducciones locales se apliquen despues del original.
+
+## Cambios en 1.5.0
+
+- Corrige los nombres de Base.Fat, Base.Tallow y los dos cinturones del desierto con textos ASCII.
+- Escapa porcentajes literales en opciones Sandbox y placeholders de Check Around para evitar excepciones del formateador de traducciones.
+
+## Cambios en 1.4.99
+
+- Completa 1,791 claves de nueve catalogos de mods activos, agrega metadatos de idioma y localiza descripciones y etiquetas inglesas que antes aparecian sin traducir.
+- Mantiene nombres propios, modelos, marcas y titulos de emotes cuando el texto funciona como nombre oficial.
+- Conserva intactos los originales de Workshop.
+
+## Cambios en 1.4.97
+
+- Completa 32 claves B42.22 de AutoTailoring para bandanas de tela, sacos de arpillera, tejido, cinturones, requisitos y avisos; conserva intactos los archivos de Workshop.
+
+## Cambios en 1.4.96
+
+- Traduce el menu de organizar alimentos de Inventory Tetris y los avisos Halo de exito y fallo.
 
 ## Cambios en 1.4.59
 
@@ -167,7 +201,7 @@
 
 - Agrega etiquetas en espanol para las acciones de menu de Viewpoint de agregar combustible, apagar fuego, recoger peces, colocar carnada, entrar a vehiculos y controles de colocar/confirmar/girar/cancelar.
 - Completa los textos de las opciones locales de neblina de rebusqueda y limite de FPS del menu.
-- No reemplaza traducciones de AutoTailoring pendientes de autorizacion del autor.
+- En 1.4.56 aun no se incluian traducciones de AutoTailoring.
 
 
 INSTALACION
@@ -1077,3 +1111,8 @@ CAMBIOS EN 1.4.54
   visible y conserva valores funcionales y ajustes.
 - Traduce el tÃ­tulo PZAPI de Has Been Read y la etiqueta Current/Total HP de CombatText.
 
+CAMBIOS EN 1.4.98
+- Traduce etiquetas literales de Mini Health Panel y Hunter Expansion en menus contextuales.
+- Traduce la descripcion de alimentacion cuando Hunter Expansion asigna su tooltip a una opcion.
+- Traduce la etiqueta literal "Menu framerate" que Viewpoint 0.1.7 agrega a Opciones > Graficos.
+- El parche carga despues de Viewpoint, MiniHealthPanel y HunterExpansion; conserva sus originales.

@@ -1,4 +1,7 @@
 ContextMenu_ES = {
+    ContextMenu_ChilaSeda_InventoryTetris_OrganizeFood = "Organizar alimentos",
+    ContextMenu_ChilaSeda_InventoryTetris_FoodFreshness = "Por frescura",
+    ContextMenu_ChilaSeda_InventoryTetris_FoodCalories = "Por calorías",
     ContextMenu_CheckThroughWindow = "Mirar a traves de la ventana",
     ContextMenu_PeekDoor = "Asomarse por la puerta",
     ContextMenu_CheckBehindDoor = "Revisar detras de la puerta",

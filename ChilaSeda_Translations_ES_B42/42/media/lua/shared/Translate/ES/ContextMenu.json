@@ -129,7 +129,7 @@
   "ContextMenu_MinimalDisplayBars_Set_HeightWidth": "Ajustar altura y anchura",
   "ContextMenu_MinimalDisplayBars_Set_Color": "Ajustar color",
   "ContextMenu_MinimalDisplayBars_Hide": "Ocultar",
-  "ContextMenu_MinimalDisplayBars_menu": "Menu",
+  "ContextMenu_MinimalDisplayBars_menu": "Menú",
   "ContextMenu_MinimalDisplayBars_hp": "Salud",
   "ContextMenu_MinimalDisplayBars_hunger": "Hambre",
   "ContextMenu_MinimalDisplayBars_thirst": "Sed",
@@ -289,5 +289,15 @@
   "ContextMenu_KnoxPacks_QualityChange": "Calidad: %1 -> %2",
   "ContextMenu_KnoxPacks_UpgradeQuality": "Mejorar la calidad",
   "ContextMenu_KnoxPacks_UpgradeQualityOf": "Mejorar la calidad de",
-  "ContextMenu_XannyArms_QuickTestKit": "Xanny: kit de prueba de ADS y silenciador integrado"
+  "ContextMenu_XannyArms_QuickTestKit": "Xanny: kit de prueba de ADS y silenciador integrado",
+  "ContextMenu_AutoTailoring_Bandana": "Bandanas de tela",
+  "ContextMenu_AutoTailoring_Sacks": "Sacos de arpillera (coser y desarmar)",
+  "ContextMenu_AutoTailoring_Knitting": "Tejer",
+  "ContextMenu_AutoTailoring_Belt": "Cinturones (coser y cortar)",
+  "ContextMenu_DigMoats": "Cavar fosos",
+  "ContextMenu_CVFE_LaserOff": "Apagar láser",
+  "ContextMenu_CVFE_LaserOn": "Encender láser",
+  "ContextMenu_CVFE_LaserIsOff": "Láser apagado",
+  "ContextMenu_CVFE_LaserIsOn": "Láser encendido",
+  "ContextMenu_CVFE_LaserKey": "Encender/apagar láser"
 }
