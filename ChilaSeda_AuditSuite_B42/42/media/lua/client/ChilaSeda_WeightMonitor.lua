@@ -229,6 +229,28 @@ local vanillaTargets = {
 }
 
 local fullTypeTargets = {
+    -- Authentic Z upgrade duffels documented at 1.00 kg each.
+    ["AuthenticZClothing.Bag_DuffelBag_Festive_Tier_1"] = 1.00,
+    ["AuthenticZClothing.Bag_DuffelBag_Festive_Tier_2"] = 1.00,
+    ["AuthenticZClothing.Bag_DuffelBag_Festive_Tier_3"] = 1.00,
+    ["AuthenticZClothing.Bag_DuffelBagGrey_Tier_1"] = 1.00,
+    ["AuthenticZClothing.Bag_DuffelBagGrey_Tier_2"] = 1.00,
+    ["AuthenticZClothing.Bag_DuffelBagGrey_Tier_3"] = 1.00,
+    ["AuthenticZClothing.Bag_MedicalBag_Tier_1"] = 1.00,
+    ["AuthenticZClothing.Bag_MedicalBag_Tier_2"] = 1.00,
+    ["AuthenticZClothing.Bag_MedicalBag_Tier_3"] = 1.00,
+    ["AuthenticZClothing.Bag_Military_Tier_1"] = 1.00,
+    ["AuthenticZClothing.Bag_Military_Tier_2"] = 1.00,
+    ["AuthenticZClothing.Bag_Military_Tier_3"] = 1.00,
+    ["AuthenticZClothing.Bag_Police_Tier_1"] = 1.00,
+    ["AuthenticZClothing.Bag_Police_Tier_2"] = 1.00,
+    ["AuthenticZClothing.Bag_Police_Tier_3"] = 1.00,
+    ["AuthenticZClothing.Bag_Sheriff_Tier_1"] = 1.00,
+    ["AuthenticZClothing.Bag_Sheriff_Tier_2"] = 1.00,
+    ["AuthenticZClothing.Bag_Sheriff_Tier_3"] = 1.00,
+    ["AuthenticZClothing.Bag_SWAT_Tier_1"] = 1.00,
+    ["AuthenticZClothing.Bag_SWAT_Tier_2"] = 1.00,
+    ["AuthenticZClothing.Bag_SWAT_Tier_3"] = 1.00,
     ["AMRBirds321.PeafowlTrainFeather"] = 0.0022,
     ["ThisIsYourLife.PreservedJournal"] = 0.25,
     ["HomemadeThings.HomemadeHacksaw"] = 0.75,

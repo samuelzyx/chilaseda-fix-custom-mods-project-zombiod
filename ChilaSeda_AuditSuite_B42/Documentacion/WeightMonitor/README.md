@@ -1,4 +1,4 @@
-# Weight Monitor · Audit Suite 2.1.5
+# Weight Monitor · Audit Suite 2.1.11
 
 
 <div align="center">
@@ -8,6 +8,8 @@
 </div>
 
 ## Estado y metas
+
+Los 21 bolsos de mejora de Authentic Z (`AuthenticZClothing.Bag_*_Tier_*`) tienen objetivo de 1.00 kg en el monitor y en VanillaWeightFix. Una lectura posterior debe mostrar `target=1.0`/`MAPPED` y actual de 1.00 kg para confirmar que el mod original y el parche quedaron alineados.
 
 Weight Monitor se trasladó a `ChilaSeda_AuditSuite_B42` junto con las demás herramientas de auditoría. Sus metas, etiquetas y formato de registro no cambiaron. Las correcciones de pesos siguen en `ChilaSeda_Fix_True_Weight_VanillaWeights_B42_3768669395`.
 

@@ -1,4 +1,4 @@
-ChilaSeda Audit Suite (B42) 2.1.1
+ChilaSeda Audit Suite (B42) 2.1.10
 
 ID: ChilaSeda_AuditSuite_B42
 
