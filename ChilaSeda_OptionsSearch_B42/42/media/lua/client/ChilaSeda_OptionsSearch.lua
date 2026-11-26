@@ -5,48 +5,72 @@ require "ISUI/ISButton"
 require "ISUI/ISPanelJoypad"
 
 local TAG = "[ChilaSeda_OptionsSearch] "
+local TRACE_ENABLED = true
+local TRACE_MAX_LINES, traceLines = 24, 0
 local FILTER_HEIGHT, FILTER_TOP = 24, 5
 local FILTER_WIDTH, FILTER_MARGIN = 360, 10
 local CLEAR_SEARCH_WIDTH, CLEAR_SEARCH_GAP = 24, 4
 local KEY_FILTER_WIDTH, CLEAR_KEY_WIDTH, KEY_FILTER_GAP = 230, 90, 8
 local MIN_KEY_FILTER_WIDTH = 180
-local NO_RESULTS_HEIGHT, FILTER_CONTENT_GAP = 18, 4
+local MIN_CATEGORY_BUTTON_WIDTH = 180
+local FILTER_TITLE_HEIGHT, NO_RESULTS_HEIGHT = 18, 18
+local FILTER_CONTENT_GAP, FILTER_BLOCK_BOTTOM_GAP = 4, 6
+local FILTER_DIVIDER_HEIGHT = 2
+
+local function trace(event, details)
+	if not TRACE_ENABLED or traceLines >= TRACE_MAX_LINES then return end
+	traceLines = traceLines + 1
+	print(TAG .. "event=" .. tostring(event) .. " " .. tostring(details or ""))
+end
 
 local function filterControlLayout(panelWidth, supportsKeyFilter)
 	local availableWidth = math.max(0, panelWidth - FILTER_MARGIN * 2)
+	local controlsY = FILTER_TOP + FILTER_TITLE_HEIGHT + FILTER_CONTENT_GAP
 	local layout = {
+		titleY = FILTER_TOP,
 		entryX = FILTER_MARGIN,
-		entryY = FILTER_TOP,
+		entryY = controlsY,
 		entryWidth = math.max(0, math.min(FILTER_WIDTH,
 			availableWidth - CLEAR_SEARCH_WIDTH - CLEAR_SEARCH_GAP)),
 		clearSearchX = FILTER_MARGIN + math.max(0, math.min(FILTER_WIDTH,
 			availableWidth - CLEAR_SEARCH_WIDTH - CLEAR_SEARCH_GAP)) + CLEAR_SEARCH_GAP,
-		clearSearchY = FILTER_TOP,
+		clearSearchY = controlsY,
 		buttonX = FILTER_MARGIN,
-		buttonY = FILTER_TOP,
+		buttonY = controlsY + FILTER_HEIGHT + FILTER_CONTENT_GAP,
 		buttonWidth = 0,
 		clearButtonX = FILTER_MARGIN,
-		clearButtonY = FILTER_TOP,
+		clearButtonY = controlsY + FILTER_HEIGHT + FILTER_CONTENT_GAP,
 		clearButtonWidth = 0,
-		noResultsY = FILTER_TOP + FILTER_HEIGHT + FILTER_CONTENT_GAP,
 	}
+	local controlsBottom = controlsY + FILTER_HEIGHT
 	if supportsKeyFilter then
-		layout.buttonY = FILTER_TOP + FILTER_HEIGHT + FILTER_CONTENT_GAP
 		if availableWidth >= MIN_KEY_FILTER_WIDTH + KEY_FILTER_GAP + CLEAR_KEY_WIDTH then
 			layout.buttonWidth = math.min(KEY_FILTER_WIDTH,
 				availableWidth - CLEAR_KEY_WIDTH - KEY_FILTER_GAP)
 			layout.clearButtonX = layout.buttonX + layout.buttonWidth + KEY_FILTER_GAP
-			layout.clearButtonY = layout.buttonY
 			layout.clearButtonWidth = CLEAR_KEY_WIDTH
-			layout.noResultsY = layout.buttonY + FILTER_HEIGHT + FILTER_CONTENT_GAP
 		else
 			layout.buttonWidth = availableWidth
 			layout.clearButtonY = layout.buttonY + FILTER_HEIGHT + FILTER_CONTENT_GAP
 			layout.clearButtonWidth = availableWidth
-			layout.noResultsY = layout.clearButtonY + FILTER_HEIGHT + FILTER_CONTENT_GAP
+			controlsBottom = layout.clearButtonY + FILTER_HEIGHT
+		end
+		if layout.clearButtonY == layout.buttonY then
+			controlsBottom = layout.buttonY + FILTER_HEIGHT
 		end
 	end
-	layout.contentOffset = layout.noResultsY + NO_RESULTS_HEIGHT + FILTER_CONTENT_GAP
+	layout.categoryButtonX = layout.clearSearchX + CLEAR_SEARCH_WIDTH + KEY_FILTER_GAP
+	layout.categoryButtonY = controlsY
+	layout.categoryButtonWidth = math.max(0,
+		panelWidth - FILTER_MARGIN - layout.categoryButtonX)
+	if layout.categoryButtonWidth < MIN_CATEGORY_BUTTON_WIDTH then
+		layout.categoryButtonX = FILTER_MARGIN
+		layout.categoryButtonY = controlsBottom + FILTER_CONTENT_GAP
+		layout.categoryButtonWidth = availableWidth
+		controlsBottom = layout.categoryButtonY + FILTER_HEIGHT
+	end
+	layout.dividerY = controlsBottom + FILTER_CONTENT_GAP
+	layout.contentOffset = layout.dividerY + FILTER_DIVIDER_HEIGHT + FILTER_BLOCK_BOTTOM_GAP
 	return layout
 end
 
@@ -223,7 +247,7 @@ local function applyFilter(state, queryText)
 	local previousVisibleRow
 	local compactBottom = compactY
 	local searching = query ~= "" or state.keyFilter ~= ""
-	local rowMatches, categoryHasMatches = {}, {}
+	local rowMatches, categoryHasMatches, matchedCategories = {}, {}, {}
 	for index, row in ipairs(state.rows) do
 		local textMatches = matchesQuery(row.text, query)
 		if row.category ~= "" and matchesQuery(row.category, query) then textMatches = true end
@@ -259,8 +283,22 @@ local function applyFilter(state, queryText)
 		rowMatches[index] = rowVisible
 		if rowVisible and not row.isCategoryHeader and row.category ~= "" then
 			categoryHasMatches[row.category] = true
+			matchedCategories[row.category] = row.categoryDisplay or row.category
 		end
 	end
+	local categorySearch, categoryDisplay, categoryCount = nil, nil, 0
+	for search, display in pairs(matchedCategories) do
+		categorySearch, categoryDisplay = search, display
+		categoryCount = categoryCount + 1
+	end
+	if not searching or categoryCount ~= 1 or query == categorySearch then
+		categorySearch, categoryDisplay = nil, nil
+	end
+	state.categoryCandidate = categorySearch and {
+		search = categorySearch,
+		display = categoryDisplay or categorySearch,
+	} or nil
+	setChildVisible(state.categoryButton, state.categoryCandidate ~= nil)
 	for index, row in ipairs(state.rows) do
 		local rowVisible = rowMatches[index]
 		if row.isCategoryHeader then
@@ -329,21 +367,24 @@ local function categoryLabels()
 			local ok, value = pcall(getText, options.name)
 			if ok and type(value) == "string" and value ~= "" then label = value end
 		end
-		result[#result + 1] = normalized(label)
+		local display = tostring(label or "")
+		result[#result + 1] = { search = normalized(display), display = display }
 	end
 	return result
 end
 
 local function applyCategories(rows, categories)
 	if not categories or #categories == 0 then return end
-	local activeCategory, categoryIndex = "", 1
+	local activeCategory, activeCategoryDisplay, categoryIndex = "", "", 1
 	for _, row in ipairs(rows) do
 		local candidate = categories[categoryIndex]
-		if candidate and row.text:find(candidate, 1, true) then
-			activeCategory = candidate
+		if candidate and row.text:find(candidate.search, 1, true) then
+			activeCategory = candidate.search
+			activeCategoryDisplay = candidate.display
 			categoryIndex = categoryIndex + 1
 		end
 		row.category = activeCategory
+		row.categoryDisplay = activeCategoryDisplay
 	end
 end
 
@@ -361,7 +402,7 @@ local function keybindingCategoryLabel(value)
 	else
 		label = rawCategory
 	end
-	return normalized(label)
+	return normalized(label), label
 end
 
 local function annotateKeyBindingCategories(rows, entries)
@@ -373,17 +414,20 @@ local function annotateKeyBindingCategories(rows, entries)
 			rowByElement[childInfo.element] = row
 		end
 	end
-	local activeCategory, headerCursor = "", -math.huge
+	local activeCategory, activeCategoryDisplay, headerCursor = "", "", -math.huge
 	local headersMapped, bindingsMapped = 0, 0
 	for _, entry in ipairs(entries or {}) do
 		if type(entry.value) == "string" and entry.value:match("^%[.+%]$") then
-			activeCategory = keybindingCategoryLabel(entry.value) or ""
+			activeCategory, activeCategoryDisplay = keybindingCategoryLabel(entry.value)
+			activeCategory = activeCategory or ""
+			activeCategoryDisplay = activeCategoryDisplay or activeCategory
 			if activeCategory ~= "" then
 				for _, row in ipairs(rows) do
 					if not row.isCategoryHeader and row.baseY >= headerCursor
 						and row.text:find(activeCategory, 1, true) then
 						row.isCategoryHeader = true
 						row.category = activeCategory
+						row.categoryDisplay = activeCategoryDisplay
 						headerCursor = row.baseY + 0.001
 						headersMapped = headersMapped + 1
 						break
@@ -394,6 +438,7 @@ local function annotateKeyBindingCategories(rows, entries)
 			local row = rowByElement[entry.txt] or rowByElement[entry.btn]
 			if row then
 				row.category = activeCategory
+				row.categoryDisplay = activeCategoryDisplay
 				bindingsMapped = bindingsMapped + 1
 			end
 		end
@@ -417,11 +462,14 @@ local function attachSearch(self, panel, pageName, categories, supportsKeyFilter
 	applyCategories(rows, categories)
 	if keyBindingEntries then
 		local headersMapped, bindingsMapped = annotateKeyBindingCategories(rows, keyBindingEntries)
-		print(TAG .. "keybinding categories mapped headers=" .. tostring(headersMapped)
+		trace("keybinding-categories", "headers=" .. tostring(headersMapped)
 			.. " bindings=" .. tostring(bindingsMapped))
 	end
 	local controls = filterControlLayout(panel:getWidth(), supportsKeyFilter)
-	if controls.entryWidth <= 0 then return end
+	if controls.entryWidth <= 0 then
+		trace("filter-layout-fallback", "tab=" .. tostring(pageName) .. " reason=panel-too-narrow")
+		return
+	end
 
 	local originalPanelHeight = panel:getHeight()
 	local originalPanelY = panel:getY()
@@ -441,8 +489,10 @@ local function attachSearch(self, panel, pageName, categories, supportsKeyFilter
 		panel:getWidth(), controls.contentOffset)
 	overlay:initialise()
 	overlay:instantiate()
-	overlay:noBackground()
-	overlay.borderColor = { r = 0, g = 0, b = 0, a = 0 }
+	overlay.background = true
+	overlay.backgroundColor = { r = 0.035, g = 0.035, b = 0.035, a = 0.96 }
+	overlay.borderColor = { r = 0.38, g = 0.38, b = 0.38, a = 0.9 }
+	overlay:setScrollChildren(false)
 	overlay:setAnchorLeft(true)
 	overlay:setAnchorRight(true)
 	overlay:setAnchorTop(true)
@@ -454,6 +504,22 @@ local function attachSearch(self, panel, pageName, categories, supportsKeyFilter
 	panel:setHeight(viewportHeight)
 	setScrollHeight(panel, contentHeight)
 	panel.chilaSedaOptionsSearch = true
+
+	local title = ISLabel:new(FILTER_MARGIN, controls.titleY, FILTER_TITLE_HEIGHT,
+		translated("UI_ChilaSeda_OptionsSearch_Filters", "Filters"),
+		1, 1, 1, 1, UIFont.Small, true)
+	title:initialise()
+	overlay:addChild(title)
+
+	local divider = ISPanelJoypad:new(FILTER_MARGIN, controls.dividerY,
+		math.max(1, panel:getWidth() - FILTER_MARGIN * 2), FILTER_DIVIDER_HEIGHT)
+	divider:initialise()
+	divider:instantiate()
+	divider.background = true
+	divider.backgroundColor = { r = 0.55, g = 0.55, b = 0.55, a = 0.8 }
+	divider.borderColor = { r = 0, g = 0, b = 0, a = 0 }
+	divider:setScrollChildren(false)
+	overlay:addChild(divider)
 
 	local entry = ISTextEntryBox:new("", controls.entryX, controls.entryY,
 		controls.entryWidth, FILTER_HEIGHT)
@@ -469,12 +535,12 @@ local function attachSearch(self, panel, pageName, categories, supportsKeyFilter
 	clearSearchButton:instantiate()
 	overlay:addChild(clearSearchButton)
 
-	local noResults = ISLabel:new(FILTER_MARGIN, controls.noResultsY, NO_RESULTS_HEIGHT,
+	local noResults = ISLabel:new(FILTER_MARGIN, FILTER_MARGIN, NO_RESULTS_HEIGHT,
 		translated("UI_ChilaSeda_OptionsSearch_NoResults", "Sin coincidencias"),
 		1, 1, 1, 1, UIFont.Small, true)
 	noResults:initialise()
 	noResults:setVisible(false)
-	overlay:addChild(noResults)
+	panel:addChild(noResults)
 
 	local keyFilterButton, clearKeyButton
 	if supportsKeyFilter then
@@ -490,6 +556,14 @@ local function attachSearch(self, panel, pageName, categories, supportsKeyFilter
 		clearKeyButton:initialise()
 		overlay:addChild(clearKeyButton)
 	end
+	local categoryButton = ISButton:new(controls.categoryButtonX, controls.categoryButtonY,
+		controls.categoryButtonWidth, FILTER_HEIGHT,
+		translated("UI_ChilaSeda_OptionsSearch_ShowCategory", "Ver otras opciones de esta categoria"),
+		self, MainOptions.onChilaSedaShowCategory)
+	categoryButton:initialise()
+	categoryButton:instantiate()
+	categoryButton:setVisible(false)
+	overlay:addChild(categoryButton)
 
 	local state = {
 		panel = panel,
@@ -497,16 +571,17 @@ local function attachSearch(self, panel, pageName, categories, supportsKeyFilter
 		rows = rows,
 		noResults = noResults,
 		originalScrollHeight = contentHeight,
-		searchStartY = rows[1] and rows[1].baseY or 0,
-		noResultsY = controls.noResultsY,
+		searchStartY = math.max(0, rows[1] and rows[1].baseY or 0),
 		bottomPadding = bottomPadding,
 		keyFilter = "",
 		keyFilterButton = keyFilterButton,
 		clearKeyButton = clearKeyButton,
+		categoryButton = categoryButton,
 		clearSearchButton = clearSearchButton,
 		lastQuery = entry:getText() or "",
 	}
 	clearSearchButton.chilaSedaOptionsSearchState = state
+	categoryButton.chilaSedaOptionsSearchState = state
 	if clearKeyButton then clearKeyButton.chilaSedaOptionsKeySearchState = state end
 	local function applyCommittedText()
 		if panel.chilaSedaOptionsSearchEntry ~= entry then return end
@@ -538,7 +613,15 @@ local function attachSearch(self, panel, pageName, categories, supportsKeyFilter
 	panel.chilaSedaOptionsSearchEntry = entry
 	panel.chilaSedaOptionsSearchState = state
 	if supportsKeyFilter then keyFilterButton.chilaSedaOptionsKeySearchState = state end
-	print(TAG .. "search installed on " .. tostring(pageName))
+	trace("filter-layout-ready", "tab=" .. tostring(pageName)
+		.. " header-height=" .. tostring(controls.contentOffset)
+		.. " options-y=" .. tostring(panel:getY())
+		.. " options-height=" .. tostring(panel:getHeight())
+		.. " first-row-y=" .. tostring(rows[1] and rows[1].baseY or 0)
+		.. " search-start-y=" .. tostring(state.searchStartY)
+		.. " category-button=" .. tostring(controls.categoryButtonX) .. ","
+		.. tostring(controls.categoryButtonY) .. "," .. tostring(controls.categoryButtonWidth)
+		.. " scroll=separate")
 	return overlay
 end
 
@@ -550,6 +633,27 @@ function MainOptions:onChilaSedaClearTextFilter(button)
 	entry:setText("")
 	state.lastQuery = ""
 	applyFilter(state, "")
+end
+
+function MainOptions:onChilaSedaShowCategory(button)
+	local state = button and button.chilaSedaOptionsSearchState
+	local candidate = state and state.categoryCandidate
+	local entry = state and state.panel.chilaSedaOptionsSearchEntry
+	if not candidate or not entry then return end
+	self.chilaSedaOptionsKeyCaptureActive = false
+	if self.chilaSedaOptionsKeyCaptureState == state then
+		self.chilaSedaOptionsKeyCaptureState = nil
+	end
+	state.keyFilter = ""
+	if state.keyFilterButton then
+		state.keyFilterButton:setTitle(translated("UI_ChilaSeda_OptionsSearch_KeyFilter",
+			"Filtrar al presionar una tecla"))
+	end
+	local query = candidate.display or candidate.search
+	entry:setText(query)
+	state.lastQuery = query
+	applyFilter(state, query)
+	trace("category-filter", "category=" .. tostring(candidate.search) .. " result=applied")
 end
 
 function MainOptions:onChilaSedaBeginKeyFilter(button)
@@ -702,4 +806,4 @@ MainOptions.onTabsActivateView = function(self, tabs, ...)
 	return result
 end
 
-print(TAG .. "search enabled on Options tabs; native Mod Options order preserved")
+trace("initialized", "search enabled on Options tabs; native Mod Options order preserved")

@@ -1,7 +1,7 @@
 name=ChilaSeda Options Search (B42)
 id=ChilaSeda_OptionsSearch_B42
 authors=ChilaSeda
-description=Busca en las pestanas de Opciones y conserva titulos y divisores de categoria al filtrar teclas sin cambiar ajustes guardados.
+description=Busca en las pestanas de Opciones, separa filtros fijos del panel desplazable y permite mostrar todas las opciones de la categoria de un resultado.
 versionMin=42.21
-modversion=1.0.8
+modversion=1.0.10
 loadModAfter=ChilaSeda_Translations_ES_B42
