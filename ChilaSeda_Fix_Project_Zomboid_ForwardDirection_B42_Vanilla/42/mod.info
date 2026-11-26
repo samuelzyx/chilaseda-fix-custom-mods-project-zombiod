@@ -1,0 +1,11 @@
+name=ChilaSeda Fix - Project Zomboid Forward Direction (B42, Vanilla)
+id=ChilaSeda_Fix_Project_Zomboid_ForwardDirection_B42_Vanilla
+authors=ChilaSeda
+description=Prevents vanilla LungeState from throwing when a zombie forwards a zero-length vector to IsoGameCharacter.setForwardDirection; preserves the actor's current facing and writes bounded diagnostics.
+require=ZombieBuddy
+loadModAfter=ZombieBuddy
+versionMin=42.22
+modversion=1.0.1
+ZBVersionMin=2.3.4
+javaJarFile=media/java/client/ChilaSedaForwardDirectionFix.jar
+javaPkgName=chilaseda.viewpointfixes.forwarddirection
