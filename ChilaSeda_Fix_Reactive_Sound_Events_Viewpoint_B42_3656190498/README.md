@@ -1,7 +1,11 @@
-# ChilaSeda Fix - Reactive Sound Events + Viewpoint (B42) 1.1.3
+# ChilaSeda Fix - Reactive Sound Events + Viewpoint (B42) 1.1.4
 
 Parches locales para orientar las senales de Reactive Sound Events con la camara Viewpoint.
 No modifica archivos de Workshop.
+
+## Version 1.1.4
+
+- Retira el marcador de prueba Ctrl+Shift+F6 y sus mensajes de depuracion; Chila confirmo la rotacion de las senales en Jill.
 
 ## Version 1.1.3
 
@@ -10,5 +14,4 @@ No modifica archivos de Workshop.
 - Conserva el calculo de direccion y la correccion de 180 grados del indicador.
 
 Con VisualSounds/Viewpoint activo, el parche depende del puente expuesto por
-`ChilaSeda_Fix_VisualSounds_UndeadWildlife_Colors_B42`. `Ctrl+Shift+F6` sigue ciclando
-las direcciones de prueba; la quinta pulsacion oculta el indicador.
+`ChilaSeda_Fix_VisualSounds_UndeadWildlife_Colors_B42`.
