@@ -12,14 +12,15 @@ const luaPath = path.join(
 );
 const modInfo = fs.readFileSync(path.join(modRoot, "42/mod.info"), "utf8");
 
-test("literature and Caps Lock traces correlate actions, windows, and Viewpoint camera state", () => {
+test("action traces correlate lifecycle events and aggregate repeated water-fill checks", () => {
   const gameJar = process.env.PZ_PROJECT_ZOMBOID_JAR
     ?? "J:/SteamLibrary/steamapps/common/ProjectZomboid/projectzomboid.jar";
   const jdkBin = path.resolve(modRoot, "../.tools/jdk-25.0.5/bin");
   assert.ok(fs.existsSync(gameJar), `Project Zomboid Java archive not found: ${gameJar}`);
-  assert.match(modInfo, /^modversion=1\.0\.52$/m);
+  assert.match(modInfo, /^modversion=1\.0\.54$/m);
   assert.match(fs.readFileSync(luaPath, "utf8"), /getLuaStackTraceStrings/);
   assert.match(fs.readFileSync(luaPath, "utf8"), /TRACE_WEAR_FLOW = true/);
+  assert.match(fs.readFileSync(luaPath, "utf8"), /local TRACE_WATER_DIAGNOSTICS = true/);
 
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "accessible-action-trace-"));
   try {
@@ -152,6 +153,10 @@ ISWorldObjectContextMenu = {
             character = player,
             item = selected,
             waterObject = source,
+            waterUnit = 1,
+            startUsedAmount = 0,
+            endUsedAmount = 2,
+            maxTime = 230,
         }
         setmetatable(action, { __index = ISTakeWaterAction })
         ISTimedActionQueue.add(action)
@@ -232,14 +237,39 @@ assert(contains("WATER_FILL_CALLBACK_BEGIN") and contains("selected=Base.WaterBo
 assert(contains("WATER_ACTION_QUEUED") and contains("waterSource=Sink"),
     "queued fill action logs its source")
 assert(ISTakeWaterAction.isValid(waterAction) == true, "water action remains valid")
+for index = 1, 110 do
+    assert(ISTakeWaterAction.isValid(waterAction) == true, "repeated water validity check remains true")
+    ISTakeWaterAction.transferFluid(waterAction, 0)
+end
 ISTakeWaterAction.start(waterAction)
 ISTakeWaterAction.complete(waterAction)
 assert(bottleFluid.amount == 1 and waterSource.amount == 3, "fill action transfers water")
-assert(contains("WATER_TRANSFERFLUID_END") and contains("itemFluid=1"),
-    "fluid transfer logs before and after item/source quantities")
+assert(contains("WATER_TRANSFERFLUID_END"), "first fluid transfer sample is logged")
+assert(contains("WATER_COMPLETE ") and contains("plannedVolume=1")
+        and contains("isValidCalls=111") and contains("transferFluidCalls=111")
+        and contains("transferFluidRequestedTotal=1") and contains("itemFluid=1")
+        and contains("sourceAmount=3"),
+    "terminal completion reports planned volume, repeated-call totals, and final quantities")
+local waterTraceLines = 0
+for _, line in ipairs(logs) do
+    if line:find("] WATER_", 1, true) then waterTraceLines = waterTraceLines + 1 end
+end
+assert(waterTraceLines < 96 and not contains("WATER_TRACE_LIMIT"),
+    "110 repeated validity and transfer cycles do not consume the water trace limit")
 ISTakeWaterAction.perform(waterAction)
 assert(contains("WATER_COMPLETE_END") and contains("WATER_PERFORM_END"),
     "water action completion and animation cleanup are logged")
+waterQueue.queue = {}
+ISWorldObjectContextMenu.onTakeWater({}, waterSource, { bottle }, nil, 0)
+local stoppedAction = waterQueue.queue[#waterQueue.queue]
+ISTakeWaterAction.start(stoppedAction)
+ISTakeWaterAction.stop(stoppedAction)
+assert(contains("WATER_STOP ") and contains("beingFilled=false") and contains("result=true"),
+    "stop event records the interruption result and cleaned container state")
+waterQueue.queue = { stoppedAction }
+ISTimedActionQueue.resetQueue(waterQueue)
+assert(contains("WATER_ACTION_QUEUE_RESET_CANCEL") and contains("result=resetQueue"),
+    "queue reset records a cancelled water action and its result")
 
 local sourceContainer = { getType = function() return "inventory" end }
 local destinationContainer = { getType = function() return "Bag_Satchel" end }

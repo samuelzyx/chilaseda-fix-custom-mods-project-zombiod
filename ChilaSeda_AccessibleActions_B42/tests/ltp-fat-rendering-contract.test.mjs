@@ -51,7 +51,7 @@ test("LTP fat routes use the exact rabbit and pork inputs and preserve native po
   assert.match(luaSource, /fallback=source-not-found/);
   assert.match(luaSource, /fallback=output-write-failed/);
   assert.match(luaSource, /stage=install result=ready/);
-  assert.match(fs.readFileSync(modInfoPath, "utf8"), /versionMin=42\.20[\s\S]*?modversion=1\.0\.52[\s\S]*?loadModAfter=.*LongTermPreservationExtended/);
+  assert.match(fs.readFileSync(modInfoPath, "utf8"), /versionMin=42\.20[\s\S]*?modversion=1\.0\.54[\s\S]*?loadModAfter=.*LongTermPreservationExtended/);
 });
 
 test("recipe translations parse and contain unique names in English and Spanish", () => {

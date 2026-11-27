@@ -1,4 +1,13 @@
-# ChilaSeda - Acciones Accesibles (Build 42) 1.0.52
+# ChilaSeda - Acciones Accesibles (Build 42) 1.0.54
+
+## Version 1.0.54
+
+- Completes the water volume reserved when an in-progress container fill makes the character inventory full. The guard still cancels if the item leaves its container or the source runs out before the reserved amount is reached. Bounded diagnostics can be toggled with `TRACE_WATER_FILL_COMPLETION_GUARD`.
+
+## Version 1.0.53
+
+- Resumes las llamadas repetidas de validacion y transferencia durante el llenado de agua. La traza conserva volumen planeado, volumen solicitado acumulado, resultado y cantidades finales, y reserva espacio para complete, stop y reinicios de cola dentro del limite de 96 lineas.
+- La traza de agua se controla con TRACE_WATER_DIAGNOSTICS en 42/media/lua/client/zzzz_ChilaSeda_AccessibleActionFlowTrace.lua; queda activa para el diagnostico actual.
 
 ## Version 1.0.52
 

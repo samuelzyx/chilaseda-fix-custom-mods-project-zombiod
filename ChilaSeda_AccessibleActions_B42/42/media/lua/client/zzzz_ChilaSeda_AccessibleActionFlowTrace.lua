@@ -25,7 +25,13 @@ local capsLockWindowLimitLogged = false
 local capsLockWindowScanFailureLogged = false
 local waterTraceCount = 0
 local MAX_WATER_TRACE_LINES = 96
+local MAX_WATER_TERMINAL_TRACE_LINES = 16
+local MAX_WATER_EVENT_TRACE_LINES = MAX_WATER_TRACE_LINES - MAX_WATER_TERMINAL_TRACE_LINES - 1
+local TRACE_WATER_DIAGNOSTICS = true
 local waterTraceLimitLogged = false
+local waterTerminalTraceCount = 0
+local waterTerminalTraceLimitLogged = false
+local waterActionTraceStates = setmetatable({}, { __mode = "k" })
 local TRACE_TRANSFER_CALLERS = true
 local transferCallerTraceCount = 0
 local MAX_TRANSFER_CALLSITE_TRACES = 32
@@ -330,10 +336,35 @@ local function waterSourceLabel(source)
         or call(source, "getName") or call(source, "getType") or "unknown")
 end
 
+local function diagnosticValue(value)
+    if value == nil then return "n/a" end
+    return tostring(value)
+end
+
+local function waterActionTraceState(action)
+    if not action then return nil end
+    local state = waterActionTraceStates[action]
+    if not state then
+        state = {
+            isValidCalls = 0,
+            isValidTrueCount = 0,
+            isValidFalseCount = 0,
+            isValidLast = nil,
+            transferFluidCalls = 0,
+            transferFluidRequestedTotal = 0,
+            transferFluidLastRequested = nil,
+            transferFluidLastResult = nil,
+        }
+        waterActionTraceStates[action] = state
+    end
+    return state
+end
+
 local function waterActionFields(action)
     local item = action and (action.item or action.waterContainer or action.itemToFill)
     local fluid = call(item, "getFluidContainer")
     local source = action and (action.waterObject or action.waterSource or action.sourceObject)
+    local state = waterActionTraceState(action)
     return "waterSource=" .. waterSourceLabel(source)
         .. " sourceAmount=" .. tostring(call(source, "getFluidAmount") or "n/a")
         .. " sourceTainted=" .. tostring(call(source, "isTaintedWater"))
@@ -341,14 +372,42 @@ local function waterActionFields(action)
         .. " itemContainer=" .. containerName(item and call(item, "getContainer"))
         .. " itemFluid=" .. tostring(call(fluid, "getAmount") or "n/a")
         .. " itemCapacity=" .. tostring(call(fluid, "getCapacity") or "n/a")
+        .. " plannedVolume=" .. diagnosticValue(safeField(action, "waterUnit"))
+        .. " startUsedAmount=" .. diagnosticValue(safeField(action, "startUsedAmount"))
+        .. " endUsedAmount=" .. diagnosticValue(safeField(action, "endUsedAmount"))
+        .. " maxTime=" .. diagnosticValue(safeField(action, "maxTime"))
         .. " beingFilled=" .. tostring(call(item, "isBeingFilled"))
+        .. " isValidCalls=" .. tostring(state and state.isValidCalls or 0)
+        .. " isValidTrue=" .. tostring(state and state.isValidTrueCount or 0)
+        .. " isValidFalse=" .. tostring(state and state.isValidFalseCount or 0)
+        .. " isValidLast=" .. diagnosticValue(state and state.isValidLast)
+        .. " transferFluidCalls=" .. tostring(state and state.transferFluidCalls or 0)
+        .. " transferFluidRequestedTotal=" .. tostring(state and state.transferFluidRequestedTotal or 0)
+        .. " transferFluidLastRequested=" .. diagnosticValue(state and state.transferFluidLastRequested)
+        .. " transferFluidLastResult=" .. diagnosticValue(state and state.transferFluidLastResult)
 end
 
-local function takeWaterTraceSlot()
-    if waterTraceCount >= MAX_WATER_TRACE_LINES then
+local function takeWaterTraceSlot(terminal)
+    if not TRACE_WATER_DIAGNOSTICS then return false end
+    if terminal then
+        if waterTerminalTraceCount >= MAX_WATER_TERMINAL_TRACE_LINES - 1 then
+            if not waterTerminalTraceLimitLogged then
+                waterTerminalTraceLimitLogged = true
+                waterTerminalTraceCount = waterTerminalTraceCount + 1
+                logDiagnostic("WATER_TERMINAL_TRACE_LIMIT",
+                    "limit=" .. tostring(MAX_WATER_TERMINAL_TRACE_LINES - 1))
+            end
+            return false
+        end
+        waterTerminalTraceCount = waterTerminalTraceCount + 1
+        return true
+    end
+    if waterTraceCount >= MAX_WATER_EVENT_TRACE_LINES then
         if not waterTraceLimitLogged then
             waterTraceLimitLogged = true
-            logDiagnostic("WATER_TRACE_LIMIT", "limit=" .. tostring(MAX_WATER_TRACE_LINES))
+            logDiagnostic("WATER_TRACE_LIMIT", "limit=" .. tostring(MAX_WATER_TRACE_LINES)
+                .. " eventLimit=" .. tostring(MAX_WATER_EVENT_TRACE_LINES)
+                .. " terminalReserve=" .. tostring(MAX_WATER_TERMINAL_TRACE_LINES - 1))
         end
         return false
     end
@@ -357,16 +416,24 @@ local function takeWaterTraceSlot()
 end
 
 local function logWaterEvent(event, fields)
-    if not takeWaterTraceSlot() then return end
+    if not takeWaterTraceSlot(false) then return end
     logDiagnostic("WATER_" .. event, fields)
 end
 
+local WATER_TERMINAL_TRACE_EVENTS = {
+    COMPLETE = true,
+    PERFORM = true,
+    STOP = true,
+    ACTION_QUEUE_COMPLETED = true,
+    ACTION_QUEUE_RESET_CANCEL = true,
+}
+
 local function logWaterAction(event, action, result)
-    if not takeWaterTraceSlot() then return end
+    if not takeWaterTraceSlot(WATER_TERMINAL_TRACE_EVENTS[event] == true) then return end
     logDiagnostic("WATER_" .. event,
         "type=" .. tostring(action and action.Type or "ISTakeWaterAction")
             .. " " .. waterActionFields(action)
-            .. " result=" .. tostring(result or "n/a"))
+            .. " result=" .. diagnosticValue(result))
 end
 
 local function relevant(action)
@@ -392,6 +459,7 @@ end
 local function trace(event, action, result, force)
     if not force and not relevant(action) then return end
     if isWaterAction(action) then
+        if not TRACE_WATER_DIAGNOSTICS then return end
         logWaterAction("ACTION_" .. event, action, result)
         return
     end
@@ -600,9 +668,43 @@ local function wrapWaterAction(methodName)
     if not actionClass or type(actionClass[methodName]) ~= "function" then return end
     local original = actionClass[methodName]
     actionClass[methodName] = function(self, ...)
-        logWaterAction(string.upper(methodName) .. "_BEGIN", self)
+        if not TRACE_WATER_DIAGNOSTICS then return original(self, ...) end
+        local state = waterActionTraceState(self)
+        local repeatedCall = methodName == "isValid" or methodName == "transferFluid"
+        local callCount = nil
+        if methodName == "isValid" then
+            state.isValidCalls = state.isValidCalls + 1
+            callCount = state.isValidCalls
+        elseif methodName == "transferFluid" then
+            local requested = select(1, ...)
+            state.transferFluidCalls = state.transferFluidCalls + 1
+            state.transferFluidLastRequested = requested
+            if type(requested) == "number" then
+                state.transferFluidRequestedTotal = state.transferFluidRequestedTotal + requested
+            end
+            callCount = state.transferFluidCalls
+        end
+        local shouldSample = not repeatedCall or callCount == 1
+        if shouldSample then logWaterAction(string.upper(methodName) .. "_BEGIN", self) end
         local result = original(self, ...)
-        logWaterAction(string.upper(methodName) .. "_END", self, result)
+        if methodName == "isValid" then
+            state.isValidLast = result
+            if result == true then
+                state.isValidTrueCount = state.isValidTrueCount + 1
+            elseif result == false then
+                state.isValidFalseCount = state.isValidFalseCount + 1
+            end
+        elseif methodName == "transferFluid" then
+            state.transferFluidLastResult = result
+        end
+        if shouldSample then logWaterAction(string.upper(methodName) .. "_END", self, result) end
+        if methodName == "complete" then
+            logWaterAction("COMPLETE", self, result)
+        elseif methodName == "perform" then
+            logWaterAction("PERFORM", self, result)
+        elseif methodName == "stop" then
+            logWaterAction("STOP", self, result)
+        end
         return result
     end
 end
@@ -625,6 +727,10 @@ local onTakeWater = ISWorldObjectContextMenu and ISWorldObjectContextMenu.onTake
 if type(onTakeWater) == "function" then
     ISWorldObjectContextMenu.onTakeWater = function(worldobjects, waterObject, waterContainerList,
             waterContainer, playerIndex, ...)
+        if not TRACE_WATER_DIAGNOSTICS then
+            return onTakeWater(worldobjects, waterObject, waterContainerList,
+                waterContainer, playerIndex, ...)
+        end
         local playerObj = type(getSpecificPlayer) == "function" and getSpecificPlayer(playerIndex) or nil
         local selected = waterContainerList and #waterContainerList > 0
             and summarizeWaterItems(waterContainerList) or itemName(waterContainer)

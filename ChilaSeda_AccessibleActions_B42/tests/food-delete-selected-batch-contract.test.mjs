@@ -12,8 +12,8 @@ const modInfo = fs.readFileSync(path.join(modRoot, "42/mod.info"), "utf8");
 const readme = fs.readFileSync(path.join(modRoot, "README.md"), "utf8");
 
 test("fresh-food deletion batches mixed selected item types and removes only the confirmed selection", () => {
-  assert.match(modInfo, /^modversion=1\.0\.52$/m);
-  assert.match(readme, /^# ChilaSeda - Acciones Accesibles \(Build 42\) 1\.0\.52$/m);
+  assert.match(modInfo, /^modversion=1\.0\.54$/m);
+  assert.match(readme, /^# ChilaSeda - Acciones Accesibles \(Build 42\) 1\.0\.54$/m);
   assert.match(lua, /local TRACE_FOOD_DELETE = true/);
   assert.match(lua, /MAX_FOOD_DELETE_TRACE_LINES = 32/);
   assert.match(lua, /reason=" \.\. tostring\(reason or "-"\)/);
