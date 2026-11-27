@@ -134,7 +134,7 @@ test("animal corpse prompt reads and displays its own modifier", () => {
 
 test("Spanish UI catalog parses without duplicate keys and includes the new labels", () => {
   assertNoDuplicateObjectKeys(translationSource);
-  assert.match(translationInfo, /^modversion=1\.5\.3$/m);
+  assert.match(translationInfo, /^modversion=1\.5\.7$/m);
   const catalog = JSON.parse(translationSource);
   assert.equal(catalog.UI_ChilaSeda_ViewpointFix_ForagePickupTitle, "Hallazgos con pin de rebusqueda");
   assert.ok(catalog.UI_ChilaSeda_ViewpointFix_AnimalCorpseActionModifier);

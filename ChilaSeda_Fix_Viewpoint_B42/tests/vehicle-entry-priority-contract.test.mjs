@@ -21,7 +21,7 @@ const helper = path.resolve(
 );
 
 test("Viewpoint promotes vehicle entry and falls back from a mechanics part to an available seat", () => {
-  assert.match(modInfo, /^modversion=2\.0\.151$/m);
+  assert.match(modInfo, /^modversion=2\.0\.159$/m);
   assert.match(lua, /getBestSeat/);
   assert.match(lua, /seatReason=/);
   assert.match(lua, /TRACE_LIMIT = 32/);

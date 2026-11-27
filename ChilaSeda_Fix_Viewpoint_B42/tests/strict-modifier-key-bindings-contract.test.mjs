@@ -25,7 +25,7 @@ test("Core's injected hook delegates without reading private modifier state", ()
 });
 
 test("the current mod selects its Java archive and exposes the arrow fallback flag", () => {
-  assert.equal(modInfo.match(/^modversion=(.+)$/m)?.[1], "2.0.151");
+  assert.equal(modInfo.match(/^modversion=(.+)$/m)?.[1], "2.0.159");
   assert.equal(
     javaArchiveLine,
     "media/java/client/ChilaSedaViewpointHalo-2.0.151.jar",

@@ -69,7 +69,7 @@ test("Java gesture bridge selects one vanilla attack and restores its original l
 });
 
 test("selected Viewpoint archive contains the exposed combat gesture bridge", () => {
-  assert.match(modInfo, /^modversion=2\.0\.151$/m);
+  assert.match(modInfo, /^modversion=2\.0\.159$/m);
   const jarLine = modInfo.match(/^javaJarFile=(.+)$/m)?.[1];
   assert.equal(jarLine, "media/java/client/ChilaSedaViewpointHalo-2.0.151.jar");
   const archive = path.join(modRoot, "42", jarLine);

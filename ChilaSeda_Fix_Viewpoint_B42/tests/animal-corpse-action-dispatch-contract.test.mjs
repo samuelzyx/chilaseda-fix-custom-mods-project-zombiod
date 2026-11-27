@@ -41,7 +41,7 @@ test("corpse shortcut traces modifier, target search, walkAdj and action queue w
   assert.match(script, /phase=restore-queue-after route=world-context-equip/);
   assert.match(script, /" phase=after result="/);
   assert.match(script, /lifecycle=butcher method=complete phase=route-after/);
-  assert.match(modInfo, /modversion=2\.0\.151/);
+  assert.match(modInfo, /modversion=2\.0\.159/);
   assert.match(modInfo, /javaJarFile=media\/java\/client\/ChilaSedaViewpointHalo-2\.0\.151\.jar/);
   assert.match(script, /require "TimedActions\/ISInventoryTransferAction"/);
   assert.doesNotMatch(script, /ISDropItemAction/);

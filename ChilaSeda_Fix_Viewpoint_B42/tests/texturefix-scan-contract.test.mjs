@@ -29,7 +29,7 @@ test("local F10 replacement avoids the Kahlua getSimpleName failure and is bound
   assert.match(bridge, /LuaEventManager\.getEvents/);
   assert.match(bridge, /event\.callbacks\.remove\(index\)/);
   assert.doesNotMatch(scan, /getClass\s*\(|getSimpleName/);
-  assert.match(modInfo, /modversion=2\.0\.151/);
+  assert.match(modInfo, /modversion=2\.0\.159/);
   assert.match(modInfo, /javaJarFile=media\/java\/client\/ChilaSedaViewpointHalo-2\.0\.151\.jar/);
   assert.match(modInfo, /loadModAfter=.*ZombieBuddy,vpfix/);
 });

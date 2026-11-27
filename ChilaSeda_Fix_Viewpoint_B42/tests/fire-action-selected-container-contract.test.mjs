@@ -17,7 +17,7 @@ const gameJar = process.env.PZ_PROJECT_ZOMBOID_JAR
 const jdkBin = path.resolve(modRoot, "../.tools/jdk-25.0.5/bin");
 
 test("vanilla fire callbacks force external ingredients into root inventory", () => {
-assert.match(modInfo, /^modversion=2\.0\.151$/m);
+assert.match(modInfo, /^modversion=2\.0\.159$/m);
   assert.match(selected, /fireTransfers\.callbackFor\(player, source, destination, main\)/);
   const transferBranch = selected.slice(
     selected.indexOf("local fireCallback = fireTransfersAvailable"),

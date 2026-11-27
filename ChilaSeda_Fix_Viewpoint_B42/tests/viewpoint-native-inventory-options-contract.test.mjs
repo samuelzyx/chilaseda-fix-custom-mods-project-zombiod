@@ -139,7 +139,7 @@ test("all native Viewpoint inventory settings, descriptions and choices are tran
 });
 
 test("Mod Options applies the native UI through PZAPI's actual onChangeApply flow", () => {
-  assert.match(modInfo, /^modversion=2\.0\.151$/m);
+  assert.match(modInfo, /^modversion=2\.0\.159$/m);
   assert.match(modInfo, /^javaJarFile=media\/java\/client\/ChilaSedaViewpointHalo-2\.0\.151\.jar$/m);
   assert.match(lua, /option\.onChangeApply = function\(_, enabled\)/);
   assert.match(lua, /PZAPI\.ModOptions\.load = function\(self, \.\.\.\)/);

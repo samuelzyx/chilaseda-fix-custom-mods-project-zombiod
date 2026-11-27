@@ -378,8 +378,8 @@ test("generic downward trait arrows use red and keep diagnostics bounded", () =>
 });
 
 test("mod version and release notes describe the sleep trait Halo fix", () => {
-  assert.match(modInfo, /^modversion=2\.0\.151$/m);
-  assert.match(readme, /^# ChilaSeda Fix - Viewpoint Workshop Fixes \(B42\) 2\.0\.151$/m);
+  assert.match(modInfo, /^modversion=2\.0\.159$/m);
+  assert.match(readme, /^# ChilaSeda Fix - Viewpoint Workshop Fixes \(B42\) 2\.0\.159$/m);
   assert.match(readme, /Necesitas dormir menos|Needs less sleep/);
 });
 

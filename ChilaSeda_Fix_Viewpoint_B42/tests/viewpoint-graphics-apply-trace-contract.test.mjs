@@ -20,7 +20,7 @@ const buddyJar =
 
 test("Viewpoint graphics settings apply trace reports state, duration, and failure fallback", () => {
   assert.match(sourcePath && fs.readFileSync(sourcePath, "utf8"), /methodName = "changed"/);
-  assert.match(modInfo, /modversion=2\.0\.151/);
+  assert.match(modInfo, /modversion=2\.0\.159/);
   const traceSource = fs.readFileSync(sourcePath, "utf8");
   assert.match(traceSource, /public static final ThreadLocal<Long> START_NANOS/);
   assert.match(traceSource, /public static volatile Supplier<String> shownReader/);

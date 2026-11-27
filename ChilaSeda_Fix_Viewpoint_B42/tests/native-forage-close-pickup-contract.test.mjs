@@ -38,7 +38,7 @@ test("Alt+G uses vanilla walkAdj for close and farther forage pins", () => {
   assert.match(pickup, /result=modifier-rejected keyCode=/);
   assert.match(pickup, /rejectedProjection=/);
   assert.match(pickup, /rejectedScreenError=/);
-  assert.match(modInfo, /modversion=2\.0\.151/);
+  assert.match(modInfo, /modversion=2\.0\.159/);
   assert.match(modInfo, /javaJarFile=media\/java\/client\/ChilaSedaViewpointHalo-2\.0\.151\.jar/);
 
   assert.ok(fs.existsSync(gameJar), `PZ archive not found: ${gameJar}`);

@@ -33,7 +33,7 @@ test("Viewpoint handover trace distinguishes partial viewport and logs composito
   assert.match(source, /public static void beforeHandover\(\) \{\s*runBeforeHandover\(\);\s*\}/);
   assert.match(source, /public static void afterHandover\([\s\S]*?\) \{\s*runAfterHandover\(failure\);\s*\}/);
   assert.match(source, /private static final AtomicInteger SAMPLE_COUNT/);
-  assert.match(modInfo, /modversion=2\.0\.151/);
+  assert.match(modInfo, /modversion=2\.0\.159/);
 
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "viewpoint-handover-trace-"));
   try {

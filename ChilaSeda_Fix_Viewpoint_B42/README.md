@@ -1,4 +1,4 @@
-# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.151
+# ChilaSeda Fix - Viewpoint Workshop Fixes (B42) 2.0.159
 
 <div align="center">
 
@@ -7,6 +7,41 @@
 </div>
 
 ---
+
+## Version 2.0.159
+
+- Shows in-game minutes remaining for active cooking and burning in the vanilla inventory progress row and Viewpoint's native item details. The detail panel keeps the remaining cooking time visible while heat is paused and identifies ready or burnt food.
+- Uses guarded Food getters and bounded `[ChilaSeda_ViewpointCookingTime]` traces (16 lines maximum), off by default through `ChilaSedaViewpointCookingTimeTrace`.
+
+## Version 2.0.158
+
+- Adds a Halo Note with `+1` and the animal's display name after `ISPickupAnimal.complete` succeeds for Jill; failed, repeated, and non-local pickups do not add a note.
+- Adds one Halo Note when the local Food Eaten moodle enters level 4 (`Moodles_FoodEaten_lvl4`, localized by the game); remaining at level 4 does not repeat it, and leaving then re-entering the state can notify again.
+- Both hooks have separate bounded traces, enabled by default for the pending Jill validation and disabled with their corresponding `ChilaSedaViewpointAnimalPickupHaloTrace` and `ChilaSedaViewpointFoodFullHaloTrace` globals.
+
+## Version 2.0.157
+
+- Routes completed local fishing catches into Halo Notes with the item's localized name and fish details. The bounded `[ChilaSeda_ViewpointFishingHalo]` trace records hook installation, successful catch display, and compatibility fallbacks.
+
+## Version 2.0.156
+
+- Binds Viewpoint's native avatar through Mirage Wardrobe's detached appearance-preview API and refreshes the preview after clothing or hand-equipment changes. The bounded `[ChilaSeda_ViewpointMirageAvatar]` trace records successful binding and compatibility fallbacks.
+
+## Version 2.0.155
+
+- Preserves Viewpoint's original inventory stack groups when it opens the vanilla item context menu. This restores stack-based batch actions such as `Dismantle All At Once`; bounded `[ChilaSeda_ViewpointInventoryBatch]` traces report the restored groups and fallback path.
+
+## Version 2.0.154
+
+- Expands the vanilla tent object group before Viewpoint builds its native interaction menu. This preserves the vanilla Rest, Sleep and Pick Up Tent actions for the full tent grid, without duplicating their callbacks. A bounded `[ChilaSeda_ViewpointTentMenus]` trace reports expansion and API fallbacks.
+
+## Version 2.0.153
+
+- Adds the native campfire actions to Viewpoint's world menu and inventory section context menu, with remaining fuel time and lit state in the header and tooltip. A bounded trace reports menu injection, displayed fuel and fallbacks.
+
+## Version 2.0.152
+
+- Refreshes Viewpoint's native backpack container list after either hand or clothing equipment changes. A bounded trace records the event, refresh result, and any missing-container fallback.
 
 ## Version 2.0.151
 
