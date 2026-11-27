@@ -1151,11 +1151,11 @@ local function addSearchTab(symbolsUI)
     zoomButton:instantiate()
     zoomButton.tooltip = getText("IGUI_ChilaSeda_MapSearchZoomHint")
     view:addChild(zoomButton)
-    view.searchLayout = "list"
+    view.searchLayout = "grid"
     local modeX = zoomX + zoomOutWidth + 4 + zoomLabelWidth + 4 + zoomButtonWidth + 4
     local searchLayoutButton
     searchLayoutButton = ISButton:new(modeX, zoomY, viewModeButtonWidth, buttonHeight,
-        getText("IGUI_ChilaSeda_MapSearchGrid"), view, function()
+        getText("IGUI_ChilaSeda_MapSearchList"), view, function()
             view.searchLayout = view.searchLayout == "grid" and "list" or "grid"
             if view.searchLayout == "grid" then
                 searchLayoutButton:setTitle(getText("IGUI_ChilaSeda_MapSearchList"))
@@ -1168,12 +1168,12 @@ local function addSearchTab(symbolsUI)
         end)
     searchLayoutButton:initialise()
     searchLayoutButton:instantiate()
-    searchLayoutButton.tooltip = getText("IGUI_ChilaSeda_MapSearchShowGrid")
+    searchLayoutButton.tooltip = getText("IGUI_ChilaSeda_MapSearchShowList")
     view:addChild(searchLayoutButton)
     view.searchLayoutButton = searchLayoutButton
     pinControlsAtTop(view, { searchEntry, clearSearchButton, zoomOutButton,
         zoomLabel, zoomButton, searchLayoutButton })
-    print("[ChilaSedaMapSymbolsUI] event=search-view result=ready mode=list")
+    print("[ChilaSedaMapSymbolsUI] event=search-view result=ready mode=grid")
     local originalRender = view.render
     view.render = function(self)
         originalRender(self)

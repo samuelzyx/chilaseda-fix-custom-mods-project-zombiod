@@ -64,7 +64,10 @@ test("map search has an X button that clears text and refreshes suggestions", ()
 test("search zoom and layout controls update shared state and refresh the results", () => {
   const constructor = lua.slice(lua.indexOf("local function addSearchTab("), lua.indexOf("local originalCreateChildren"));
   assert.match(constructor, /local zoomLabel\s+zoomLabel = ISButton:new[\s\S]*?setSymbolZoom\(symbolsUI, 1\)/);
-  assert.match(constructor, /view\.searchLayout = "list"/);
+  assert.match(constructor, /view\.searchLayout = "grid"/);
+  assert.match(constructor, /getText\("IGUI_ChilaSeda_MapSearchList"\), view, function\(\)/);
+  assert.match(constructor, /searchLayoutButton\.tooltip = getText\("IGUI_ChilaSeda_MapSearchShowList"\)/);
+  assert.match(constructor, /event=search-view result=ready mode=grid/);
   assert.match(constructor, /view\.searchLayout = view\.searchLayout == "grid" and "list" or "grid"/);
   assert.match(constructor, /searchLayoutButton:setTitle\(getText\("IGUI_ChilaSeda_MapSearchList"\)\)/);
   assert.match(constructor, /searchLayoutButton:setTitle\(getText\("IGUI_ChilaSeda_MapSearchGrid"\)\)/);
@@ -143,5 +146,5 @@ test("the map symbols patch keeps B42 and Workshop load dependencies", () => {
   const info = fs.readFileSync(path.join(modRoot, "42/mod.info"), "utf8");
   assert.match(info, /loadModAfter=MapSymbolSizeSlider,ExtraSymbols/);
   assert.match(info, /versionMin=42\.20/);
-  assert.match(info, /modversion=0\.3\.7/);
+  assert.match(info, /modversion=0\.3\.8/);
 });
