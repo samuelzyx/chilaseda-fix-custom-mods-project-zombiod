@@ -1,0 +1,7 @@
+name=ChilaSeda - Moats Fill Level (B42)
+id=ChilaSeda_MoatsFillLevel_B42
+authors=ChilaSeda
+description=Shows the measured water amount, fill percentage, and amount missing before unfinished Moats tiles become normal water in Viewpoint interaction menus. Does not modify the Workshop mod.
+loadModAfter=MoatsB42,Viewpoint,ChilaSeda_Fix_Viewpoint_B42
+versionMin=42.22
+modversion=0.1.1

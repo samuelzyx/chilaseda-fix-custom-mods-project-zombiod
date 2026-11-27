@@ -1,0 +1,6 @@
+{
+    "IGUI_ChilaSeda_Moats_FillLabel": "Agua de zanja",
+    "IGUI_ChilaSeda_Moats_FillTooltip": "Cantidad de agua actual comparada con la capacidad total de la zanja.",
+    "IGUI_ChilaSeda_Moats_FillMissing": "Faltan {missing}",
+    "IGUI_ChilaSeda_Moats_FillMissingTooltip": "Cantidad que falta para que esta zanja se convierta en agua normal."
+}

@@ -1,0 +1,6 @@
+{
+    "IGUI_ChilaSeda_Moats_FillLabel": "Trench water",
+    "IGUI_ChilaSeda_Moats_FillTooltip": "Current water amount compared with the tile's total capacity.",
+    "IGUI_ChilaSeda_Moats_FillMissing": "{missing} remaining",
+    "IGUI_ChilaSeda_Moats_FillMissingTooltip": "Amount missing before this trench converts to normal water."
+}
