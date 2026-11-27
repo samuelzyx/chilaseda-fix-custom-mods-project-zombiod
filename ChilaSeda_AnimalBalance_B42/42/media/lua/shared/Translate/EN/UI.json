@@ -1,3 +1,11 @@
 {
-  "UI_AnimalBalance_HeavyPickup": "This animal weighs %1 kg, above the safe pickup limit of %2 kg."
+  "UI_AnimalBalance_HeavyPickup": "This animal weighs %1 kg, above the safe pickup limit of %2 kg.",
+  "UI_ChilaSeda_AnimalBalance_PredationOptions": "Zombie vs. Animal Interaction",
+  "UI_ChilaSeda_AnimalBalance_PredationDescription": "Set how many zombies can pursue each animal and how long they wait before abandoning or ignoring unreachable prey. Covers normal animal prey and species added by Undead Wildlife.",
+  "UI_ChilaSeda_AnimalBalance_MaxHunters": "Maximum zombies per animal",
+  "UI_ChilaSeda_AnimalBalance_MaxHuntersTooltip": "Maximum zombies allowed to pursue the same animal. Range: 1 to 20.",
+  "UI_ChilaSeda_AnimalBalance_StallTimeout": "Seconds without getting closer before giving up",
+  "UI_ChilaSeda_AnimalBalance_StallTimeoutTooltip": "The timer resets when a zombie gets at least 0.35 tiles closer. Range: 5 to 300 seconds.",
+  "UI_ChilaSeda_AnimalBalance_UnreachablePrey": "Seconds to ignore an unreachable animal",
+  "UI_ChilaSeda_AnimalBalance_UnreachablePreyTooltip": "The animal becomes eligible sooner if it moves 2 tiles or changes level. Set to 0 to disable this pause. Range: 0 to 600 seconds."
 }

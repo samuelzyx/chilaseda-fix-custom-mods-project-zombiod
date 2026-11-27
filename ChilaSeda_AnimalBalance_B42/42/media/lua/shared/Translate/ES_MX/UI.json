@@ -1,0 +1,10 @@
+{
+  "UI_ChilaSeda_AnimalBalance_PredationOptions": "Interaccion zombies vs animales",
+  "UI_ChilaSeda_AnimalBalance_PredationDescription": "Configura cuantos zombis pueden perseguir a cada animal y cuanto esperan antes de abandonarlo o ignorar una presa inaccesible. Incluye animales normales y especies agregadas por Undead Wildlife.",
+  "UI_ChilaSeda_AnimalBalance_MaxHunters": "Maximo de zombis por animal",
+  "UI_ChilaSeda_AnimalBalance_MaxHuntersTooltip": "Maximo de zombis que pueden perseguir al mismo animal. Rango: 1 a 20.",
+  "UI_ChilaSeda_AnimalBalance_StallTimeout": "Segundos sin acercarse antes de abandonar",
+  "UI_ChilaSeda_AnimalBalance_StallTimeoutTooltip": "El tiempo se reinicia cuando el zombi se acerca al menos 0.35 casillas. Rango: 5 a 300 segundos.",
+  "UI_ChilaSeda_AnimalBalance_UnreachablePrey": "Segundos para ignorar un animal inaccesible",
+  "UI_ChilaSeda_AnimalBalance_UnreachablePreyTooltip": "El animal vuelve a ser elegible antes si se mueve 2 casillas o cambia de nivel. Usa 0 para desactivar la pausa. Rango: 0 a 600 segundos."
+}

@@ -11,7 +11,7 @@
 
 Paquete local para rendimiento, productos y manipulacion de animales. ID:
 `ChilaSeda_AnimalBalance_B42`. Reune Animal Yield, Heavy Animal Pickup y las reparaciones
-locales de Undead Wildlife. Version 2.3.4. No modifica archivos de Workshop.
+locales de Undead Wildlife. Version 2.3.8. No modifica archivos de Workshop.
 
 La opción de carnicería desde contenedor usa el icono vanilla B42 de cuchilla y
 queda tras las opciones nativas de equipar/recetas.
@@ -47,7 +47,9 @@ Bloquea recoger animales vivos y cadaveres animales que superen 50 kg. Protege t
 del menu como la validacion y finalizacion de las acciones temporizadas; el aviso Halo informa
 masa medida y limite. No altera la carniceria ni reconstruye objetos ya perdidos.
 
-## Undead Wildlife opcional
+## Interaccion zombies vs animales (Undead Wildlife opcional)
+
+En `Opciones > Mods > Interaccion zombies vs animales` se ajustan el maximo de zombis por presa (1-20, predeterminado 2), los segundos sin acercarse antes de soltarla (5-300, predeterminado 20) y el tiempo para ignorar una presa inaccesible (0-600 segundos, predeterminado 60). Aplica a animales normales y a especies agregadas por Undead Wildlife. Los valores se guardan en las opciones locales de Build 42. La presa vuelve a ser elegible antes si se mueve dos casillas o cambia de nivel.
 
 `UndeadWildlife` aparece solo en `loadModAfter`, nunca en `require`. Si no esta instalado, los
 scripts especificos salen sin modificar el juego y siguen disponibles el balance general y el
@@ -69,10 +71,32 @@ limite de carga. Si esta instalado, el paquete:
 La proteccion usa el evento temprano `AnimalAttackStart` y el comando `AnimalAttackInterrupt` que
 Undead Wildlife procesa antes del impacto. El resultado final debe confirmarse en partida.
 
+### Presas inaccesibles y acumulacion de zombis
+
+Undead Wildlife Workshop `3781571720` version `1.1.0` escanea animales elegibles y asigna la
+presa mas cercana a cada zombi. Su script cliente renueva el objetivo incluso cuando el zombi se
+mueve por la orilla sin acercarse a la presa; tampoco limita cuantos zombis pueden elegir el mismo
+animal. Este paquete incluye un override local de `UndeadWildlife_PredationVisuals.lua`, cargado
+despues del Workshop. El archivo original permanece intacto.
+
+- Limita a dos los zombis que persiguen simultaneamente al mismo animal.
+- Considera avance una reduccion de al menos `0.35` tiles en la distancia a la presa. Si no ocurre
+  en `20` segundos, libera a todos los cazadores de esa presa y la excluye temporalmente durante
+  `60` segundos.
+- Si el animal se desplaza al menos `2` tiles o cambia de nivel, la caceria vuelve a estar
+  disponible antes de que termine la pausa.
+- Las trazas quedan bajo la opcion `PredationDebug`: `route-stalled`, `prey-temporarily-ignored`,
+  `prey-unblocked` y el resumen `scan` informa el limite de cazadores y presas pausadas.
+
+La prueba de contrato compara el override con la version instalada del Workshop. Si el original
+cambia, revisar el flujo upstream antes de actualizar este archivo local.
+
 ## Dependencias y validacion
 
-Requiere `AnimalRemasterApproved`, `ChilaSeda_Fix_True_Weight_VanillaWeights_B42_3768669395` y
-`ChilaSeda_AuditSuite_B42`. Carga despues de esos mods y de Undead Wildlife si esta activo.
+Requiere `ChilaSeda_Fix_True_Weight_VanillaWeights_B42_3768669395` y `ChilaSeda_AuditSuite_B42`.
+`AnimalRemasterApproved` es opcional: el paquete no llama codigo de ese mod; su entrada en
+`loadModAfter` solo conserva el orden si esta instalado, no lo activa ni lo exige. Undead Wildlife
+tambien es opcional y sus integraciones se cargan despues solo cuando esta activo.
 
 La revision estatica enlaza las rutas vanilla de carniceria de suelo, extraccion de huesos,
 despiece en gancho y recogida pesada. Falta validar en Jill el tope acumulado, destino, avisos Halo,
