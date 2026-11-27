@@ -98,7 +98,8 @@ test("Kahlua keeps only the matching category divider and restores it when clear
   assert.ok(fs.existsSync(gameJar), `Project Zomboid Java archive not found: ${gameJar}`);
 
   const helpers = section(lua, "local function safeField(", "local function refreshSearchOverlays(");
-  const fixture = `${helpers}
+  const fixture = `local function trace() end
+${helpers}
 getText = function(key)
   if key == "UI_optionscreen_binding_Combat" then return "Combat" end
   if key == "UI_optionscreen_binding_Survival" then return "Survival" end
@@ -181,6 +182,133 @@ assert(combatLine.visible and combatTitle.visible and otherCombatButton.visible
   }
 });
 
+test("Kahlua keeps the first Mod Options section title when only its setting matches", () => {
+  const jdkBin = path.resolve(modRoot, "../.tools/jdk-25.0.5/bin");
+  const gameJar = process.env.PZ_PROJECT_ZOMBOID_JAR
+    ?? "J:/SteamLibrary/steamapps/common/ProjectZomboid/projectzomboid.jar";
+  assert.ok(fs.existsSync(gameJar), `Project Zomboid Java archive not found: ${gameJar}`);
+
+  const helpers = section(lua, "local function safeField(", "local function refreshSearchOverlays(");
+  const fixture = `local function trace() end
+${helpers}
+local function element(y, text)
+  local value = { y = y, height = 10, text = text, visible = true }
+  function value:setVisible(visible) self.visible = visible end
+  function value:setY(newY) self.y = newY end
+  return value
+end
+local function row(y, text, value)
+  return { baseY = y, bottomY = y + 10, height = 10, text = normalized(text), category = "",
+    children = { { element = value, baseY = y, height = 10, baseVisible = true } } }
+end
+local firstHeader = element(0, "General")
+local matchingSetting = element(20, "Talk to the person in front (Project Viewpoint)")
+local secondHeader = element(40, "Graphics")
+local unrelatedSetting = element(60, "Fog intensity")
+local rows = {
+  row(0, "General", firstHeader),
+  row(20, "Talk to the person in front (Project Viewpoint)", matchingSetting),
+  row(40, "Graphics", secondHeader),
+  row(60, "Fog intensity", unrelatedSetting),
+}
+applyCategories(rows, {
+  { search = "general", display = "General" },
+  { search = "graphics", display = "Graphics" },
+})
+local panel = { height = 100, scrollHeight = 100 }
+function panel:getHeight() return self.height end
+function panel:setScrollHeight(height) self.scrollHeight = height end
+function panel:setYScroll(value) self.yScroll = value end
+local noResults = element(0, "No results")
+local categoryButton = element(0, "Show category")
+local state = { panel = panel, rows = rows, noResults = noResults, categoryButton = categoryButton,
+  originalScrollHeight = 100, searchStartY = 0, bottomPadding = 0, keyFilter = "" }
+applyFilter(state, "viewpoint")
+assert(firstHeader.visible and matchingSetting.visible,
+  "the first section title stays visible with its matching setting")
+assert(not secondHeader.visible and not unrelatedSetting.visible,
+  "an unrelated section and setting stay hidden")
+`;
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "options-search-mod-category-kahlua-"));
+  try {
+    const fixtureFile = path.join(tempDir, "mod-category-contract.lua");
+    fs.writeFileSync(fixtureFile, fixture, "utf8");
+    const harness = path.join(modRoot, "tests/LuaCompileContract.java");
+    execFileSync(path.join(jdkBin, "javac.exe"), ["-classpath", gameJar, "-d", tempDir, harness]);
+    execFileSync(
+      path.join(jdkBin, "java.exe"),
+      ["-classpath", `${gameJar};${tempDir}`, "LuaCompileContract", fixtureFile, "--execute"],
+      { cwd: path.dirname(gameJar), encoding: "utf8" },
+    );
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+test("Kahlua centers native option controls without moving section titles or dividers", () => {
+  const jdkBin = path.resolve(modRoot, "../.tools/jdk-25.0.5/bin");
+  const gameJar = process.env.PZ_PROJECT_ZOMBOID_JAR
+    ?? "J:/SteamLibrary/steamapps/common/ProjectZomboid/projectzomboid.jar";
+  assert.ok(fs.existsSync(gameJar), `Project Zomboid Java archive not found: ${gameJar}`);
+
+  const helpers = section(lua, "local function safeField(", "local function readRows(");
+  const fixture = `${helpers}
+local function child(x, width)
+  local value = { x = x, width = width }
+  function value:setX(newX) self.x = newX end
+  return value
+end
+local title = child(50, 240)
+local divider = child(0, 1000)
+local noResults = child(10, 120)
+local label = child(700, 170)
+local combo = child(720, 200)
+local checkboxLabel = child(700, 190)
+local checkbox = child(720, 30)
+local panel = { width = 1000, children = { title, divider, noResults, label, combo, checkboxLabel, checkbox } }
+function panel:getWidth() return self.width end
+function panel:getChildren() return self.children end
+local count, delta, result = centerNativeOptionControls(panel)
+assert(count == 4 and result == "centered" and delta == -310,
+  "the right-shifted options block is moved to the panel center")
+assert(label.x == 390 and combo.x == 410 and checkboxLabel.x == 390 and checkbox.x == 410,
+  "all native option rows share one horizontal offset")
+assert(title.x == 50 and divider.x == 0 and noResults.x == 10,
+  "section title, full-width divider, and no-results label stay in place")
+local secondCount, secondDelta, secondResult = centerNativeOptionControls(panel)
+assert(secondCount == 4 and secondDelta == 0 and secondResult == "already-centered",
+  "centering is idempotent")
+`;
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "options-search-native-centering-kahlua-"));
+  try {
+    const fixtureFile = path.join(tempDir, "native-centering-contract.lua");
+    fs.writeFileSync(fixtureFile, fixture, "utf8");
+    const harness = path.join(modRoot, "tests/LuaCompileContract.java");
+    execFileSync(path.join(jdkBin, "javac.exe"), ["-classpath", gameJar, "-d", tempDir, harness]);
+    execFileSync(
+      path.join(jdkBin, "java.exe"),
+      ["-classpath", `${gameJar};${tempDir}`, "LuaCompileContract", fixtureFile, "--execute"],
+      { cwd: path.dirname(gameJar), encoding: "utf8" },
+    );
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+test("native horizontal centering is limited to the five reported settings tabs", () => {
+  const builders = section(lua, "local pageBuilders = {", "local originalCreate = MainOptions.create");
+  const centering = section(lua, "local function centerNativeOptionControls(", "local function readRows(");
+  assert.match(builders, /addDisplayPanel = true/);
+  assert.match(builders, /addUIPanel = true/);
+  assert.match(builders, /addSoundPanel = true/);
+  assert.match(builders, /addAccessibilityPanel = true/);
+  assert.match(builders, /addMultiplayerPanel = true/);
+  assert.match(builders, /centerNativeOptions = nativeOptionTabsToCenter\[methodName\] == true/);
+  assert.match(centering, /x >= panelWidth \* 0\.25/);
+  assert.match(centering, /width < panelWidth \* 0\.75/);
+  assert.match(lua, /trace\("native-options-center"/);
+});
+
 test("filter header and scrolling options area are separate blocks", () => {
   const attach = section(lua, "local function attachSearch(", "function MainOptions:onChilaSedaClearTextFilter(button)");
   assert.match(lua, /local TRACE_ENABLED = true/);
@@ -196,7 +324,7 @@ test("filter header and scrolling options area are separate blocks", () => {
   assert.match(attach, /divider\.background = true/);
   assert.match(attach, /trace\("filter-layout-ready"[\s\S]*?scroll=separate/);
   assert.match(attach, /trace\("filter-layout-fallback"[\s\S]*?reason=panel-too-narrow/);
-  assert.match(fs.readFileSync(modInfoFile, "utf8"), /^modversion=1\.0\.10$/m);
+  assert.match(fs.readFileSync(modInfoFile, "utf8"), /^modversion=1\.0\.12$/m);
 });
 
 test("fixed filter header has a Spanish translation", () => {
@@ -330,8 +458,8 @@ assert(state.originalScrollHeight == 420 and panel.scrollHeight == 420,
   "the options panel preserves its independent content scroll height")
 assert(state.searchStartY == 0, "a list that starts above its viewport is normalized to the top")
 applyFilter(state, "hide")
-assert(clippedOption.y == 0 and clippedOption.visible,
-  "the first matching result starts fully inside the results viewport")
+assert(clippedHeader.y == 0 and clippedHeader.visible and clippedOption.y >= 10 and clippedOption.visible,
+  "the first matching section title and setting start fully inside the results viewport")
 assert(state.categoryButton.visible and state.categoryCandidate.search == "mods",
   "one matching category exposes the show-rest-of-category action")
 state.keyFilter = "Ctrl"

@@ -200,6 +200,43 @@ local function elementHeight(element)
 	return type(height) == "number" and math.max(0, height) or 0
 end
 
+local function numericChildValue(child, field, getterName)
+	local value = safeField(child, field)
+	if type(value) == "number" then return value end
+	local getter = safeField(child, getterName)
+	if type(getter) == "function" then
+		local ok, result = pcall(getter, child)
+		if ok and type(result) == "number" then return result end
+	end
+	return nil
+end
+
+local function centerNativeOptionControls(panel)
+	local panelWidth = panel and panel:getWidth() or 0
+	if panelWidth <= 0 then return 0, 0, "invalid-panel-width" end
+	local children = panel:getChildren() or panel.children or {}
+	local candidates, minX, maxRight = {}, math.huge, -math.huge
+	for _, child in pairs(children) do
+		if child ~= panel.vscroll and child ~= panel.hscroll then
+			local x = numericChildValue(child, "x", "getX")
+			local width = numericChildValue(child, "width", "getWidth")
+			if x and width and x >= panelWidth * 0.25
+				and width > 0 and width < panelWidth * 0.75 then
+				candidates[#candidates + 1] = { element = child, x = x }
+				minX = math.min(minX, x)
+				maxRight = math.max(maxRight, x + width)
+			end
+		end
+	end
+	if #candidates < 2 then return #candidates, 0, "insufficient-controls" end
+	local deltaX = panelWidth / 2 - (minX + maxRight) / 2
+	if math.abs(deltaX) < 0.5 then return #candidates, 0, "already-centered" end
+	for _, candidate in ipairs(candidates) do
+		candidate.element:setX(candidate.x + deltaX)
+	end
+	return #candidates, deltaX, "centered"
+end
+
 local function readRows(panel)
 	local children = {}
 	local childList = panel:getChildren() or panel.children or {}
@@ -243,6 +280,7 @@ local function applyFilter(state, queryText)
 	local query = normalized(queryText)
 	local visibleRows = 0
 	local visibleResultRows = 0
+	local visibleCategoryHeaders = 0
 	local compactY = state.searchStartY
 	local previousVisibleRow
 	local compactBottom = compactY
@@ -325,7 +363,11 @@ local function applyFilter(state, queryText)
 			compactY = compactBottom
 			previousVisibleRow = row
 			visibleRows = visibleRows + 1
-			if not row.isCategoryHeader then visibleResultRows = visibleResultRows + 1 end
+			if row.isCategoryHeader then
+				visibleCategoryHeaders = visibleCategoryHeaders + 1
+			else
+				visibleResultRows = visibleResultRows + 1
+			end
 		elseif searching then
 			for _, childInfo in ipairs(row.children) do
 				setChildVisible(childInfo.element, false)
@@ -338,6 +380,18 @@ local function applyFilter(state, queryText)
 		end
 	end
 	setChildVisible(state.noResults, searching and visibleResultRows == 0)
+	if searching and not state.categoryVisibilityLogged then
+		trace("filter-category-check", "tab=" .. tostring(state.pageName)
+			.. " query=" .. tostring(query)
+			.. " key=" .. tostring(state.keyFilter)
+			.. " mapped-headers=" .. tostring(state.categoryHeadersMapped or 0)
+			.. " visible-headers=" .. tostring(visibleCategoryHeaders)
+			.. " results=" .. tostring(visibleResultRows)
+			.. " fallback=" .. tostring(visibleResultRows > 0 and visibleCategoryHeaders == 0))
+		state.categoryVisibilityLogged = true
+	elseif not searching then
+		state.categoryVisibilityLogged = false
+	end
 	if searching then
 		local contentBottom = visibleRows > 0 and compactBottom or 0
 		setScrollHeight(state.panel, math.max(state.panel:getHeight(),
@@ -374,18 +428,23 @@ local function categoryLabels()
 end
 
 local function applyCategories(rows, categories)
-	if not categories or #categories == 0 then return end
+	if not categories or #categories == 0 then return 0 end
 	local activeCategory, activeCategoryDisplay, categoryIndex = "", "", 1
+	local headersMapped = 0
 	for _, row in ipairs(rows) do
+		row.isCategoryHeader = false
 		local candidate = categories[categoryIndex]
 		if candidate and row.text:find(candidate.search, 1, true) then
 			activeCategory = candidate.search
 			activeCategoryDisplay = candidate.display
 			categoryIndex = categoryIndex + 1
+			row.isCategoryHeader = true
+			headersMapped = headersMapped + 1
 		end
 		row.category = activeCategory
 		row.categoryDisplay = activeCategoryDisplay
 	end
+	return headersMapped
 end
 
 local function keybindingCategoryLabel(value)
@@ -454,14 +513,22 @@ local function refreshSearchOverlays(self, tabs)
 	end
 end
 
-local function attachSearch(self, panel, pageName, categories, supportsKeyFilter, keyBindingEntries)
+local function attachSearch(self, panel, pageName, categories, supportsKeyFilter, keyBindingEntries, centerNativeOptions)
 	if not panel or panel.chilaSedaOptionsSearch then return end
+	if centerNativeOptions then
+		local count, deltaX, result = centerNativeOptionControls(panel)
+		trace("native-options-center", "tab=" .. tostring(pageName)
+			.. " controls=" .. tostring(count)
+			.. " dx=" .. tostring(deltaX)
+			.. " result=" .. tostring(result))
+	end
 	local rows = readRows(panel)
 	local originalContentBottom = 0
 	for _, row in ipairs(rows) do originalContentBottom = math.max(originalContentBottom, row.bottomY) end
-	applyCategories(rows, categories)
+	local categoryHeadersMapped = applyCategories(rows, categories)
 	if keyBindingEntries then
 		local headersMapped, bindingsMapped = annotateKeyBindingCategories(rows, keyBindingEntries)
+		categoryHeadersMapped = headersMapped
 		trace("keybinding-categories", "headers=" .. tostring(headersMapped)
 			.. " bindings=" .. tostring(bindingsMapped))
 	end
@@ -573,6 +640,8 @@ local function attachSearch(self, panel, pageName, categories, supportsKeyFilter
 		originalScrollHeight = contentHeight,
 		searchStartY = math.max(0, rows[1] and rows[1].baseY or 0),
 		bottomPadding = bottomPadding,
+		pageName = pageName,
+		categoryHeadersMapped = categoryHeadersMapped,
 		keyFilter = "",
 		keyFilterButton = keyFilterButton,
 		clearKeyButton = clearKeyButton,
@@ -619,6 +688,7 @@ local function attachSearch(self, panel, pageName, categories, supportsKeyFilter
 		.. " options-height=" .. tostring(panel:getHeight())
 		.. " first-row-y=" .. tostring(rows[1] and rows[1].baseY or 0)
 		.. " search-start-y=" .. tostring(state.searchStartY)
+		.. " category-headers=" .. tostring(categoryHeadersMapped)
 		.. " category-button=" .. tostring(controls.categoryButtonX) .. ","
 		.. tostring(controls.categoryButtonY) .. "," .. tostring(controls.categoryButtonWidth)
 		.. " scroll=separate")
@@ -746,6 +816,13 @@ local pageBuilders = {
 	"addDisplayPanel", "addUIPanel", "addSoundPanel", "addKeybindingPanel",
 	"addAccessibilityPanel", "addControllerPanel", "addMultiplayerPanel", "addModOptionsPanel",
 }
+local nativeOptionTabsToCenter = {
+	addDisplayPanel = true,
+	addUIPanel = true,
+	addSoundPanel = true,
+	addAccessibilityPanel = true,
+	addMultiplayerPanel = true,
+}
 
 for _, methodName in ipairs(pageBuilders) do
 	local original = MainOptions[methodName]
@@ -778,6 +855,7 @@ for _, methodName in ipairs(pageBuilders) do
 				categories = categories,
 				supportsKeyFilter = supportsKeyFilter,
 				keyBindingEntries = keyBindingEntries,
+				centerNativeOptions = nativeOptionTabsToCenter[methodName] == true,
 			}
 			return result
 		end
@@ -792,7 +870,7 @@ MainOptions.create = function(self, ...)
 	-- controls only after that pass so they cannot change the native centering.
 	for _, spec in ipairs(self.chilaSedaOptionsSearchPageSpecs) do
 		spec.overlay = attachSearch(self, spec.panel, spec.pageName, spec.categories,
-			spec.supportsKeyFilter, spec.keyBindingEntries)
+			spec.supportsKeyFilter, spec.keyBindingEntries, spec.centerNativeOptions)
 	end
 	refreshSearchOverlays(self, self.tabs)
 	return result

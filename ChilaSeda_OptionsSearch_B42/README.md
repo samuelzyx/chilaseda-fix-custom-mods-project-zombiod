@@ -4,12 +4,18 @@ Agrega un filtro de busqueda a cada pestana de la ventana Opciones. Busca por te
 
 La categoria de cada mod conserva el orden original de la lista de opciones. El filtro de texto encuentra tanto la categoria como sus ajustes. Si el resultado pertenece a una sola categoria, `Ver otras opciones de esta categoria` cambia la busqueda al nombre de la categoria y muestra todos sus ajustes; tambien limpia un filtro de tecla activo. Los resultados filtrados empiezan en la parte superior del area desplazable, aunque la lista original tenga filas fuera del viewport.
 
+Al filtrar por un ajuste, conserva visible el titulo de la categoria a la que pertenece, aunque el texto del titulo no coincida con la busqueda.
+
+En Pantalla, Interfaz de usuario, Sonido, Accesibilidad y Multijugador, centra horizontalmente el bloque de controles dentro del panel. Los titulos de seccion, divisores y avisos de busqueda conservan su posicion.
+
 En `Teclas`, el filtro de texto busca la accion y la tecla mostrada. El control `Filtrar al presionar una tecla` captura la siguiente tecla pulsada y muestra solo las acciones asignadas a ella, comparando sus palabras en orden con el boton de asignacion (incluye nombres como `Left Shift`). `Esc` tambien se puede seleccionar como filtro. Usa `Limpiar tecla`, junto al selector, para quitarlo sin cerrar Opciones. El mismo filtro por tecla esta disponible en `Mods` para las opciones que usan asignaciones de teclas; cada pestana conserva su propio estado. La `X` junto al campo borra el texto sin borrar el filtro de tecla. Las filas se descubren desde los hijos reales del panel, se compactan al filtrar y se restauran al limpiar. El buscador conserva el orden nativo de los mods y no modifica sus datos compartidos.
 
 La normalizacion ignora tildes al comparar los textos.
 
 ## Historial
 
+- 1.0.12: centra el bloque de controles de las cinco pestanas nativas sin mover titulos, divisores ni el aviso de busqueda; agrega una traza del desplazamiento aplicado.
+- 1.0.11: conserva el titulo de la primera categoria de Mods al filtrar uno de sus ajustes; agrega un contrato Kahlua para el encabezado y una traza acotada del resultado.
 - 1.0.10: evita recortar la primera coincidencia si el panel tenia filas por encima del viewport; agrega un boton para cambiar de una opcion a todas las opciones de su categoria.
 - 1.0.9: separa los filtros en un bloque fijo titulado `Filtros`, con fondo y divisor, del panel desplazable de opciones. El aviso `Sin coincidencias` aparece dentro del viewport de resultados, que conserva su propio desplazamiento.
 - 1.0.8: en `Teclas`, asocia cada atajo con la categoria nativa de `MainOptions.keyText`; al filtrar conserva el titulo y divisor originales solo para categorias con resultados, y los restaura al limpiar. Registra una traza compacta con la cantidad de encabezados y atajos asociados.
