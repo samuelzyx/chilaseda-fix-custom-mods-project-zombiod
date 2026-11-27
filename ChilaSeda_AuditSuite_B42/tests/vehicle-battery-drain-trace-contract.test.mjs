@@ -24,7 +24,7 @@ test("nearby Spiffo and towing partner battery trace is bounded and read-only", 
   );
   assert.ok(fs.existsSync(gameJar), `Project Zomboid Java archive not found: ${gameJar}`);
   assert.ok(fs.existsSync(helper), `Kahlua contract helper not found: ${helper}`);
-  assert.match(modInfo, /^modversion=2\.1\.13$/m);
+  assert.match(modInfo, /^modversion=2\.1\.14$/m);
   assert.match(lua, /TARGET_SCRIPT = "Base\.VanSpiffo"/);
   assert.match(lua, /MAX_SAMPLES_PER_SESSION = 180/);
   assert.match(lua, /MAX_VEHICLES_PER_SAMPLE = 8/);

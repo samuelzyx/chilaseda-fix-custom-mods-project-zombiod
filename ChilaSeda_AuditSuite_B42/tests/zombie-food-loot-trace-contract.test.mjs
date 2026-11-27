@@ -21,7 +21,7 @@ const helper = path.resolve(
 );
 
 test("server zombie food trace reads saved loot odds, post-hook food and enforces its line cap", () => {
-  assert.match(modInfo, /^modversion=2\.1\.13$/m);
+  assert.match(modInfo, /^modversion=2\.1\.14$/m);
   assert.match(modInfo, /loadModAfter=.*MaDZombieLootB42/);
   assert.match(lua, /MAX_LOG_LINES = 64/);
   assert.match(lua, /MAX_OBSERVATIONS = 10000/);

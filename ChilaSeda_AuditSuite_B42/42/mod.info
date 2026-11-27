@@ -4,6 +4,6 @@ authors=ChilaSeda
 description=Optional Error Magnifier session logs, mod-memory audit, performance recorder, Weight Monitor, bounded read-only combat mouse and prone traces, floor inventory transfer/drop diagnostics with Lua caller frames, nearby Spiffo/trailer battery diagnostics, and bounded server-side zombie food-loot outcome trace.
 loadModAfter=errorMagnifier,ZombieBuddy,TrueWeight,ThisIsYourLife,ExtendedVanillaWeapons,AnimalRemasterApproved,DGVFlags,DGVPosters,ProperRagdolls,MaDZombieLootB42
 versionMin=42.21
-modversion=2.1.13
+modversion=2.1.14
 javaJarFile=media/java/client/ChilaSedaAuditSuite.jar
 javaPkgName=chilaseda

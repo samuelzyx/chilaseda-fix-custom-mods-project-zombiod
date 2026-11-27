@@ -31,6 +31,8 @@
 | **Vehicle Battery Drain Trace** | Muestrea hasta 180 veces vans Spiffo cercanas y sus remolques enlazados: carga y condicion de bateria, motor, luces, radio, piezas y conexiones de remolque. Guarda cada muestra en DebugLog y en `ChilaSeda_VehicleBatteryTrace.log`. | Al buscar descargas de bateria. Cada sesion limita el radio a 50 tiles, 8 vehiculos por muestra y 180 muestras; no modifica los vehiculos. |
 | **Weight Monitor** | Registra pesos observados de objetos y compara objetivos por ID tecnico. | Al revisar masas incoherentes o preparar una meta razonada en el manual. |
 
+Para Jill, el monitor considera `Base.Key1` y `Base.CarKey` en 0 kg mientras `ZeroWeightKeys_B42` esta activo.
+
 Los modulos son independientes y no cambian gameplay, inventarios, vehiculos, XP ni el peso de los objetos. Los datos son evidencia para investigar; una correlacion temporal no demuestra por si sola la causa.
 
 ## Instalacion

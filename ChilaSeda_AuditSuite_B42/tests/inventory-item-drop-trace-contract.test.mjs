@@ -20,7 +20,7 @@ test("floor transfer trace records pickup/drop counts without changing transfer 
   );
   assert.ok(fs.existsSync(gameJar), `Project Zomboid Java archive not found: ${gameJar}`);
   assert.ok(fs.existsSync(helper), "Kahlua contract helper was not found");
-  assert.match(modInfo, /^modversion=2\.1\.13$/m);
+  assert.match(modInfo, /^modversion=2\.1\.14$/m);
   assert.match(lua, /MAX_TRACE_LINES = 192/);
   assert.match(lua, /MAX_CARRIED_ITEMS = 2000/);
   assert.match(lua, /readOnly=1/);

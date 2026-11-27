@@ -68,8 +68,9 @@ local TARGET_WEIGHTS = {
     SleepingBag_Cheap_Green = 2.00,
     SugarPacket = 0.004,
     Battery = 0.023,
-    Key1 = 0.009,
-    CarKey = 0.012,
+    -- Match ZeroWeightKeys_B42; positive values here are restored after sleep.
+    Key1 = 0.0,
+    CarKey = 0.0,
     Bandaid = 0.001,
     HandTorch = 0.20,
     WristWatch_Left_DigitalDress = 0.021,
@@ -649,10 +650,27 @@ local function rebalanceVanillaItems()
     end
 
     print("[ChilaSeda_VanillaWeightFix] adjusted " .. tostring(changed)
-        .. " item definition(s) after True Weight")
+        .. " item definition(s) after True Weight key_targets=Base.Key1:0,Base.CarKey:0")
 end
 
-local function rebalanceContainer(container, visited)
+local function newKeyRebalanceStats()
+    return {
+        ["Base.Key1"] = { scanned = 0, updated = 0 },
+        ["Base.CarKey"] = { scanned = 0, updated = 0 },
+    }
+end
+
+local function keyRebalanceSummary(stats)
+    stats = stats or newKeyRebalanceStats()
+    local parts = {}
+    for _, fullType in ipairs({ "Base.Key1", "Base.CarKey" }) do
+        local row = stats[fullType] or { scanned = 0, updated = 0 }
+        parts[#parts + 1] = fullType .. ":" .. tostring(row.updated) .. "/" .. tostring(row.scanned)
+    end
+    return table.concat(parts, ",")
+end
+
+local function rebalanceContainer(container, visited, keyStats)
     if not container or visited[container] then return 0, 0 end
     visited[container] = true
     local items = container:getItems()
@@ -661,11 +679,17 @@ local function rebalanceContainer(container, visited)
     for i = 0, items:size() - 1 do
         local item = items:get(i)
         scanned = scanned + 1
-        if applyItemWeight(item) then changed = changed + 1 end
+        local fullType = item and type(item.getFullType) == "function" and item:getFullType() or nil
+        local keyRow = fullType and keyStats[fullType] or nil
+        if keyRow then keyRow.scanned = keyRow.scanned + 1 end
+        if applyItemWeight(item) then
+            changed = changed + 1
+            if keyRow then keyRow.updated = keyRow.updated + 1 end
+        end
         if item and item.getInventory then
             local ok, nested = pcall(function() return item:getInventory() end)
             if ok and nested then
-                local nestedChanged, nestedScanned = rebalanceContainer(nested, visited)
+                local nestedChanged, nestedScanned = rebalanceContainer(nested, visited, keyStats)
                 changed = changed + nestedChanged
                 scanned = scanned + nestedScanned
             end
@@ -675,9 +699,10 @@ local function rebalanceContainer(container, visited)
 end
 
 local function rebalanceAccessiblePlayer(player, playerNum)
-    if not player then return 0, 0 end
+    local keyStats = newKeyRebalanceStats()
+    if not player then return 0, 0, keyStats end
     local visited = {}
-    local changed, scanned = rebalanceContainer(player:getInventory(), visited)
+    local changed, scanned = rebalanceContainer(player:getInventory(), visited, keyStats)
     local paneMenu = rawget(_G, "ISInventoryPaneContextMenu")
 
     -- Match Weight Monitor's container discovery. Refreshing both pages
@@ -704,17 +729,13 @@ local function rebalanceAccessiblePlayer(player, playerNum)
         local ok, containers = pcall(function() return paneMenu.getContainers(player) end)
         if ok and containers then
             for i = 0, containers:size() - 1 do
-                local containerChanged, containerScanned = rebalanceContainer(containers:get(i), visited)
+                local containerChanged, containerScanned = rebalanceContainer(containers:get(i), visited, keyStats)
                 changed = changed + containerChanged
                 scanned = scanned + containerScanned
             end
         end
     end
-    if changed > 0 then
-        print("[ChilaSeda_VanillaWeightFix] sleep rebalance updated " .. tostring(changed)
-            .. " existing item instance(s) in inventory, bags, and open containers")
-    end
-    return changed, scanned
+    return changed, scanned, keyStats
 end
 
 local sleepRebalanced = {}
@@ -743,13 +764,13 @@ local function onPlayerUpdate(player)
         else
             loadRetryTicks[playerIndex] = LOAD_RETRY_INTERVAL
             loadRetryCount[playerIndex] = (loadRetryCount[playerIndex] or 0) + 1
-            local ok, changed, scanned = pcall(rebalanceAccessiblePlayer, player, playerIndex)
+            local ok, changed, scanned, keyStats = pcall(rebalanceAccessiblePlayer, player, playerIndex)
             if ok and (scanned or 0) > 0 then
                 loadRebalanced[playerIndex] = true
                 print("[ChilaSeda_VanillaWeightFix] event=load_rebalance result=complete items="
                     .. tostring(changed or 0) .. " accessible_items=" .. tostring(scanned)
                     .. " attempts=" .. tostring(loadRetryCount[playerIndex])
-                    .. " health-independent=true")
+                    .. " health-independent=true key_instances=" .. keyRebalanceSummary(keyStats))
             elseif ok then
                 if not loadWaitLogged[playerIndex] then
                     loadWaitLogged[playerIndex] = true
@@ -800,7 +821,10 @@ local function onSleepingTick(playerIndex)
         return
     end
 
-    rebalanceAccessiblePlayer(player, playerIndex)
+    local changed, scanned, keyStats = rebalanceAccessiblePlayer(player, playerIndex)
+    print("[ChilaSeda_VanillaWeightFix] event=sleep_rebalance result=complete items="
+        .. tostring(changed or 0) .. " accessible_items=" .. tostring(scanned or 0)
+        .. " key_instances=" .. keyRebalanceSummary(keyStats))
 end
 
 Events.OnLoadedTileDefinitions.Add(rebalanceVanillaItems)

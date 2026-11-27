@@ -18,9 +18,9 @@ test("saved-weight pass waits for accessible inventory and loot containers", () 
   assert.ok(fs.existsSync(gameJar), `Project Zomboid Java archive not found: ${gameJar}`);
   const lua = fs.readFileSync(luaPath, "utf8");
   const onPlayerUpdate = lua.slice(lua.indexOf("local function onPlayerUpdate"), lua.indexOf("local function onSleepingTick"));
-  assert.match(lua, /local nestedChanged, nestedScanned = rebalanceContainer\(nested, visited\)/);
-  assert.match(lua, /local containerChanged, containerScanned = rebalanceContainer\(containers:get\(i\), visited\)/);
-  assert.match(onPlayerUpdate, /local ok, changed, scanned = pcall\(rebalanceAccessiblePlayer/);
+  assert.match(lua, /local nestedChanged, nestedScanned = rebalanceContainer\(nested, visited, keyStats\)/);
+  assert.match(lua, /local containerChanged, containerScanned = rebalanceContainer\(containers:get\(i\), visited, keyStats\)/);
+  assert.match(onPlayerUpdate, /local ok, changed, scanned, keyStats = pcall\(rebalanceAccessiblePlayer/);
   assert.match(onPlayerUpdate, /result=waiting accessible_items=0/);
   assert.match(onPlayerUpdate, /retry_ticks=/);
 
@@ -31,6 +31,45 @@ test("saved-weight pass waits for accessible inventory and loot containers", () 
     const result = execFileSync(
       path.join(jdkBin, "java.exe"),
       ["-classpath", `${gameJar};${tempDir}`, "LuaCompileContract", luaPath, "--compile-only"],
+      { cwd: path.dirname(gameJar), encoding: "utf8" },
+    );
+    assert.match(result, /Kahlua syntax compile passed/);
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+test("keeps key targets aligned with ZeroWeightKeys and Weight Monitor", () => {
+  const lua = fs.readFileSync(luaPath, "utf8");
+  const targetStart = lua.indexOf("local TARGET_WEIGHTS = {");
+  const targetEnd = lua.indexOf("local FULL_TYPE_TARGETS = {");
+  assert.ok(targetStart >= 0 && targetEnd > targetStart, "weight target table bounds found");
+  const targetTable = lua.slice(targetStart, targetEnd);
+  assert.match(targetTable, /Key1\s*=\s*0\.0\b/);
+  assert.match(targetTable, /CarKey\s*=\s*0\.0\b/);
+  assert.match(lua, /key_instances=\"\s*\.\.\s*keyRebalanceSummary\(keyStats\)/);
+
+  const monitorPath = path.resolve(
+    modRoot,
+    "../ChilaSeda_AuditSuite_B42/42/media/lua/client/ChilaSeda_WeightMonitor.lua",
+  );
+  const monitor = fs.readFileSync(monitorPath, "utf8");
+  assert.match(monitor, /Key1\s*=\s*0\.0,\s*CarKey\s*=\s*0\.0/);
+});
+
+test("Weight Monitor Lua syntax compiles with the game's Kahlua parser", () => {
+  const monitorPath = path.resolve(
+    modRoot,
+    "../ChilaSeda_AuditSuite_B42/42/media/lua/client/ChilaSeda_WeightMonitor.lua",
+  );
+  assert.ok(fs.existsSync(monitorPath), `Weight Monitor Lua not found: ${monitorPath}`);
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "weight-monitor-kahlua-"));
+  try {
+    const harness = path.join(modRoot, "../ChilaSeda_AccessibleActions_B42/tests/LuaCompileContract.java");
+    execFileSync(path.join(jdkBin, "javac.exe"), ["-classpath", gameJar, "-d", tempDir, harness]);
+    const result = execFileSync(
+      path.join(jdkBin, "java.exe"),
+      ["-classpath", `${gameJar};${tempDir}`, "LuaCompileContract", monitorPath, "--compile-only"],
       { cwd: path.dirname(gameJar), encoding: "utf8" },
     );
     assert.match(result, /Kahlua syntax compile passed/);

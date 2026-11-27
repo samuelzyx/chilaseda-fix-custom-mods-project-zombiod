@@ -1,4 +1,9 @@
-# ChilaSeda Fix · pesos vanilla y overrides (B42) 2.1.5
+# ChilaSeda Fix · pesos vanilla y overrides (B42) 2.1.6
+
+## Version 2.1.6
+
+- Keeps `Base.Key1` and `Base.CarKey` at 0 kg to match the active `ZeroWeightKeys_B42` mod; this prevents the sleep rebalance from restoring their positive weights between key scans.
+- Adds bounded key instance counts to the load and sleep rebalance markers for runtime verification.
 
 ## Version 2.1.5
 
@@ -13,7 +18,7 @@ Incluye VanillaWeightFix y los overrides de peso para Any Wall Flags y Posters. 
 
 ## Reajuste de instancias
 
-Al cargar al personaje, el parche reajusta una vez los objetos accesibles que ya estaban guardados, sin depender de la salud. Para objetos recogidos despues, el reajuste sigue corriendo una sola vez por episodio de sueno y solo si la salud esta completa (100). No hay sondeo periodico mientras el personaje juega.
+Al cargar al personaje, el parche reajusta una vez los objetos accesibles que ya estaban guardados, sin depender de la salud. Para objetos recogidos despues, el reajuste sigue corriendo una sola vez por episodio de sueno y solo si la salud esta completa (100). No hay sondeo periodico mientras el personaje juega. Las llaves `Base.Key1` y `Base.CarKey` se mantienen en 0 kg para concordar con `ZeroWeightKeys_B42`.
 
 ## Metas de peso documentadas
 

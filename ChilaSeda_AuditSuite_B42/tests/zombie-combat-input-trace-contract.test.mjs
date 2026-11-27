@@ -23,7 +23,7 @@ test("combat input trace captures bounded read-only right mouse, Ctrl, Shift, an
   );
   assert.ok(fs.existsSync(gameJar), `Project Zomboid Java archive not found: ${gameJar}`);
   assert.ok(fs.existsSync(helper), `Kahlua contract helper not found: ${helper}`);
-  assert.match(modInfo, /^modversion=2\.1\.13$/m);
+  assert.match(modInfo, /^modversion=2\.1\.14$/m);
   assert.match(lua, /MAX_ATTEMPTS_PER_SESSION = 24/);
   assert.match(lua, /MAX_TRACE_LINES = 768/);
   assert.match(lua, /MAX_SAMPLES_PER_ATTEMPT = 10/);

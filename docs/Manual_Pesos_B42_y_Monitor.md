@@ -71,6 +71,8 @@ VanillaWeightFix 2.1.4 incluye las 21 metas de 1.00 kg de la tabla como objetivo
 
 Las 21 entradas `AuthenticZClothing.Bag_*_Tier_*` estan declaradas en los scripts de recetas de mejora de mochilas de Workshop 2335368829, con `Weight=1` y capacidad de 19. Se conserva el peso base de 1.00 kg como realista para un bolso tipo duffel de esa capacidad: productos comparables pesan 0.99 kg para un duffel de viaje de 31 L ([Swiss Military](https://www.swissmilitaryindia.com/products/java-duffle-bag-with-spacious-main-compartment-31l-db34)), 0.9 kg para un duffel militar de lona ([Army and Outdoors](https://www.armyandoutdoors.com.au/products/british-olive-drab-duffel-bag)) y alrededor de 1 kg para una bolsa de asalto medico vacia ([MED-TAC](https://tactical-medicine.com/en-gb/products/tacmed-r-aid-medic-assault-bag)). Weight Monitor 1.7.4 las marca `BASE_OK` solo si la definicion cargada sigue en 1.00 kg; es revision de la definicion, no lectura de una instancia de Jill.
 
+> La meta vigente de Jill para `Base.Key1` y `Base.CarKey` es 0 kg porque `ZeroWeightKeys_B42` esta activo. Las lecturas del 07/11 en la tabla historica conservan las metas que usaba entonces el monitor (0.009/0.012 kg); no representan la meta actual. El monitor del 26/11 vio 8 llaves de casa y 57 llaves de auto bajar juntas de 0.756 kg a 0 tras el escaneo de llaves.
+
 | Nombre / grupo | ID tecnico | Base (kg) | Meta (kg) | Observado (kg) | Estado |
 |---|---|---:|---:|---:|---|
 | Duffel festivo Tier 1 | `AuthenticZClothing.Bag_DuffelBag_Festive_Tier_1` | 1.00 | 1.00 | — | Base revisada; sin registro runtime |
@@ -114,8 +116,8 @@ Los objetivos estan en kg por unidad. `Observado` solo se rellena con una medici
 | Bolígrafo azul | `Base.BluePen` | 0.1 | 0.006 | — | BIC Cristal 5.58–5.6 g; analogía |
 | Bolígrafo rojo | `Base.RedPen` | 0.1 | 0.006 | — | BIC Cristal 5.58–5.6 g; analogía |
 | Lápiz | `Base.Pencil` | 0.1 | 0.005 | — | Lápiz de madera OHTO, 5.4 g |
-| Llave de casa | `Base.Key1` | 0.05 | 0.009 | 0 | Blanco SC1: 8.4 g aprox. por unidad incluyendo embalaje ([paquete de 50](https://www.millsupply.co/hardware/keys-and-assys/key-blanks/cylinder/all-cylinder-blanks/kaba-ilco-sc1-br-5-pin-schlage-sc1-key-blank-brass-50-box-m34136)) |
-| Llave de auto | `Base.CarKey` | 0.05 | 0.012 | 0 | Jill 07/11 19:37, monitor 1.9.7: actual/total 0 kg/1, target 0.012 kg; luego Visto. Llave SC1 decorada, 13.6 g ([producto](https://www.walmart.ca/en/ip/shiyou-Forged-Key-Shapes-Anchor-House-Key-Blank-SC1-1-Key-B304S-Schlage-SC1/2NN5ULGU7JLV)) |
+| Llave de casa | `Base.Key1` | 0.05 | 0 | 0 | Meta de Jill alineada con `ZeroWeightKeys_B42`; no restaurar el peso fisico estimado mientras ese mod este activo. |
+| Llave de auto | `Base.CarKey` | 0.05 | 0 | 0 | Meta de Jill alineada con `ZeroWeightKeys_B42`; las lecturas historicas de 0.012 kg se conservan abajo. |
 | Curita | `Base.Bandaid` | 0.05 | 0.001 | 0.01 | Caja de 100 con envío 0.18 lb ≈0.82 g/unidad ([Band-Aid 100 ct](https://www.target.com/p/-/A-14796602)) |
 | Linterna de mano | `Base.HandTorch` | 0.5 | 0.20 | 0.20 | Energizer 2-in-1: 117 g sin pilas + 4 AA de 23 g ≈209 g ([ficha](https://data.energizer.com/pdfs/enfhh41e.pdf), [E91 AA](https://data.energizer.com/pdfs/e91_max_na.pdf)) |
 | Reloj digital de vestir | `Base.WristWatch_Left_DigitalDress` | 0.1 | 0.021 | 0.03 | Casio F-91W, 21 g ([fabricante](https://www.casio.com/us/watches/casio/about/f-91w/)) |

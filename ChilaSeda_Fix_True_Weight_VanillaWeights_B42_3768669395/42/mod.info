@@ -4,4 +4,4 @@ authors=ChilaSeda
 description=Rebalances vanilla and selected Workshop item weights. Corrects accessible saved instances after player load and later once per full-health sleep episode.
 loadModAfter=TrueWeight,ThisIsYourLife,ExtendedVanillaWeapons,AnimalRemasterApproved,DGVFlags,DGVPosters
 versionMin=42.21
-modversion=2.1.5
+modversion=2.1.6

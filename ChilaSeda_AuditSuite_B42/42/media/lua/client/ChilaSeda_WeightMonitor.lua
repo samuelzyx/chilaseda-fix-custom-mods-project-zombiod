@@ -68,7 +68,8 @@ local vanillaTargets = {
     SleepingBag_Cheap_Green = 2.00,
     SugarPacket = 0.004,
     Battery = 0.023,
-    Key1 = 0.009, CarKey = 0.012, Bandaid = 0.001,
+    -- Jill enables ZeroWeightKeys_B42, so key targets must remain zero here too.
+    Key1 = 0.0, CarKey = 0.0, Bandaid = 0.001,
     HandTorch = 0.20,
     WristWatch_Left_DigitalDress = 0.021,
     BluePen = 0.006, RedPen = 0.006, Pencil = 0.005,
