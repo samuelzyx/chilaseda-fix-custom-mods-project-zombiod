@@ -156,3 +156,39 @@ contratos y suite local pasan 19/19, pero aun falta validarlo en Jill. Mantener
 el workaround durante la carga actual de prueba. Cuando esa sesion termine, se
 puede hacer una carga aislada con Inventory Tetris y Size Cap 1.4.9 activados,
 con un respaldo nuevo del save antes de editar su `mods.txt`.
+
+## AnimalRemasterApproved opcional con AnimalBalance activo en Jill - 2026-11-27
+
+A solicitud de Chila se retiro solo el mod Workshop `AnimalRemasterApproved`
+(item 3819478254, version instalada 1.0.11) del `mods.txt` del save activo
+`Jill_Valantine_26_11_2026_2PM`. `ChilaSeda_AnimalBalance_B42` 2.3.8 permanece
+activo y ya no declara RRAR en `require`; RRAR sigue en `loadModAfter` como orden
+opcional. No se cambio la plantilla, las suscripciones de Workshop ni otros IDs.
+
+- Destino: `C:\Users\zyxsa\Zomboid\Saves\Sandbox\Jill_Valantine_26_11_2026_2PM\mods.txt`.
+- Backup: `C:\Users\zyxsa\Zomboid\mods\backups\2026-11-27_10-38-23-0600\Saves\Sandbox\Jill_Valantine_26_11_2026_2PM\mods.txt`.
+- SHA-256 original/backup: `5785AA91E955F59664F57D2533B73C3180044FEC5A05AAC5C98DD166A435EFDC`.
+- SHA-256 resultante: `5448AFA8FC8FF03CD3083B6F67F5542E6E2DB30CFD94251F5A6575928DFF77CD`.
+
+La comprobacion por bytes confirma que el resultado es el backup menos la unica
+linea `mod = AnimalRemasterApproved,`. Conserva `VERSION = 1,` como primeros
+bytes, UTF-8 sin BOM, una entrada `ChilaSeda_AnimalBalance_B42` y
+`ZeroWeightKeys_B42` al final. Los contratos locales de AnimalBalance pasan
+14/14. Para instalar otra vez esta configuracion, con Jill cerrada, conserva el
+mod local 2.3.8 activo y deja ausente solo el ID `AnimalRemasterApproved`. Para
+revertir, cierra Project Zomboid, copia el backup sobre el destino y verifica
+que su SHA-256 vuelva a ser
+`5785AA91E955F59664F57D2533B73C3180044FEC5A05AAC5C98DD166A435EFDC`, el
+encabezado y la ausencia de BOM. La retirada evita cargar el modelo de ganso de
+RRAR; no repara ese modelo.
+
+## Parche de nivel de zanjas Moats en Jill - 2026-11-27
+
+Se agrego solo el ID local `ChilaSeda_MoatsFillLevel_B42` 0.1.1 al save activo `Jill_Valantine_26_11_2026_2PM`. El parche se inserto despues de `ChilaSeda_Fix_Viewpoint_B42`; sus dependencias MoatsB42, Viewpoint y el fix estaban activos. Viewpoint Workshop 3809306528 declara 0.1.7 y Moats Workshop 3550032314 declara 1.7. No se cambio la plantilla ni archivos de Workshop.
+
+- Destino: `C:\Users\zyxsa\Zomboid\Saves\Sandbox\Jill_Valantine_26_11_2026_2PM\mods.txt`.
+- Backup: `C:\Users\zyxsa\Zomboid\mods\backups\2026-11-27_10-58-26-0600\Saves\Sandbox\Jill_Valantine_26_11_2026_2PM\mods.txt`.
+- SHA-256 original/backup: `5448AFA8FC8FF03CD3083B6F67F5542E6E2DB30CFD94251F5A6575928DFF77CD`.
+- SHA-256 resultante: `3452DEB7360E65845B4DB414E6204D4B71232FC893EA59F7D449224F099D81C8`.
+
+El unico cambio en el perfil fue insertar el ID del parche despues de Viewpoint Fix. Se comprobo el encabezado `VERSION = 1,`, UTF-8 sin BOM, dependencias antes del parche y `ZeroWeightKeys_B42` como ultimo mod. Para revertir, con Project Zomboid cerrado, copia el backup sobre el destino y confirma que el SHA-256 regrese al valor original. El contrato local pasa 1/1; el valor visible y su tooltip siguen pendientes de validacion en Jill.

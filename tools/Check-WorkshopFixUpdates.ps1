@@ -155,7 +155,7 @@ $tableRows += '| Project Zomboid (juego base) | - | - | ChilaSeda_Fix_Project_Zo
 
 $state = [pscustomobject]@{ checked_utc=$now; items=$newState }
 $state | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $stateFile -Encoding utf8
-$document = Get-Content -LiteralPath $trackingFile -Raw
+$document = [IO.File]::ReadAllText($trackingFile, [System.Text.Encoding]::UTF8)
 $lineBreak = [Environment]::NewLine
 $tableText = [string]::Join($lineBreak, [string[]]$tableRows)
 $currentBlock = '<!-- CURRENT_STATE_START -->' + $lineBreak + '| Mod original de Workshop | Workshop ID | Mod ID fuente | Fix local | Version del fix | Version fuente aplicada | Workshop actualizado | Version fuente instalada | Estado |' + $lineBreak + '|---|---:|---|---|---:|---|---|---|---|' + $lineBreak + $tableText + $lineBreak + '<!-- CURRENT_STATE_END -->'
@@ -167,7 +167,7 @@ if ($events.Count -gt 0) {
     $eventText = [string]::Join($lineBreak, [string[]]$eventRows)
     $document = $document.Replace($marker, ($eventText + $lineBreak + $marker))
 }
-Set-Content -LiteralPath $trackingFile -Value $document -Encoding utf8
+[IO.File]::WriteAllText($trackingFile, $document, (New-Object System.Text.UTF8Encoding($false)))
 if ($oldState.Count -eq 0) {
     Write-Output 'Primera consulta completada: se estableció la línea base. No se marcaron cambios históricos.'
     Write-CheckerLog 'Primera línea base establecida; no se marcaron cambios históricos.'
