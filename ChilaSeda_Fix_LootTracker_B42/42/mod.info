@@ -1,0 +1,8 @@
+name=ChilaSeda Fix - Loot Tracker
+id=ChilaSeda_Fix_LootTracker_B42
+authors=ChilaSeda
+description=Prevents a missing-format-argument warning for Loot Tracker's localized My Car days-left label.
+require=LootTrackerB42
+loadModAfter=LootTrackerB42
+versionMin=42.20
+modversion=1.0.0
