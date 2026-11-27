@@ -47,6 +47,16 @@ test("catalog coverage and corrected English labels are present", () => {
   assert.equal(language.language_name, "Español");
 });
 
+test("Animal Remaster Canada goose egg has a Spanish ItemName entry", () => {
+  const itemNames = JSON.parse(fs.readFileSync(catalogPath("ItemName"), "utf8"));
+  assert.equal(itemNames["AMRBirds321.CanadaGooseEgg783"], "Huevo de ganso canadiense");
+  assert.equal(
+    Object.prototype.hasOwnProperty.call(itemNames, "ItemName_AMRBirds321.CanadaGooseEgg783"),
+    false,
+    "ItemName.json keys use the full type without the ItemName_ prefix",
+  );
+});
+
 test("literal percent signs survive translation formatting", () => {
   const sandbox = JSON.parse(fs.readFileSync(catalogPath("Sandbox"), "utf8"));
   const igUi = JSON.parse(fs.readFileSync(catalogPath("IG_UI"), "utf8"));
@@ -71,9 +81,30 @@ test("literal percent signs survive translation formatting", () => {
   assert.match(igUi.IGUI_CheckAround_zombiesUpstairs1, /%%d %%s/);
 });
 
+test("cooking labels parse cleanly in Spanish and English without duplicate keys", () => {
+  const expected = {
+    IGUI_ChilaSeda_CookingRemainingShort: ["%d min restantes", "%d min remaining"],
+    IGUI_ChilaSeda_BurningRemainingShort: ["%d min para quemarse", "%d min until burnt"],
+    IGUI_ChilaSeda_CookingRemaining: ["Cocinando: %d min restantes", "Cooking: %d min remaining"],
+    IGUI_ChilaSeda_CookingPaused: ["Pausado: %d min restantes", "Paused: %d min remaining"],
+    IGUI_ChilaSeda_CookingReady: ["Listo para retirar", "Ready to take off heat"],
+    IGUI_ChilaSeda_BurningRemaining: ["Quemándose: %d min para quemarse", "Burning: %d min until burnt"],
+    IGUI_ChilaSeda_CookingBurnt: ["Quemado", "Burnt"],
+  };
+  for (const [language, index] of [["ES", 0], ["EN", 1]]) {
+    const file = path.join(modRoot, `42/media/lua/shared/Translate/${language}/IG_UI.json`);
+    const source = fs.readFileSync(file, "utf8");
+    const catalog = JSON.parse(source);
+    assert.deepEqual(duplicateKeys(source), [], `${language}/IG_UI.json has duplicate keys`);
+    for (const [key, values] of Object.entries(expected)) {
+      assert.equal(catalog[key], values[index], `${language}/${key}`);
+    }
+  }
+});
+
 test("translation mod version and order cover every audited source mod", () => {
   const modInfo = fs.readFileSync(path.join(modRoot, "42/mod.info"), "utf8");
-  assert.match(modInfo, /^modversion=1\.5\.3$/m);
+  assert.match(modInfo, /^modversion=1\.5\.8$/m);
   const loadAfter = new Set(modInfo.match(/^loadModAfter=(.+)$/m)?.[1].split(",") ?? []);
   for (const id of [
     "isoContainers",

@@ -1,4 +1,6 @@
 {
+  "ContextMenu_Grab_all": "Tomar todo",
+  "ContextMenu_Wash": "Lavar",
   "ContextMenu_AutoCook_From_Category": "Cocinar automaticamente %1",
   "ContextMenu_AutoCook_Tooltip": "Usa %1 ingredientes adecuados que haya cerca para cocinar un(a) %2 segun la dieta de cocina que configuraste.",
   "ContextMenu_AutoCook_Tooltip_No_Mats": "No hay ingredientes adecuados cerca...",

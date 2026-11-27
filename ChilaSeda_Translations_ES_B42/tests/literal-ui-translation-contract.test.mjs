@@ -42,7 +42,7 @@ test("literal UI catalog parses, has no duplicates, and contains all new labels"
 });
 
 test("translation mod version and load order cover the patched Workshop mods", () => {
-  assert.match(modInfo, /^modversion=1\.5\.3$/m);
+  assert.match(modInfo, /^modversion=1\.5\.8$/m);
   const loadAfter = modInfo.match(/^loadModAfter=(.+)$/m)?.[1].split(",") ?? [];
   for (const id of ["MiniHealthPanel", "HunterExpansion", "Viewpoint"]) {
     assert.ok(loadAfter.includes(id), `translation mod must load after ${id}`);

@@ -1,4 +1,6 @@
 ContextMenu_ES = {
+    ContextMenu_Grab_all = "Tomar todo",
+    ContextMenu_Wash = "Lavar",
     ContextMenu_ChilaSeda_InventoryTetris_OrganizeFood = "Organizar alimentos",
     ContextMenu_ChilaSeda_InventoryTetris_FoodFreshness = "Por frescura",
     ContextMenu_ChilaSeda_InventoryTetris_FoodCalories = "Por calorías",

@@ -1,4 +1,4 @@
-# ChilaSeda_Translations_ES_B42 - Traducciones al espanol para mods Build 42 1.5.3
+# ChilaSeda_Translations_ES_B42 - Traducciones al espanol para mods Build 42 1.5.8
 
 <div align="center">
 
@@ -7,6 +7,27 @@
 </div>
 
 ---
+
+## Cambios en 1.5.8
+
+- Cambia las opciones para lavar vendas de `Limpiar` a `Lavar`, con etiquetas claras para la fuente de agua y los contenedores accesibles.
+
+## Cambios en 1.5.7
+
+- Agrega al inventario nativo de Viewpoint los minutos de juego que faltan para cocinarse o quemarse, con estado pausado, listo o quemado en el panel de detalles.
+
+## Cambios en 1.5.6
+
+- Ajusta las etiquetas del inventario nativo de Viewpoint a espanol de Mexico: `Alrededores`, `Agregar`, `Controles del mouse` y `Tomar todo`. Mantiene estas cadenas en los catalogos JSON y TXT para B42.
+- Traduce `ContextMenu_Grab_all` como `Tomar todo` y `ContextMenu_Wash` como `Lavar`.
+
+## Cambios en 1.5.5
+
+- Corrige la clave del huevo de ganso canadiense al full type que usa `ItemName.json`, para que el tooltip muestre `Huevo de ganso canadiense` y no el identificador tecnico.
+
+## Cambios en 1.5.4
+
+- Mueve al catalogo JSON ES las etiquetas del inventario nativo de Viewpoint para que se apliquen en Build 42, incluidos los titulos, controles, filtros, acciones y conteos.
 
 ## Cambios en 1.5.3
 

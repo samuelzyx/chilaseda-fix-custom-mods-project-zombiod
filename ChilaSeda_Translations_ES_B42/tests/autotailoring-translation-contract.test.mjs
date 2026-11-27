@@ -86,6 +86,6 @@ test('AutoTailoring B42.22 catalogs parse, contain all 32 translations, and have
 test('translation mod version and load order include AutoTailoring', () => {
   const modInfo = fs.readFileSync(path.join(modRoot, '42/mod.info'), 'utf8');
 
-  assert.match(modInfo, /^modversion=1\.5\.3$/m);
+  assert.match(modInfo, /^modversion=1\.5\.8$/m);
   assert.match(modInfo, /^loadModAfter=.*(?:^|,)AutoTailoring(?:,|$)/m);
 });

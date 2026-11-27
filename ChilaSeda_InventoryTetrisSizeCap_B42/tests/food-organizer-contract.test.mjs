@@ -513,7 +513,7 @@ test("organizer metadata and translations stay with the active local addon", () 
   assert.match(modInfo, /^modversion=1\.4\.9$/m);
   assert.match(readme, /Version 1\.4\.7/);
   assert.match(translationModInfo, /^id=ChilaSeda_Translations_ES_B42$/m);
-  assert.match(translationModInfo, /^modversion=1\.5\.3$/m);
+  assert.match(translationModInfo, /^modversion=1\.5\.8$/m);
   assert.match(translationModInfo, /^loadModAfter=.*ChilaSeda_InventoryTetrisSizeCap_B42/m);
   assert.match(translationReadme, /1\.5\.0/);
   assert.match(englishMenu, /ContextMenu_ChilaSeda_InventoryTetris_FoodFreshness/);

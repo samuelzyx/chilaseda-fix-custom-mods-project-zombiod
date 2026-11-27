@@ -1,0 +1,9 @@
+{
+  "IGUI_ChilaSeda_CookingRemainingShort": "%d min remaining",
+  "IGUI_ChilaSeda_BurningRemainingShort": "%d min until burnt",
+  "IGUI_ChilaSeda_CookingRemaining": "Cooking: %d min remaining",
+  "IGUI_ChilaSeda_CookingPaused": "Paused: %d min remaining",
+  "IGUI_ChilaSeda_CookingReady": "Ready to take off heat",
+  "IGUI_ChilaSeda_BurningRemaining": "Burning: %d min until burnt",
+  "IGUI_ChilaSeda_CookingBurnt": "Burnt"
+}
